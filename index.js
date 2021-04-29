@@ -54,3 +54,4 @@ client.on("message", function(message) {
 });      
 
 client.login(config.BOT_TOKEN);
+console.log("Same5JokesBot online");
