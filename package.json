@@ -1,0 +1,23 @@
+{
+  "name": "same5jokesbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w2tong/Same5JokesBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/w2tong/Same5JokesBot/issues"
+  },
+  "homepage": "https://github.com/w2tong/Same5JokesBot#readme"
+}
