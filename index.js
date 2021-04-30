@@ -35,39 +35,39 @@ client.on("message", function(message) {
     var command = message.content.toLowerCase();
     if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where's is andy"))
     {
-        message.reply(WhereIsAndy());
+        message.channel.send(WhereIsAndy());
     }
     else if (command.includes("translate"))
     {
-        message.reply(Translate() + "!");
+        message.channel.send(Translate() + "!");
     }
     else if (command.includes("bazinga") || command.includes("zimbabwe"))
     {
-        message.reply("Bazinga!");
+        message.channel.send("Bazinga!");
     }
     else if (command.includes("im hungry") || command.includes("i'm hungry"))
     {
-        message.reply("Then go eat.");
+        message.channel.send("Then go eat.");
     }
     else if (command.includes("other side"))
     {
-        message.reply("The other what?");
+        message.channel.send("The other what?");
     }
     else if (command.includes("take it back"))
     {
-        message.reply("now y'all.");
+        message.channel.send("Now y'all.");
     }
     else if (command.includes("no shot"))
     {
-        message.reply("shot.");
+        message.channel.send("Shot.");
     }
     else if (command.includes("pam"))
     {
-        message.reply("PAM!");
+        message.channel.send("PAM!");
     }
     else if (command.includes("gamers"))
     {
-        message.reply(gamersResponse());
+        message.channel.send(gamersResponse());
     }
 });      
 
