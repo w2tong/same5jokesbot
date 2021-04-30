@@ -55,6 +55,10 @@ client.on("message", function(message) {
     {
         message.reply("shot.");
     }
+    else if (command.includes("gamers"))
+    {
+        message.reply("rise up.");
+    }
 });      
 
 client.login(config.BOT_TOKEN);
