@@ -51,6 +51,10 @@ client.on("message", function(message) {
     {
         message.reply("now y'all.");
     }
+    else if (command.includes("no shot"))
+    {
+        message.reply("shot.");
+    }
 });      
 
 client.login(config.BOT_TOKEN);
