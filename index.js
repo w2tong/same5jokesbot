@@ -27,7 +27,7 @@ function Translate()
 client.on("message", function(message) { 
     if (message.author.bot) return;
     var command = message.content.toLowerCase();
-    if (command.includes("where is andy?") || command.includes("where is andy"))
+    if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where's is andy"))
     {
         message.reply(WhereIsAndy());
     }
@@ -54,6 +54,10 @@ client.on("message", function(message) {
     else if (command.includes("no shot"))
     {
         message.reply("shot.");
+    }
+    else if (command.includes("pam"))
+    {
+        message.reply("PAM!");
     }
 });      
 
