@@ -30,10 +30,15 @@ function gamersResponse()
     return gamers[RandomRange(gamers.length)]; 
 }
 
+function getAndyComputerDate()
+{
+    var date = new Date();
+    return date.getFullYear() + 1;
+}
+
 client.on("message", function(message) { 
     if (message.author.bot) return;
     var command = message.content.toLowerCase();
-    console.log(command);
     if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy"))
     {
         message.reply(WhereIsAndy());
@@ -69,6 +74,10 @@ client.on("message", function(message) {
     else if (command.includes("gamers"))
     {
         message.reply(gamersResponse());
+    }
+    else if (command.includes("when is andy getting a new computer") || command.includes("whens andy getting a new computer") || command.includes("when\'s andy getting a new computer"))
+    {
+        message.reply(getAndyComputerDate());
     }
 });      
 
