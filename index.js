@@ -6,6 +6,7 @@ const client = new Discord.Client();
 const verbs = ["Walking", "Washing", "Eating"];
 const nouns = ["dog", "dishes", "dinner"];
 const translations = ["Prance forward", "Shashay left", "Boogie down", "Shimmy right"];
+const gamers = ["Rise up!", "Disperse!", "Discharge!"];
 
 function RandomRange(max)
 {
@@ -22,6 +23,11 @@ function WhereIsAndy()
 function Translate()
 {
     return translations[RandomRange(translations.length)];
+}
+
+function gamersResponse()
+{
+    return gamers[RandomRange(gamers.length)]; 
 }
 
 client.on("message", function(message) { 
@@ -58,6 +64,10 @@ client.on("message", function(message) {
     else if (command.includes("pam"))
     {
         message.reply("PAM!");
+    }
+    else if (command.includes("gamers"))
+    {
+        message.reply(gamersResponse());
     }
 });      
 
