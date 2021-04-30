@@ -33,7 +33,8 @@ function gamersResponse()
 client.on("message", function(message) { 
     if (message.author.bot) return;
     var command = message.content.toLowerCase();
-    if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where's is andy"))
+    console.log(command);
+    if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy"))
     {
         message.reply(WhereIsAndy());
     }
@@ -45,7 +46,7 @@ client.on("message", function(message) {
     {
         message.reply("Bazinga!");
     }
-    else if (command.includes("im hungry") || command.includes("i'm hungry"))
+    else if (command.includes("im hungry") || command.includes("i\'m hungry"))
     {
         message.reply("Then go eat.");
     }
