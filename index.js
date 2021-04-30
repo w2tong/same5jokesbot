@@ -70,6 +70,11 @@ client.on("message", function(message) {
     {
         botMessage += gamersResponse() + "\n";
     }
+    if (command.includes("blind"))
+    {
+        botMessage += command.replace("blind", "~~blind~~ doing a first playthrough no spoilers");
+    }
+
     if (botMessage)
     {
         message.channel.send(botMessage);
