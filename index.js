@@ -37,35 +37,35 @@ client.on("message", function(message) {
     {
         message.channel.send(WhereIsAndy());
     }
-    else if (command.includes("translate"))
+    if (command.includes("translate"))
     {
         message.channel.send(Translate() + "!");
     }
-    else if (command.includes("bazinga") || command.includes("zimbabwe"))
+    if (command.includes("bazinga") || command.includes("zimbabwe"))
     {
         message.channel.send("Bazinga!");
     }
-    else if (command.includes("im hungry") || command.includes("i'm hungry"))
+    if (command.includes("im hungry") || command.includes("i'm hungry"))
     {
         message.channel.send("Then go eat.");
     }
-    else if (command.includes("other side"))
+    if (command.includes("other side"))
     {
         message.channel.send("The other what?");
     }
-    else if (command.includes("take it back"))
+    if (command.includes("take it back"))
     {
         message.channel.send("Now y'all.");
     }
-    else if (command.includes("no shot"))
+    if (command.includes("no shot"))
     {
         message.channel.send("Shot.");
     }
-    else if (command.includes("pam"))
+    if (command.includes("pam"))
     {
         message.channel.send("PAM!");
     }
-    else if (command.includes("gamers"))
+    if (command.includes("gamers"))
     {
         message.channel.send(gamersResponse());
     }
