@@ -72,7 +72,7 @@ client.on("message", function(message) {
     }
     if (command.includes("blind"))
     {
-        botMessage += command.replace("blind", "~~blind~~ doing a first playthrough no spoilers");
+        botMessage += "You mean \"" + command.replace("blind", "~~blind~~ doing a first playthrough no spoilers") + "\"";
     }
 
     if (botMessage)
