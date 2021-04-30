@@ -33,42 +33,48 @@ function gamersResponse()
 client.on("message", function(message) { 
     if (message.author.bot) return;
     var command = message.content.toLowerCase();
+    botMessage = "";
     if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where's is andy"))
     {
-        message.channel.send(WhereIsAndy());
+        botMessage += WhereIsAndy() + "\n";
     }
     if (command.includes("translate"))
     {
-        message.channel.send(Translate() + "!");
+        botMessage += Translate() + "!" + "\n";
     }
     if (command.includes("bazinga") || command.includes("zimbabwe"))
     {
-        message.channel.send("Bazinga!");
+        botMessage += "Bazinga!\n";
     }
     if (command.includes("im hungry") || command.includes("i'm hungry"))
     {
-        message.channel.send("Then go eat.");
+        botMessage += "Then go eat.\n";
     }
     if (command.includes("other side"))
     {
-        message.channel.send("The other what?");
+        botMessage += "The other what?\n";
     }
     if (command.includes("take it back"))
     {
-        message.channel.send("Now y'all.");
+        botMessage += "Now y'all.\n";
     }
     if (command.includes("no shot"))
     {
-        message.channel.send("Shot.");
+        botMessage += "Shot.\n";
     }
     if (command.includes("pam"))
     {
-        message.channel.send("PAM!");
+        botMessage += "PAM!\n";
     }
     if (command.includes("gamers"))
     {
-        message.channel.send(gamersResponse());
+        botMessage += gamersResponse() + "\n";
     }
+    if (botMessage)
+    {
+        message.channel.send(botMessage);
+    }
+    
 });      
 
 client.login(config.BOT_TOKEN);
