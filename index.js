@@ -8,78 +8,76 @@ const nouns = ["dog", "dishes", "dinner"];
 const translations = ["Prance forward", "Shashay left", "Boogie down", "Shimmy right"];
 const gamers = ["Rise up!", "Disperse!", "Discharge!"];
 
-function RandomRange(max)
-{
-    return Math.floor(Math.random() * max);
+function RandomRange(max) {
+	return Math.floor(Math.random() * max);
 }
 
-function WhereIsAndy()
-{
-    var verb = verbs[RandomRange(verbs.length)];
-    var noun = nouns[RandomRange(nouns.length)];
-    return verb + " his " + noun + ".";
+function WhereIsAndy() {
+	var verb = verbs[RandomRange(verbs.length)];
+	var noun = nouns[RandomRange(nouns.length)];
+	return verb + " his " + noun + ".";
 }
 
-function Translate()
-{
-    return translations[RandomRange(translations.length)];
+function Translate() {
+	return translations[RandomRange(translations.length)];
 }
 
-function gamersResponse()
-{
-    return gamers[RandomRange(gamers.length)]; 
+function gamersResponse() {
+	return gamers[RandomRange(gamers.length)];
 }
 
-function getAndyComputerDate()
-{
-    var date = new Date();
-    return date.getFullYear() + 1;
+function getAndyComputerDate() {
+	var date = new Date();
+	return date.getFullYear() + 1;
 }
 
-client.on("message", function(message) { 
-    if (message.author.bot) return;
-    var command = message.content.toLowerCase();
-    if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy"))
-    {
-        message.reply(WhereIsAndy());
-    }
-    else if (command.includes("translate"))
-    {
-        message.reply(Translate() + "!");
-    }
-    else if (command.includes("bazinga") || command.includes("zimbabwe"))
-    {
-        message.reply("Bazinga!");
-    }
-    else if (command.includes("im hungry") || command.includes("i\'m hungry"))
-    {
-        message.reply("Then go eat.");
-    }
-    else if (command.includes("other side"))
-    {
-        message.reply("The other what?");
-    }
-    else if (command.includes("take it back"))
-    {
-        message.reply("now y'all.");
-    }
-    else if (command.includes("no shot"))
-    {
-        message.reply("shot.");
-    }
-    else if (command.includes("pam"))
-    {
-        message.reply("PAM!");
-    }
-    else if (command.includes("gamers"))
-    {
-        message.reply(gamersResponse());
-    }
-    else if (command.includes("when is andy getting a new computer") || command.includes("whens andy getting a new computer") || command.includes("when\'s andy getting a new computer"))
-    {
-        message.reply(getAndyComputerDate());
-    }
-});      
+client.on("message", function (message) {
+	if (message.author.bot) return;
+	if (message.member.roles.cache.some(role => role.name === "Bot Abusser")) return;
+	var command = message.content.toLowerCase();
+	botMessage = "";
+
+	if (command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy")) {
+		botMessage += WhereIsAndy() + "\n";
+	}
+	if (command.includes("translate")) {
+		botMessage += Translate() + "!" + "\n";
+	}
+	if (command.includes("bazinga") || command.includes("zimbabwe")) {
+		botMessage += "Bazinga!\n";
+	}
+	else if (command.includes("im hungry") || command.includes("i\'m hungry")) {
+		botMessage += "Then go eat.\n";
+	}
+	if (command.includes("other side")) {
+		botMessage += "The other what?\n";
+	}
+	if (command.includes("take it back")) {
+		botMessage += "Now y'all.\n";
+	}
+	if (command.includes("no shot")) {
+		botMessage += "Shot.\n";
+	}
+	if (command.includes("pam")) {
+		botMessage += "PAM!\n";
+	}
+	if (command.includes("gamers")) {
+		botMessage += gamersResponse() + "\n";
+	}
+	if (command.includes("blind")) {
+		botMessage += "You mean \"" + command.replace("blind", "~~blind~~ doing a first playthrough no spoilers") + "\"";
+	}
+	if (command.includes("166")) {
+		message.channel.send("", { files: ["https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png"] });
+	}
+	if (command.includes("when is andy getting a new computer") || command.includes("whens andy getting a new computer") || command.includes("when\'s andy getting a new computer")) {
+		botMessage += getAndyComputerDate(); + "\n";
+	}
+
+	if (botMessage) {
+		message.channel.send(botMessage);
+	}
+});
 
 client.login(config.BOT_TOKEN);
 console.log("Same5JokesBot online");
