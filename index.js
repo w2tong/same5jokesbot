@@ -30,8 +30,9 @@ function gamersResponse()
     return gamers[RandomRange(gamers.length)]; 
 }
 
-client.on("message", function(message) { 
+client.on("message", function(message) {
     if (message.author.bot) return;
+    if (message.member.roles.cache.some(role => role.name === "Bot Abusser")) return;
     var command = message.content.toLowerCase();
     botMessage = "";
     if (command.includes("where is andy?") || command.includes("where is andy") || command.includes("wheres andy") || command.includes("where's is andy"))
@@ -83,7 +84,6 @@ client.on("message", function(message) {
     {
         message.channel.send(botMessage);
     }
-    
 });      
 
 client.login(config.BOT_TOKEN);
