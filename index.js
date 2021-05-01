@@ -74,6 +74,10 @@ client.on("message", function(message) {
     {
         botMessage += "You mean \"" + command.replace("blind", "~~blind~~ doing a first playthrough no spoilers") + "\"";
     }
+    if (command.includes("166"))
+    {
+        message.channel.send("", {files: ["https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png"]});
+    }
 
     if (botMessage)
     {
