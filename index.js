@@ -33,7 +33,7 @@ function getAndyComputerDate() {
 
 client.on("message", function (message) {
 	if (message.author.bot) return;
-	if (message.member.roles.cache.some(role => role.name === "Bot Abusser")) return;
+	if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
 	var command = message.content.toLowerCase();
 	botMessage = "";
 
