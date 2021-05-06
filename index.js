@@ -13,8 +13,8 @@ function RandomRange(max) {
 }
 
 function WhereIsAndy() {
-	var verb = verbs[RandomRange(verbs.length)];
-	var noun = nouns[RandomRange(nouns.length)];
+	let verb = verbs[RandomRange(verbs.length)];
+	let noun = nouns[RandomRange(nouns.length)];
 	return verb + " his " + noun + ".";
 }
 
@@ -27,14 +27,13 @@ function gamersResponse() {
 }
 
 function getAndyComputerDate() {
-	var date = new Date();
-	return date.getFullYear() + 1;
+	return new Date().getFullYear() + 1;
 }
 
 client.on("message", function (message) {
 	if (message.author.bot) return;
 	if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
-	var command = message.content.toLowerCase();
+	let command = message.content.toLowerCase();
 	botMessage = "";
 
 	if (command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy")) {
