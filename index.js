@@ -72,6 +72,9 @@ client.on("message", function (message) {
 	if (command.includes("when is andy getting a new computer") || command.includes("whens andy getting a new computer") || command.includes("when\'s andy getting a new computer")) {
 		botMessage += getAndyComputerDate(); + "\n";
 	}
+	if (command.includes("too late") ) {
+		botMessage += "But you promised." + "\n";
+	}
 
 	if (botMessage) {
 		message.channel.send(botMessage);
