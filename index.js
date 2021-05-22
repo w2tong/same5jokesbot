@@ -45,7 +45,7 @@ client.on("message", function (message) {
     if (command.includes("bazinga") || command.includes("zimbabwe")) {
         botMessage += "Bazinga!\n";
     }
-    else if (command.includes("im hungry") || command.includes("i\'m hungry")) {
+    if (command.includes("im hungry") || command.includes("i\'m hungry")) {
         botMessage += "Then go eat.\n";
     }
     if (command.includes("other side")) {
