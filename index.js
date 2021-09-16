@@ -78,6 +78,9 @@ client.on("message", function (message) {
     if (command.includes("too late")) {
         botMessage += "But you promised." + "\n";
     }
+	if (command.includes("woah") || command.includes("whoa")) {
+        botMessage += "Basement Gang!" + "\n";
+    }
 
     if (botMessage) {
         message.channel.send(botMessage);
