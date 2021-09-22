@@ -34,6 +34,9 @@ client.on("message", function (message) {
     if (message.author.bot) return;
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
     let command = message.content.toLowerCase();
+	if (command.includes("cooler")) {
+		message.react('🐟');
+	}
     botMessage = "";
 
     if (command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy")) {
