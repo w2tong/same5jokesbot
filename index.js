@@ -31,10 +31,16 @@ function getAndyComputerDate() {
     return new Date().getFullYear() + 1;
 }
 
+// Message replies
 client.on("message", function (message) {
     if (message.author.bot) return;
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
     let command = message.content.toLowerCase();
+	
+	if (command.includes("!roll")) {
+		message.reply(Math.floor(Math.random() * (99) + 1));
+	}
+	
 	if (command.includes("cooler")) {
 		message.react('🐟');
 	}
@@ -91,6 +97,7 @@ client.on("message", function (message) {
     }
 });
 
+// Hourly water and posture check
 let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
 	let channel = client.channels.cache.find(channel => channel.name === 'waterboy');
 	const guild = client.guilds.cache.get("158049091434184705");
