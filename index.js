@@ -1,8 +1,8 @@
-const Discord = require("discord.js");
+const { Client, Intents } = require('discord.js');
 const config = require("./config.json");
 const cron = require("cron");
 
-const client = new Discord.Client();
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 const verbs = ["Walking", "Washing", "Eating"];
 const nouns = ["dog", "dishes", "dinner"];
@@ -32,7 +32,8 @@ function getAndyComputerDate() {
 }
 
 // Message replies
-client.on("message", function (message) {
+client.on("messageCreate", function (message) {
+    console.log('mes');
     if (message.author.bot) return;
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
     let command = message.content.toLowerCase();
@@ -107,4 +108,6 @@ let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
 scheduledMessage.start();
 
 client.login(config.BOT_TOKEN);
-console.log("Same5JokesBot online");
+client.once('ready', () => {
+	console.log('Same5JokesBot online.');
+});
