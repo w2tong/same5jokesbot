@@ -101,8 +101,9 @@ client.on("message", function (message) {
 let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
 	let channel = client.channels.cache.find(channel => channel.name === 'waterboy');
 	const guild = client.guilds.cache.get("158049091434184705");
+	if (!guild) return;
     const role = guild.roles.cache.find(role => role.name === "HydroPostureHomie");
-	if (guild && channel && role) {
+	if (channel && role) {
 		channel.send(`<@&${role.id}> Water Check. Posture Check.`);
 	}
 });
