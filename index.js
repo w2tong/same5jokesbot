@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const config = require("./config.json");
+const cron = require("cron");
 
 const client = new Discord.Client();
 
@@ -89,6 +90,16 @@ client.on("message", function (message) {
         message.channel.send(botMessage);
     }
 });
+
+let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
+	let channel = client.channels.cache.find(channel => channel.name === 'waterboy');
+	const guild = client.guilds.cache.get("158049091434184705");
+    const role = guild.roles.cache.find(role => role.name === "HydroPostureHomie");
+	if (guild && channel && role) {
+		channel.send(`<@&${role.id}> Water Check. Posture Check.`);
+	}
+});
+scheduledMessage.start();
 
 client.login(config.BOT_TOKEN);
 console.log("Same5JokesBot online");

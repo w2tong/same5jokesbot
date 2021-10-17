@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "cron": "^1.8.2",
     "discord.js": "^12.5.3",
     "ws": "^7.4.6"
   },
