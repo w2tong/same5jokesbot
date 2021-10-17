@@ -100,15 +100,16 @@ client.on("messageCreate", function (message) {
     }
 	if (command.includes("woah") || command.includes("whoa")) {
         botMessage += "Basement Gang!" + "\n";
-        if (!message.member.voice.channel) return;
-        const connection = joinVoiceChannel({
-            channelId: message.member.voice.channel.id,
-            guildId: message.channel.guild.id,
-            adapterCreator: message.channel.guild.voiceAdapterCreator,
-        })
-        const subscription = connection.subscribe(player);
-        const resource = createAudioResource('audio/basementgang.mp3');
-        player.play(resource);
+        if (message.member.voice.channel) {
+            const connection = joinVoiceChannel({
+                channelId: message.member.voice.channel.id,
+                guildId: message.channel.guild.id,
+                adapterCreator: message.channel.guild.voiceAdapterCreator,
+            })
+            const subscription = connection.subscribe(player);
+            const resource = createAudioResource('audio/basementgang.mp3');
+            player.play(resource);
+        }
     }
 
     if (botMessage) {
