@@ -7,6 +7,8 @@ const cron = require("cron");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
 
+let emotes = {};
+
 const verbs = ["Walking", "Washing", "Eating"];
 const nouns = ["dog", "dishes", "dinner"];
 const translations = ["Prance forward", "Shashay left", "Boogie down", "Shimmy right"];
@@ -92,8 +94,9 @@ client.on("messageCreate", function (message) {
         botMessage += "But you promised." + "\n";
     }
     if (command.includes("hellhalt") || command.includes("hell halt") ) {
-        let sadge = client.emojis.cache.find(emoji => emoji.name === "Sadge");
-        botMessage += `I'm a leak, I'm a leak. ${sadge}` + "\n";
+        let sadge = '';
+        if (emotes.sadge) sadge = emotes.sadge;
+        botMessage += `I'm a leak, I'm a leak. ${emotes.sadge}` + "\n";
     }
 	if (command.includes("woah") || command.includes("whoa")) {
         botMessage += "Basement Gang!" + "\n";
@@ -103,14 +106,7 @@ client.on("messageCreate", function (message) {
             guildId: message.channel.guild.id,
             adapterCreator: message.channel.guild.voiceAdapterCreator,
         })
-        
-        // Subscribe the connection to the audio player (will play audio on the voice connection)
         const subscription = connection.subscribe(player);
-        // subscription could be undefined if the connection is destroyed!
-        if (subscription) {
-            // Unsubscribe after 5 seconds (stop playing audio on the voice connection)
-            setTimeout(() => subscription.unsubscribe(), 5_000);
-        }
         const resource = createAudioResource('audio/basementgang.mp3');
         player.play(resource);
     }
@@ -132,4 +128,5 @@ scheduledMessage.start();
 client.login(config.BOT_TOKEN);
 client.once('ready', () => {
 	console.log('Same5JokesBot online.');
+    emotes['sadge'] = client.emojis.cache.find(emoji => emoji.name === "Sadge");
 });
