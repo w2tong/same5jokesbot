@@ -1,8 +1,11 @@
 const { Client, Intents } = require('discord.js');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@discordjs/voice');
 const config = require("./config.json");
 const cron = require("cron");
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
+const player = createAudioPlayer();
 
 const verbs = ["Walking", "Washing", "Eating"];
 const nouns = ["dog", "dishes", "dinner"];
@@ -33,7 +36,6 @@ function getAndyComputerDate() {
 
 // Message replies
 client.on("messageCreate", function (message) {
-    console.log('mes');
     if (message.author.bot) return;
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
     let command = message.content.toLowerCase();
@@ -91,6 +93,22 @@ client.on("messageCreate", function (message) {
     }
 	if (command.includes("woah") || command.includes("whoa")) {
         botMessage += "Basement Gang!" + "\n";
+        if (!message.member.voice.channel) return;
+        const connection = joinVoiceChannel({
+            channelId: message.member.voice.channel.id,
+            guildId: message.channel.guild.id,
+            adapterCreator: message.channel.guild.voiceAdapterCreator,
+        })
+        
+        // Subscribe the connection to the audio player (will play audio on the voice connection)
+        const subscription = connection.subscribe(player);
+        // subscription could be undefined if the connection is destroyed!
+        if (subscription) {
+            // Unsubscribe after 5 seconds (stop playing audio on the voice connection)
+            setTimeout(() => subscription.unsubscribe(), 5_000);
+        }
+        const resource = createAudioResource('audio/basementgang.mp3');
+        player.play(resource);
     }
 
     if (botMessage) {
