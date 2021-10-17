@@ -99,12 +99,9 @@ client.on("message", function (message) {
 
 // Hourly water and posture check
 let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
-	let channel = client.channels.cache.find(channel => channel.name === 'waterboy');
-	const guild = client.guilds.cache.get("158049091434184705");
-	if (!guild) return;
-    const role = guild.roles.cache.find(role => role.name === "HydroPostureHomie");
-	if (channel && role) {
-		channel.send(`<@&${role.id}> Water Check. Posture Check.`);
+	let channel = client.channels.cache.get('899162908498468934');
+	if (channel) {
+		channel.send(`<@&899160433548722176> Water Check. Posture Check.`);
 	}
 });
 scheduledMessage.start();
