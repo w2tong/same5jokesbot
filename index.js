@@ -91,6 +91,10 @@ client.on("messageCreate", function (message) {
     if (command.includes("too late")) {
         botMessage += "But you promised." + "\n";
     }
+    if (command.includes("hellhalt") || command.includes("hell halt") ) {
+        let sadge = client.emojis.cache.find(emoji => emoji.name === "Sadge");
+        botMessage += `I'm a leak, I'm a leak. ${sadge}` + "\n";
+    }
 	if (command.includes("woah") || command.includes("whoa")) {
         botMessage += "Basement Gang!" + "\n";
         if (!message.member.voice.channel) return;
