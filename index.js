@@ -36,6 +36,19 @@ function getAndyComputerDate() {
     return new Date().getFullYear() + 1;
 }
 
+function playAudioFile(message, audioFie) {
+    if (message.member.voice.channel) {
+        const connection = joinVoiceChannel({
+            channelId: message.member.voice.channel.id,
+            guildId: message.channel.guild.id,
+            adapterCreator: message.channel.guild.voiceAdapterCreator,
+        })
+        const subscription = connection.subscribe(player);
+        const resource = createAudioResource(audioFie);
+        player.play(resource);
+    }
+}
+
 // Message replies
 client.on("messageCreate", function (message) {
     if (message.author.bot) return;
@@ -100,17 +113,14 @@ client.on("messageCreate", function (message) {
     }
 	if (command.includes("woah") || command.includes("whoa")) {
         botMessage += "Basement Gang!" + "\n";
-        if (message.member.voice.channel) {
-            const connection = joinVoiceChannel({
-                channelId: message.member.voice.channel.id,
-                guildId: message.channel.guild.id,
-                adapterCreator: message.channel.guild.voiceAdapterCreator,
-            })
-            const subscription = connection.subscribe(player);
-            const resource = createAudioResource('audio/basementgang.mp3');
-            player.play(resource);
-        }
+        playAudioFile(message, 'audio/basementgang.mp3');
     }
+    if (command.includes("thunder") || command.includes("lightning")) {
+        playAudioFile(message, 'audio/thundervslightning.mp3');
+    }
+    if (command.includes("groan")) {
+        playAudioFile(message, 'audio/groan.mp3');
+    } 
 
     if (botMessage) {
         message.channel.send(botMessage);
