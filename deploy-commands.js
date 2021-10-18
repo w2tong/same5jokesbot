@@ -5,17 +5,22 @@ const { clientId, guildId, BOT_TOKEN } = require('./config.json');
 
 const playCommand = new SlashCommandBuilder()
     .setName('play')
-    .setDescription('Ahhhhhhhhhhhhhhhhhhhhhhhhh')
+    .setDescription('Plays selected audio clip')
     .addStringOption(option =>
 		option.setName('audio')
 			.setDescription('The audio clip')
 			.setRequired(true)
 			.addChoice('Thunder vs Lightning', 'thundervslightning')
-			.addChoice('Phasmo Groan', 'groan'));
+            .addChoice('Phasmo Attack', 'attack')
+            .addChoice('Phasmo Breath', 'breath')
+            .addChoice('Phasmo Die', 'die')
+            .addChoice('Phasmo Groan', 'groan')
+            .addChoice('Phasmo Kill', 'kill')
+    );
 
 const rollCommand = new SlashCommandBuilder()
     .setName('roll')
-    .setDescription('Rolls a number from 1 to 100.');
+    .setDescription('Rolls a number from 1 to 100');
 
 const commands = [playCommand, rollCommand].map(command => command.toJSON());
 

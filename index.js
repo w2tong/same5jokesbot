@@ -131,7 +131,6 @@ client.on('interactionCreate', async interaction => {
 	const { commandName } = interaction;
 
 	if (commandName === 'play') {
-        console.log(interaction.options);
         let reply = 'You are not in a voice channel';
         if (playAudioFile(interaction, `audio/${interaction.options.getString('audio')}.mp3`)) {
             reply = `Playing ${interaction.options.getString('audio')}.`;
