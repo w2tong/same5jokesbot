@@ -123,6 +123,9 @@ let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
 	if (channel) {
 		channel.send(`<@&899160433548722176> Water Check. Posture Check.`);
 	}
+    else {
+        console.log('Water/Posture Check channel not found.');
+    }
 });
 scheduledMessage.start();
 
