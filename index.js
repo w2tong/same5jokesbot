@@ -13,22 +13,22 @@ const nouns = ["dog", "dishes", "dinner"];
 const translations = ["Prance forward", "Shashay left", "Boogie down", "Shimmy right"];
 const gamers = ["Rise up!", "Disperse!", "Discharge!"];
 
-function RandomRange(max) {
+function randomRange(max) {
     return Math.floor(Math.random() * max);
 }
 
-function WhereIsAndy() {
-    let verb = verbs[RandomRange(verbs.length)];
-    let noun = nouns[RandomRange(nouns.length)];
+function whereIsAndy() {
+    let verb = verbs[randomRange(verbs.length)];
+    let noun = nouns[randomRange(nouns.length)];
     return verb + " his " + noun + ".";
 }
 
 function Translate() {
-    return translations[RandomRange(translations.length)];
+    return translations[randomRange(translations.length)];
 }
 
 function gamersResponse() {
-    return gamers[RandomRange(gamers.length)];
+    return gamers[randomRange(gamers.length)];
 }
 
 function getAndyComputerDate() {
@@ -62,7 +62,7 @@ client.on("messageCreate", function (message) {
     botMessage = "";
 
     if (command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy")) {
-        botMessage += WhereIsAndy() + "\n";
+        botMessage += whereIsAndy() + "\n";
     }
     if (command.includes("translate")) {
         botMessage += Translate() + "!" + "\n";
