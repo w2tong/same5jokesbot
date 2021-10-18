@@ -20,7 +20,9 @@ const playCommand = new SlashCommandBuilder()
 
 const rollCommand = new SlashCommandBuilder()
     .setName('roll')
-    .setDescription('Rolls a number from 1 to 100');
+    .setDescription('Rolls a random number from 1 to 100')
+    //.addIntegerOption(option => option.setName('int').setDescription('Enter an integer'))
+    ;
 
 const commands = [playCommand, rollCommand].map(command => command.toJSON());
 

@@ -138,7 +138,12 @@ client.on('interactionCreate', async interaction => {
         await interaction.reply({ content: reply, ephemeral: true });
 	}
     else if (commandName === 'roll') {
-		await interaction.reply(Math.floor(Math.random() * (99) + 1).toString());
+        let int = 100;
+        /*
+        let int = interaction.options.getInteger('int');
+        int = (interaction.options.getInteger('int') ? interaction.options.getInteger('int') : 100 )
+        */
+		await interaction.reply(Math.floor(Math.random() * (int - 1) + 1).toString());
 	}
 });
 
