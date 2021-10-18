@@ -3,7 +3,6 @@ const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@d
 const config = require("./config.json");
 const cron = require("cron");
 
-
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
 
@@ -46,7 +45,9 @@ function playAudioFile(message, audioFie) {
         const subscription = connection.subscribe(player);
         const resource = createAudioResource(audioFie);
         player.play(resource);
+        return true;
     }
+    return false;
 }
 
 // Message replies
@@ -54,10 +55,6 @@ client.on("messageCreate", function (message) {
     if (message.author.bot) return;
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
     let command = message.content.toLowerCase();
-	
-	if (command.includes("!roll")) {
-		message.reply(Math.floor(Math.random() * (99) + 1));
-	}
 	
 	if (command.includes("cooler")) {
 		message.react('🐟');
@@ -125,6 +122,25 @@ client.on("messageCreate", function (message) {
     if (botMessage) {
         message.channel.send(botMessage);
     }
+});
+
+// Slash commands
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
+
+	const { commandName } = interaction;
+
+	if (commandName === 'play') {
+        console.log(interaction.options);
+        let reply = 'You are not in a voice channel';
+        if (playAudioFile(interaction, `audio/${interaction.options.getString('audio')}.mp3`)) {
+            reply = `Playing ${interaction.options.getString('audio')}.`;
+        }
+        await interaction.reply({ content: reply, ephemeral: true });
+	}
+    else if (commandName === 'roll') {
+		await interaction.reply(Math.floor(Math.random() * (99) + 1).toString());
+	}
 });
 
 // Hourly water and posture check
