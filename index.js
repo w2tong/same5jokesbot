@@ -113,11 +113,8 @@ client.on("messageCreate", function (message) {
         playAudioFile(message, 'audio/basementgang.mp3');
     }
     if (command.includes("thunder") || command.includes("lightning")) {
-        playAudioFile(message, 'audio/thundervslightning.mp3');
+        playAudioFile(message, 'audio/thunder_vs_lightning.mp3');
     }
-    if (command.includes("groan")) {
-        playAudioFile(message, 'audio/groan.mp3');
-    } 
 
     if (botMessage) {
         message.channel.send(botMessage);
