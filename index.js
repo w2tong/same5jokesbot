@@ -37,13 +37,14 @@ function getAndyComputerDate() {
 
 function playAudioFile(message, audioFie) {
     if (message.member.voice.channel) {
+        console.log(`${new Date().toLocaleTimeString("en-US")}: ${message.member.user.username} played ${audioFie}`);
         const connection = joinVoiceChannel({
             channelId: message.member.voice.channel.id,
             guildId: message.channel.guild.id,
             adapterCreator: message.channel.guild.voiceAdapterCreator,
         })
         const subscription = connection.subscribe(player);
-        const resource = createAudioResource(audioFie);
+        const resource = createAudioResource(`audio/${audioFie}.mp3` );
         player.play(resource);
         return true;
     }
@@ -129,7 +130,7 @@ client.on('interactionCreate', async interaction => {
 
 	if (commandName === 'play') {
         let reply = 'You are not in a voice channel';
-        if (playAudioFile(interaction, `audio/${interaction.options.getString('audio')}.mp3`)) {
+        if (playAudioFile(interaction, interaction.options.getString('audio'))) {
             reply = `Playing ${interaction.options.getString('audio')}.`;
         }
         await interaction.reply({ content: reply, ephemeral: true });
