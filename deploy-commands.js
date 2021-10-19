@@ -17,6 +17,10 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Phasmo Groan', 'phasmo_groan')
             .addChoice('Phasmo Heartbeat', 'phasmo_heartbeat')
             .addChoice('Phasmo Kill', 'phasmo_kill')
+            .addChoice('Phasmo Behind', 'phasmo_behind')
+            .addChoice('Phasmo Here', 'phasmo_here')
+            .addChoice('Among Us Emergency Meeting', 'amongus_meeting')
+            .addChoice('Disgustang', 'disgustang')
     );
 
 const rollCommand = new SlashCommandBuilder()
