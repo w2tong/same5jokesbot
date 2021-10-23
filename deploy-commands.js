@@ -21,6 +21,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Phasmo Here', 'phasmo_here')
             .addChoice('Among Us Emergency Meeting', 'amongus_meeting')
             .addChoice('Disgustang', 'disgustang')
+            .addChoice('Demon Time', 'demontime')
     );
 
 const rollCommand = new SlashCommandBuilder()

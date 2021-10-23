@@ -52,6 +52,7 @@ function playAudioFile(message, audioFie) {
 }
 
 // Message replies
+// TODO: change ORs to regex
 client.on("messageCreate", function (message) {
     if (message.author.bot) return;
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
@@ -111,10 +112,13 @@ client.on("messageCreate", function (message) {
     }
 	if (command.includes("woah") || command.includes("whoa")) {
         botMessage += "Basement Gang!" + "\n";
-        playAudioFile(message, 'audio/basementgang.mp3');
+        playAudioFile(message, 'basementgang');
     }
     if (command.includes("thunder") || command.includes("lightning")) {
-        playAudioFile(message, 'audio/thunder_vs_lightning.mp3');
+        playAudioFile(message, 'thunder_vs_lightning');
+    }
+    if (command.includes("demon")) {
+        playAudioFile(message, 'demontime');
     }
 
     if (botMessage) {
@@ -137,7 +141,7 @@ client.on('interactionCreate', async interaction => {
 	}
     else if (commandName === 'roll') {
         let int = 100;
-        /*
+        /* CDOE FOR ROLLING 1 TO ENTERED RANGE
         let int = interaction.options.getInteger('int');
         int = (interaction.options.getInteger('int') ? interaction.options.getInteger('int') : 100 )
         */
