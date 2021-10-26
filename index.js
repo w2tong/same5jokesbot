@@ -121,7 +121,7 @@ client.on("messageCreate", function (message) {
     if (/i'?m.*(four|poor|bored)/.test(command)) {
         playAudioFile(message, 'VillagerCWhat3');
     }
-    if (/((yo)?u|yu).*(no|know)u k/.test(command)) {
+    if (/((yo)?u|yu).*(no|know)/.test(command)) {
         playAudioFile(message, 'sykkuno');
     }
     if (botMessage) {
