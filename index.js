@@ -23,7 +23,7 @@ function whereIsAndy() {
     return verb + " his " + noun + ".";
 }
 
-function Translate() {
+function translate() {
     return translations[randomRange(translations.length)];
 }
 
@@ -52,33 +52,31 @@ function playAudioFile(message, audioFie) {
 }
 
 // Message replies
-// TODO: change ORs to regex
 client.on("messageCreate", function (message) {
     if (message.author.bot) return;
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
     let command = message.content.toLowerCase();
 	
-	if (command.includes("cooler")) {
+	if (/cooler/.test(command)) {
 		message.react('🐟');
 	}
     botMessage = "";
-
-    if (command.includes("where is andy") || command.includes("wheres andy") || command.includes("where\'s andy")) {
+    if (/where.*andy/.test(command)) {
         botMessage += whereIsAndy() + "\n";
     }
-    if (command.includes("translate")) {
-        botMessage += Translate() + "!" + "\n";
+    if (/translat(e|ion)/.test(command)) {
+        botMessage += translate() + "!" + "\n";
     }
-    if (command.includes("bazinga") || command.includes("zimbabwe")) {
+    if (/(bazinga|zimbabwe)/.test(command)) {
         botMessage += "Bazinga!\n";
     }
-    if (command.includes("im hungry") || command.includes("i\'m hungry")) {
+    if (/(i'?m|me).*hungr?y/.test(command)) {
         botMessage += "Then go eat.\n";
     }
-    if (command.includes("other side")) {
+    if (/oth(er|a).*side/.test(command)) {
         botMessage += "The other what?\n";
     }
-    if (command.includes("take it back")) {
+    if (/take?.*it.*bac?k/.test(command)) {
         botMessage += "Now y'all.\n";
     }
     if (command.includes("no shot")) {
@@ -87,42 +85,47 @@ client.on("messageCreate", function (message) {
     if (command.includes("shot") && !command.includes("no shot")) {
         botMessage += "No shot.\n";
     }
-    if (command.includes("pam")) {
+    if (/pam/.test(command)) {
         botMessage += "PAM!\n";
     }
-    if (command.includes("gamers")) {
+    if (/gay?mers/.test(command)) {
         botMessage += gamersResponse() + "\n";
     }
-    if (command.includes("blind")) {
+    if (/blind/.test(command)) {
         botMessage += "You mean \"" + command.replace("blind", "~~blind~~ doing a first playthrough no spoilers") + "\"";
     }
-    if (command.includes("166")) {
-        message.channel.send("", { files: ["https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png"] });
+    if (/166/.test(command)) {
+        botMessage += "https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png" + "\n";
     }
-    if (command.includes("when is andy getting a new computer") || command.includes("whens andy getting a new computer") || command.includes("when\'s andy getting a new computer")) {
+    if (/when.*andy.*get(ting)?.*new.*computer/.test(command)) {
         botMessage += getAndyComputerDate(); + "\n";
     }
-    if (command.includes("too late")) {
+    if (/too.*late/.test(command)) {
         botMessage += "But you promised." + "\n";
     }
-    if (command.includes("hellhalt") || command.includes("hell halt") ) {
+    if (/hell\s*halt/.test(command)) {
         let sadge = '';
         if (emotes.sadge) sadge = emotes.sadge;
         botMessage += `I'm a leak, I'm a leak. ${emotes.sadge}` + "\n";
     }
-	if (command.includes("woah") || command.includes("whoa")) {
+	if (/w(oah|hoa)/.test(command)) {
         botMessage += "Basement Gang!" + "\n";
         playAudioFile(message, 'basementgang');
     }
-    if (command.includes("thunder") || command.includes("lightning")) {
+    if (/(thunder|lightning)/.test(command)) {
         playAudioFile(message, 'thunder_vs_lightning');
     }
-    if (command.includes("demon")) {
+    if (/demon/.test(command)) {
         playAudioFile(message, 'demontime');
     }
-
+    if (/i'?m.*(four|poor|bored)/.test(command)) {
+        playAudioFile(message, 'VillagerCWhat3');
+    }
+    if (/((yo)?u|yu).*(no|know)u k/.test(command)) {
+        playAudioFile(message, 'sykkuno');
+    }
     if (botMessage) {
-        message.channel.send(botMessage);
+        message.channel.send(botMessage, );
     }
 });
 
