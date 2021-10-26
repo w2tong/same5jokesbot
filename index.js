@@ -124,6 +124,9 @@ client.on("messageCreate", function (message) {
     if (/((yo)?u|yu).*(no|know)/.test(command)) {
         playAudioFile(message, 'sykkuno');
     }
+    if (/uh.*oh.*stinky/.test(command)) {
+        playAudioFile(message, 'uhohstinky');
+    }
     if (botMessage) {
         message.channel.send(botMessage, );
     }
