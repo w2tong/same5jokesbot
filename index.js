@@ -115,6 +115,9 @@ client.on("messageCreate", function (message) {
     if (/(thunder|lightning)/.test(command)) {
         playAudioFile(message, 'thunder_vs_lightning');
     }
+    if (/(thunder vs lightning)/.test(command)) {
+        playAudioFile(message, 'thunder_vs_lightning_full');
+    }
     if (/demon/.test(command)) {
         playAudioFile(message, 'demontime');
     }
@@ -127,8 +130,14 @@ client.on("messageCreate", function (message) {
     if (/uh.*oh.*stinky/.test(command)) {
         playAudioFile(message, 'uhohstinky');
     }
+    if (/tbc.*hype/.test(command)) {
+        playAudioFile(message, 'tbchype');
+    }
+    if (/suc(c|k|tion)/.test(command)) {
+        playAudioFile(message, 'suction');
+    }
     if (botMessage) {
-        message.channel.send(botMessage, );
+        message.channel.send(botMessage);
     }
 });
 
