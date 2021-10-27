@@ -112,7 +112,7 @@ client.on("messageCreate", function (message) {
         botMessage += "Basement Gang!" + "\n";
         playAudioFile(message, 'basementgang');
     }
-    if (/(thunder|lightning)/.test(command)) {
+    if (/(thunder|lightning)/.test(command) && !/(thunder vs lightning)/.test(command)) {
         playAudioFile(message, 'thunder_vs_lightning');
     }
     if (/(thunder vs lightning)/.test(command)) {
