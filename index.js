@@ -61,6 +61,7 @@ client.on("messageCreate", function (message) {
 		message.react('🐟');
 	}
     botMessage = "";
+    // Message reposnse
     if (/where.*andy/.test(command)) {
         botMessage += whereIsAndy() + "\n";
     }
@@ -85,6 +86,9 @@ client.on("messageCreate", function (message) {
     if (/shot/.test(command) && !/no shot/.test(command)) {
         botMessage += "No shot.\n";
     }
+    if (/fa(x|ct(s|ual))/.test(command)) {
+        botMessage += "No printer.\n";
+    }
     if (/pam/.test(command)) {
         botMessage += "PAM!\n";
     }
@@ -108,6 +112,7 @@ client.on("messageCreate", function (message) {
         if (emotes.sadge) sadge = emotes.sadge;
         botMessage += `I'm a leak, I'm a leak. ${emotes.sadge}` + "\n";
     }
+    // Play audio
 	if (/w(oah|hoa)/.test(command)) {
         botMessage += "Basement Gang!" + "\n";
         playAudioFile(message, 'basementgang');
