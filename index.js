@@ -37,7 +37,7 @@ function getAndyComputerDate() {
 
 function playAudioFile(message, audioFie) {
     if (message.member.voice.channel) {
-        console.log(`${new Date().toLocaleTimeString("en-US")}: ${message.member.user.username} played ${audioFie}`);
+        console.log(`[${new Date().toLocaleTimeString("en-US")}] ${message.member.user.username} played ${audioFie}`);
         const connection = joinVoiceChannel({
             channelId: message.member.voice.channel.id,
             guildId: message.channel.guild.id,
@@ -79,10 +79,10 @@ client.on("messageCreate", function (message) {
     if (/take?.*it.*bac?k/.test(command)) {
         botMessage += "Now y'all.\n";
     }
-    if (command.includes("no shot")) {
+    if (/no shot/.test(command)) {
         botMessage += "Shot.\n";
     }
-    if (command.includes("shot") && !command.includes("no shot")) {
+    if (/shot/.test(command) && !/no shot/.test(command)) {
         botMessage += "No shot.\n";
     }
     if (/pam/.test(command)) {
