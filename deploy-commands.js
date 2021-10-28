@@ -22,6 +22,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Among Us Emergency Meeting', 'amongus_meeting')
             .addChoice('Disgustang', 'disgustang')
             .addChoice('Demon Time', 'demontime')
+            .addChoice('Arcadum Monologue', 'arcadum')
     );
 
 const rollCommand = new SlashCommandBuilder()
