@@ -141,6 +141,9 @@ client.on("messageCreate", function (message) {
     if (/suc(c|k|tion)/.test(command)) {
         playAudioFile(message, 'suction');
     }
+    if (/stop/.test(command)) {
+        playAudioFile(message, 'itstimetostop');
+    }
     if (botMessage) {
         message.channel.send(botMessage);
     }
