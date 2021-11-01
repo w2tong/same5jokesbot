@@ -126,7 +126,7 @@ client.on("messageCreate", function (message) {
     if (/demon/.test(command)) {
         playAudioFile(message, 'demontime');
     }
-    if (/i'?m.*(four|poor|bored)/.test(command)) {
+    if (/i'?m.*(4|four|poor|bored)/.test(command)) {
         playAudioFile(message, 'VillagerCWhat3');
     }
     if (/((yo)?u|yu).*(no|know)/.test(command)) {
