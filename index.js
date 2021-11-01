@@ -13,6 +13,7 @@ const nouns = ["dog", "dishes", "dinner"];
 const translations = ["Prance forward", "Shashay left", "Boogie down", "Shimmy right"];
 const gamers = ["Rise up!", "Disperse!", "Discharge!"];
 
+// Random integer between 0 and max
 function randomRange(max) {
     return Math.floor(Math.random() * max);
 }
@@ -51,17 +52,20 @@ function playAudioFile(message, audioFie) {
     return false;
 }
 
-// Message replies
+// Message responses
 client.on("messageCreate", function (message) {
+    // Don't respond to bots
     if (message.author.bot) return;
+    // Don't respond to Bot Abuser role
     if (message.member.roles.cache.some(role => role.name === "Bot Abuser")) return;
+    
     let command = message.content.toLowerCase();
-	
+	//React with emoji
 	if (/cooler/.test(command)) {
 		message.react('🐟');
 	}
     botMessage = "";
-    // Message reposnse
+    // Replies
     if (/where.*andy/.test(command)) {
         botMessage += whereIsAndy() + "\n";
     }
@@ -112,7 +116,7 @@ client.on("messageCreate", function (message) {
         if (emotes.sadge) sadge = emotes.sadge;
         botMessage += `I'm a leak, I'm a leak. ${emotes.sadge}` + "\n";
     }
-    // Play audio
+    // Audio
 	if (/w(oah|hoa)/.test(command)) {
         botMessage += "Basement Gang!" + "\n";
         playAudioFile(message, 'basementgang');
@@ -154,7 +158,7 @@ client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
 
 	const { commandName } = interaction;
-
+    // Play audio
 	if (commandName === 'play') {
         let reply = 'You are not in a voice channel';
         if (playAudioFile(interaction, interaction.options.getString('audio'))) {
@@ -162,6 +166,7 @@ client.on('interactionCreate', async interaction => {
         }
         await interaction.reply({ content: reply, ephemeral: true });
 	}
+    // Reply with a number between 1 and 100
     else if (commandName === 'roll') {
         let int = 100;
         /* CDOE FOR ROLLING 1 TO ENTERED RANGE
