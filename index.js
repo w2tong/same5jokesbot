@@ -139,7 +139,7 @@ client.on("messageCreate", function (message) {
     if (/uh.*oh.*stinky/.test(command)) {
         playAudioFile(message, 'uhohstinky');
     }
-    if (/tbc.*hype/.test(command)) {
+    if (/(tbc.*hype|focus.*up)/.test(command)) {
         playAudioFile(message, 'tbchype');
     }
     if (/suc(c|k|tion)/.test(command)) {
