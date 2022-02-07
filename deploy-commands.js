@@ -26,6 +26,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('What the dog doin', 'whatthedogdoin')
             .addChoice('Beans', 'beans')
             .addChoice('Beans Slow', 'beans_slow')
+            .addChoice('NOIDONTTHINKSO', 'NOIDONTTHINKSO')
     );
 
 const rollCommand = new SlashCommandBuilder()
