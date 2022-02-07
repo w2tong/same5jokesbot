@@ -23,6 +23,9 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Disgustang', 'disgustang')
             .addChoice('Demon Time', 'demontime')
             .addChoice('Arcadum Monologue', 'arcadum')
+            .addChoice('What the dog doin', 'whatthedogdoin')
+            .addChoice('Beans', 'beans')
+            .addChoice('Beans Slow', 'beans_slow')
     );
 
 const rollCommand = new SlashCommandBuilder()
