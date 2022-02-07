@@ -148,6 +148,12 @@ client.on("messageCreate", function (message) {
     if (/stop/.test(command)) {
         playAudioFile(message, 'itstimetostop');
     }
+    if (/dog/.test(command)) {
+        playAudioFile(message, 'whatthedogdoin');
+    }
+    if (/bean/.test(command)) {
+        playAudioFile(message, 'beans');
+    }
     if (botMessage) {
         message.channel.send(botMessage);
     }
