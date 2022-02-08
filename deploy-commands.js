@@ -27,6 +27,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Beans', 'beans')
             .addChoice('Beans Slow', 'beans_slow')
             .addChoice('NOIDONTTHINKSO', 'NOIDONTTHINKSO')
+            .addChoice('Uh guys?', 'uhguys')
     );
 
 const rollCommand = new SlashCommandBuilder()
