@@ -184,7 +184,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 // Hourly water and posture check
-let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
+let waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () => {
 	let channel = client.channels.cache.get('899162908498468934');
 	if (channel) {
 		channel.send(`<@&899160433548722176> Water Check. Posture Check.`);
@@ -193,7 +193,21 @@ let scheduledMessage = new cron.CronJob('00 00 * * * *', () => {
         console.log('Water/Posture Check channel not found.');
     }
 });
-scheduledMessage.start();
+waterPostureCheckScheduledMessage.start();
+
+// Daily Wordle Reminder
+let wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', () => {
+	let channel = client.channels.cache.get('933772784948101120');
+	if (channel) {
+		channel.send(`Wordle time POGCRAZY`);
+	}
+    else {
+        console.log('Wordle channel not found.');
+    }
+});
+wordleScheduledMessage.start();
+
+//TODO: Add user created reminders/cronjobs
 
 client.login(config.BOT_TOKEN);
 client.once('ready', () => {
