@@ -30,6 +30,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Uh guys?', 'uhguys')
             .addChoice('ENOUGH TALK', 'ENOUGHTALK')
             .addChoice('Champ Select', 'champ_select')
+            .addChoice('TRUE', 'TRUE')
     );
 
 const rollCommand = new SlashCommandBuilder()
