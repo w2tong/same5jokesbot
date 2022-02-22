@@ -34,6 +34,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Nut Quake', 'nutquake')
             .addChoice('Moonmoon destroys Weebs', 'moonmoon_destroys_weebs')
             .addChoice('CBT', 'CBT')
+            .addChoice('Bing Chilling', 'bing_chilling')
     );
 
 const rollCommand = new SlashCommandBuilder()
