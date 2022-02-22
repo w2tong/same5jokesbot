@@ -31,6 +31,9 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('ENOUGH TALK', 'ENOUGHTALK')
             .addChoice('Champ Select', 'champ_select')
             .addChoice('TRUE', 'TRUE')
+            .addChoice('Nut Quake', 'nutquake')
+            .addChoice('Moonmoon destroys Weebs', 'moonmoon_destroys_weebs')
+            .addChoice('CBT', 'CBT')
     );
 
 const rollCommand = new SlashCommandBuilder()
