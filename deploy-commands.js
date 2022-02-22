@@ -13,11 +13,13 @@ const playCommand = new SlashCommandBuilder()
 			.addChoice('Thunder vs Lightning', 'thunder_vs_lightning')
             .addChoice('Phasmo Attack', 'phasmo_attack')
             .addChoice('Phasmo Breath', 'phasmo_breath')
+            /*
             .addChoice('Phasmo Die', 'phasmo_die')
             .addChoice('Phasmo Groan', 'phasmo_groan')
             .addChoice('Phasmo Heartbeat', 'phasmo_heartbeat')
             .addChoice('Phasmo Kill', 'phasmo_kill')
             .addChoice('Phasmo Behind', 'phasmo_behind')
+            */
             .addChoice('Phasmo Here', 'phasmo_here')
             .addChoice('Among Us Emergency Meeting', 'amongus_meeting')
             .addChoice('Disgustang', 'disgustang')
@@ -35,6 +37,8 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Moonmoon destroys Weebs', 'moonmoon_destroys_weebs')
             .addChoice('CBT', 'CBT')
             .addChoice('Bing Chilling', 'bing_chilling')
+            .addChoice('An Exclusive! It Arrived', 'an_exclusive_it_arrived')
+            
     );
 
 const rollCommand = new SlashCommandBuilder()
