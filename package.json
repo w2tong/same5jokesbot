@@ -27,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/w2tong/Same5JokesBot/issues"
   },
-  "homepage": "https://github.com/w2tong/Same5JokesBot#readme"
+  "homepage": "https://github.com/w2tong/Same5JokesBot#readme",
+  "devDependencies": {
+    "eslint": "^8.18.0"
+  }
 }
