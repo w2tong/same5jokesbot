@@ -43,7 +43,7 @@ const playCommand = new SlashCommandBuilder()
 
 const rollCommand = new SlashCommandBuilder()
     .setName('roll')
-    .setDescription('Rolls a random number from 0 to 100 (or min and max)')
+    .setDescription('Rolls a random number from 1 to 100 (or min and max)')
     .addIntegerOption(option => option.setName('min').setDescription('Enter an integer'))
     .addIntegerOption(option => option.setName('max').setDescription('Enter an integer'))
     ;

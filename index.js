@@ -178,7 +178,7 @@ client.on('interactionCreate', async interaction => {
     }
     // Reply with a number between 1 and 100 (or min and max)
     else if (commandName === 'roll') {
-        const min = (interaction.options.getInteger('min') ? interaction.options.getInteger('min') : 0 );
+        const min = (interaction.options.getInteger('min') ? interaction.options.getInteger('min') : 1 );
         const max = (interaction.options.getInteger('max') ? interaction.options.getInteger('max') : 100 );
         await interaction.reply(Math.floor(Math.random()*(max+1-min)+min).toString());
     }
