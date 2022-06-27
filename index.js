@@ -176,14 +176,11 @@ client.on('interactionCreate', async interaction => {
         }
         await interaction.reply({ content: reply, ephemeral: true });
     }
-    // Reply with a number between 1 and 100
+    // Reply with a number between 1 and 100 (or min and max)
     else if (commandName === 'roll') {
-        let int = 100;
-        /* CDOE FOR ROLLING 1 TO ENTERED RANGE
-        let int = interaction.options.getInteger('int');
-        int = (interaction.options.getInteger('int') ? interaction.options.getInteger('int') : 100 )
-        */
-        await interaction.reply(Math.floor(Math.random() * (int - 1) + 1).toString());
+        const min = (interaction.options.getInteger('min') ? interaction.options.getInteger('min') : 0 );
+        const max = (interaction.options.getInteger('max') ? interaction.options.getInteger('max') : 100 );
+        await interaction.reply(Math.floor(Math.random()*(max+1-min)+min).toString());
     }
 });
 

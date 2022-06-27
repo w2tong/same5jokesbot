@@ -7,10 +7,10 @@ const playCommand = new SlashCommandBuilder()
     .setName('play')
     .setDescription('Plays selected audio clip')
     .addStringOption(option =>
-		option.setName('audio')
-			.setDescription('The audio clip')
-			.setRequired(true)
-			.addChoice('Thunder vs Lightning', 'thunder_vs_lightning')
+        option.setName('audio')
+            .setDescription('The audio clip')
+            .setRequired(true)
+            .addChoice('Thunder vs Lightning', 'thunder_vs_lightning')
             .addChoice('Phasmo Attack', 'phasmo_attack')
             .addChoice('Phasmo Breath', 'phasmo_breath')
             /*
@@ -43,8 +43,9 @@ const playCommand = new SlashCommandBuilder()
 
 const rollCommand = new SlashCommandBuilder()
     .setName('roll')
-    .setDescription('Rolls a random number from 1 to 100')
-    //.addIntegerOption(option => option.setName('int').setDescription('Enter an integer'))
+    .setDescription('Rolls a random number from 0 to 100 (or min and max)')
+    .addIntegerOption(option => option.setName('min').setDescription('Enter an integer'))
+    .addIntegerOption(option => option.setName('max').setDescription('Enter an integer'))
     ;
 
 const commands = [playCommand, rollCommand].map(command => command.toJSON());
@@ -52,5 +53,5 @@ const commands = [playCommand, rollCommand].map(command => command.toJSON());
 const rest = new REST({ version: '9' }).setToken(BOT_TOKEN);
 
 rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-	.then(() => console.log('Successfully registered application commands.'))
-	.catch(console.error);
+    .then(() => console.log('Successfully registered application commands.'))
+    .catch(console.error);
