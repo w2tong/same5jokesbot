@@ -1,10 +1,12 @@
 const { Client, Intents } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const config = require('./config.json');
 const cron = require('cron');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
+let connection;
+let timeoutId;
 
 let emotes = {};
 
@@ -38,8 +40,9 @@ function getAndyComputerDate() {
 
 function playAudioFile(message, audioFie) {
     if (message.member.voice.channel) {
+        clearTimeout(timeoutId);
         console.log(`[${new Date().toLocaleTimeString('en-US')}] ${message.member.user.username} played ${audioFie}`);
-        const connection = joinVoiceChannel({
+        connection = joinVoiceChannel({
             channelId: message.member.voice.channel.id,
             guildId: message.channel.guild.id,
             adapterCreator: message.channel.guild.voiceAdapterCreator,
@@ -182,6 +185,14 @@ client.on('interactionCreate', async interaction => {
         */
         await interaction.reply(Math.floor(Math.random() * (int - 1) + 1).toString());
     }
+});
+
+// Disconnect after 5 min of inactivity
+player.on(AudioPlayerStatus.Idle, () => {
+    player.stop();
+    timeoutId = setTimeout(() => {
+        connection.disconnect();
+    }, 300000);
 });
 
 // Hourly water and posture check
