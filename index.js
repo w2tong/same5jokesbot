@@ -100,29 +100,27 @@ client.on('messageCreate', function (message) {
     if (/pam/.test(command)) {
         botMessage += 'PAM!\n';
     }
-    if (/gay?mers/.test(command)) {
-        botMessage += gamersResponse() + '\n';
+    if (/gamers/.test(command)) {
+        botMessage += `${gamersResponse()}\n`;
     }
     if (/blind/.test(command)) {
-        botMessage += 'You mean "' + command.replace('blind', '~~blind~~ doing a first playthrough no spoilers') + '"';
+        botMessage += `You mean "${command.replace('blind', '~~blind~~ doing a first playthrough no spoilers')}"`;
     }
     if (/166/.test(command)) {
-        botMessage += 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png' + '\n';
+        botMessage += 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png\n';
     }
     if (/when.*andy.*get(ting)?.*new.*computer/.test(command)) {
-        botMessage += getAndyComputerDate(); + '\n';
+        botMessage += `${getAndyComputerDate()}\n`;
     }
     if (/too.*late/.test(command)) {
-        botMessage += 'But you promised.' + '\n';
+        botMessage += 'But you promised.\n';
     }
     if (/hell\s*halt/.test(command)) {
-        let sadge = '';
-        if (emotes.sadge) sadge = emotes.sadge;
-        botMessage += `I'm a leak, I'm a leak. ${sadge}` + '\n';
+        botMessage += `I'm a leak, I'm a leak. ${emotes.sadge ? emotes.sadge : ''}\n`;
     }
     // Audio
     if (/w(oah|hoa)/.test(command)) {
-        botMessage += 'Basement Gang!' + '\n';
+        botMessage += 'Basement Gang!\n';
         playAudioFile(message, 'basementgang');
     }
     if (/(thunder|lightning)/.test(command) && !/(thunder vs lightning)/.test(command)) {
