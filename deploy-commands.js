@@ -36,6 +36,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('CBT', 'CBT')
             .addChoice('Bing Chilling', 'bing_chilling')
             .addChoice('An Exclusive! It Arrived', 'an_exclusive_it_arrived')
+            .addChoice('Smosh: Shut Up!', 'smosh_shut_up')
     );
 
 const rollCommand = new SlashCommandBuilder()

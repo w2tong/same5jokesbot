@@ -8,33 +8,33 @@ const player = createAudioPlayer();
 let connection;
 let timeoutId;
 
+// Object to store emotes
 let emotes = {};
-
-const verbs = ['Walking', 'Washing', 'Eating'];
-const nouns = ['dog', 'dishes', 'dinner'];
-const translations = ['Prance forward', 'Shashay left', 'Boogie down', 'Shimmy right'];
-const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
 
 // Random integer between 0 and max
 function randomRange(max) {
     return Math.floor(Math.random() * max);
 }
 
+const verbs = ['Walking', 'Washing', 'Eating'];
+const nouns = ['dog', 'dishes', 'dinner'];
 function whereIsAndy() {
     let verb = verbs[randomRange(verbs.length)];
     let noun = nouns[randomRange(nouns.length)];
     return verb + ' his ' + noun + '.';
 }
 
-function translate() {
+const translations = ['Prance forward', 'Shashay left', 'Boogie down', 'Shimmy right'];
+function getTranslation() {
     return translations[randomRange(translations.length)];
 }
 
+const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
 function gamersResponse() {
     return gamers[randomRange(gamers.length)];
 }
 
-function getAndyComputerDate() {
+function getNextYear() {
     return new Date().getFullYear() + 1;
 }
 
@@ -47,7 +47,6 @@ function playAudioFile(message, audioFie) {
             guildId: message.channel.guild.id,
             adapterCreator: message.channel.guild.voiceAdapterCreator,
         });
-        // const subscription = connection.subscribe(player);
         connection.subscribe(player);
         const resource = createAudioResource(`audio/${audioFie}.mp3` );
         player.play(resource);
@@ -56,7 +55,7 @@ function playAudioFile(message, audioFie) {
     return false;
 }
 
-// Message responses
+// Responses to text messages
 client.on('messageCreate', function (message) {
     // Don't respond to bots
     if (message.author.bot) return;
@@ -74,7 +73,7 @@ client.on('messageCreate', function (message) {
         botMessage += whereIsAndy() + '\n';
     }
     if (/translat(e|ion)/.test(command)) {
-        botMessage += translate() + '!' + '\n';
+        botMessage += getTranslation() + '!' + '\n';
     }
     if (/(bazinga|zimbabwe)/.test(command)) {
         botMessage += 'Bazinga!\n';
@@ -110,7 +109,7 @@ client.on('messageCreate', function (message) {
         botMessage += 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png\n';
     }
     if (/when.*andy.*get(ting)?.*new.*computer/.test(command)) {
-        botMessage += `${getAndyComputerDate()}\n`;
+        botMessage += `${getNextYear()}\n`;
     }
     if (/too.*late/.test(command)) {
         botMessage += 'But you promised.\n';
@@ -118,44 +117,49 @@ client.on('messageCreate', function (message) {
     if (/hell\s*halt/.test(command)) {
         botMessage += `I'm a leak, I'm a leak. ${emotes.sadge ? emotes.sadge : ''}\n`;
     }
+    
     // Audio
     if (/w(oah|hoa)/.test(command)) {
         botMessage += 'Basement Gang!\n';
         playAudioFile(message, 'basementgang');
     }
-    if (/(thunder|lightning)/.test(command) && !/(thunder vs lightning)/.test(command)) {
+    else if (/(thunder|lightning)/.test(command) && !/(thunder vs lightning)/.test(command)) {
         playAudioFile(message, 'thunder_vs_lightning');
     }
-    if (/(thunder vs lightning)/.test(command)) {
+    else if (/(thunder vs lightning)/.test(command)) {
         playAudioFile(message, 'thunder_vs_lightning_full');
     }
-    if (/demon/.test(command)) {
+    else if (/demon/.test(command)) {
         playAudioFile(message, 'demontime');
     }
-    if (/i'?m.*(4|four|poor|bored)/.test(command)) {
+    else if (/i'?m.*(4|four|poor|bored)/.test(command)) {
         playAudioFile(message, 'VillagerCWhat3');
     }
-    if (/((yo)?u|yu).*(no|know)|sigh/.test(command)) {
+    else if (/((yo)?u|yu).*(no|know)|sigh/.test(command)) {
         playAudioFile(message, 'sykkuno');
     }
-    if (/uh.*oh/.test(command)) {
+    else if (/uh.*oh/.test(command)) {
         playAudioFile(message, 'uhohstinky');
     }
-    if (/(tbc.*hype|focus.*up)/.test(command)) {
+    else if (/(tbc.*hype|focus.*up)/.test(command)) {
         playAudioFile(message, 'tbchype');
     }
-    if (/suc(c|k|tion)/.test(command)) {
+    else if (/suc(c|k|tion)/.test(command)) {
         playAudioFile(message, 'suction');
     }
-    if (/stop/.test(command)) {
+    else if (/stop/.test(command)) {
         playAudioFile(message, 'itstimetostop');
     }
-    if (/dog/.test(command)) {
+    else if (/dog/.test(command)) {
         playAudioFile(message, 'whatthedogdoin');
     }
-    if (/bean/.test(command)) {
+    else if (/bean/.test(command)) {
         playAudioFile(message, 'beans');
     }
+    else if (/smosh/.test(command)) {
+        playAudioFile(message, 'smosh_shut_up');
+    }
+    // Send message if there is botMessage
     if (botMessage) {
         message.channel.send(botMessage);
     }
@@ -219,5 +223,6 @@ wordleScheduledMessage.start();
 client.login(config.BOT_TOKEN);
 client.once('ready', () => {
     console.log('Same5JokesBot online.');
+    // Add emotes from server to object
     emotes['sadge'] = client.emojis.cache.find(emoji => emoji.name === 'Sadge');
 });
