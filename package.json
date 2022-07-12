@@ -9,7 +9,7 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "@discordjs/voice": "^0.10.0",
     "cron": "^1.8.2",
-    "discord-api-types": "^0.24.0",
+    "discord-api-types": "^0.36.1",
     "discord.js": "^13.8.1",
     "ffmpeg-static": "^4.4.0",
     "tweetnacl": "^1.0.3",
