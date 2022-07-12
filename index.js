@@ -156,7 +156,7 @@ client.on('messageCreate', function (message) {
     else if (/bean/.test(command)) {
         playAudioFile(message, 'beans');
     }
-    else if (/smosh/.test(command)) {
+    else if (/smosh|shut.*up/.test(command)) {
         playAudioFile(message, 'smosh_shut_up');
     }
     // Send message if there is botMessage
