@@ -55,6 +55,69 @@ function playAudioFile(message, audioFie) {
     return false;
 }
 
+const regexTexts = [
+    {
+        regex: /where.*andy/,
+        getText: () => whereIsAndy()
+    },
+    {
+        regex: /translat(e|ion)/,
+        getText: () => getTranslation()
+    },
+    {
+        regex: /gamers/,
+        getText: () => `${gamersResponse()}`
+    },
+    {
+        regex: /bazinga|zimbabwe/,
+        getText: () => 'Bazinga!'
+    },
+    {
+        regex: /(i'?m|me).*hungr?y/,
+        getText: () => 'Then go eat.'
+    },
+    {
+        regex: /oth(er|a).*side/,
+        getText: () => 'The other what?'
+    },
+    {
+        regex: /take?.*it.*bac?k/,
+        getText: () => 'Now y\'all.'
+    },
+    {
+        regex: /no shot/,
+        getText: () => 'Shot.'
+    },
+    {
+        regex: /^(no)shot/,
+        getText: () => 'No shot.'
+    },
+    {
+        regex: /fa(x|ct(s|ual))/,
+        getText: () => 'No printer.'
+    },
+    {
+        regex: /pam/,
+        getText: () => 'PAM!'
+    },
+    {
+        regex: /166/,
+        getText: () => 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png'
+    },
+    {
+        regex: /when.*andy.*get(ting)?.*new.*computer/,
+        getText: () => getNextYear()
+    },
+    {
+        regex: /too.*late/,
+        getText: () => 'But you promised.'
+    },
+    {
+        regex: /hell\s*halt/,
+        getText: () => `I'm a leak, I'm a leak. ${emotes.sadge ?? emotes.sadge}`
+    }
+];
+
 const regexAudios = [
     {
         regex: /w(oah|hoa)/,
@@ -119,62 +182,16 @@ client.on('messageCreate', function (message) {
         message.react('🐟');
     }
     let botMessage = '';
-    // Replies
-    if (/where.*andy/.test(command)) {
-        botMessage += whereIsAndy() + '\n';
-    }
-    if (/translat(e|ion)/.test(command)) {
-        botMessage += getTranslation() + '!' + '\n';
-    }
-    if (/(bazinga|zimbabwe)/.test(command)) {
-        botMessage += 'Bazinga!\n';
-    }
-    if (/(i'?m|me).*hungr?y/.test(command)) {
-        botMessage += 'Then go eat.\n';
-    }
-    if (/oth(er|a).*side/.test(command)) {
-        botMessage += 'The other what?\n';
-    }
-    if (/take?.*it.*bac?k/.test(command)) {
-        botMessage += 'Now y\'all.\n';
-    }
-    if (/no shot/.test(command)) {
-        botMessage += 'Shot.\n';
-    }
-    if (/shot/.test(command) && !/no shot/.test(command)) {
-        botMessage += 'No shot.\n';
-    }
-    if (/fa(x|ct(s|ual))/.test(command)) {
-        botMessage += 'No printer.\n';
-    }
-    if (/pam/.test(command)) {
-        botMessage += 'PAM!\n';
-    }
-    if (/gamers/.test(command)) {
-        botMessage += `${gamersResponse()}\n`;
-    }
-    if (/blind/.test(command)) {
-        botMessage += `You mean "${command.replace('blind', '~~blind~~ doing a first playthrough no spoilers')}"`;
-    }
-    if (/166/.test(command)) {
-        botMessage += 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png\n';
-    }
-    if (/when.*andy.*get(ting)?.*new.*computer/.test(command)) {
-        botMessage += `${getNextYear()}\n`;
-    }
-    if (/too.*late/.test(command)) {
-        botMessage += 'But you promised.\n';
-    }
-    if (/hell\s*halt/.test(command)) {
-        botMessage += `I'm a leak, I'm a leak. ${emotes.sadge ? emotes.sadge : ''}\n`;
-    }
-    
-    // Audio
+    // Text replies
+    for (let regexText of regexTexts) {
+        if (regexText.regex.test(command)) {
+            botMessage += `${regexText.getText(command)}\n`;
+        }
+    }    
+    // Audio replies
     for (let regexAudio of regexAudios) {
-        const regex = regexAudio.regex;
-        const audio = regexAudio.audio;
-        if (regex.test(command)) {
-            playAudioFile(message, audio);
+        if (regexAudio.regex.test(command)) {
+            playAudioFile(message, regexAudio.audio);
             break;
         }
     }
