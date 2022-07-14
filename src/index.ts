@@ -1,18 +1,18 @@
-const { Client, Intents } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
-const config = require('./config.json');
-const cron = require('cron');
+import { Client, Intents, GuildEmoji, Message, TextChannel } from "discord.js";
+import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } from "@discordjs/voice";
+import config from '../config.json';
+import cron from 'cron';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
-let connection;
-let timeoutId;
+let connection: VoiceConnection;
+let timeoutId: NodeJS.Timer;
 
 // Object to store emotes
-let emotes = {};
+let emotes: { [key: string]: GuildEmoji | undefined } = {};
 
 // Random integer between 0 and max
-function randomRange(max) {
+function randomRange(max: number) {
     return Math.floor(Math.random() * max);
 }
 
@@ -38,17 +38,17 @@ function getNextYear() {
     return new Date().getFullYear() + 1;
 }
 
-function playAudioFile(message, audioFie) {
-    if (message.member.voice.channel) {
+function playAudioFile(message: Message, audioFie: string) {
+    if (message.member && message.guild && message.member.voice.channel) {
         clearTimeout(timeoutId);
         console.log(`[${new Date().toLocaleTimeString('en-US')}] ${message.member.user.username} played ${audioFie}`);
         connection = joinVoiceChannel({
             channelId: message.member.voice.channel.id,
-            guildId: message.channel.guild.id,
-            adapterCreator: message.channel.guild.voiceAdapterCreator,
+            guildId: message.guild.id,
+            adapterCreator: message.guild.voiceAdapterCreator
         });
         connection.subscribe(player);
-        const resource = createAudioResource(`audio/${audioFie}.mp3` );
+        const resource = createAudioResource(`audio/${audioFie}.mp3`);
         player.play(resource);
         return true;
     }
@@ -170,12 +170,12 @@ const regexAudios = [
 ];
 
 // Responses to text messages
-client.on('messageCreate', function (message) {
+client.on('messageCreate', function (message: Message) {
     // Don't respond to bots
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
-    if (message.member.roles.cache.some(role => role.name === 'Bot Abuser')) return;
-    
+    if (message.member && message.member.roles.cache.some(role => role.name === 'Bot Abuser')) return;
+
     const command = message.content.toLowerCase();
     //React with emoji
     if (/cooler/.test(command)) {
@@ -185,9 +185,9 @@ client.on('messageCreate', function (message) {
     // Text replies
     for (let regexText of regexTexts) {
         if (regexText.regex.test(command)) {
-            botMessage += `${regexText.getText(command)}\n`;
+            botMessage += `${regexText.getText()}\n`;
         }
-    }    
+    }
     // Audio replies
     for (let regexAudio of regexAudios) {
         if (regexAudio.regex.test(command)) {
@@ -195,7 +195,7 @@ client.on('messageCreate', function (message) {
             break;
         }
     }
-    
+
     // Send message if there is botMessage
     if (botMessage) {
         message.channel.send(botMessage);
@@ -203,21 +203,21 @@ client.on('messageCreate', function (message) {
 });
 
 // Slash commands
-client.on('interactionCreate', async interaction => {
+client.on('interactionCreate', async (interaction: any) => {
     if (!interaction.isCommand()) return;
-
-    const { commandName } = interaction;
-    // Play audio
-    if (commandName === 'play') {
-        const reply = playAudioFile(interaction, interaction.options.getString('audio')) ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
-        await interaction.reply({ content: reply, ephemeral: true });
-    }
-    // Reply with a number between 1 and 100 (or min and max)
-    else if (commandName === 'roll') {
-        const min = (interaction.options.getInteger('min') ? interaction.options.getInteger('min') : 1 );
-        const max = (interaction.options.getInteger('max') ? interaction.options.getInteger('max') : 100 );
-        await interaction.reply(Math.floor(Math.random()*(max+1-min)+min).toString());
-    }
+    console.log(typeof (interaction));
+    // const { commandName } = interaction;
+    // // Play audio
+    // if (commandName === 'play') {
+    //     const reply = playAudioFile(interaction, interaction.options.getString('audio')) ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
+    //     await interaction.reply({ content: reply, ephemeral: true });
+    // }
+    // // Reply with a number between 1 and 100 (or min and max)
+    // else if (commandName === 'roll') {
+    //     const min = interaction.options.getInteger('min') ? interaction.options.getInteger('min') : 1;
+    //     const max = interaction.options.getInteger('max') ? interaction.options.getInteger('max') : 100;
+    //     await interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
+    // }
 });
 
 // Disconnect after 5 min of inactivity
@@ -231,7 +231,7 @@ player.on(AudioPlayerStatus.Idle, () => {
 // Hourly water and posture check
 const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () => {
     const channel = client.channels.cache.get('899162908498468934');
-    if (channel) {
+    if (channel && channel instanceof TextChannel) {
         channel.send('<@&899160433548722176> Water Check. Posture Check.');
     }
     else {
@@ -243,7 +243,7 @@ waterPostureCheckScheduledMessage.start();
 // Daily Wordle Reminder
 const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', () => {
     const channel = client.channels.cache.get('933772784948101120');
-    if (channel) {
+    if (channel && channel instanceof TextChannel) {
         channel.send('Wordle time POGCRAZY');
     }
     else {
@@ -258,5 +258,5 @@ client.login(config.BOT_TOKEN);
 client.once('ready', () => {
     console.log('Same5JokesBot online.');
     // Add emotes from server to object
-    emotes['sadge'] = client.emojis.cache.find(emoji => emoji.name === 'Sadge');
+    emotes['sadge'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'Sadge');
 });
