@@ -66,7 +66,7 @@ const regexTexts = [
     },
     {
         regex: /gamers/,
-        getText: () => `${gamersResponse()}`
+        getText: () => gamersResponse()
     },
     {
         regex: /bazinga|zimbabwe/,
