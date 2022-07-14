@@ -19,8 +19,8 @@ function randomRange(max) {
 const verbs = ['Walking', 'Washing', 'Eating'];
 const nouns = ['dog', 'dishes', 'dinner'];
 function whereIsAndy() {
-    let verb = verbs[randomRange(verbs.length)];
-    let noun = nouns[randomRange(nouns.length)];
+    const verb = verbs[randomRange(verbs.length)];
+    const noun = nouns[randomRange(nouns.length)];
     return verb + ' his ' + noun + '.';
 }
 
@@ -62,7 +62,7 @@ client.on('messageCreate', function (message) {
     // Don't respond to Bot Abuser role
     if (message.member.roles.cache.some(role => role.name === 'Bot Abuser')) return;
     
-    let command = message.content.toLowerCase();
+    const command = message.content.toLowerCase();
     //React with emoji
     if (/cooler/.test(command)) {
         message.react('🐟');
@@ -172,10 +172,7 @@ client.on('interactionCreate', async interaction => {
     const { commandName } = interaction;
     // Play audio
     if (commandName === 'play') {
-        let reply = 'You are not in a voice channel';
-        if (playAudioFile(interaction, interaction.options.getString('audio'))) {
-            reply = `Playing ${interaction.options.getString('audio')}.`;
-        }
+        const reply = playAudioFile(interaction, interaction.options.getString('audio')) ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
         await interaction.reply({ content: reply, ephemeral: true });
     }
     // Reply with a number between 1 and 100 (or min and max)
@@ -195,8 +192,8 @@ player.on(AudioPlayerStatus.Idle, () => {
 });
 
 // Hourly water and posture check
-let waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () => {
-    let channel = client.channels.cache.get('899162908498468934');
+const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () => {
+    const channel = client.channels.cache.get('899162908498468934');
     if (channel) {
         channel.send('<@&899160433548722176> Water Check. Posture Check.');
     }
@@ -207,8 +204,8 @@ let waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () => 
 waterPostureCheckScheduledMessage.start();
 
 // Daily Wordle Reminder
-let wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', () => {
-    let channel = client.channels.cache.get('933772784948101120');
+const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', () => {
+    const channel = client.channels.cache.get('933772784948101120');
     if (channel) {
         channel.send('Wordle time POGCRAZY');
     }
