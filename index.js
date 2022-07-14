@@ -55,6 +55,57 @@ function playAudioFile(message, audioFie) {
     return false;
 }
 
+const regexAudios = [
+    {
+        regex: /w(oah|hoa)/,
+        audio: 'basementgang'
+    },
+    {
+        regex: /(thunder vs lightning)/,
+        audio: 'thunder_vs_lightning_full'
+    },
+    {
+        regex: /demon/,
+        audio: 'demontime'
+    },
+    {
+        regex: /i'?m.*(4|four|poor|bored)/,
+        audio: 'VillagerCWhat3'
+    },
+    {
+        regex: /((yo)?u|yu).*(no|know)|sigh/,
+        audio: 'sykkuno'
+    },
+    {
+        regex: /uh.*oh/,
+        audio: 'uhohstinky'
+    },
+    {
+        regex: /(tbc.*hype|focus.*up)/,
+        audio: 'tbchype'
+    },
+    {
+        regex: /suc(c|k|tion)/,
+        audio: 'suction'
+    },
+    {
+        regex: /stop/,
+        audio: 'itstimetostop'
+    },
+    {
+        regex: /dog/,
+        audio: 'whatthedogdoin'
+    },
+    {
+        regex: /bean/,
+        audio: 'beans'
+    },
+    {
+        regex: /smosh|shut.*up/,
+        audio: 'smosh_shut_up'
+    }
+];
+
 // Responses to text messages
 client.on('messageCreate', function (message) {
     // Don't respond to bots
@@ -119,46 +170,15 @@ client.on('messageCreate', function (message) {
     }
     
     // Audio
-    if (/w(oah|hoa)/.test(command)) {
-        botMessage += 'Basement Gang!\n';
-        playAudioFile(message, 'basementgang');
+    for (let regexAudio of regexAudios) {
+        const regex = regexAudio.regex;
+        const audio = regexAudio.audio;
+        if (regex.test(command)) {
+            playAudioFile(message, audio);
+            break;
+        }
     }
-    else if (/(thunder|lightning)/.test(command) && !/(thunder vs lightning)/.test(command)) {
-        playAudioFile(message, 'thunder_vs_lightning');
-    }
-    else if (/(thunder vs lightning)/.test(command)) {
-        playAudioFile(message, 'thunder_vs_lightning_full');
-    }
-    else if (/demon/.test(command)) {
-        playAudioFile(message, 'demontime');
-    }
-    else if (/i'?m.*(4|four|poor|bored)/.test(command)) {
-        playAudioFile(message, 'VillagerCWhat3');
-    }
-    else if (/((yo)?u|yu).*(no|know)|sigh/.test(command)) {
-        playAudioFile(message, 'sykkuno');
-    }
-    else if (/uh.*oh/.test(command)) {
-        playAudioFile(message, 'uhohstinky');
-    }
-    else if (/(tbc.*hype|focus.*up)/.test(command)) {
-        playAudioFile(message, 'tbchype');
-    }
-    else if (/suc(c|k|tion)/.test(command)) {
-        playAudioFile(message, 'suction');
-    }
-    else if (/stop/.test(command)) {
-        playAudioFile(message, 'itstimetostop');
-    }
-    else if (/dog/.test(command)) {
-        playAudioFile(message, 'whatthedogdoin');
-    }
-    else if (/bean/.test(command)) {
-        playAudioFile(message, 'beans');
-    }
-    else if (/smosh|shut.*up/.test(command)) {
-        playAudioFile(message, 'smosh_shut_up');
-    }
+    
     // Send message if there is botMessage
     if (botMessage) {
         message.channel.send(botMessage);
