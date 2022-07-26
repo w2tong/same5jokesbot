@@ -1,7 +1,7 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
-const { clientId, guildId, BOT_TOKEN } = require('../config.json');
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
+import { clientId, guildId, BOT_TOKEN } from '../config.json';
 
 const playCommand = new SlashCommandBuilder()
     .setName('play')
