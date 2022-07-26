@@ -8,4 +8,4 @@ Prod\
 `npm start`
 
 Deploy slash commands to server\
-`node deploy-commands.ts`
+`src/node deploy-commands.ts`
