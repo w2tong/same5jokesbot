@@ -6,7 +6,7 @@ import cron from 'cron';
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
 let connection: VoiceConnection;
-let timeoutId: NodeJS.Timer;
+let timeoutId: NodeJS.Timer | null = null;
 
 // Object to store emotes
 let emotes: { [key: string]: GuildEmoji | undefined } = {};
@@ -40,7 +40,6 @@ function getNextYear() {
 
 // function playAudioFile(message: Message, audioFie: string) {
 function playAudioFile(username: string, channelId: string, guildId: string, adapterCreator: DiscordGatewayAdapterCreator, audioFie: string) {
-    clearTimeout(timeoutId);
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
     connection = joinVoiceChannel({
         channelId,
@@ -203,8 +202,6 @@ client.on('messageCreate', async (message: Message) => {
 client.on('interactionCreate', async (interaction: Interaction) => {
     if (!interaction.isCommand()) return;
     const { commandName } = interaction;
-    console.log(interaction)
-    console.log(interaction.constructor.name)
     // Play audio
     if (commandName === 'play' && interaction.member instanceof GuildMember && interaction.guild && interaction.member.voice.channel) {
         playAudioFile(interaction.member.user.username, interaction.member.voice.channel.id, interaction.guild.id, interaction.guild.voiceAdapterCreator, interaction.options.getString('audio') ?? '')
@@ -220,10 +217,17 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 });
 
 // Disconnect after 5 min of inactivity
+player.on(AudioPlayerStatus.Playing, () => {
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+    }
+});
 player.on(AudioPlayerStatus.Idle, () => {
     player.stop();
     timeoutId = setTimeout(() => {
         connection.disconnect();
+        timeoutId = null;
     }, 300000);
 });
 
