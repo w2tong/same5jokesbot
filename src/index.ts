@@ -1,5 +1,5 @@
-import { Client, Intents, GuildEmoji, Message, TextChannel } from "discord.js";
-import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } from "@discordjs/voice";
+import { Client, Intents, GuildEmoji, Message, TextChannel, Interaction, CommandInteraction, GuildMember } from "discord.js";
+import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import config from '../config.json';
 import cron from 'cron';
 
@@ -38,21 +38,18 @@ function getNextYear() {
     return new Date().getFullYear() + 1;
 }
 
-function playAudioFile(message: Message, audioFie: string) {
-    if (message.member && message.guild && message.member.voice.channel) {
-        clearTimeout(timeoutId);
-        console.log(`[${new Date().toLocaleTimeString('en-US')}] ${message.member.user.username} played ${audioFie}`);
-        connection = joinVoiceChannel({
-            channelId: message.member.voice.channel.id,
-            guildId: message.guild.id,
-            adapterCreator: message.guild.voiceAdapterCreator
-        });
-        connection.subscribe(player);
-        const resource = createAudioResource(`audio/${audioFie}.mp3`);
-        player.play(resource);
-        return true;
-    }
-    return false;
+// function playAudioFile(message: Message, audioFie: string) {
+function playAudioFile(username: string, channelId: string, guildId: string, adapterCreator: DiscordGatewayAdapterCreator, audioFie: string) {
+    clearTimeout(timeoutId);
+    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
+    connection = joinVoiceChannel({
+        channelId,
+        guildId,
+        adapterCreator
+    });
+    connection.subscribe(player);
+    const resource = createAudioResource(`audio/${audioFie}.mp3`);
+    player.play(resource);
 }
 
 const regexTexts = [
@@ -170,7 +167,7 @@ const regexAudios = [
 ];
 
 // Responses to text messages
-client.on('messageCreate', function (message: Message) {
+client.on('messageCreate', async (message: Message) => {
     // Don't respond to bots
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
@@ -190,8 +187,8 @@ client.on('messageCreate', function (message: Message) {
     }
     // Audio replies
     for (let regexAudio of regexAudios) {
-        if (regexAudio.regex.test(command)) {
-            playAudioFile(message, regexAudio.audio);
+        if (regexAudio.regex.test(command) && message.member && message.member.voice.channel && message.guild) {
+            playAudioFile(message.member.user.username, message.member.voice.channel.id, message.guild.id, message.guild.voiceAdapterCreator, regexAudio.audio);
             break;
         }
     }
@@ -203,21 +200,23 @@ client.on('messageCreate', function (message: Message) {
 });
 
 // Slash commands
-client.on('interactionCreate', async (interaction: any) => {
+client.on('interactionCreate', async (interaction: Interaction) => {
     if (!interaction.isCommand()) return;
-    console.log(typeof (interaction));
-    // const { commandName } = interaction;
-    // // Play audio
-    // if (commandName === 'play') {
-    //     const reply = playAudioFile(interaction, interaction.options.getString('audio')) ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
-    //     await interaction.reply({ content: reply, ephemeral: true });
-    // }
-    // // Reply with a number between 1 and 100 (or min and max)
-    // else if (commandName === 'roll') {
-    //     const min = interaction.options.getInteger('min') ? interaction.options.getInteger('min') : 1;
-    //     const max = interaction.options.getInteger('max') ? interaction.options.getInteger('max') : 100;
-    //     await interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
-    // }
+    const { commandName } = interaction;
+    console.log(interaction)
+    console.log(interaction.constructor.name)
+    // Play audio
+    if (commandName === 'play' && interaction.member instanceof GuildMember && interaction.guild && interaction.member.voice.channel) {
+        playAudioFile(interaction.member.user.username, interaction.member.voice.channel.id, interaction.guild.id, interaction.guild.voiceAdapterCreator, interaction.options.getString('audio') ?? '')
+        const reply = interaction.member.voice ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
+        await interaction.reply({ content: reply, ephemeral: true });
+    }
+    // Reply with a number between 1 and 100 (or min and max)
+    else if (commandName === 'roll') {
+        const min = interaction.options.getInteger('min') ?? 1;
+        const max = interaction.options.getInteger('max') ?? 100;
+        await interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
+    }
 });
 
 // Disconnect after 5 min of inactivity
