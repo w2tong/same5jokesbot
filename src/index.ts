@@ -40,13 +40,14 @@ function getNextYear() {
 }
 
 // Join voice channel and play audio
-function playAudioFile(username: string, channelId: string, guildId: string, adapterCreator: DiscordGatewayAdapterCreator, audioFie: string) {
+interface voiceConnection {
+    channelId: string,
+    guildId: string,
+    adapterCreator: DiscordGatewayAdapterCreator
+}
+function playAudioFile(username: string, voiceConnection: voiceConnection, audioFie: string) {
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
-    connection = joinVoiceChannel({
-        channelId,
-        guildId,
-        adapterCreator
-    });
+    connection = joinVoiceChannel(voiceConnection);
     connection.subscribe(player);
     const resource = createAudioResource(`audio/${audioFie}.mp3`);
     player.play(resource);
@@ -195,7 +196,12 @@ client.on('messageCreate', async (message: Message) => {
     // Audio replies
     for (let regexAudio of regexAudios) {
         if (regexAudio.regex.test(command) && message.member && message.member.voice.channel && message.guild) {
-            playAudioFile(message.member.user.username, message.member.voice.channel.id, message.guild.id, message.guild.voiceAdapterCreator, regexAudio.audio);
+            const voiceConnection = {
+                channelId: message.member.voice.channel.id,
+                guildId: message.guild.id,
+                adapterCreator: message.guild.voiceAdapterCreator
+            }
+            playAudioFile(message.member.user.username, voiceConnection, regexAudio.audio);
             break;
         }
     }
@@ -207,7 +213,12 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     const { commandName } = interaction;
     // Play audio
     if (commandName === 'play' && interaction.member instanceof GuildMember && interaction.guild && interaction.member.voice.channel) {
-        playAudioFile(interaction.member.user.username, interaction.member.voice.channel.id, interaction.guild.id, interaction.guild.voiceAdapterCreator, interaction.options.getString('audio') ?? '')
+        const voiceConnection = {
+            channelId: interaction.member.voice.channel.id,
+            guildId: interaction.guild.id,
+            adapterCreator: interaction.guild.voiceAdapterCreator
+        }
+        playAudioFile(interaction.member.user.username, voiceConnection, interaction.options.getString('audio') ?? '')
         const reply = interaction.member.voice ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
         await interaction.reply({ content: reply, ephemeral: true });
     }
