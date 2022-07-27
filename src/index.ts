@@ -12,33 +12,34 @@ let timeoutId: NodeJS.Timer | null = null;
 let emotes: { [key: string]: GuildEmoji | undefined } = {};
 
 // Random integer between 0 and max
-function randomRange(max: number) {
+function getRandomRange(max: number) {
     return Math.floor(Math.random() * max);
 }
 
+// Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
 const nouns = ['dog', 'dishes', 'dinner'];
 function whereIsAndy() {
-    const verb = verbs[randomRange(verbs.length)];
-    const noun = nouns[randomRange(nouns.length)];
+    const verb = verbs[getRandomRange(verbs.length)];
+    const noun = nouns[getRandomRange(nouns.length)];
     return verb + ' his ' + noun + '.';
 }
 
 const translations = ['Prance forward', 'Shashay left', 'Boogie down', 'Shimmy right'];
 function getTranslation() {
-    return translations[randomRange(translations.length)];
+    return translations[getRandomRange(translations.length)];
 }
 
 const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
-function gamersResponse() {
-    return gamers[randomRange(gamers.length)];
+function getGamersResponse() {
+    return gamers[getRandomRange(gamers.length)];
 }
 
 function getNextYear() {
     return new Date().getFullYear() + 1;
 }
 
-// function playAudioFile(message: Message, audioFie: string) {
+// Join voice channel and play audio
 function playAudioFile(username: string, channelId: string, guildId: string, adapterCreator: DiscordGatewayAdapterCreator, audioFie: string) {
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
     connection = joinVoiceChannel({
@@ -62,7 +63,7 @@ const regexTexts = [
     },
     {
         regex: /gamers/,
-        getText: () => gamersResponse()
+        getText: () => getGamersResponse()
     },
     {
         regex: /bazinga|zimbabwe/,
@@ -173,28 +174,30 @@ client.on('messageCreate', async (message: Message) => {
     if (message.member && message.member.roles.cache.some(role => role.name === 'Bot Abuser')) return;
 
     const command = message.content.toLowerCase();
+
     //React with emoji
     if (/cooler/.test(command)) {
         message.react('🐟');
     }
-    let botMessage = '';
+
     // Text replies
+    let botMessage = '';
     for (let regexText of regexTexts) {
         if (regexText.regex.test(command)) {
             botMessage += `${regexText.getText()}\n`;
         }
     }
+    // Send message
+    if (botMessage) {
+        message.channel.send(botMessage);
+    }
+
     // Audio replies
     for (let regexAudio of regexAudios) {
         if (regexAudio.regex.test(command) && message.member && message.member.voice.channel && message.guild) {
             playAudioFile(message.member.user.username, message.member.voice.channel.id, message.guild.id, message.guild.voiceAdapterCreator, regexAudio.audio);
             break;
         }
-    }
-
-    // Send message if there is botMessage
-    if (botMessage) {
-        message.channel.send(botMessage);
     }
 });
 
@@ -231,7 +234,7 @@ player.on(AudioPlayerStatus.Idle, () => {
     }, 300000);
 });
 
-// Hourly water and posture check
+// Hourly water and posture check cronjob
 const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () => {
     const channel = client.channels.cache.get('899162908498468934');
     if (channel && channel instanceof TextChannel) {
@@ -243,7 +246,7 @@ const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () =
 });
 waterPostureCheckScheduledMessage.start();
 
-// Daily Wordle Reminder
+// Daily Wordle reminder cronjob
 const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', () => {
     const channel = client.channels.cache.get('933772784948101120');
     if (channel && channel instanceof TextChannel) {
@@ -260,6 +263,6 @@ wordleScheduledMessage.start();
 client.login(config.BOT_TOKEN);
 client.once('ready', () => {
     console.log('Same5JokesBot online.');
-    // Add emotes from server to object
+    // Add emotes from server to emotes object
     emotes['sadge'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'Sadge');
 });
