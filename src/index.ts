@@ -12,30 +12,30 @@ let timeoutId: NodeJS.Timer | null = null;
 let emotes: { [key: string]: GuildEmoji | undefined } = {};
 
 // Random integer between 0 and max
-function getRandomRange(max: number) {
+function getRandomRange(max: number): number {
     return Math.floor(Math.random() * max);
 }
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
 const nouns = ['dog', 'dishes', 'dinner'];
-function whereIsAndy() {
+function whereIsAndy(): string {
     const verb = verbs[getRandomRange(verbs.length)];
     const noun = nouns[getRandomRange(nouns.length)];
     return verb + ' his ' + noun + '.';
 }
 
 const translations = ['Prance forward', 'Shashay left', 'Boogie down', 'Shimmy right'];
-function getTranslation() {
+function getTranslation(): string {
     return translations[getRandomRange(translations.length)];
 }
 
 const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
-function getGamersResponse() {
+function getGamersResponse(): string {
     return gamers[getRandomRange(gamers.length)];
 }
 
-function getNextYear() {
+function getNextYear(): number {
     return new Date().getFullYear() + 1;
 }
 
@@ -45,7 +45,7 @@ interface voiceConnection {
     guildId: string,
     adapterCreator: DiscordGatewayAdapterCreator
 }
-function playAudioFile(username: string, voiceConnection: voiceConnection, audioFie: string) {
+function playAudioFile(username: string, voiceConnection: voiceConnection, audioFie: string): void {
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
     connection = joinVoiceChannel(voiceConnection);
     connection.subscribe(player);
@@ -168,7 +168,7 @@ const regexAudios = [
 ];
 
 // Responses to text messages
-client.on('messageCreate', async (message: Message) => {
+client.on('messageCreate', async (message: Message): Promise<void> => {
     // Don't respond to bots
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
@@ -208,7 +208,7 @@ client.on('messageCreate', async (message: Message) => {
 });
 
 // Slash commands
-client.on('interactionCreate', async (interaction: Interaction) => {
+client.on('interactionCreate', async (interaction: Interaction): Promise<void> => {
     if (!interaction.isCommand()) return;
     const { commandName } = interaction;
     // Play audio
@@ -231,13 +231,13 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 });
 
 // Disconnect after 5 min of inactivity
-player.on(AudioPlayerStatus.Playing, () => {
+player.on(AudioPlayerStatus.Playing, (): void => {
     if (timeoutId) {
         clearTimeout(timeoutId);
         timeoutId = null;
     }
 });
-player.on(AudioPlayerStatus.Idle, () => {
+player.on(AudioPlayerStatus.Idle, (): void => {
     player.stop();
     timeoutId = setTimeout(() => {
         connection.disconnect();
@@ -246,7 +246,7 @@ player.on(AudioPlayerStatus.Idle, () => {
 });
 
 // Hourly water and posture check cronjob
-const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () => {
+const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): void => {
     const channel = client.channels.cache.get('899162908498468934');
     if (channel && channel instanceof TextChannel) {
         channel.send('<@&899160433548722176> Water Check. Posture Check.');
@@ -258,7 +258,7 @@ const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', () =
 waterPostureCheckScheduledMessage.start();
 
 // Daily Wordle reminder cronjob
-const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', () => {
+const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', (): void => {
     const channel = client.channels.cache.get('933772784948101120');
     if (channel && channel instanceof TextChannel) {
         channel.send('Wordle time POGCRAZY');
@@ -272,7 +272,7 @@ wordleScheduledMessage.start();
 //TODO: Add user created reminders/cronjobs
 
 client.login(config.BOT_TOKEN);
-client.once('ready', () => {
+client.once('ready', (): void => {
     console.log('Same5JokesBot online.');
     // Add emotes from server to emotes object
     emotes['sadge'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'Sadge');
