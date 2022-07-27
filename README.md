@@ -1,11 +1,17 @@
 # Same5JokesBot
 Discord bot for the same 5 jokes
 
-Dev\
-`npm run dev`
+Dev
+```shell
+npm run dev
+```
 
-Prod\
-`npm start`
+Prod
+```shell
+npm start
+```
 
-Deploy slash commands to server\
-`node deploy-commands.ts`
+Deploy slash commands to server
+```shell
+src/node deploy-commands.ts
+```
