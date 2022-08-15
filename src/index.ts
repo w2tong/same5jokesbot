@@ -180,6 +180,9 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     if (/cooler/.test(command)) {
         message.react('🐟');
     }
+    else if (/shut.*up/.test(command) && emotes['smoshShutUp']) {
+        message.react(emotes['smoshShutUp']);
+    }
 
     // Text replies
     let botMessage = '';
@@ -276,4 +279,5 @@ client.once('ready', (): void => {
     console.log('Same5JokesBot online.');
     // Add emotes from server to emotes object
     emotes['sadge'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'Sadge');
+    emotes['smoshShutUp'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'smoshShutUp');
 });
