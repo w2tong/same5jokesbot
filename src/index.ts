@@ -2,6 +2,8 @@ import { Client, Intents, GuildEmoji, Message, TextChannel, Interaction, Command
 import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import config from '../config.json';
 import cron from 'cron';
+import regexToText from "./regexToText";
+import regexToAudio from "./regexToAudio";
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
@@ -10,34 +12,6 @@ let timeoutId: NodeJS.Timer | null = null;
 
 // Object to store emotes
 let emotes: { [key: string]: GuildEmoji | undefined } = {};
-
-// Random integer between 0 and max
-function getRandomRange(max: number): number {
-    return Math.floor(Math.random() * max);
-}
-
-// Where is Andy random response
-const verbs = ['Walking', 'Washing', 'Eating'];
-const nouns = ['dog', 'dishes', 'dinner'];
-function whereIsAndy(): string {
-    const verb = verbs[getRandomRange(verbs.length)];
-    const noun = nouns[getRandomRange(nouns.length)];
-    return verb + ' his ' + noun + '.';
-}
-
-const translations = ['Prance forward', 'Shashay left', 'Boogie down', 'Shimmy right'];
-function getTranslation(): string {
-    return translations[getRandomRange(translations.length)];
-}
-
-const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
-function getGamersResponse(): string {
-    return gamers[getRandomRange(gamers.length)];
-}
-
-function getNextYear(): number {
-    return new Date().getFullYear() + 1;
-}
 
 // Join voice channel and play audio
 interface voiceConnection {
@@ -52,120 +26,6 @@ function playAudioFile(username: string, voiceConnection: voiceConnection, audio
     const resource = createAudioResource(`audio/${audioFie}.mp3`);
     player.play(resource);
 }
-
-const regexTexts = [
-    {
-        regex: /where.*andy/,
-        getText: () => whereIsAndy()
-    },
-    {
-        regex: /translat(e|ion)/,
-        getText: () => getTranslation()
-    },
-    {
-        regex: /gamers/,
-        getText: () => getGamersResponse()
-    },
-    {
-        regex: /bazinga|zimbabwe/,
-        getText: () => 'Bazinga!'
-    },
-    {
-        regex: /(i'?m|me).*hungr?y/,
-        getText: () => 'Then go eat.'
-    },
-    {
-        regex: /oth(er|a).*side/,
-        getText: () => 'The other what?'
-    },
-    {
-        regex: /take?.*it.*bac?k/,
-        getText: () => 'Now y\'all.'
-    },
-    {
-        regex: /no shot/,
-        getText: () => 'Shot.'
-    },
-    {
-        regex: /^(no)shot/,
-        getText: () => 'No shot.'
-    },
-    {
-        regex: /fa(x|ct(s|ual))/,
-        getText: () => 'No printer.'
-    },
-    {
-        regex: /pam/,
-        getText: () => 'PAM!'
-    },
-    {
-        regex: /166/,
-        getText: () => 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png'
-    },
-    {
-        regex: /when.*andy.*get(ting)?.*new.*computer/,
-        getText: () => getNextYear()
-    },
-    {
-        regex: /too.*late/,
-        getText: () => 'But you promised.'
-    },
-    {
-        regex: /hell\s*halt/,
-        getText: () => `I'm a leak, I'm a leak. ${emotes.sadge ?? emotes.sadge}`
-    }
-];
-
-const regexAudios = [
-    {
-        regex: /w(oah|hoa)/,
-        audio: 'basementgang'
-    },
-    {
-        regex: /(thunder vs lightning)/,
-        audio: 'thunder_vs_lightning_full'
-    },
-    {
-        regex: /demon/,
-        audio: 'demontime'
-    },
-    {
-        regex: /i'?m.*(4|four|poor|bored)/,
-        audio: 'VillagerCWhat3'
-    },
-    {
-        regex: /((yo)?u|yu).*(no|know)|sigh/,
-        audio: 'sykkuno'
-    },
-    {
-        regex: /uh.*oh/,
-        audio: 'uhohstinky'
-    },
-    {
-        regex: /(tbc.*hype|focus.*up)/,
-        audio: 'tbchype'
-    },
-    {
-        regex: /suc(c|k|tion)/,
-        audio: 'suction'
-    },
-    {
-        regex: /stop/,
-        audio: 'itstimetostop'
-    },
-    {
-        regex: /dog/,
-        audio: 'whatthedogdoin'
-    },
-    {
-        regex: /bean/,
-        audio: 'beans'
-    },
-    {
-        regex: /smosh|shut.*up/,
-        audio: 'smosh_shut_up'
-    }
-];
 
 // Responses to text messages
 client.on('messageCreate', async (message: Message): Promise<void> => {
@@ -186,7 +46,7 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
 
     // Text replies
     let botMessage = '';
-    for (let regexText of regexTexts) {
+    for (let regexText of regexToText) {
         if (regexText.regex.test(command)) {
             botMessage += `${regexText.getText()}\n`;
         }
@@ -197,7 +57,7 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     }
 
     // Audio replies
-    for (let regexAudio of regexAudios) {
+    for (let regexAudio of regexToAudio) {
         if (regexAudio.regex.test(command) && message.member && message.member.voice.channel && message.guild) {
             const voiceConnection = {
                 channelId: message.member.voice.channel.id,
@@ -281,3 +141,5 @@ client.once('ready', (): void => {
     emotes['sadge'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'Sadge');
     emotes['smoshShutUp'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'smoshShutUp');
 });
+
+export { emotes };
