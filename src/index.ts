@@ -4,7 +4,8 @@ import config from '../config.json';
 import cron from 'cron';
 import regexToText from './regexToText';
 import regexToAudio from './regexToAudio';
-import { emotes, getEmotes } from './emotes'
+import regexToReact from "./regexToReact";
+import { getEmotes } from './emotes'
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
@@ -35,11 +36,10 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     const command = message.content.toLowerCase();
 
     //React with emoji
-    if (/cooler/.test(command)) {
-        message.react('🐟');
-    }
-    else if (/shut.*up/.test(command) && emotes['smoshShutUp']) {
-        message.react(emotes['smoshShutUp']);
+    for (const regexReact of regexToReact) {
+        if (regexReact.regex.test(command)) {
+            message.react(regexReact.react());
+        }
     }
 
     // Text replies
