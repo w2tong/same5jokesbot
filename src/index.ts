@@ -1,4 +1,4 @@
-import { Client, Intents, GuildEmoji, Message, TextChannel, Interaction, CommandInteraction, GuildMember } from "discord.js";
+import { Client, Intents, Message, TextChannel, Interaction, GuildMember } from "discord.js";
 import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import config from '../config.json';
 import cron from 'cron';
