@@ -74,10 +74,6 @@ const regexToText = [
         getText: () => 'PAM!'
     },
     {
-        regex: /166/,
-        getText: () => 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png'
-    },
-    {
         regex: /when.*andy.*get(ting)?.*new.*computer/,
         getText: () => getNextYear()
     },
@@ -88,6 +84,10 @@ const regexToText = [
     {
         regex: /hell\s*halt/,
         getText: () => `I'm a leak, I'm a leak. ${emotes.sadge ?? ''}`
+    },
+    {
+        regex: /166/,
+        getText: () => 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png'
     },
     {
         regex: /judge?ment/,
