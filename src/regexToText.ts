@@ -1,4 +1,4 @@
-import { emotes } from './index'
+import { emotes } from './emotes'
 
 // Random integer between 0 and max
 function getRandomRange(max: number): number {

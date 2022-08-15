@@ -2,16 +2,14 @@ import { Client, Intents, GuildEmoji, Message, TextChannel, Interaction, Command
 import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import config from '../config.json';
 import cron from 'cron';
-import regexToText from "./regexToText";
-import regexToAudio from "./regexToAudio";
+import regexToText from './regexToText';
+import regexToAudio from './regexToAudio';
+import { emotes, getEmotes } from './emotes'
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const player = createAudioPlayer();
 let connection: VoiceConnection;
 let timeoutId: NodeJS.Timer | null = null;
-
-// Object to store emotes
-let emotes: { [key: string]: GuildEmoji | undefined } = {};
 
 // Join voice channel and play audio
 interface voiceConnection {
@@ -138,8 +136,7 @@ client.login(config.BOT_TOKEN);
 client.once('ready', (): void => {
     console.log('Same5JokesBot online.');
     // Add emotes from server to emotes object
-    emotes['sadge'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'Sadge');
-    emotes['smoshShutUp'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'smoshShutUp');
+    getEmotes(client);
 });
 
-export { emotes };
+export { client };
