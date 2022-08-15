@@ -95,11 +95,19 @@ const regexToText = [
     },
     {
         regex: /shut.*up/,
-        getText: () => 'Smosh voice'
+        getText: () => 'Smosh voice.'
     },
     {
         regex: /so.*troll?/,
-        getText: () => 'Dyrus'
+        getText: () => 'Dyrus.'
+    },
+    {
+        regex: /dyrus/,
+        getText: () => 'So troll.'
+    },
+    {
+        regex: /oh?/,
+        getText: () => 'The misery.'
     }
 ];
 
