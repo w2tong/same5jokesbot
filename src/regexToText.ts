@@ -88,7 +88,11 @@ const regexToText = [
     {
         regex: /hell\s*halt/,
         getText: () => `I'm a leak, I'm a leak. ${emotes.sadge ?? ''}`
-    }
+    },
+    {
+        regex: /judge?ment/,
+        getText: () => 'https://media.discordapp.net/attachments/837434910486691873/1008836841581072454/judgment.png'
+    },
 ];
 
 export default regexToText;
