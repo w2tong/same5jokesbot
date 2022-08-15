@@ -1,5 +1,6 @@
 import { Client, Intents, Message, TextChannel, Interaction, GuildMember } from "discord.js";
 import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
+import { join } from 'node:path';
 import config from '../config.json';
 import cron from 'cron';
 import regexToText from './regexToText';
@@ -8,9 +9,24 @@ import regexToReact from "./regexToReact";
 import { getEmotes } from './emotes'
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
+
 const player = createAudioPlayer();
-let connection: VoiceConnection;
 let timeoutId: NodeJS.Timer | null = null;
+let connection: VoiceConnection;
+// Disconnect after 5 min of inactivity
+player.on(AudioPlayerStatus.Playing, (): void => {
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+    }
+});
+player.on(AudioPlayerStatus.Idle, (): void => {
+    player.stop();
+    timeoutId = setTimeout(() => {
+        connection.disconnect();
+        timeoutId = null;
+    }, 300000);
+});
 
 // Join voice channel and play audio
 interface voiceConnection {
@@ -22,7 +38,7 @@ function playAudioFile(username: string, voiceConnection: voiceConnection, audio
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
     connection = joinVoiceChannel(voiceConnection);
     connection.subscribe(player);
-    const resource = createAudioResource(`audio/${audioFie}.mp3`);
+    const resource = createAudioResource(join(__dirname, `audio/${audioFie}.mp3`));
     player.play(resource);
 }
 
@@ -90,21 +106,6 @@ client.on('interactionCreate', async (interaction: Interaction): Promise<void> =
         const max = interaction.options.getInteger('max') ?? 100;
         await interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
     }
-});
-
-// Disconnect after 5 min of inactivity
-player.on(AudioPlayerStatus.Playing, (): void => {
-    if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-    }
-});
-player.on(AudioPlayerStatus.Idle, (): void => {
-    player.stop();
-    timeoutId = setTimeout(() => {
-        connection.disconnect();
-        timeoutId = null;
-    }, 300000);
 });
 
 // Hourly water and posture check cronjob
