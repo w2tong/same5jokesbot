@@ -87,7 +87,7 @@ const regexToText = [
     },
     {
         regex: /hell\s*halt/,
-        getText: () => `I'm a leak, I'm a leak. ${emotes.sadge ?? emotes.sadge}`
+        getText: () => `I'm a leak, I'm a leak. ${emotes.sadge ?? ''}`
     }
 ];
 
