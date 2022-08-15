@@ -106,7 +106,7 @@ const regexToText = [
         getText: () => 'So troll.'
     },
     {
-        regex: /oh?/,
+        regex: /^oh?$/,
         getText: () => 'The misery.'
     }
 ];
