@@ -93,6 +93,14 @@ const regexToText = [
         regex: /judge?ment/,
         getText: () => 'https://media.discordapp.net/attachments/837434910486691873/1008836841581072454/judgment.png'
     },
+    {
+        regex: /shut.*up/,
+        getText: () => 'Smosh voice'
+    },
+    {
+        regex: /so.*troll?/,
+        getText: () => 'Dyrus'
+    }
 ];
 
 export default regexToText;
