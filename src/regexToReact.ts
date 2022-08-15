@@ -3,11 +3,11 @@ import { emotes } from './emotes'
 const regexToReact = [
     {
         regex: /cooler/,
-        react: () => '🐟'
+        getReact: () => '🐟'
     },
     {
         regex: /shut.*up/,
-        react: () => emotes.smoshShutUp ?? ''
+        getReact: () => emotes.smoshShutUp ?? ''
     }
 ]
 

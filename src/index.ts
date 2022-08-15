@@ -37,8 +37,9 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
 
     //React with emoji
     for (const regexReact of regexToReact) {
-        if (regexReact.regex.test(command)) {
-            message.react(regexReact.react());
+        const react = regexReact.getReact()
+        if (react && regexReact.regex.test(command)) {
+            message.react(react);
         }
     }
 
