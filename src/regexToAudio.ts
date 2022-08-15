@@ -46,6 +46,10 @@ const regexToAudio = [
     {
         regex: /smosh|shut.*up/,
         audio: 'smosh_shut_up'
+    },
+    {
+        regex: /no/,
+        audio: 'NOIDONTTHINKSO'
     }
 ];
 

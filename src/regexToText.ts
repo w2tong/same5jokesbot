@@ -108,6 +108,10 @@ const regexToText = [
     {
         regex: /^oh?$/,
         getText: () => 'The misery.'
+    },
+    {
+        regex: /no/,
+        getText: () => 'IDONTTHINKSO.'
     }
 ];
 
