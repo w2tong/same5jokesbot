@@ -106,12 +106,16 @@ const regexToText = [
         getText: () => 'So troll.'
     },
     {
-        regex: / oh? /,
+        regex: /\boh?\b/,
         getText: () => 'The misery.'
     },
     {
-        regex: / no /,
+        regex: /\bno\b/,
         getText: () => 'IDONTTHINKSO.'
+    },
+    {
+        regex: /\bl\b/,
+        getText: () => '+ Ratio.'
     }
 ];
 
