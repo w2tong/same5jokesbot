@@ -132,7 +132,17 @@ const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', (): void => {
 });
 wordleScheduledMessage.start();
 
-//TODO: Add user created reminders/cronjobs
+// Weekly Wednesday Lost Ark Reset cronjob
+const lostArkResetScheduledMessage = new cron.CronJob('00 00 17 * * 3', (): void => {
+    const channel = client.channels.cache.get('158049091434184705');
+    if (channel && channel instanceof TextChannel) {
+        channel.send('When Argos/Vykas/Challenge Guardian/Challenge Abyssal/Valtan/Oreha/Div/Val/City Guesser');
+    }
+    else {
+        console.log('Lost Ark Reset channel not found.');
+    }
+});
+wordleScheduledMessage.start();
 
 client.login(config.BOT_TOKEN);
 client.once('ready', (): void => {
