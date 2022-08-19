@@ -150,5 +150,3 @@ client.once('ready', (): void => {
     // Add emotes from server to emotes object
     getEmotes(client);
 });
-
-export { client };
