@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import { clientId, guildId, BOT_TOKEN } from '../config.json';
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 const playCommand = new SlashCommandBuilder()
     .setName('play')
@@ -47,8 +48,9 @@ const rollCommand = new SlashCommandBuilder()
 
 const commands = [playCommand, rollCommand].map(command => command.toJSON());
 
-const rest = new REST({ version: '9' }).setToken(BOT_TOKEN);
-
-rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-    .then(() => console.log('Successfully registered application commands.'))
-    .catch(console.error);
+if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {
+    const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
+    rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: commands })
+        .then(() => console.log('Successfully registered application commands.'))
+        .catch(console.error);
+}

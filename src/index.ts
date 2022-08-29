@@ -1,7 +1,8 @@
 import { Client, Intents, Message, TextChannel, Interaction, GuildMember } from "discord.js";
 import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import { join } from 'node:path';
-import config from '../config.json';
+import * as dotenv from 'dotenv'
+dotenv.config()
 import cron from 'cron';
 import regexToText from './regexToText';
 import regexToAudio from './regexToAudio';
@@ -144,7 +145,7 @@ const lostArkResetScheduledMessage = new cron.CronJob('00 00 17 * * 3', (): void
 });
 wordleScheduledMessage.start();
 
-client.login(config.BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
 client.once('ready', (): void => {
     console.log('Same5JokesBot online.');
     // Add emotes from server to emotes object
