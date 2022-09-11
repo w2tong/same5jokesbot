@@ -39,6 +39,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Smosh: Shut Up!', 'smosh_shut_up')
             .addChoice('Get ready! M.O.A.B.!', 'get_ready_MOAB')
             .addChoice('Clean-cut, and still cuts a tomato.', 'clean_cuts')
+            .addChoice('Game over, man.', 'game_over_man')
     );
 
 const rollCommand = new SlashCommandBuilder()
