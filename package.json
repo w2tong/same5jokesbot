@@ -19,7 +19,8 @@
   },
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "deploy": "ts-node src/deploy-commands.ts"
   },
   "repository": {
     "type": "git",

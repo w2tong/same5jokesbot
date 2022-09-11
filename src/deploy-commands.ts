@@ -37,6 +37,8 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Bing Chilling', 'bing_chilling')
             .addChoice('An Exclusive! It Arrived', 'an_exclusive_it_arrived')
             .addChoice('Smosh: Shut Up!', 'smosh_shut_up')
+            .addChoice('Get ready! M.O.A.B.!', 'get_ready_MOAB')
+            .addChoice('Clean-cut, and still cuts a tomato.', 'clean_cuts')
     );
 
 const rollCommand = new SlashCommandBuilder()
