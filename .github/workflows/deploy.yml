@@ -19,3 +19,7 @@ jobs:
 
       - name: Install and deploy
         run: npm install && npm run deploy
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
