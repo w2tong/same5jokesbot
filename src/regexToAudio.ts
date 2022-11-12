@@ -50,6 +50,14 @@ const regexToAudio = [
     {
         regex: /\bno\b|noidontthinkso/,
         audio: 'NOIDONTTHINKSO'
+    },
+    {
+        regex: /fulcrum|c(o|u)me?/,
+        audio: 'fulcrum_come_in'
+    },
+    {
+        regex: /\bl\b/,
+        audio: 'obliterated'
     }
 ];
 

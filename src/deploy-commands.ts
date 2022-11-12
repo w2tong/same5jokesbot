@@ -40,6 +40,9 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Get ready! M.O.A.B.!', 'get_ready_MOAB')
             .addChoice('Clean-cut, and still cuts a tomato.', 'clean_cuts')
             .addChoice('Game over, man.', 'game_over_man')
+            .addChoice('Fulcrum, come in', 'fulcrum_come_in')
+            .addChoice('Obliterated', 'obliterated')
+            .addChoice('FADEDTHANAHO', 'FADEDTHANAHO')
     );
 
 const rollCommand = new SlashCommandBuilder()
