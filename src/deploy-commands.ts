@@ -12,7 +12,6 @@ const playCommand = new SlashCommandBuilder()
             .setDescription('Audio clip')
             .setRequired(true)
             .addChoice('Thunder vs Lightning', 'thunder_vs_lightning')
-            .addChoice('Phasmo Attack', 'phasmo_attack')
             .addChoice('Phasmo Breath', 'phasmo_breath')
             /*
             .addChoice('Phasmo Die', 'phasmo_die')
