@@ -58,6 +58,10 @@ const regexToAudio = [
     {
         regex: /\bl\b/,
         audio: 'obliterated'
+    },
+    {
+        regex: /good morning|morning|gm|donda/,
+        audio: 'good_morning_donda'
     }
 ];
 

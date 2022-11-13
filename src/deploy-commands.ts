@@ -42,6 +42,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Fulcrum, come in', 'fulcrum_come_in')
             .addChoice('Obliterated', 'obliterated')
             .addChoice('FADEDTHANAHO', 'FADEDTHANAHO')
+            .addChoice('Good Morning Donda', 'good_morning_donda')
     );
 
 const rollCommand = new SlashCommandBuilder()
