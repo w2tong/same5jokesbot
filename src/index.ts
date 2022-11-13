@@ -156,7 +156,7 @@ client.once('ready', (): void => {
 
 const express = require("express");
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3001;
 
 app.get('/', (_req, res, _next) => {
     const healthcheck = {
