@@ -155,10 +155,8 @@ client.once('ready', (): void => {
 });
 
 const express = require("express");
-// const router = express.Router({});
 const app = express()
 const port = 3000
-// router.get('/', async (_req, res, _next) => {
 
 app.get('/', (_req, res, _next) => {
     const healthcheck = {
