@@ -47,9 +47,6 @@ function playAudioFile(username: string, voiceConnection: voiceConnection, audio
     var interval = setInterval(function(){ 
         console.log('keep bot active'); 
     }, 300000);
-    setTimeout(function() { 
-        clearInterval(interval); 
-    }, 10000000000000);
 }
 
 // Responses to text messages
