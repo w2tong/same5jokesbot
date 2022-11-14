@@ -43,6 +43,13 @@ function playAudioFile(username: string, voiceConnection: voiceConnection, audio
     connection.subscribe(player);
     const resource = createAudioResource(join(__dirname, `audio/${audioFie}.mp3`));
     player.play(resource);
+    
+    var interval = setInterval(function(){ 
+        console.log('keep bot active'); 
+    }, 300000);
+    setTimeout(function() { 
+        clearInterval(interval); 
+    }, 10000000000000);
 }
 
 // Responses to text messages
