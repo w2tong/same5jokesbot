@@ -28,7 +28,7 @@ player.on(AudioPlayerStatus.Idle, (): void => {
     timeoutId = setTimeout(() => {
         connection.disconnect();
         timeoutId = null;
-    }, 300000);
+    }, 30000000);
 });
 
 // Join voice channel and play audio
