@@ -111,7 +111,6 @@ client.on('interactionCreate', async (interaction: Interaction): Promise<void> =
 
 // 
 client.on('voiceStateUpdate', async (oldState, newState) => {
-    console.log(newState);
     if (oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
         const voiceConnection = {
             channelId: newState.channelId,
