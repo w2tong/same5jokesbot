@@ -109,6 +109,19 @@ client.on('interactionCreate', async (interaction: Interaction): Promise<void> =
     }
 });
 
+// 
+client.on('voiceStateUpdate', async (oldState, newState) => {
+    console.log(newState);
+    if (oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
+        const voiceConnection = {
+            channelId: newState.channelId,
+            guildId: newState.guild.id,
+            adapterCreator: newState.guild.voiceAdapterCreator
+        }
+        playAudioFile('', voiceConnection, 'teleporting_fat_guy')
+    }
+});
+
 // Hourly water and posture check cronjob
 const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): void => {
     const channel = client.channels.cache.get('899162908498468934');
