@@ -28,7 +28,7 @@ player.on(AudioPlayerStatus.Idle, (): void => {
     timeoutId = setTimeout(() => {
         connection.disconnect();
         timeoutId = null;
-    }, 30000000);
+    }, 300000);
 });
 
 // Join voice channel and play audio
@@ -134,18 +134,6 @@ const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): 
     }
 });
 waterPostureCheckScheduledMessage.start();
-
-// keep bot active
-const keepBotActive = new cron.CronJob('30 * * * * *', (): void => {
-    const channel = client.channels.cache.get('899162908498468934');
-    if (channel && channel instanceof TextChannel) {
-        channel.send('<@&899160433548722176> Water Check. Posture Check.');
-    }
-    else {
-        console.log('keeps bot active');
-    }
-});
-keepBotActive.start();
 
 // Daily Wordle reminder cronjob
 const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', (): void => {
