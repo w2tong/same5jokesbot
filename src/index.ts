@@ -157,7 +157,6 @@ const lostArkResetScheduledMessage = new cron.CronJob('00 00 17 * * 3', (): void
         console.log('Lost Ark Reset channel not found.');
     }
 });
-wordleScheduledMessage.start();
 
 client.login(process.env.BOT_TOKEN);
 client.once('ready', (): void => {
