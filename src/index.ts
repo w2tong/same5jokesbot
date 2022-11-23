@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import * as dotenv from 'dotenv'
 dotenv.config()
 import cron from 'cron';
+import moment from "moment-timezone";
 import regexToText from './regexToText';
 import regexToAudio from './regexToAudio';
 import regexToReact from "./regexToReact";
@@ -109,8 +110,9 @@ client.on('interactionCreate', async (interaction: Interaction): Promise<void> =
     }
 });
 
-// 
+// On channel move / mute / deafen
 client.on('voiceStateUpdate', async (oldState, newState) => {
+    // Play teleporting fat guy when moving between channels
     if (oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
         const voiceConnection = {
             channelId: newState.channelId,
@@ -118,6 +120,18 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             adapterCreator: newState.guild.voiceAdapterCreator
         }
         playAudioFile('', voiceConnection, 'teleporting_fat_guy')
+    }
+    // Play Good Morning Donda when joining channel in the morning
+    if (newState.channelId && oldState.channelId == null) {
+        const hour = moment().utc().tz('America/Toronto').hour();
+        if (hour >= 4 && hour < 12) {
+            const voiceConnection = {
+                channelId: newState.channelId,
+                guildId: newState.guild.id,
+                adapterCreator: newState.guild.voiceAdapterCreator
+            }
+            playAudioFile('', voiceConnection, 'good_morning_donda');
+        }
     }
 });
 
@@ -134,27 +148,39 @@ const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): 
 waterPostureCheckScheduledMessage.start();
 
 // Daily Wordle reminder cronjob
-const wordleScheduledMessage = new cron.CronJob('00 00 00 * * *', (): void => {
-    const channel = client.channels.cache.get('933772784948101120');
-    if (channel && channel instanceof TextChannel) {
-        channel.send('Wordle time POGCRAZY');
-    }
-    else {
-        console.log('Wordle channel not found.');
-    }
-});
+const wordleScheduledMessage = new cron.CronJob(
+    '00 00 00 * * *',
+    (): void => {
+        const channel = client.channels.cache.get('933772784948101120');
+        if (channel && channel instanceof TextChannel) {
+            channel.send('Wordle time POGCRAZY');
+        }
+        else {
+            console.log('Wordle channel not found.');
+        }
+    },
+    null,
+    true,
+    'America/Toronto'
+);
 wordleScheduledMessage.start();
 
 // Weekly Wednesday Lost Ark Reset cronjob
-const lostArkResetScheduledMessage = new cron.CronJob('00 00 17 * * 3', (): void => {
-    const channel = client.channels.cache.get('158049091434184705');
-    if (channel && channel instanceof TextChannel) {
-        channel.send('When Argos/Vykas/Challenge Guardian/Challenge Abyssal/Valtan/Oreha/Div/Val/City Guesser');
-    }
-    else {
-        console.log('Lost Ark Reset channel not found.');
-    }
-});
+const lostArkResetScheduledMessage = new cron.CronJob(
+    '00 00 17 * * 3',
+    (): void => {
+        const channel = client.channels.cache.get('158049091434184705');
+        if (channel && channel instanceof TextChannel) {
+            channel.send('When Argos/Vykas/Challenge Guardian/Challenge Abyssal/Valtan/Oreha/Div/Val/City Guesser');
+        }
+        else {
+            console.log('Lost Ark Reset channel not found.');
+        }
+    },
+    null,
+    true,
+    'America/Toronto'
+);
 lostArkResetScheduledMessage.start();
 
 client.login(process.env.BOT_TOKEN);
