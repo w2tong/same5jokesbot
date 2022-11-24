@@ -167,7 +167,7 @@ wordleScheduledMessage.start();
 
 // Weekly Tuesday WoW Reset cronjob
 const WoWResetScheduledMessage = new cron.CronJob(
-    '00 00 17 * * 3',
+    '00 00 17 * * 2',
     (): void => {
         const channel = client.channels.cache.get('158049091434184705');
         if (channel && channel instanceof TextChannel) {
