@@ -165,23 +165,23 @@ const wordleScheduledMessage = new cron.CronJob(
 );
 wordleScheduledMessage.start();
 
-// Weekly Wednesday Lost Ark Reset cronjob
-const lostArkResetScheduledMessage = new cron.CronJob(
+// Weekly Tuesday WoW Reset cronjob
+const WoWResetScheduledMessage = new cron.CronJob(
     '00 00 17 * * 3',
     (): void => {
         const channel = client.channels.cache.get('158049091434184705');
         if (channel && channel instanceof TextChannel) {
-            channel.send('When Argos/Vykas/Challenge Guardian/Challenge Abyssal/Valtan/Oreha/Div/Val/City Guesser');
+            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking');
         }
         else {
-            console.log('Lost Ark Reset channel not found.');
+            console.log('WoW text channel not found.');
         }
     },
     null,
     true,
     'America/Toronto'
 );
-lostArkResetScheduledMessage.start();
+WoWResetScheduledMessage.start();
 
 client.login(process.env.BOT_TOKEN);
 client.once('ready', (): void => {
