@@ -116,6 +116,14 @@ const regexToText = [
     {
         regex: /\bl\b/,
         getText: () => '+ Ratio.'
+    },
+    {
+        regex: /\b(win|won)\b/,
+        getText: () => 'Boring.'
+    },
+    {
+        regex: /\b(lose|lost)\b/,
+        getText: () => 'Go agane.'
     }
 ];
 
