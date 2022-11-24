@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Client, Intents, Message, TextChannel, Interaction, GuildMember } from "discord.js";
 import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import { join } from 'node:path';
@@ -150,7 +148,6 @@ const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): 
 waterPostureCheckScheduledMessage.start();
 
 // Daily Wordle reminder cronjob
-/*
 const wordleScheduledMessage = new cron.CronJob(
     '00 00 00 * * *',
     (): void => {
@@ -167,7 +164,6 @@ const wordleScheduledMessage = new cron.CronJob(
     'America/Toronto'
 );
 wordleScheduledMessage.start();
-*/
 
 // Weekly Wednesday Lost Ark Reset cronjob
 const lostArkResetScheduledMessage = new cron.CronJob(
@@ -193,24 +189,3 @@ client.once('ready', (): void => {
     // Add emotes from server to emotes object
     getEmotes(client);
 });
-
-const express = require("express");
-const app = express()
-const port = process.env.PORT || 3001;
-
-app.get('/', (_req, res, _next) => {
-    const healthcheck = {
-        uptime: process.uptime(),
-        message: 'OK',
-        timestamp: Date.now()
-    };
-    try {
-        res.send(healthcheck);
-    } catch (error) {
-        healthcheck.message = error;
-        res.status(503).send();
-    }
-});
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`)
-})
