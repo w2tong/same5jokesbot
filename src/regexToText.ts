@@ -59,11 +59,11 @@ const regexToText = [
     },
     {
         regex: /no.*shot/,
-        getText: () => 'Shot 1.'
+        getText: () => 'Shot.'
     },
     {
         regex: /(?<!no.*)shot/,
-        getText: () => 'No shot 1.'
+        getText: () => 'No shot.'
     },
     {
         regex: /fa(x|ct(s|ual))/,
