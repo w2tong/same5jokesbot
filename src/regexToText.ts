@@ -58,12 +58,12 @@ const regexToText = [
         getText: () => 'Now y\'all.'
     },
     {
-        regex: /no\s*shot/,
-        getText: () => 'Shot.'
+        regex: /no.*shot/,
+        getText: () => 'Shot 1.'
     },
     {
-        regex: /(?<!no\s*)shot/,
-        getText: () => 'No shot.'
+        regex: /(?<!no.*)shot/,
+        getText: () => 'No shot 1.'
     },
     {
         regex: /fa(x|ct(s|ual))/,
