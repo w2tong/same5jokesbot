@@ -58,11 +58,11 @@ const regexToText = [
         getText: () => 'Now y\'all.'
     },
     {
-        regex: /no shot/,
+        regex: /no\s*shot/,
         getText: () => 'Shot.'
     },
     {
-        regex: /^(no)shot/,
+        regex: /(?<!no\s*)shot/,
         getText: () => 'No shot.'
     },
     {
@@ -110,7 +110,7 @@ const regexToText = [
         getText: () => 'The misery.'
     },
     {
-        regex: /\bno\b/,
+        regex: /\bno\b(?!.*shot)/,
         getText: () => 'IDONTTHINKSO.'
     },
     {
