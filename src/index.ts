@@ -147,7 +147,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 			guildId: newState.guild.id,
 			adapterCreator: newState.guild.voiceAdapterCreator,
 		};
-		playAudioFile('', voiceConnection, 'teleporting_fat_guy');
+		playAudioFile('', voiceConnection, 'teleporting_short_fat_guy');
 	}
 	// Play Good Morning Donda when joining channel in the morning
 	if (newState.channelId && oldState.channelId == null) {
