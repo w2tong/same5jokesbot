@@ -174,23 +174,6 @@ const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): 
 });
 waterPostureCheckScheduledMessage.start();
 
-// Daily Wordle reminder cronjob
-const wordleScheduledMessage = new cron.CronJob(
-	'00 00 00 * * *',
-	(): void => {
-		const channel = client.channels.cache.get('933772784948101120');
-		if (channel && channel instanceof TextChannel) {
-			channel.send('Wordle time POGCRAZY');
-		} else {
-			console.log('Wordle channel not found.');
-		}
-	},
-	null,
-	true,
-	'America/Toronto'
-);
-wordleScheduledMessage.start();
-
 // Weekly Tuesday WoW Reset cronjob
 const WoWResetScheduledMessage = new cron.CronJob(
 	'00 00 17 * * 2',
