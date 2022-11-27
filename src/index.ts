@@ -30,6 +30,8 @@ player.on(AudioPlayerStatus.Idle, (): void => {
     }, 300000);
 });
 
+
+
 // Join voice channel and play audio
 interface voiceConnection {
     channelId: string,
@@ -189,3 +191,24 @@ client.once('ready', (): void => {
     // Add emotes from server to emotes object
     getEmotes(client);
 });
+
+const express = require("express");
+const app = express()
+const port = process.env.PORT || 3001;
+
+app.get('/', (_req, res, _next) => {
+    const healthcheck = {
+        uptime: process.uptime(),
+        message: 'OK',
+        timestamp: Date.now()
+    };
+    try {
+        res.send(healthcheck);
+    } catch (error) {
+        healthcheck.message = error;
+        res.status(503).send();
+    }
+});
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+})
