@@ -52,7 +52,7 @@ const regexToAudio = [
 		audio: 'NOIDONTTHINKSO',
 	},
 	{
-		regex: /fulcrum|^c(o|u)me$/,
+		regex: /fulcrum|\bc(o|u)me\b/,
 		audio: 'fulcrum_come_in',
 	},
 	{
