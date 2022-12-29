@@ -62,6 +62,10 @@ const regexToAudio = [
     {
         regex: /good morning|morning|gm|donda/,
         audio: 'good_morning_donda'
+    },
+    {
+        regex: /(not|doesn\'t) look.*good|watch this/,
+        audio: 'guga'
     }
 ];
 
