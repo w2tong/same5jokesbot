@@ -20,8 +20,8 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Phasmo Heartbeat', 'phasmo_heartbeat')
             .addChoice('Phasmo Kill', 'phasmo_kill')
             .addChoice('Phasmo Behind', 'phasmo_behind')
-            */
 			.addChoice('Phasmo Here', 'phasmo_here')
+			*/
 			.addChoice('Among Us Emergency Meeting', 'amongus_meeting')
 			.addChoice('Disgustang', 'disgustang')
 			.addChoice('Demon Time', 'demontime')
