@@ -43,6 +43,7 @@ const playCommand = new SlashCommandBuilder()
             .addChoice('Obliterated', 'obliterated')
             .addChoice('FADEDTHANAHO', 'FADEDTHANAHO')
             .addChoice('Good Morning Donda', 'good_morning_donda')
+            .addChoice('Guga', 'guga')
     );
 
 const rollCommand = new SlashCommandBuilder()
