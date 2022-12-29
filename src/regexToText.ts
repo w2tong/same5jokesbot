@@ -127,6 +127,14 @@ const regexToText = [
 		regex: /\b(lose|lost)\b/,
 		getText: () => 'Go agane.',
 	},
+	{
+		regex: /boring/,
+		getText: () => "Don't care.",
+	},
+	{
+		regex: /don'?t care/,
+		getText: () => 'Boring.',
+	},
 ];
 
 export default regexToText;
