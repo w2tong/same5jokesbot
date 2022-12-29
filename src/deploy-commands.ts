@@ -45,6 +45,7 @@ const playCommand = new SlashCommandBuilder()
 			.addChoice('FADEDTHANAHO', 'FADEDTHANAHO')
 			.addChoice('Good Morning Donda', 'good_morning_donda')
 			.addChoice('Teleporting Fat Guy', 'teleporting_fat_guy')
+			.addChoice('Guga', 'guga')
 	);
 
 const rollCommand = new SlashCommandBuilder()
