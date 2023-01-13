@@ -135,6 +135,10 @@ const regexToText = [
 		regex: /don'?t care/,
 		getText: () => 'Boring.',
 	},
+	{
+		regex: /please|pl(s|z)/,
+		getText: () => '(with rizz)',
+	},
 ];
 
 export default regexToText;
