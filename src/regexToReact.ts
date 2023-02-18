@@ -9,6 +9,10 @@ const regexToReact = [
 	//     regex: /shut.*up/,
 	//     getReact: () => emotes.smoshShutUp ?? ''
 	// }
+	 {
+        	regex: /^\ba\b$/,
+        	getReact: () => '🚕'
+    	}
 ];
 
 export default regexToReact;
