@@ -69,7 +69,14 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
 	for (const regexReact of regexToReact) {
 		const react = regexReact.getReact();
 		if (react && regexReact.regex.test(command)) {
-			message.react(react);
+			if (/^\ba\b$/.test(command)) {
+                if (new Date().getMonth() == 1) {
+                    message.react(react);
+                }
+            }
+            else {
+                message.react(react);
+            }
 		}
 	}
 
