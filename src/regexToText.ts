@@ -28,6 +28,11 @@ function getNextYear(): number {
     return new Date().getFullYear() + 1;
 }
 
+const lifeIs = ['Strange', 'Peculiar']
+function getLifeAdjective(): string {
+    return lifeIs[getRandomRange(lifeIs.length)];
+}
+
 const regexToText = [
     {
         regex: /where.*andy/,
@@ -137,6 +142,10 @@ const regexToText = [
         regex: /please|pl(s|z)/,
         getText: () => '(with rizz)'
     },
+    {
+        regex: /\blife\b/,
+        getText: () => `is ${getLifeAdjective()}.`
+    }
 ];
 
 export default regexToText;
