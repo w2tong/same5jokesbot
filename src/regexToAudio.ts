@@ -94,6 +94,10 @@ const regexToAudio = [
     {
         regex: /soda/,
         audio: 'SODA'
+    },
+    {
+        regex: /legend(ary)?/,
+        audio: 'GOLDEN_LEGENDARY'
     }
 ];
 
