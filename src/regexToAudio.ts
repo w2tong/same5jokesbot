@@ -83,6 +83,11 @@ const regexToAudio = [
         regex: /blind|deaf/,
         audio: 'im_blind_not_deaf'
     }
+    ,
+    {
+        regex: /they came|behind/,
+        audio: 'they_came_from_behind'
+    }
 ];
 
 export default regexToAudio;
