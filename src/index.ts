@@ -15,6 +15,9 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
 let connection: VoiceConnection;
+
+let disperseStreak = 0;
+
 // Disconnect after 5 min of inactivity
 player.on(AudioPlayerStatus.Playing, (): void => {
     if (timeoutId) {
@@ -72,9 +75,22 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     let botMessage = '';
     for (let regexText of regexToText) {
         if (regexText.regex.test(command)) {
-            botMessage += `${regexText.getText()}\n`;
+            const text = regexText.getText();
+            if (/gamers/.test(command)) {
+                if (text === 'Disperse!') {
+                    disperseStreak++;
+                }
+                else {
+                    if (disperseStreak > 1) {
+                        botMessage += `Disperse Streak: ${disperseStreak}\n`
+                    }
+                    disperseStreak = 0;
+                }
+            }
+            botMessage += `${text}\n`;
         }
     }
+
     // Send message
     if (botMessage) {
         message.channel.send(botMessage);
