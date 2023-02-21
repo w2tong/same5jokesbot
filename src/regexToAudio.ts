@@ -66,6 +66,10 @@ const regexToAudio = [
     {
         regex: /(not|doesn\'t) look.*good|watch this/,
         audio: 'guga'
+    },
+    {
+        regex: /wake.*up/,
+        audio: 'WAKEUP'
     }
 ];
 
