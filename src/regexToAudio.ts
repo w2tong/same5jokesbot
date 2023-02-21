@@ -70,6 +70,10 @@ const regexToAudio = [
     {
         regex: /wake.*up/,
         audio: 'WAKEUP'
+    },
+    {
+        regex: /want/,
+        audio: 'YOUWANTEDTO'
     }
 ];
 
