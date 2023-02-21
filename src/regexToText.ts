@@ -1,31 +1,31 @@
-import { emotes } from './emotes'
+import { emotes } from './emotes';
 
 // Random integer between 0 and max
 function getRandomRange(max: number): number {
-    return Math.floor(Math.random() * max);
+	return Math.floor(Math.random() * max);
 }
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
 const nouns = ['dog', 'dishes', 'dinner'];
 function whereIsAndy(): string {
-    const verb = verbs[getRandomRange(verbs.length)];
-    const noun = nouns[getRandomRange(nouns.length)];
-    return verb + ' his ' + noun + '.';
+	const verb = verbs[getRandomRange(verbs.length)];
+	const noun = nouns[getRandomRange(nouns.length)];
+	return verb + ' his ' + noun + '.';
 }
 
 const translations = ['Prance forward', 'Shashay left', 'Boogie down', 'Shimmy right'];
 function getTranslation(): string {
-    return translations[getRandomRange(translations.length)];
+	return translations[getRandomRange(translations.length)];
 }
 
 const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
 function getGamersResponse(): string {
-    return gamers[getRandomRange(gamers.length)];
+	return gamers[getRandomRange(gamers.length)];
 }
 
 function getNextYear(): number {
-    return new Date().getFullYear() + 1;
+	return new Date().getFullYear() + 1;
 }
 
 const lifeIs = ['Strange', 'Peculiar']
