@@ -48,7 +48,7 @@ const regexToAudio = [
         audio: 'smosh_shut_up'
     },
     {
-        regex: /\bno\b(?!.*shot)|noidontthinkso/,
+        regex: /^\bno\b$|noidontthinkso/,
         audio: 'NOIDONTTHINKSO'
     },
     {
@@ -82,11 +82,14 @@ const regexToAudio = [
     {
         regex: /blind|deaf/,
         audio: 'im_blind_not_deaf'
-    }
-    ,
+    },
     {
         regex: /they came|behind/,
         audio: 'they_came_from_behind'
+    },
+    {
+        regex: /no\s*no\s*no|not like that/,
+        audio: 'no_no_no_not_like_that'
     }
 ];
 
