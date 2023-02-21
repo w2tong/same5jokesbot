@@ -90,6 +90,10 @@ const regexToAudio = [
     {
         regex: /no\s*no\s*no|not like that/,
         audio: 'no_no_no_not_like_that'
+    },
+    {
+        regex: /soda/,
+        audio: 'SODA'
     }
 ];
 
