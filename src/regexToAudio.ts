@@ -78,6 +78,10 @@ const regexToAudio = [
     {
         regex: /forget|forgot|forgor/,
         audio: 'fugetaboutit'
+    },
+    {
+        regex: /blind|deaf/,
+        audio: 'im_blind_not_deaf'
     }
 ];
 
