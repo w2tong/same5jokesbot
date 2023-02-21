@@ -74,6 +74,10 @@ const regexToAudio = [
     {
         regex: /want/,
         audio: 'YOUWANTEDTO'
+    },
+    {
+        regex: /forget|forgot|forgor/,
+        audio: 'fugetaboutit'
     }
 ];
 
