@@ -184,6 +184,14 @@ const regexToText = [
     {
         regex: /\bgrind(ing|s)?.*gears?\b/,
         getText: () => 'Games.'
+    },
+    {
+        regex: /\bha\s*ha\b/,
+        getText: () => 'That\s crazy.'
+    },
+    {
+        regex: /\bthat'?s crazy\b/,
+        getText: () => 'Haha.'
     }
 ];
 
