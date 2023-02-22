@@ -33,6 +33,11 @@ function getLifeAdjective(): string {
     return lifeIs[getRandomRange(lifeIs.length)];
 }
 
+const sonsOf = ['the Forest', 'Anarchy']
+function getSonsOf(): string {
+    return sonsOf[getRandomRange(sonsOf.length)];
+}
+
 const regexToText = [
     {
         regex: /where.*andy/,
@@ -149,6 +154,10 @@ const regexToText = [
     {
         regex: /guess (yo)?u could say/,
         getText: () => `Life is ${getLifeAdjective()}.`
+    },
+    {
+        regex: /\bsons\b/,
+        getText: () => `of ${getSonsOf()}.`
     }
 ];
 
