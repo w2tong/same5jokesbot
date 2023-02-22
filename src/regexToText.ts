@@ -28,9 +28,9 @@ function getNextYear(): number {
     return new Date().getFullYear() + 1;
 }
 
-const lifeIs = ['Strange', 'Peculiar']
+const life = ['is Strange', 'is Peculiar', 'of Luxury']
 function getLifeAdjective(): string {
-    return lifeIs[getRandomRange(lifeIs.length)];
+    return life[getRandomRange(life.length)];
 }
 
 const sonsOf = ['the Forest', 'Anarchy']
@@ -149,7 +149,7 @@ const regexToText = [
     },
     {
         regex: /\blife\b/,
-        getText: () => `is ${getLifeAdjective()}.`
+        getText: () => `${getLifeAdjective()}.`
     },
     {
         regex: /guess (yo)?u could say/,
