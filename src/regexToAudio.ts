@@ -16,7 +16,7 @@ const regexToAudio = [
         audio: 'VillagerCWhat3'
     },
     {
-        regex: /((yo)?u|yu).*(no|know)|sigh/,
+        regex: /((yo)?u) (no|know)|sigh|yuno/,
         audio: 'sykkuno'
     },
     {
