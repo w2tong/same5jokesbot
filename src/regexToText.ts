@@ -43,6 +43,11 @@ function getDND(): string {
     return DND[getRandomRange(DND.length)];
 }
 
+const val = ['orant?', 'heim?']
+function getVal(): string {
+    return val[getRandomRange(val.length)];
+}
+
 const regexToText = [
     {
         regex: /where.*andy/,
@@ -171,6 +176,10 @@ const regexToText = [
     {
         regex: /\bdnd\b/,
         getText: () => getDND()
+    },
+    {
+        regex: /\bval\b/,
+        getText: () => getVal()
     }
 ];
 
