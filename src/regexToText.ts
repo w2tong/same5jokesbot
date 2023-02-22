@@ -158,6 +158,10 @@ const regexToText = [
     {
         regex: /\bsons\b/,
         getText: () => `of ${getSonsOf()}.`
+    },
+    {
+        regex: /\bdark\b/,
+        getText: () => `and Darker.`
     }
 ];
 
