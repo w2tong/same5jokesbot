@@ -76,7 +76,7 @@ const regexToAudio = [
         audio: 'YOUWANTEDTO'
     },
     {
-        regex: /forget|forgot|forgor/,
+        regex: /forget|forgot|forgor|i'?m walking here/,
         audio: 'fugetaboutit'
     },
     {
