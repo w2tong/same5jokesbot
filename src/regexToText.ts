@@ -180,6 +180,10 @@ const regexToText = [
     {
         regex: /\bval\b/,
         getText: () => getVal()
+    },
+    {
+        regex: /\bgrind(ing|s)?.*gears?\b/,
+        getText: () => 'Games.'
     }
 ];
 
