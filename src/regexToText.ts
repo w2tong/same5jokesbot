@@ -38,6 +38,11 @@ function getSonsOf(): string {
     return sonsOf[getRandomRange(sonsOf.length)];
 }
 
+const DND = ['Dungeons and Dragons?', 'Dark and Darker?', 'Where\'s Albert?']
+function getDND(): string {
+    return DND[getRandomRange(DND.length)];
+}
+
 const regexToText = [
     {
         regex: /where.*andy/,
@@ -162,6 +167,10 @@ const regexToText = [
     {
         regex: /\bdark\b/,
         getText: () => `and Darker.`
+    },
+    {
+        regex: /\bdnd\b/,
+        getText: () => getDND()
     }
 ];
 
