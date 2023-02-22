@@ -1,103 +1,117 @@
+// Random integer between 0 and max
+function getRandomRange(max: number): number {
+    return Math.floor(Math.random() * max);
+}
+
+const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13',]
+function getCongratulations(): string {
+    return congratulations[getRandomRange(congratulations.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
-        audio: 'basementgang'
+        getAudio: () => 'basementgang'
     },
     {
         regex: /(thunder vs lightning)/,
-        audio: 'thunder_vs_lightning_full'
+        getAudio: () => 'thunder_vs_lightning_full'
     },
     {
         regex: /demon/,
-        audio: 'demontime'
+        getAudio: () => 'demontime'
     },
     {
         regex: /i'?m.*(4|four|poor|bored)/,
-        audio: 'VillagerCWhat3'
+        getAudio: () => 'VillagerCWhat3'
     },
     {
         regex: /((yo)?u) (no|know)|sigh|yuno/,
-        audio: 'sykkuno'
+        getAudio: () => 'sykkuno'
     },
     {
         regex: /uh.*oh/,
-        audio: 'uhohstinky'
+        getAudio: () => 'uhohstinky'
     },
     {
         regex: /(tbc.*hype|focus.*up)/,
-        audio: 'tbchype'
+        getAudio: () => 'tbchype'
     },
     {
         regex: /suc(c|k|tion)/,
-        audio: 'suction'
+        getAudio: () => 'suction'
     },
     {
         regex: /stop/,
-        audio: 'itstimetostop'
+        getAudio: () => 'itstimetostop'
     },
     {
         regex: /dog/,
-        audio: 'whatthedogdoin'
+        getAudio: () => 'whatthedogdoin'
     },
     {
         regex: /bean|badlands|chugs|eric booker/,
-        audio: 'beans'
+        getAudio: () => 'beans'
     },
     {
         regex: /smosh|shut.*up/,
-        audio: 'smosh_shut_up'
+        getAudio: () => 'smosh_shut_up'
     },
     {
         regex: /^\bno\b$|noidontthinkso/,
-        audio: 'NOIDONTTHINKSO'
+        getAudio: () => 'NOIDONTTHINKSO'
     },
     {
         regex: /fulcrum|c(o|u)me?/,
-        audio: 'fulcrum_come_in'
+        getAudio: () => 'fulcrum_come_in'
     },
     {
         regex: /\bl\b/,
-        audio: 'obliterated'
+        getAudio: () => 'obliterated'
     },
     {
         regex: /good morning|morning|gm|donda/,
-        audio: 'good_morning_donda'
+        getAudio: () => 'good_morning_donda'
     },
     {
         regex: /(not|doesn\'t) look.*good|watch this/,
-        audio: 'guga'
+        getAudio: () => 'guga'
     },
     {
         regex: /wake.*up/,
-        audio: 'WAKEUP'
+        getAudio: () => 'WAKEUP'
     },
     {
         regex: /want/,
-        audio: 'YOUWANTEDTO'
+        getAudio: () => 'YOUWANTEDTO'
     },
     {
         regex: /forget|forgot|forgor|i'?m walking here/,
-        audio: 'fugetaboutit'
+        getAudio: () => 'fugetaboutit'
     },
     {
         regex: /blind|deaf/,
-        audio: 'im_blind_not_deaf'
+        getAudio: () => 'im_blind_not_deaf'
     },
     {
         regex: /they came|behind/,
-        audio: 'they_came_from_behind'
+        getAudio: () => 'they_came_from_behind'
     },
     {
         regex: /no\s*no\s*no|not like that/,
-        audio: 'no_no_no_not_like_that'
+        getAudio: () => 'no_no_no_not_like_that'
     },
     {
         regex: /soda/,
-        audio: 'SODA'
+        getAudio: () => 'SODA'
     },
     {
         regex: /legend(ary)?/,
-        audio: 'GOLDEN_LEGENDARY'
+        getAudio: () => 'GOLDEN_LEGENDARY'
+    },
+    {
+        regex: /grats|congratulations|gz/,
+        getAudio: () => getCongratulations()
     }
 ];
 

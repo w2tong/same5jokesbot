@@ -104,7 +104,7 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
                 guildId: message.guild.id,
                 adapterCreator: message.guild.voiceAdapterCreator
             }
-            playAudioFile(message.member.user.username, voiceConnection, regexAudio.audio);
+            playAudioFile(message.member.user.username, voiceConnection, regexAudio.getAudio());
             break;
         }
     }
