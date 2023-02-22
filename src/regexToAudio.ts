@@ -40,7 +40,7 @@ const regexToAudio = [
         audio: 'whatthedogdoin'
     },
     {
-        regex: /bean/,
+        regex: /bean|badlands|chugs|eric booker/,
         audio: 'beans'
     },
     {
