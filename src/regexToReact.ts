@@ -11,7 +11,7 @@ const regexToReact = [
     },
     {
         regex: /^\ba\b$/,
-        getReact: () => '🚕'
+        getReact: () => new Date().getMonth() == 1 ? '🚕' : ''
     }
 ]
 
