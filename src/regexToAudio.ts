@@ -116,6 +116,10 @@ const regexToAudio = [
     {
         regex: /[0-9]+\s+(pc|piece|set)/,
         getAudio: () => 'the_one_piece_is_real'
+    },
+    {
+        regex: /michael|hbd|b(irth)?day/,
+        getAudio: () => 'michael_its_your_bd_today'
     }
 ];
 
