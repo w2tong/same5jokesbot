@@ -19,6 +19,7 @@ const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
 function getGamersResponse(): string {
     return gamers[getRandomRange(gamers.length)];
 }
+let disperseStreak = 0;
 
 function getNextYear(): number {
     return new Date().getFullYear() + 1;
@@ -60,7 +61,19 @@ const regexToText = [
     },
     {
         regex: /gamers/,
-        getText: () => getGamersResponse()
+        getText: () => {
+            let res = getGamersResponse();
+            if (res === 'Disperse!') {
+                disperseStreak++;
+            }
+            else {
+                if (disperseStreak > 1) {
+                    res = `Disperse Streak: ${disperseStreak}\n${res}`
+                }
+                disperseStreak = 0;
+            }
+            return res;
+        }
     },
     {
         regex: /bazinga|zimbabwe/,

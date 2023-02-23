@@ -17,8 +17,6 @@ const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
 let connection: VoiceConnection;
 
-let disperseStreak = 0;
-
 // Disconnect after 5 min of inactivity
 // Reset timeout when audio playing
 player.on(AudioPlayerStatus.Playing, (): void => {
@@ -76,17 +74,6 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     for (let regexText of regexToText) {
         if (regexText.regex.test(command)) {
             const text = regexText.getText(command);
-            if (/gamers/.test(command)) {
-                if (text === 'Disperse!') {
-                    disperseStreak++;
-                }
-                else {
-                    if (disperseStreak > 1) {
-                        botMessage += `Disperse Streak: ${disperseStreak}\n`
-                    }
-                    disperseStreak = 0;
-                }
-            }
             botMessage += `${text}\n`;
         }
     }
