@@ -61,14 +61,14 @@ const regexToText = [
     },
     {
         regex: /gamers/,
-        getText: () => {
+        getText: (_message: string, username: string) => {
             let res = getGamersResponse();
             if (res === 'Disperse!') {
                 disperseStreak++;
             }
             else {
                 if (disperseStreak > 1) {
-                    res = `Disperse Streak: ${disperseStreak}\n${res}`
+                    res = `Disperse Streak: ${disperseStreak} - ${username}'s fault.\n${res}`
                 }
                 disperseStreak = 0;
             }
@@ -227,7 +227,7 @@ const regexToText = [
     {
         regex: /\b(big|strong|handsome|tall|smart|rich|funny)\b/,
 
-        getText: (message: string) => {
+        getText: (message: string, _username: string) => {
             let arr = ['big', 'strong', 'handsome', 'tall', 'smart', 'rich', 'funny'];
             for (let i = 0; i < arr.length; i++) {
                 if (message.includes(arr[i])) {
