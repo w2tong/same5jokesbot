@@ -72,8 +72,8 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     // Text replies
     let botMessage = '';
     for (let regexText of regexToText) {
-        if (regexText.regex.test(command)) {
-            const text = regexText.getText(command);
+        if (regexText.regex.test(command) && message.member) {
+            const text = regexText.getText(command, message.member?.displayName);
             botMessage += `${text}\n`;
         }
     }
