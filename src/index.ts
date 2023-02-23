@@ -93,13 +93,16 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     // Audio replies
     for (let regexAudio of regexToAudio) {
         if (regexAudio.regex.test(command) && message.member && message.member.voice.channel && message.guild) {
-            const voiceConnection = {
-                channelId: message.member.voice.channel.id,
-                guildId: message.guild.id,
-                adapterCreator: message.guild.voiceAdapterCreator
+            const audio = regexAudio.getAudio();
+            if (audio) {
+                const voiceConnection = {
+                    channelId: message.member.voice.channel.id,
+                    guildId: message.guild.id,
+                    adapterCreator: message.guild.voiceAdapterCreator
+                }
+                playAudioFile(message.member.user.username, voiceConnection, audio);
+                break;
             }
-            playAudioFile(message.member.user.username, voiceConnection, regexAudio.getAudio());
-            break;
         }
     }
 });
