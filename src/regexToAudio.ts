@@ -10,6 +10,11 @@ function getCongratulations(): string {
     return congratulations[getRandomRange(congratulations.length)];
 }
 
+const shutUp = ['smosh_shut_up', 'imaqtpie_ shut_up']
+function getShutUp(): string {
+    return shutUp[getRandomRange(shutUp.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -56,8 +61,8 @@ const regexToAudio = [
         getAudio: () => 'beans'
     },
     {
-        regex: /smosh|shut.*up/,
-        getAudio: () => 'smosh_shut_up'
+        regex: /smosh|shut.*up|imaqtpie/,
+        getAudio: () => getShutUp()
     },
     {
         regex: /^\bno\b$|noidontthinkso/,
