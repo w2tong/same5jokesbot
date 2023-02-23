@@ -12,8 +12,7 @@ const regexToReact = [
     {
         regex: /^\ba\b$/,
         getReact: () => new Date().getMonth() == 1 ? '🚕' : ''
-    }
-    ,
+    },
     {
         regex: /anime|vtuber/,
         getReact: () => emotes.dansGame ?? ''
