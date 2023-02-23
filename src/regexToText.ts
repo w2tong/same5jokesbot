@@ -151,7 +151,7 @@ const regexToText = [
         getText: () => '(with rizz)'
     },
     {
-        regex: /\blife\b/,
+        regex: /life/,
         getText: () => `${getLifeAdjective()}.`
     },
     {
@@ -159,11 +159,11 @@ const regexToText = [
         getText: () => `Life is ${getLifeAdjective()}.`
     },
     {
-        regex: /\bsons\b/,
+        regex: /sons/,
         getText: () => `of ${getSonsOf()}.`
     },
     {
-        regex: /\bdark\b/,
+        regex: /dark/,
         getText: () => `and Darker.`
     },
     {
@@ -179,11 +179,11 @@ const regexToText = [
         getText: () => 'Games.'
     },
     {
-        regex: /\bha\s*ha\b/,
+        regex: /\bha\b*ha\b/,
         getText: () => 'That\s crazy.'
     },
     {
-        regex: /\bthat'?s crazy\b/,
+        regex: /that'?s crazy/,
         getText: () => 'Haha.'
     },
     {
