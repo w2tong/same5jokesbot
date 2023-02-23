@@ -179,7 +179,7 @@ const regexToText = [
         getText: () => 'Games.'
     },
     {
-        regex: /\bha\b*ha\b/,
+        regex: /\bha\s*ha\b/,
         getText: () => 'That\s crazy.'
     },
     {
@@ -210,6 +210,10 @@ const regexToText = [
     {
         regex: /where.*wayne/,
         getText: () => whereIsWayne()
+    },
+    {
+        regex: /\b(big|strong|handsome|tall|smart|rich)\b/,
+        getText: (message: string) => message + 'Big, strong, handsome, tall, smart, rich.'
     },
 ];
 
