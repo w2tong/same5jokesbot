@@ -31,6 +31,9 @@ player.on(AudioPlayerStatus.Idle, (): void => {
     timeoutId = setTimeout(() => {
         connection.disconnect();
         timeoutId = null;
+        if (mainChannel && mainChannel instanceof TextChannel) {
+            mainChannel.send('You made Azi leave.');
+        }
     }, 300000);
 });
 
