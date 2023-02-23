@@ -20,12 +20,14 @@ let connection: VoiceConnection;
 let disperseStreak = 0;
 
 // Disconnect after 5 min of inactivity
+// Reset timeout when audio playing
 player.on(AudioPlayerStatus.Playing, (): void => {
     if (timeoutId) {
         clearTimeout(timeoutId);
         timeoutId = null;
     }
 });
+// Start timeout timer when idle
 player.on(AudioPlayerStatus.Idle, (): void => {
     player.stop();
     timeoutId = setTimeout(() => {
@@ -37,12 +39,13 @@ player.on(AudioPlayerStatus.Idle, (): void => {
     }, 300000);
 });
 
-// Join voice channel and play audio
+
 interface voiceConnection {
     channelId: string,
     guildId: string,
     adapterCreator: DiscordGatewayAdapterCreator
 }
+// Join voice channel and play audio
 function playAudioFile(username: string, voiceConnection: voiceConnection, audioFie: string): void {
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
     connection = joinVoiceChannel(voiceConnection);
@@ -162,6 +165,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
     }
 });
 
+// Cronjobs
 // Hourly water and posture check cronjob
 const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): void => {
     const channel = client.channels.cache.get('899162908498468934');
@@ -210,6 +214,7 @@ const WoWResetScheduledMessage = new cron.CronJob(
 );
 WoWResetScheduledMessage.start();
 
+// Login with bot token
 client.login(process.env.BOT_TOKEN);
 client.once('ready', (): void => {
     // Add emotes from server to emotes object
