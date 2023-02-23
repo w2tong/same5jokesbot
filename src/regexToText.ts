@@ -198,7 +198,10 @@ const regexToText = [
         regex: /m(ine)?c(raft)?|chernobyl/,
         getText: () => 'https://cdn.discordapp.com/attachments/982195734046732338/1078118698222628915/mc_chernobyl.png'
     },
-
+    {
+        regex: /since we('?re not| aren'?t) doing anything/,
+        getText: () => 'I gotta go.'
+    }
 ];
 
 export default regexToText;
