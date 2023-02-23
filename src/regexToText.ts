@@ -44,6 +44,11 @@ function getVal(): string {
     return val[getRandomRange(val.length)];
 }
 
+const wayneAction = ['Watching Westworld', 'Watching Better Call Saul', 'Watching Game of Thrones', 'Pathfinding', 'Kingmaking'];
+function whereIsWayne(): string {
+    return `${wayneAction[getRandomRange(wayneAction.length)]}.`;
+}
+
 const regexToText = [
     {
         regex: /where.*andy/,
@@ -201,7 +206,11 @@ const regexToText = [
     {
         regex: /since we('?re not| aren'?t) doing anything/,
         getText: () => 'I gotta go.'
-    }
+    },
+    {
+        regex: /where.*wayne/,
+        getText: () => whereIsWayne()
+    },
 ];
 
 export default regexToText;
