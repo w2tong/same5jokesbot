@@ -210,11 +210,7 @@ const regexToText = [
     {
         regex: /where.*wayne/,
         getText: () => whereIsWayne()
-    },
-    {
-        regex: /\b(big|strong|handsome|tall|smart|rich)\b/,
-        getText: (message: string) => message + 'Big, strong, handsome, tall, smart, rich.'
-    },
+    }
 ];
 
 export default regexToText;
