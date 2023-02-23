@@ -1,3 +1,5 @@
+import moment from "moment-timezone";
+
 // Random integer between 0 and max
 function getRandomRange(max: number): number {
     return Math.floor(Math.random() * max);
@@ -120,6 +122,20 @@ const regexToAudio = [
     {
         regex: /michael|hbd|b(irth)?day/,
         getAudio: () => 'michael_its_your_bd_today'
+    },
+    {
+        regex: /ahem|cough|breakfast/,
+        getAudio: () => 'breakfast'
+    },
+    {
+        regex: /food/,
+        getAudio: () => {
+            const hour = moment().utc().tz('America/Toronto').hour();
+            if (hour >= 4 && hour < 12) {
+                return 'breakfast'
+            }
+            return ''
+        }
     }
 ];
 
