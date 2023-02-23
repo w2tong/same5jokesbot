@@ -1,9 +1,5 @@
 import { emotes } from './emotes';
-
-// Random integer between 0 and max
-function getRandomRange(max: number): number {
-    return Math.floor(Math.random() * max);
-}
+import { getRandomRange } from './util'
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
