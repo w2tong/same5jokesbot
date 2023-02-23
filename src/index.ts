@@ -75,7 +75,7 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
     let botMessage = '';
     for (let regexText of regexToText) {
         if (regexText.regex.test(command)) {
-            const text = regexText.getText();
+            const text = regexText.getText(command);
             if (/gamers/.test(command)) {
                 if (text === 'Disperse!') {
                     disperseStreak++;
