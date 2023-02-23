@@ -192,6 +192,10 @@ const regexToText = [
     {
         regex: /\bthat'?s crazy\b/,
         getText: () => 'Haha.'
+    },
+    {
+        regex: /voti|vault of the incarnates|vaati/,
+        getText: () => 'Vidya.'
     }
 ];
 
