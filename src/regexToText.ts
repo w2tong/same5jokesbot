@@ -44,7 +44,7 @@ function getVal(): string {
     return val[getRandomRange(val.length)];
 }
 
-const wayneAction = ['Watching Westworld', 'Watching Better Call Saul', 'Watching Game of Thrones', 'Pathfinding', 'Kingmaking'];
+const wayneAction = ['Watching Westworld', 'Watching Better Call Saul', 'Watching Game of Thrones', 'Watching The Boys', 'Pathfinding', 'Kingmaking'];
 function whereIsWayne(): string {
     return `${wayneAction[getRandomRange(wayneAction.length)]}.`;
 }
