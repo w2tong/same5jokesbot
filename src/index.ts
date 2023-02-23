@@ -1,14 +1,14 @@
 import { Client, Intents, Message, TextChannel, Interaction, GuildMember, AnyChannel } from "discord.js";
 import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import { join } from 'node:path';
-import * as dotenv from 'dotenv'
-dotenv.config()
+import * as dotenv from 'dotenv';
+dotenv.config();
 import cron from 'cron';
 import moment from "moment-timezone";
 import regexToText from './regexToText';
 import regexToAudio from './regexToAudio';
 import regexToReact from "./regexToReact";
-import { getEmotes } from './emotes'
+import { getEmotes } from './emotes';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 let mainChannel: AnyChannel | undefined;
@@ -95,17 +95,15 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
 
     // Audio replies
     for (let regexAudio of regexToAudio) {
-        if (regexAudio.regex.test(command) && message.member && message.member.voice.channel && message.guild) {
-            const audio = regexAudio.getAudio();
-            if (audio) {
-                const voiceConnection = {
-                    channelId: message.member.voice.channel.id,
-                    guildId: message.guild.id,
-                    adapterCreator: message.guild.voiceAdapterCreator
-                }
-                playAudioFile(message.member.user.username, voiceConnection, audio);
-                break;
+        const audio = regexAudio.getAudio();
+        if (regexAudio.regex.test(command) && audio && message.member && message.member.voice.channel && message.guild) {
+            const voiceConnection = {
+                channelId: message.member.voice.channel.id,
+                guildId: message.guild.id,
+                adapterCreator: message.guild.voiceAdapterCreator
             }
+            playAudioFile(message.member.user.username, voiceConnection, audio);
+            break;
         }
     }
 });
@@ -133,7 +131,7 @@ client.on('interactionCreate', async (interaction: Interaction): Promise<void> =
     }
 });
 
-// On channel move / mute / deafen
+// On channel move/mute/deafen
 client.on('voiceStateUpdate', async (oldState, newState) => {
     // Play teleporting fat guy when moving between channels
     if (oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
@@ -156,6 +154,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             playAudioFile('', voiceConnection, 'good_morning_donda');
         }
     }
+    // Message when Azi leaves or chance when someone else leaves
     if (newState.member?.id !== '837241561481347094' && (newState.member?.id == '180881117547593728' || Math.random() < 0.1) && newState.channelId == null) {
         if (mainChannel && mainChannel instanceof TextChannel) {
             mainChannel.send('You made Azi leave.');
