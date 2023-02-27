@@ -145,6 +145,10 @@ const regexToAudio = [
     {
         regex: /small.*cat|feral/,
         getAudio: () => 'small_cat'
+    },
+    {
+        regex: /under.*water/,
+        getAudio: () => 'i_am_under_the_water'
     }
 ];
 
