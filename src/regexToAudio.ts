@@ -117,7 +117,7 @@ const regexToAudio = [
         getAudio: () => getCongratulations()
     },
     {
-        regex: /[0-9]+\s+(pc|piece|set)/,
+        regex: /[0-9]+\s*(pc|piece|set)/,
         getAudio: () => 'the_one_piece_is_real'
     },
     {
