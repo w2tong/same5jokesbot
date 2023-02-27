@@ -137,6 +137,10 @@ const regexToAudio = [
             }
             return ''
         }
+    },
+    {
+        regex: /finite|possibl|axe/,
+        getAudio: () => 'infinite_possibilities'
     }
 ];
 
