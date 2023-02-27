@@ -150,6 +150,11 @@ const regexToAudio = [
         regex: /under.*water/,
         getAudio: () => 'i_am_under_the_water'
     }
+    ,
+    {
+        regex: /everybody/,
+        getAudio: () => 'guga_everybody'
+    }
 ];
 
 export default regexToAudio;
