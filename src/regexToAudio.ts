@@ -141,6 +141,10 @@ const regexToAudio = [
     {
         regex: /finite|possibl|axe/,
         getAudio: () => 'infinite_possibilities'
+    },
+    {
+        regex: /small.*cat|feral/,
+        getAudio: () => 'small_cat'
     }
 ];
 
