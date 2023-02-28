@@ -17,7 +17,7 @@ const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
 let connection: VoiceConnection;
 
-// Disconnect after 5 min of inactivity
+// Disconnect after 15 min of inactivity
 // Reset timeout when audio playing
 player.on(AudioPlayerStatus.Playing, (): void => {
     if (timeoutId) {
@@ -34,7 +34,7 @@ player.on(AudioPlayerStatus.Idle, (): void => {
         if (mainChannel && mainChannel instanceof TextChannel) {
             mainChannel.send('You made Azi leave.');
         }
-    }, 300000);
+    }, 900000);
 });
 
 
