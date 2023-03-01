@@ -31,7 +31,7 @@ player.on(AudioPlayerStatus.Idle, (): void => {
     timeoutId = setTimeout(() => {
         connection.destroy();
         timeoutId = null;
-    }, 5000);
+    }, 900000);
 });
 
 interface voiceConnection {
