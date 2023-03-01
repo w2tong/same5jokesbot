@@ -1,5 +1,5 @@
 import { Client, Intents, Message, TextChannel, Interaction, GuildMember, AnyChannel } from "discord.js";
-import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
+import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -15,7 +15,7 @@ let mainChannel: AnyChannel | undefined;
 
 const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
-let connection: VoiceConnection;
+let connection: VoiceConnection | null = null;
 
 // Disconnect after 15 min of inactivity
 // Reset timeout when audio playing
@@ -29,7 +29,7 @@ player.on(AudioPlayerStatus.Playing, (): void => {
 player.on(AudioPlayerStatus.Idle, (): void => {
     player.stop();
     timeoutId = setTimeout(() => {
-        connection.disconnect();
+        destroyConnection();
         timeoutId = null;
         if (mainChannel && mainChannel instanceof TextChannel) {
             mainChannel.send('You made Azi leave.');
@@ -47,12 +47,27 @@ interface voiceConnection {
 //Create voice connection
 function joinVoice(voiceConnection: voiceConnection) {
     connection = joinVoiceChannel(voiceConnection);
+    // Add event listener on receiving voice input
+    if (connection.receiver.speaking.listenerCount('start') === 0) {
+        connection.receiver.speaking.on('start', async (userId) => {
+            // console.log(`${userId} is speaking`)
+        });
+    }
+    // Remove listeners on disconnect
+    connection.on(VoiceConnectionStatus.Disconnected, () => {
+        if (connection) connection.receiver.speaking.removeAllListeners();
+    })
+}
+
+function destroyConnection() {
+    if (connection) connection.destroy();
+    connection = null;
 }
 
 // Join voice channel and play audio
 function playAudioFile(audioFie: string, username?: string): void {
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
-    connection.subscribe(player);
+    if (connection) connection.subscribe(player);
     const resource = createAudioResource(join(__dirname, `audio/${audioFie}.mp3`));
     player.play(resource);
 }
