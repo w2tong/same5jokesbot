@@ -31,9 +31,6 @@ player.on(AudioPlayerStatus.Idle, (): void => {
     timeoutId = setTimeout(() => {
         destroyConnection();
         timeoutId = null;
-        if (mainChannel && mainChannel.type === ChannelType.GuildText) {
-            mainChannel.send('You made Azi leave.');
-        }
     }, 900000);
 });
 
