@@ -1,13 +1,13 @@
 import { Client, GatewayIntentBits, Message, TextChannel, Interaction, GuildMember, ChannelType, Events } from "discord.js";
-import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
+import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator, entersState } from "@discordjs/voice";
 import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import cron from 'cron';
 import moment from "moment-timezone";
-import regexToText from './regexToText';
-import regexToAudio from './regexToAudio';
-import regexToReact from "./regexToReact";
+import regexToText from './regex-to-text';
+import regexToAudio from './regex-to-audio';
+import regexToReact from "./regex-to-react";
 import { getEmotes } from './emotes';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
@@ -15,7 +15,7 @@ let mainChannel: TextChannel | undefined;
 
 const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
-let connection: VoiceConnection | null = null;
+let connection: VoiceConnection;
 
 // Disconnect after 15 min of inactivity
 // Reset timeout when audio playing
@@ -29,7 +29,6 @@ player.on(AudioPlayerStatus.Playing, (): void => {
 player.on(AudioPlayerStatus.Idle, (): void => {
     player.stop();
     timeoutId = setTimeout(() => {
-        destroyConnection();
         timeoutId = null;
     }, 900000);
 });
@@ -46,19 +45,21 @@ function joinVoice(voiceConnection: voiceConnection) {
     // Add event listener on receiving voice input
     if (connection.receiver.speaking.listenerCount('start') === 0) {
         connection.receiver.speaking.on('start', async (userId) => {
-            // console.log(`${userId} is speaking`)
-            // playAudioFile('smosh_shut_up', '');
+
         });
     }
     // Remove listeners on disconnect
-    connection.on(VoiceConnectionStatus.Disconnected, () => {
-        if (connection) connection.receiver.speaking.removeAllListeners();
+    connection.on(VoiceConnectionStatus.Disconnected, async () => {
+        connection.receiver.speaking.removeAllListeners();
+        try {
+            await Promise.race([
+                entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+                entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+            ]);
+        } catch (error) {
+            connection.destroy();
+        }
     })
-}
-
-function destroyConnection() {
-    if (connection) connection.destroy();
-    connection = null;
 }
 
 // Join voice channel and play audio
@@ -145,7 +146,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
 
     // Message when Azi leaves or chance when someone else leaves
-    if ((newState.member?.id == '180881117547593728' || Math.random() < 0.99) && newState.channelId == null) {
+    if ((newState.member?.id == '180881117547593728' || Math.random() < 0.10) && newState.channelId == null) {
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
             mainChannel.send('You made Azi leave.').catch((e) => console.log(`Error sending to mainChannel: ${e}`));
         }
