@@ -29,8 +29,9 @@ player.on(AudioPlayerStatus.Playing, (): void => {
 player.on(AudioPlayerStatus.Idle, (): void => {
     player.stop();
     timeoutId = setTimeout(() => {
+        connection.destroy();
         timeoutId = null;
-    }, 900000);
+    }, 5000);
 });
 
 interface voiceConnection {
@@ -51,14 +52,6 @@ function joinVoice(voiceConnection: voiceConnection) {
     // Remove listeners on disconnect
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
         connection.receiver.speaking.removeAllListeners();
-        try {
-            await Promise.race([
-                entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
-                entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
-            ]);
-        } catch (error) {
-            connection.destroy();
-        }
     })
 }
 
@@ -144,7 +137,8 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
 
 // On channel move/mute/deafen
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
-
+    // Return if incorrect guild
+    if (oldState.guild.id !== process.env.GUILD_ID) return;
     // Message when Azi leaves or chance when someone else leaves
     if ((newState.member?.id == '180881117547593728' || Math.random() < 0.10) && newState.channelId == null) {
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
