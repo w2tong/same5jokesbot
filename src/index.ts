@@ -145,9 +145,9 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
 
     // Message when Azi leaves or chance when someone else leaves
-    if ((newState.member?.id == '180881117547593728' || Math.random() < 0.1) && newState.channelId == null) {
+    if ((newState.member?.id == '180881117547593728' || Math.random() < 0.99) && newState.channelId == null) {
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
-            mainChannel.send('You made Azi leave.');
+            mainChannel.send('You made Azi leave.').catch((e) => console.log(`Error sending to mainChannel: ${e}`));
         }
     }
 
