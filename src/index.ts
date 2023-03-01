@@ -171,7 +171,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         }
     }
     // Message when Azi leaves or chance when someone else leaves
-    if (newState.member?.id !== '837241561481347094' && (newState.member?.id == '180881117547593728' || Math.random() < 0.1) && newState.channelId == null) {
+    if ((newState.member?.id == '180881117547593728' || Math.random() < 0.1) && newState.channelId == null) {
         if (mainChannel && mainChannel instanceof TextChannel) {
             mainChannel.send('You made Azi leave.');
         }
