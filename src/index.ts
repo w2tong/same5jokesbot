@@ -1,5 +1,5 @@
 import { Client, Intents, Message, TextChannel, Interaction, GuildMember, AnyChannel } from "discord.js";
-import { VoiceConnection, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
+import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -15,9 +15,9 @@ let mainChannel: AnyChannel | undefined;
 
 const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
-let connection: VoiceConnection;
+let connection: VoiceConnection | null = null;
 
-// Disconnect after 5 min of inactivity
+// Disconnect after 15 min of inactivity
 // Reset timeout when audio playing
 player.on(AudioPlayerStatus.Playing, (): void => {
     if (timeoutId) {
@@ -29,12 +29,12 @@ player.on(AudioPlayerStatus.Playing, (): void => {
 player.on(AudioPlayerStatus.Idle, (): void => {
     player.stop();
     timeoutId = setTimeout(() => {
-        connection.disconnect();
+        destroyConnection();
         timeoutId = null;
         if (mainChannel && mainChannel instanceof TextChannel) {
             mainChannel.send('You made Azi leave.');
         }
-    }, 300000);
+    }, 900000);
 });
 
 
@@ -43,11 +43,31 @@ interface voiceConnection {
     guildId: string,
     adapterCreator: DiscordGatewayAdapterCreator
 }
-// Join voice channel and play audio
-function playAudioFile(username: string, voiceConnection: voiceConnection, audioFie: string): void {
-    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
+
+//Create voice connection
+function joinVoice(voiceConnection: voiceConnection) {
     connection = joinVoiceChannel(voiceConnection);
-    connection.subscribe(player);
+    // Add event listener on receiving voice input
+    if (connection.receiver.speaking.listenerCount('start') === 0) {
+        connection.receiver.speaking.on('start', async (userId) => {
+            // console.log(`${userId} is speaking`)
+        });
+    }
+    // Remove listeners on disconnect
+    connection.on(VoiceConnectionStatus.Disconnected, () => {
+        if (connection) connection.receiver.speaking.removeAllListeners();
+    })
+}
+
+function destroyConnection() {
+    if (connection) connection.destroy();
+    connection = null;
+}
+
+// Join voice channel and play audio
+function playAudioFile(audioFie: string, username?: string): void {
+    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
+    if (connection) connection.subscribe(player);
     const resource = createAudioResource(join(__dirname, `audio/${audioFie}.mp3`));
     player.play(resource);
 }
@@ -90,9 +110,11 @@ client.on('messageCreate', async (message: Message): Promise<void> => {
             const voiceConnection = {
                 channelId: message.member.voice.channel.id,
                 guildId: message.guild.id,
-                adapterCreator: message.guild.voiceAdapterCreator
+                adapterCreator: message.guild.voiceAdapterCreator,
+                selfDeaf: false
             }
-            playAudioFile(message.member.user.username, voiceConnection, audio);
+            joinVoice(voiceConnection);
+            playAudioFile(audio, message.member.user.username);
             break;
         }
     }
@@ -107,9 +129,11 @@ client.on('interactionCreate', async (interaction: Interaction): Promise<void> =
         const voiceConnection = {
             channelId: interaction.member.voice.channel.id,
             guildId: interaction.guild.id,
-            adapterCreator: interaction.guild.voiceAdapterCreator
+            adapterCreator: interaction.guild.voiceAdapterCreator,
+            selfDeaf: false
         }
-        playAudioFile(interaction.member.user.username, voiceConnection, interaction.options.getString('audio') ?? '')
+        joinVoice(voiceConnection);
+        playAudioFile(interaction.options.getString('audio') ?? '', interaction.member.user.username)
         const reply = interaction.member.voice ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
         await interaction.reply({ content: reply, ephemeral: true });
     }
@@ -123,14 +147,15 @@ client.on('interactionCreate', async (interaction: Interaction): Promise<void> =
 
 // On channel move/mute/deafen
 client.on('voiceStateUpdate', async (oldState, newState) => {
-    // Play teleporting fat guy when moving between channels
-    if (oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
+    // Play teleporting fat guy when moving between channels and not itself
+    if (newState.member?.id !== '837241561481347094' && oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
         const voiceConnection = {
             channelId: newState.channelId,
             guildId: newState.guild.id,
             adapterCreator: newState.guild.voiceAdapterCreator
         }
-        playAudioFile('', voiceConnection, 'teleporting_fat_guy')
+        joinVoice(voiceConnection);
+        playAudioFile('teleporting_fat_guy', oldState.member?.user.username);
     }
     // Play Good Morning Donda when joining channel in the morning
     if (newState.channelId && oldState.channelId == null) {
@@ -141,11 +166,12 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
                 guildId: newState.guild.id,
                 adapterCreator: newState.guild.voiceAdapterCreator
             }
-            playAudioFile('', voiceConnection, 'good_morning_donda');
+            joinVoice(voiceConnection);
+            playAudioFile('good_morning_donda', oldState.member?.user.username);
         }
     }
     // Message when Azi leaves or chance when someone else leaves
-    if (newState.member?.id !== '837241561481347094' && (newState.member?.id == '180881117547593728' || Math.random() < 0.1) && newState.channelId == null) {
+    if ((newState.member?.id == '180881117547593728' || Math.random() < 0.1) && newState.channelId == null) {
         if (mainChannel && mainChannel instanceof TextChannel) {
             mainChannel.send('You made Azi leave.');
         }
