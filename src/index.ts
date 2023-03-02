@@ -184,7 +184,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     // Return if incorrect guild
     if (oldState.guild.id !== process.env.GUILD_ID) return;
     // Message when Azi leaves or chance when someone else leaves
-    if ((newState.member?.id == '180881117547593728' || Math.random() < 0.10) && newState.channelId == null) {
+    if ((newState.member?.id == process.env.AZI_ID || Math.random() < 0.10) && newState.channelId == null) {
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
             mainChannel.send('You made Azi leave.').catch((e) => console.log(`Error sending to mainChannel: ${e}`));
         }
@@ -273,7 +273,7 @@ client.login(process.env.BOT_TOKEN);
 client.once(Events.ClientReady, (): void => {
     // Add emotes from server to emotes object
     getEmotes(client);
-    let channel = client.channels.cache.get('1042597804452872285');
+    let channel = client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
     if (channel && channel.type === ChannelType.GuildText) {
         mainChannel = channel;
     }
