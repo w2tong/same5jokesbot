@@ -165,6 +165,10 @@ const regexToAudio = [
     {
         regex: /bye|baj|badge/,
         getAudio: () => 'baj_baj'
+    },
+    {
+        regex: /mask/,
+        getAudio: () => 'bane_mask'
     }
 ];
 
