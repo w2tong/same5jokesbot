@@ -50,7 +50,10 @@ function joinVoice(voiceConnection: voiceConnection) {
     // Add event listener on receiving voice input
     if (connection.receiver.speaking.listenerCount('start') === 0) {
         connection.receiver.speaking.on('start', async (userId) => {
+            // Return if audio player is playing audio
             if (player.state.status === AudioPlayerStatus.Playing) return;
+            // Return if speaker is a bot
+            if (client.users.cache.get(userId)?.bot) return;
             transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
                 if (!data.transcript.text || player.state.status === AudioPlayerStatus.Playing) return;
                 let text = data.transcript.text.toLowerCase();
