@@ -169,7 +169,12 @@ const regexToAudio = [
     {
         regex: /mask/,
         getAudio: () => 'bane_mask'
-    }
+    },
+    {
+        regex: /(for|4)\s+(yo)?u/,
+        getAudio: () => 'bane_for_you'
+    },
+
 ];
 
 export default regexToAudio;
