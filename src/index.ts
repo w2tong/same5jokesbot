@@ -83,6 +83,20 @@ function joinVoice(voiceConnection: voiceConnection) {
             connection.destroy();
         }
     })
+
+    // Temp fix for Discord UDP packet issue
+    connection.on('stateChange', (oldState, newState) => {
+        const oldNetworking = Reflect.get(oldState, 'networking');
+        const newNetworking = Reflect.get(newState, 'networking');
+
+        const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
+            const newUdp = Reflect.get(newNetworkState, 'udp');
+            clearInterval(newUdp?.keepAliveInterval);
+        }
+
+        oldNetworking?.off('stateChange', networkStateChangeHandler);
+        newNetworking?.on('stateChange', networkStateChangeHandler);
+    });
 }
 
 // Join voice channel and play audio
