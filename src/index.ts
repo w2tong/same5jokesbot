@@ -1,14 +1,17 @@
-import { Client, GatewayIntentBits, Message, TextChannel, Interaction, GuildMember, ChannelType, Events } from "discord.js";
-import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator } from "@discordjs/voice";
+import { Client, GatewayIntentBits, Message, TextChannel, Interaction, GuildMember, ChannelType, Events } from 'discord.js';
+import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator, entersState } from '@discordjs/voice';
 import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import cron from 'cron';
-import moment from "moment-timezone";
+import moment from 'moment-timezone';
 import regexToText from './regex-to-text';
 import regexToAudio from './regex-to-audio';
-import regexToReact from "./regex-to-react";
+import regexToReact from './regex-to-react';
 import { getEmotes } from './emotes';
+
+// @ts-ignore
+import Transcriber from 'discord-speech-to-text';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 let mainChannel: TextChannel | undefined;
@@ -16,6 +19,7 @@ let mainChannel: TextChannel | undefined;
 const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
 let connection: VoiceConnection;
+const transcriber = new Transcriber(process.env.WITAI_KEY);
 
 // Disconnect after 15 min of inactivity
 // Reset timeout when audio playing
@@ -46,12 +50,35 @@ function joinVoice(voiceConnection: voiceConnection) {
     // Add event listener on receiving voice input
     if (connection.receiver.speaking.listenerCount('start') === 0) {
         connection.receiver.speaking.on('start', async (userId) => {
-
+            if (player.state.status === AudioPlayerStatus.Playing) return;
+            transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
+                if (!data.transcript.text || player.state.status === AudioPlayerStatus.Playing) return;
+                let text = data.transcript.text.toLowerCase();
+                let user = data.user;
+                console.log(`[${new Date().toLocaleTimeString('en-US')}] ${data.user}: ${text}`);
+                for (let regexAudio of regexToAudio) {
+                    const audio = regexAudio.getAudio();
+                    if (regexAudio.regex.test(text) && audio) {
+                        playAudioFile(audio, user);
+                        break;
+                    }
+                }
+            });
         });
     }
     // Remove listeners on disconnect
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
         connection.receiver.speaking.removeAllListeners();
+        try {
+            await Promise.race([
+                entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+                entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+            ]);
+            // Seems to be reconnecting to a new channel - ignore disconnect
+        } catch (error) {
+            // Seems to be a real disconnect which SHOULDN'T be recovered from
+            connection.destroy();
+        }
     })
 }
 
