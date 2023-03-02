@@ -161,6 +161,10 @@ const regexToAudio = [
     {
         regex: /zoomin|foreign|t(yler)?\s?(1|one)/,
         getAudio: () => 'zoomin_in_the_foreign'
+    },
+    {
+        regex: /bye|baj|badge/,
+        getAudio: () => 'baj_baj'
     }
 ];
 
