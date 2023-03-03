@@ -181,8 +181,11 @@ const regexToAudio = [
     {
         regex: /disgusting/,
         getAudio: () => 'disgustang'
+    },
+    {
+        regex: /all the|alda/,
+        getAudio: () => 'small_things'
     }
-
 ];
 
 export default regexToAudio;
