@@ -15,6 +15,7 @@ import Transcriber from 'discord-speech-to-text';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 let mainChannel: TextChannel | undefined;
+let voiceLogChannel: TextChannel | undefined;
 
 const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
@@ -56,13 +57,17 @@ function joinVoice(voiceConnection: voiceConnection) {
             if (client.users.cache.get(userId)?.bot) return;
             transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
                 if (!data.transcript.text || player.state.status === AudioPlayerStatus.Playing) return;
-                let text = data.transcript.text.toLowerCase();
-                let user = data.user;
-                console.log(`[${new Date().toLocaleTimeString('en-US')}] ${data.user}: ${text}`);
+                const text = data.transcript.text.toLowerCase();
+                const username = client.users.cache.get(userId)?.username;
+                const voiceTextLog = `[${new Date().toLocaleTimeString('en-US')}] ${username}: ${text}`
+                console.log(voiceTextLog);
+                if (voiceLogChannel && voiceLogChannel.type === ChannelType.GuildText) {
+                    voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
+                }
                 for (let regexAudio of regexToAudio) {
                     const audio = regexAudio.getAudio();
                     if (regexAudio.regex.test(text) && audio) {
-                        playAudioFile(audio, user);
+                        playAudioFile(audio, username);
                         break;
                     }
                 }
@@ -280,6 +285,10 @@ client.once(Events.ClientReady, (): void => {
     let channel = client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
     if (channel && channel.type === ChannelType.GuildText) {
         mainChannel = channel;
+    }
+    channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID ?? '');
+    if (channel && channel.type === ChannelType.GuildText) {
+        voiceLogChannel = channel;
     }
     console.log('Same5JokesBot online.');
 });
