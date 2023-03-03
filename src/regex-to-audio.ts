@@ -85,7 +85,7 @@ const regexToAudio = [
         getAudio: () => 'WAKEUP'
     },
     {
-        regex: /want/,
+        regex: /wanted to/,
         getAudio: () => 'YOUWANTEDTO'
     },
     {
