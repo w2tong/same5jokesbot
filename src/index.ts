@@ -67,7 +67,7 @@ function joinVoice(voiceConnection: voiceConnection) {
                 // Send rate limited message and return
                 if (Object.keys(data.transcript).length === 0 && isRateLimited === false) {
                     isRateLimited = true;
-                    voiceLogChannel?.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`);
+                    if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`);
                     return;
                 }
 
@@ -81,7 +81,7 @@ function joinVoice(voiceConnection: voiceConnection) {
                 // Log voice messages to console and discord channel
                 const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`
                 console.log(voiceTextLog);
-                voiceLogChannel?.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
+                if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
 
                 // Play any audio where text matches regex
                 for (let regexAudio of regexToAudio) {
