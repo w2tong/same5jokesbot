@@ -143,7 +143,7 @@ const regexToAudio = [
         }
     },
     {
-        regex: /finite|possib|\baxe\b/,
+        regex: /infinite|possib|\baxe\b/,
         getAudio: () => 'infinite_possibilities'
     },
     {
