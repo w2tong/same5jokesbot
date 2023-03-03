@@ -145,7 +145,7 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
     if (message.member && message.member.roles.cache.some(role => role.name === 'Bot Abuser')) return;
-    //
+    // Return if incorrect channel type
     if (message.channel.type !== ChannelType.GuildText) return;
 
     const command = message.content.toLowerCase();
@@ -283,22 +283,36 @@ const wordleScheduledMessage = new cron.CronJob(
 wordleScheduledMessage.start();
 
 // Weekly Tuesday WoW Reset cronjob
-const WoWResetScheduledMessage = new cron.CronJob(
-    '00 00 17 * * 2',
+// const WoWResetScheduledMessage = new cron.CronJob(
+//     '00 00 17 * * 2',
+//     (): void => {
+//         const channel = client.channels.cache.get('158049091434184705');
+//         if (channel && channel.type === ChannelType.GuildText) {
+//             channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking');
+//         }
+//         else {
+//             console.log('WoW text channel not found.');
+//         }
+//     },
+//     null,
+//     true,
+//     'America/Toronto'
+// );
+// WoWResetScheduledMessage.start();
+
+// Weekly Tuesday Div 2 / Sons of the Forest Session
+const TuesdayScheduledMessage = new cron.CronJob(
+    '00 00 21 * * 2',
     (): void => {
-        const channel = client.channels.cache.get('158049091434184705');
-        if (channel && channel.type === ChannelType.GuildText) {
-            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking');
-        }
-        else {
-            console.log('WoW text channel not found.');
+        if (mainChannel) {
+            mainChannel.send('Where Sons of the Forest/Divnity: Original Sin 2');
         }
     },
     null,
     true,
     'America/Toronto'
 );
-WoWResetScheduledMessage.start();
+TuesdayScheduledMessage.start();
 
 // Login with bot token
 client.login(process.env.BOT_TOKEN);
