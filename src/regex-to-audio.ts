@@ -202,6 +202,18 @@ const regexToAudio = [
         regex: /teleport|fat guy/,
         getAudio: () => 'teleporting_fat_guy_short'
     },
+    {
+        regex: /developers/,
+        getAudio: () => 'steve_ballmer_developers'
+    },
+    {
+        regex: /valor/,
+        getAudio: () => 'quinn_what_do_you_see_up_there'
+    },
+    {
+        regex: /let'?s go/,
+        getAudio: () => 'ryze_lets_go_lets_go'
+    }
 ];
 
 export default regexToAudio;
