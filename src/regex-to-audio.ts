@@ -73,8 +73,12 @@ const regexToAudio = [
         getAudio: () => 'obliterated'
     },
     {
-        regex: /good morning|morning|\bgm\b|donda/,
+        regex: /good morning donda/,
         getAudio: () => 'good_morning_donda'
+    },
+    {
+        regex: /good morning|morning|\bgm\b|donda/,
+        getAudio: () => 'good_morning_donda_short'
     },
     {
         regex: /(not|doesn\'t) look.*good|watch this/,
