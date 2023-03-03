@@ -65,11 +65,11 @@ const regexToAudio = [
         getAudio: () => 'NOIDONTTHINKSO'
     },
     {
-        regex: /fulcrum|come/,
+        regex: /fulcrum|come in/,
         getAudio: () => 'fulcrum_come_in'
     },
     {
-        regex: /\bl\b/,
+        regex: /\bl+\b/,
         getAudio: () => 'obliterated'
     },
     {
