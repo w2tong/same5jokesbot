@@ -101,7 +101,7 @@ const regexToAudio = [
         getAudio: () => 'they_came_from_behind'
     },
     {
-        regex: /no\s*no\s*no|not like that/,
+        regex: /no,?\s*no,?\s*no|not like that/,
         getAudio: () => 'no_no_no_not_like_that'
     },
     {
