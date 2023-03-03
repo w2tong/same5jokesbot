@@ -233,7 +233,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             adapterCreator: newState.guild.voiceAdapterCreator
         }
         joinVoice(voiceConnection);
-        playAudioFile('teleporting_fat_guy', oldState.member?.user.username);
+        playAudioFile('teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
     // Play Good Morning Donda when joining channel in the morning
