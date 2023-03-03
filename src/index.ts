@@ -135,7 +135,7 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
     }
     // Send message
     if (botMessage) {
-        message.channel.send(botMessage);
+        message.channel.send(botMessage).catch((e) => console.log(`Error sending message: ${e}`));;
     }
     // Audio replies
     for (let regexAudio of regexToAudio) {
