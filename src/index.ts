@@ -70,7 +70,7 @@ function joinVoice(voiceConnection: voiceConnection) {
         });
     }
     // Remove listeners on disconnect
-    connection.on(VoiceConnectionStatus.Disconnected, async () => {
+    connection.once(VoiceConnectionStatus.Disconnected, async () => {
         connection.receiver.speaking.removeAllListeners();
         try {
             await Promise.race([
