@@ -176,7 +176,7 @@ const regexToAudio = [
     },
     {
         regex: /get ready/,
-        getAudio: () => 'bane_for_you'
+        getAudio: () => 'get_ready_MOAB'
     },
 ];
 
