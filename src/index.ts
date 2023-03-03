@@ -117,8 +117,6 @@ function joinVoice(voiceConnection: voiceConnection) {
         connection.on('stateChange', (oldState, newState) => {
             const oldNetworking = Reflect.get(oldState, 'networking');
             const newNetworking = Reflect.get(newState, 'networking');
-            oldNetworking?.setMaxListeners(1);
-            newNetworking?.setMaxListeners(1);
 
             const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
                 const newUdp = Reflect.get(newNetworkState, 'udp');
