@@ -93,7 +93,7 @@ const regexToAudio = [
         getAudio: () => 'fugetaboutit'
     },
     {
-        regex: /blind|deaf/,
+        regex: /blind|deaf|can'?t see/,
         getAudio: () => 'im_blind_not_deaf'
     },
     {
