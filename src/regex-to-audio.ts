@@ -61,7 +61,7 @@ const regexToAudio = [
         getAudio: () => getShutUp()
     },
     {
-        regex: /^\bno\b$|noidontthinkso/,
+        regex: /i don'?t think so/,
         getAudio: () => 'NOIDONTTHINKSO'
     },
     {
@@ -174,7 +174,10 @@ const regexToAudio = [
         regex: /(for|4)\s+(yo)?u/,
         getAudio: () => 'bane_for_you'
     },
-
+    {
+        regex: /get ready/,
+        getAudio: () => 'bane_for_you'
+    },
 ];
 
 export default regexToAudio;
