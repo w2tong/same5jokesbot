@@ -69,11 +69,11 @@ const regexToAudio = [
         getAudio: () => 'fulcrum_come_in'
     },
     {
-        regex: /\bl+\b/,
+        regex: /\bl+\b|obliterated|need i say more/,
         getAudio: () => 'obliterated'
     },
     {
-        regex: /good morning|morning|gm|donda/,
+        regex: /good morning|morning|\bgm\b|donda/,
         getAudio: () => 'good_morning_donda'
     },
     {
@@ -185,6 +185,10 @@ const regexToAudio = [
     {
         regex: /all the|alda/,
         getAudio: () => 'small_things'
+    },
+    {
+        regex: /uh guys/,
+        getAudio: () => 'uh_guys'
     }
 ];
 
