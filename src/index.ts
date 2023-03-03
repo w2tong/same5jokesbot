@@ -70,33 +70,37 @@ function joinVoice(voiceConnection: voiceConnection) {
         });
     }
     // Remove listeners on disconnect
-    connection.once(VoiceConnectionStatus.Disconnected, async () => {
-        connection.receiver.speaking.removeAllListeners();
-        try {
-            await Promise.race([
-                entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
-                entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
-            ]);
-            // Seems to be reconnecting to a new channel - ignore disconnect
-        } catch (error) {
-            // Seems to be a real disconnect which SHOULDN'T be recovered from
-            connection.destroy();
-        }
-    })
+    if (connection.listenerCount(VoiceConnectionStatus.Disconnected) === 0) {
+        connection.on(VoiceConnectionStatus.Disconnected, async () => {
+            connection.receiver.speaking.removeAllListeners();
+            try {
+                await Promise.race([
+                    entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+                    entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+                ]);
+                // Seems to be reconnecting to a new channel - ignore disconnect
+            } catch (error) {
+                // Seems to be a real disconnect which SHOULDN'T be recovered from
+                connection.destroy();
+            }
+        })
+    }
 
     // Temp fix for Discord UDP packet issue
-    connection.on('stateChange', (oldState, newState) => {
-        const oldNetworking = Reflect.get(oldState, 'networking');
-        const newNetworking = Reflect.get(newState, 'networking');
+    if (connection.listenerCount('stateChange') === 0) {
+        connection.on('stateChange', (oldState, newState) => {
+            const oldNetworking = Reflect.get(oldState, 'networking');
+            const newNetworking = Reflect.get(newState, 'networking');
 
-        const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
-            const newUdp = Reflect.get(newNetworkState, 'udp');
-            clearInterval(newUdp?.keepAliveInterval);
-        }
+            const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
+                const newUdp = Reflect.get(newNetworkState, 'udp');
+                clearInterval(newUdp?.keepAliveInterval);
+            }
 
-        oldNetworking?.off('stateChange', networkStateChangeHandler);
-        newNetworking?.on('stateChange', networkStateChangeHandler);
-    });
+            oldNetworking?.off('stateChange', networkStateChangeHandler);
+            newNetworking?.on('stateChange', networkStateChangeHandler);
+        });
+    }
 }
 
 // Join voice channel and play audio
