@@ -213,6 +213,14 @@ const regexToAudio = [
     {
         regex: /let'?s go/,
         getAudio: () => 'ryze_lets_go_lets_go'
+    },
+    {
+        regex: /obamn?a/,
+        getAudio: () => 'obamna'
+    },
+    {
+        regex: /((ya|yeah),?\s*){3}/,
+        getAudio: () => 'i_am_lorde'
     }
 ];
 
