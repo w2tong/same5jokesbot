@@ -1,7 +1,7 @@
 import moment from "moment-timezone";
 import { getRandomRange } from './util'
 
-const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13',]
+const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13']
 function getCongratulations(): string {
     return congratulations[getRandomRange(congratulations.length)];
 }
