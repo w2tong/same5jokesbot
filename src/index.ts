@@ -56,25 +56,24 @@ function joinVoice(voiceConnection: voiceConnection) {
         connection.receiver.speaking.on('start', async (userId) => {
             // Return if audio player is playing audio
             if (player.state.status === AudioPlayerStatus.Playing) return;
-
             // Return if speaker is a bot
             if (client.users.cache.get(userId)?.bot) return;
             transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
 
                 // Return if rate limited
-                if (isRateLimited) return;
 
                 // Send rate limited message and return
-                if (Object.keys(data.transcript).length === 0 && isRateLimited === false) {
-                    isRateLimited = true;
-                    if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`);
+                if (Object.keys(data.transcript).length === 0) {
+                    if (isRateLimited === false) {
+                        isRateLimited = true;
+                        if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`);
+                    }
                     return;
                 }
-
                 // Process text
                 isRateLimited = false;
                 // Return if no text
-                if (!data.transcript.text || player.state.status === AudioPlayerStatus.Playing) return;
+                if (!data.transcript.text) return;
                 const text = data.transcript.text.toLowerCase();
                 const username = client.users.cache.get(userId)?.username;
 
