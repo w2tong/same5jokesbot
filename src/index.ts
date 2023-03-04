@@ -58,8 +58,6 @@ function joinVoice(voiceConnection: voiceConnection) {
             if (client.users.cache.get(userId)?.bot) return;
             transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
 
-                // Return if rate limited
-
                 // Send rate limited message and return
                 if (Object.keys(data.transcript).length === 0) {
                     if (isRateLimited === false) {
@@ -79,6 +77,9 @@ function joinVoice(voiceConnection: voiceConnection) {
                 const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`
                 console.log(voiceTextLog);
                 if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
+
+                // Stop if audio is already playing
+                if (player.state.status === AudioPlayerStatus.Playing) return;
 
                 // Play any audio where text matches regex
                 for (let regexAudio of regexToAudio) {
