@@ -23,14 +23,14 @@ const transcriber = new Transcriber(process.env.WITAI_KEY);
 
 // Disconnect after 15 min of inactivity
 // Reset timeout when audio playing
-player.on(AudioPlayerStatus.Playing, async (): Promise<void> => {
+player.on(AudioPlayerStatus.Playing, (): void => {
     if (timeoutId) {
         clearTimeout(timeoutId);
         timeoutId = null;
     }
 });
 // Start timeout timer when idle
-player.on(AudioPlayerStatus.Idle, async (): Promise<void> => {
+player.on(AudioPlayerStatus.Idle, (): void => {
     player.stop();
     timeoutId = setTimeout(() => {
         connection.destroy();
