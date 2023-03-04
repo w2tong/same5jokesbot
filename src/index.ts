@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits, Message, TextChannel, Interaction, GuildMember, ChannelType, Events } from 'discord.js';
-import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator, entersState } from '@discordjs/voice';
+import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, AudioPlayer } from '@discordjs/voice';
 import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -16,27 +16,8 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 let mainChannel: TextChannel | undefined;
 let voiceLogChannel: TextChannel | undefined;
 
-const player = createAudioPlayer();
 let timeoutId: NodeJS.Timer | null = null;
-let connection: VoiceConnection;
 const transcriber = new Transcriber(process.env.WITAI_KEY);
-
-// Disconnect after 15 min of inactivity
-// Reset timeout when audio playing
-player.on(AudioPlayerStatus.Playing, (): void => {
-    if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-    }
-});
-// Start timeout timer when idle
-player.on(AudioPlayerStatus.Idle, (): void => {
-    player.stop();
-    timeoutId = setTimeout(() => {
-        connection.destroy();
-        timeoutId = null;
-    }, 900000);
-});
 
 interface voiceConnection {
     channelId: string,
@@ -45,16 +26,16 @@ interface voiceConnection {
     selfDeaf: boolean
 }
 
-let isRateLimited = false;
-//Create voice connection and add event listeners
-function joinVoice(voiceConnection: voiceConnection) {
-    connection = joinVoiceChannel(voiceConnection);
-    connection.setMaxListeners(2);
+// Creates VoiceConnection and add event listeners
+function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer): VoiceConnection {
+    const connection = joinVoiceChannel(voiceConnection);
+    connection.setMaxListeners(1);
     connection.receiver.speaking.setMaxListeners(1);
 
     // Add event listener on receiving voice input
     if (connection.receiver.speaking.listenerCount('start') === 0) {
         connection.receiver.speaking.on('start', async (userId) => {
+            console.log(`${userId} is speaking.`)
             // Return if speaker is a bot
             if (client.users.cache.get(userId)?.bot) return;
             transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
@@ -92,33 +73,42 @@ function joinVoice(voiceConnection: voiceConnection) {
                 for (let regexAudio of regexToAudio) {
                     const audio = regexAudio.getAudio();
                     if (regexAudio.regex.test(text) && audio) {
-                        playAudioFile(audio, username);
+                        playAudioFile(connection, player, audio, username);
                         break;
                     }
                 }
             });
         });
     }
+    console.log('speaking listeners: ' + connection.receiver.speaking.listenerCount('start'));
 
     // Remove listeners on disconnect
+    console.log('[VoiceConnection]: ' + connection.listenerCount('error'), connection.listenerCount('signalling'))
     if (connection.listenerCount(VoiceConnectionStatus.Disconnected) === 0) {
         connection.on(VoiceConnectionStatus.Disconnected, async () => {
-            connection.receiver.speaking.removeAllListeners();
             try {
                 await Promise.race([
                     entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
                     entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
                 ]);
                 // Seems to be reconnecting to a new channel - ignore disconnect
-            } catch (error) {
+            }
+            catch (e) {
                 if (timeoutId) {
                     clearTimeout(timeoutId);
                     timeoutId = null;
                 }
                 // Seems to be a real disconnect which SHOULDN'T be recovered from
-                connection.destroy();
+                try {
+                    player.stop();
+                    connection.destroy();
+                }
+                catch (e) {
+                    console.log(e)
+                }
             }
         })
+
     }
 
     // Temp fix for Discord UDP packet issue
@@ -136,13 +126,54 @@ function joinVoice(voiceConnection: voiceConnection) {
             newNetworking?.on('stateChange', networkStateChangeHandler);
         });
     }
+
+    return connection;
 }
 
+// Creates AudioPlayer and add event listeners
+function createPlayer(): AudioPlayer {
+    const player = createAudioPlayer();
+    // Disconnect after 15 min of inactivity
+    // Reset timeout when audio playing
+    player.on(AudioPlayerStatus.Playing, (): void => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
+    });
+    // Start timeout timer when idle
+    player.on(AudioPlayerStatus.Idle, (): void => {
+        timeoutId = setTimeout(() => {
+            const connection = getVoiceConnection(process.env.GUILD_ID ?? '')
+            try {
+                player.stop();
+                connection?.destroy();
+            }
+            catch (e) {
+                console.log(e)
+            }
+            timeoutId = null;
+        }, 900000);
+    });
+
+    return player;
+}
+
+let isRateLimited = false;
 // Join voice channel and play audio
-function playAudioFile(audioFie: string, username?: string): void {
-    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
-    if (connection) connection.subscribe(player);
-    const resource = createAudioResource(join(__dirname, `audio/${audioFie}.mp3`));
+//Create voice connection and add event listeners
+async function createVoiceConnectionAndAudioPlayer(voiceConnection: voiceConnection) {
+    const player = createPlayer();
+    const connection = createVoiceConnection(voiceConnection, player);
+    console.log('player: ' + player.listenerCount(AudioPlayerStatus.Playing), player.listenerCount(AudioPlayerStatus.Idle));
+    return { connection, player };
+}
+
+async function playAudioFile(connection: VoiceConnection, player: AudioPlayer, audioFile: string, username?: string): Promise<void> {
+    connection.subscribe(player);
+    console.log(player);
+    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFile}`);
+    const resource = createAudioResource(join(__dirname, `audio/${audioFile}.mp3`));
     player.play(resource);
 }
 
@@ -186,8 +217,8 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
                 adapterCreator: message.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            joinVoice(voiceConnection);
-            playAudioFile(audio, message.member.user.username);
+            const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+            await playAudioFile(connection, player, audio, message.member.user.username);
             break;
         }
     }
@@ -205,25 +236,28 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
             adapterCreator: interaction.guild.voiceAdapterCreator,
             selfDeaf: false
         }
-        joinVoice(voiceConnection);
-        playAudioFile(interaction.options.getString('audio') ?? '', interaction.member.user.username)
-        const reply = interaction.member.voice ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
-        await interaction.reply({ content: reply, ephemeral: true });
+        const audioFile = interaction.options.getString('audio') ?? ''
+        const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
+        interaction.reply({ content: reply, ephemeral: true });
+        const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+        await playAudioFile(connection, player, audioFile, interaction.member.user.username)
     }
     // Reply with a number between 1 and 100 (or min and max)
     else if (commandName === 'roll') {
         const min = interaction.options.getInteger('min') ?? 1;
         const max = interaction.options.getInteger('max') ?? 100;
-        await interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
+        interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
     }
 });
 
 // On channel move/mute/deafen
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
-    // Return if incorrect guild
-    if (oldState.guild.id !== process.env.GUILD_ID) return;
+
+    // Return if user is a bot
+    if (oldState.member?.user.bot) return;
+
     // Message when Azi leaves or chance when someone else leaves
-    if ((newState.member?.id == process.env.AZI_ID || Math.random() < 0.10) && newState.channelId == null) {
+    if ((newState.member?.id == process.env.AZI_ID || Math.random() < 0.10) && newState.channelId == null && oldState.guild.id === process.env.GUILD_ID) {
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
             mainChannel.send('You made Azi leave.').catch((e) => console.log(`Error sending to mainChannel: ${e}`));
         }
@@ -240,8 +274,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             adapterCreator: newState.guild.voiceAdapterCreator,
             selfDeaf: false
         }
-        joinVoice(voiceConnection);
-        playAudioFile('teleporting_fat_guy_short', oldState.member?.user.username);
+        const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+        await playAudioFile(connection, player, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
     // Play Good Morning Donda when joining channel in the morning
@@ -254,8 +288,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
                 adapterCreator: newState.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            joinVoice(voiceConnection);
-            playAudioFile('good_morning_donda', oldState.member?.user.username);
+            const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+            await playAudioFile(connection, player, 'good_morning_donda', oldState.member?.user.username);
         }
     }
 });
