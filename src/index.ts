@@ -4,12 +4,11 @@ import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import cron from 'cron';
-import moment from 'moment-timezone';
 import regexToText from './regex-to-text';
 import regexToAudio from './regex-to-audio';
 import regexToReact from './regex-to-react';
 import { getEmotes } from './emotes';
-
+import { getMomentCurrentTimeEST } from './util'
 // @ts-ignore
 import Transcriber from 'discord-speech-to-text';
 
@@ -45,9 +44,13 @@ interface voiceConnection {
     adapterCreator: DiscordGatewayAdapterCreator
 }
 
-//Create voice connection
+let isRateLimited = false;
+//Create voice connection and add event listeners
 function joinVoice(voiceConnection: voiceConnection) {
     connection = joinVoiceChannel(voiceConnection);
+    connection.setMaxListeners(2);
+    connection.receiver.speaking.setMaxListeners(1);
+
     // Add event listener on receiving voice input
     if (connection.receiver.speaking.listenerCount('start') === 0) {
         connection.receiver.speaking.on('start', async (userId) => {
@@ -56,14 +59,30 @@ function joinVoice(voiceConnection: voiceConnection) {
             // Return if speaker is a bot
             if (client.users.cache.get(userId)?.bot) return;
             transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
-                if (!data.transcript.text || player.state.status === AudioPlayerStatus.Playing) return;
+
+                // Return if rate limited
+
+                // Send rate limited message and return
+                if (Object.keys(data.transcript).length === 0) {
+                    if (isRateLimited === false) {
+                        isRateLimited = true;
+                        if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`);
+                    }
+                    return;
+                }
+                // Process text
+                isRateLimited = false;
+                // Return if no text
+                if (!data.transcript.text) return;
                 const text = data.transcript.text.toLowerCase();
                 const username = client.users.cache.get(userId)?.username;
-                const voiceTextLog = `[${new Date().toLocaleTimeString('en-US')}] ${username}: ${text}`
+
+                // Log voice messages to console and discord channel
+                const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`
                 console.log(voiceTextLog);
-                if (voiceLogChannel && voiceLogChannel.type === ChannelType.GuildText) {
-                    voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
-                }
+                if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
+
+                // Play any audio where text matches regex
                 for (let regexAudio of regexToAudio) {
                     const audio = regexAudio.getAudio();
                     if (regexAudio.regex.test(text) && audio) {
@@ -74,6 +93,7 @@ function joinVoice(voiceConnection: voiceConnection) {
             });
         });
     }
+
     // Remove listeners on disconnect
     if (connection.listenerCount(VoiceConnectionStatus.Disconnected) === 0) {
         connection.on(VoiceConnectionStatus.Disconnected, async () => {
@@ -96,8 +116,6 @@ function joinVoice(voiceConnection: voiceConnection) {
         connection.on('stateChange', (oldState, newState) => {
             const oldNetworking = Reflect.get(oldState, 'networking');
             const newNetworking = Reflect.get(newState, 'networking');
-            oldNetworking?.setMaxListeners(1);
-            newNetworking?.setMaxListeners(1);
 
             const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
                 const newUdp = Reflect.get(newNetworkState, 'udp');
@@ -124,7 +142,7 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
     if (message.member && message.member.roles.cache.some(role => role.name === 'Bot Abuser')) return;
-    //
+    // Return if incorrect channel type
     if (message.channel.type !== ChannelType.GuildText) return;
 
     const command = message.content.toLowerCase();
@@ -212,12 +230,12 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             adapterCreator: newState.guild.voiceAdapterCreator
         }
         joinVoice(voiceConnection);
-        playAudioFile('teleporting_fat_guy', oldState.member?.user.username);
+        playAudioFile('teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
     // Play Good Morning Donda when joining channel in the morning
     if (newState.channelId && oldState.channelId == null) {
-        const hour = moment().utc().tz('America/Toronto').hour();
+        const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
         if (hour >= 4 && hour < 12) {
             const voiceConnection = {
                 channelId: newState.channelId,
@@ -262,35 +280,55 @@ const wordleScheduledMessage = new cron.CronJob(
 wordleScheduledMessage.start();
 
 // Weekly Tuesday WoW Reset cronjob
-const WoWResetScheduledMessage = new cron.CronJob(
-    '00 00 17 * * 2',
+// const WoWResetScheduledMessage = new cron.CronJob(
+//     '00 00 17 * * 2',
+//     (): void => {
+//         const channel = client.channels.cache.get('158049091434184705');
+//         if (channel && channel.type === ChannelType.GuildText) {
+//             channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking');
+//         }
+//         else {
+//             console.log('WoW text channel not found.');
+//         }
+//     },
+//     null,
+//     true,
+//     'America/Toronto'
+// );
+// WoWResetScheduledMessage.start();
+
+// Weekly Tuesday Div 2 / Sons of the Forest Session
+const TuesdayScheduledMessage = new cron.CronJob(
+    '00 00 21 * * 2',
     (): void => {
-        const channel = client.channels.cache.get('158049091434184705');
-        if (channel && channel.type === ChannelType.GuildText) {
-            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking');
-        }
-        else {
-            console.log('WoW text channel not found.');
+        if (mainChannel) {
+            mainChannel.send('Where Sons of the Forest/Divnity: Original Sin 2');
         }
     },
     null,
     true,
     'America/Toronto'
 );
-WoWResetScheduledMessage.start();
+TuesdayScheduledMessage.start();
 
 // Login with bot token
 client.login(process.env.BOT_TOKEN);
 client.once(Events.ClientReady, (): void => {
+
     // Add emotes from server to emotes object
     getEmotes(client);
+
+    // Get main channel
     let channel = client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
-    if (channel && channel.type === ChannelType.GuildText) {
+    if (channel?.type === ChannelType.GuildText) {
         mainChannel = channel;
     }
+
+    // Get voice log channel
     channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID ?? '');
-    if (channel && channel.type === ChannelType.GuildText) {
+    if (channel?.type === ChannelType.GuildText) {
         voiceLogChannel = channel;
     }
+
     console.log('Same5JokesBot online.');
 });
