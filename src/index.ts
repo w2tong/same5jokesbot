@@ -35,7 +35,6 @@ function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPl
     // Add event listener on receiving voice input
     if (connection.receiver.speaking.listenerCount('start') === 0) {
         connection.receiver.speaking.on('start', async (userId) => {
-            console.log(`${userId} is speaking.`)
             // Return if speaker is a bot
             if (client.users.cache.get(userId)?.bot) return;
             transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
@@ -80,10 +79,8 @@ function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPl
             });
         });
     }
-    console.log('speaking listeners: ' + connection.receiver.speaking.listenerCount('start'));
 
     // Remove listeners on disconnect
-    console.log('[VoiceConnection]: ' + connection.listenerCount('error'), connection.listenerCount('signalling'))
     if (connection.listenerCount(VoiceConnectionStatus.Disconnected) === 0) {
         connection.on(VoiceConnectionStatus.Disconnected, async () => {
             try {
@@ -165,13 +162,11 @@ let isRateLimited = false;
 async function createVoiceConnectionAndAudioPlayer(voiceConnection: voiceConnection) {
     const player = createPlayer();
     const connection = createVoiceConnection(voiceConnection, player);
-    console.log('player: ' + player.listenerCount(AudioPlayerStatus.Playing), player.listenerCount(AudioPlayerStatus.Idle));
     return { connection, player };
 }
 
 async function playAudioFile(connection: VoiceConnection, player: AudioPlayer, audioFile: string, username?: string): Promise<void> {
     connection.subscribe(player);
-    console.log(player);
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFile}`);
     const resource = createAudioResource(join(__dirname, `audio/${audioFile}.mp3`));
     player.play(resource);
