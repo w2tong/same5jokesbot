@@ -221,6 +221,10 @@ const regexToAudio = [
     {
         regex: /((ya|yeah),?\s*){3}/,
         getAudio: () => 'i_am_lorde'
+    },
+    {
+        regex: /oh?,?\s*((g|j)eez|cheese)/,
+        getAudio: () => 'oh_geez'
     }
 ];
 
