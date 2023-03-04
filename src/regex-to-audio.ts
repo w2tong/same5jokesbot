@@ -121,11 +121,11 @@ const regexToAudio = [
         getAudio: () => getCongratulations()
     },
     {
-        regex: /([0-9]+|one|two|three|four|five|six|seven|eight|nine)\s*(pc|piece|set)/,
+        regex: /([0-9]+|one|two|three|four|five|six|seven|eight|nine|for)\s*(pc|piece|set|peace)/,
         getAudio: () => 'the_one_piece_is_real'
     },
     {
-        regex: /michael|hbd|b(irth)?day/,
+        regex: /hbd|b(irth)?day/,
         getAudio: () => 'michael_its_your_bd_today'
     },
     {
@@ -147,7 +147,7 @@ const regexToAudio = [
         getAudio: () => 'infinite_possibilities'
     },
     {
-        regex: /small.*cat|feral/,
+        regex: /small.*cat|feral|meow/,
         getAudio: () => 'small_cat'
     },
     {
