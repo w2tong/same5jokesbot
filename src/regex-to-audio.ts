@@ -69,7 +69,7 @@ const regexToAudio = [
         getAudio: () => 'fulcrum_come_in'
     },
     {
-        regex: /\bl+\b|obliterated|need i say more/,
+        regex: /obliterated|need i say more/,
         getAudio: () => 'obliterated'
     },
     {
