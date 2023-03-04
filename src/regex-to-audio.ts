@@ -225,6 +225,10 @@ const regexToAudio = [
     {
         regex: /oh?,?\s*((g|j)eez|cheese)/,
         getAudio: () => 'oh_geez'
+    },
+    {
+        regex: /wrap|finger/,
+        getAudio: () => 'wrapped_around_your_finger'
     }
 ];
 
