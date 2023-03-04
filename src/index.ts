@@ -23,14 +23,14 @@ const transcriber = new Transcriber(process.env.WITAI_KEY);
 
 // Disconnect after 15 min of inactivity
 // Reset timeout when audio playing
-player.on(AudioPlayerStatus.Playing, (): void => {
+player.on(AudioPlayerStatus.Playing, async (): Promise<void> => {
     if (timeoutId) {
         clearTimeout(timeoutId);
         timeoutId = null;
     }
 });
 // Start timeout timer when idle
-player.on(AudioPlayerStatus.Idle, (): void => {
+player.on(AudioPlayerStatus.Idle, async (): Promise<void> => {
     player.stop();
     timeoutId = setTimeout(() => {
         connection.destroy();
@@ -47,7 +47,7 @@ interface voiceConnection {
 
 let isRateLimited = false;
 //Create voice connection and add event listeners
-function joinVoice(voiceConnection: voiceConnection) {
+async function joinVoice(voiceConnection: voiceConnection) {
     connection = joinVoiceChannel(voiceConnection);
     connection.setMaxListeners(2);
     connection.receiver.speaking.setMaxListeners(1);
@@ -139,7 +139,7 @@ function joinVoice(voiceConnection: voiceConnection) {
 }
 
 // Join voice channel and play audio
-function playAudioFile(audioFie: string, username?: string): void {
+async function playAudioFile(audioFie: string, username?: string): Promise<void> {
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFie}`);
     if (connection) connection.subscribe(player);
     const resource = createAudioResource(join(__dirname, `audio/${audioFie}.mp3`));
@@ -186,8 +186,8 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
                 adapterCreator: message.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            joinVoice(voiceConnection);
-            playAudioFile(audio, message.member.user.username);
+            await joinVoice(voiceConnection);
+            await playAudioFile(audio, message.member.user.username);
             break;
         }
     }
@@ -205,16 +205,17 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
             adapterCreator: interaction.guild.voiceAdapterCreator,
             selfDeaf: false
         }
-        joinVoice(voiceConnection);
-        playAudioFile(interaction.options.getString('audio') ?? '', interaction.member.user.username)
-        const reply = interaction.member.voice ? `Playing ${interaction.options.getString('audio')}.` : 'You are not in a voice channel.';
-        await interaction.reply({ content: reply, ephemeral: true });
+        const audioFile = interaction.options.getString('audio') ?? ''
+        const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
+        interaction.reply({ content: reply, ephemeral: true });
+        await joinVoice(voiceConnection);
+        await playAudioFile(audioFile, interaction.member.user.username)
     }
     // Reply with a number between 1 and 100 (or min and max)
     else if (commandName === 'roll') {
         const min = interaction.options.getInteger('min') ?? 1;
         const max = interaction.options.getInteger('max') ?? 100;
-        await interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
+        interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
     }
 });
 
@@ -245,8 +246,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             adapterCreator: newState.guild.voiceAdapterCreator,
             selfDeaf: false
         }
-        joinVoice(voiceConnection);
-        playAudioFile('teleporting_fat_guy_short', oldState.member?.user.username);
+        await joinVoice(voiceConnection);
+        await playAudioFile('teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
     // Play Good Morning Donda when joining channel in the morning
@@ -259,8 +260,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
                 adapterCreator: newState.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            joinVoice(voiceConnection);
-            playAudioFile('good_morning_donda', oldState.member?.user.username);
+            await joinVoice(voiceConnection);
+            await playAudioFile('good_morning_donda', oldState.member?.user.username);
         }
     }
 });
