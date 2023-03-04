@@ -41,7 +41,8 @@ player.on(AudioPlayerStatus.Idle, (): void => {
 interface voiceConnection {
     channelId: string,
     guildId: string,
-    adapterCreator: DiscordGatewayAdapterCreator
+    adapterCreator: DiscordGatewayAdapterCreator,
+    selfDeaf: boolean
 }
 
 let isRateLimited = false;
@@ -78,7 +79,13 @@ function joinVoice(voiceConnection: voiceConnection) {
                 console.log(voiceTextLog);
                 if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
 
-                // Stop if audio is already playing
+                // Stop audio voice command
+                if (/hey bot stop/.test(text)) {
+                    player.stop();
+                    return;
+                }
+
+                // Return if audio is already playing
                 if (player.state.status === AudioPlayerStatus.Playing) return;
 
                 // Play any audio where text matches regex
@@ -104,6 +111,10 @@ function joinVoice(voiceConnection: voiceConnection) {
                 ]);
                 // Seems to be reconnecting to a new channel - ignore disconnect
             } catch (error) {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                }
                 // Seems to be a real disconnect which SHOULDN'T be recovered from
                 connection.destroy();
             }
@@ -226,7 +237,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
         const voiceConnection = {
             channelId: newState.channelId,
             guildId: newState.guild.id,
-            adapterCreator: newState.guild.voiceAdapterCreator
+            adapterCreator: newState.guild.voiceAdapterCreator,
+            selfDeaf: false
         }
         joinVoice(voiceConnection);
         playAudioFile('teleporting_fat_guy_short', oldState.member?.user.username);
@@ -239,7 +251,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             const voiceConnection = {
                 channelId: newState.channelId,
                 guildId: newState.guild.id,
-                adapterCreator: newState.guild.voiceAdapterCreator
+                adapterCreator: newState.guild.voiceAdapterCreator,
+                selfDeaf: false
             }
             joinVoice(voiceConnection);
             playAudioFile('good_morning_donda', oldState.member?.user.username);
