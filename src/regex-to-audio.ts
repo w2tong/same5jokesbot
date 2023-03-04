@@ -69,12 +69,16 @@ const regexToAudio = [
         getAudio: () => 'fulcrum_come_in'
     },
     {
-        regex: /\bl+\b|obliterated|need i say more/,
+        regex: /obliterated|need i say more/,
         getAudio: () => 'obliterated'
     },
     {
-        regex: /good morning|morning|\bgm\b|donda/,
+        regex: /good morning donda/,
         getAudio: () => 'good_morning_donda'
+    },
+    {
+        regex: /good morning|morning|\bgm\b|donda/,
+        getAudio: () => 'good_morning_donda_short'
     },
     {
         regex: /(not|doesn\'t) look.*good|watch this/,
@@ -117,11 +121,11 @@ const regexToAudio = [
         getAudio: () => getCongratulations()
     },
     {
-        regex: /([0-9]+|one|two|three|four|five|six|seven|eight|nine)\s*(pc|piece|set)/,
+        regex: /([0-9]+|one|two|three|four|five|six|seven|eight|nine|for)\s*(pc|piece|set|peace)/,
         getAudio: () => 'the_one_piece_is_real'
     },
     {
-        regex: /michael|hbd|b(irth)?day/,
+        regex: /hbd|b(irth)?day/,
         getAudio: () => 'michael_its_your_bd_today'
     },
     {
@@ -139,11 +143,11 @@ const regexToAudio = [
         }
     },
     {
-        regex: /finite|possib|axe/,
+        regex: /infinite|possib|\baxe\b/,
         getAudio: () => 'infinite_possibilities'
     },
     {
-        regex: /small.*cat|feral/,
+        regex: /small.*cat|feral|meow/,
         getAudio: () => 'small_cat'
     },
     {
@@ -189,6 +193,42 @@ const regexToAudio = [
     {
         regex: /uh guys/,
         getAudio: () => 'uh_guys'
+    },
+    {
+        regex: /teleporting fat guy/,
+        getAudio: () => 'teleporting_fat_guy'
+    },
+    {
+        regex: /teleport|fat guy/,
+        getAudio: () => 'teleporting_fat_guy_short'
+    },
+    {
+        regex: /developers/,
+        getAudio: () => 'steve_ballmer_developers'
+    },
+    {
+        regex: /valor/,
+        getAudio: () => 'quinn_what_do_you_see_up_there'
+    },
+    {
+        regex: /let'?s go/,
+        getAudio: () => 'ryze_lets_go_lets_go'
+    },
+    {
+        regex: /obamn?a/,
+        getAudio: () => 'obamna'
+    },
+    {
+        regex: /((ya|yeah),?\s*){3}/,
+        getAudio: () => 'i_am_lorde'
+    },
+    {
+        regex: /oh?,?\s*((g|j)eez|cheese)/,
+        getAudio: () => 'oh_geez'
+    },
+    {
+        regex: /wrap|finger/,
+        getAudio: () => 'wrapped_around_your_finger'
     }
 ];
 
