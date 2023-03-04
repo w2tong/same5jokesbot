@@ -117,7 +117,7 @@ const regexToAudio = [
         getAudio: () => 'GOLDEN_LEGENDARY'
     },
     {
-        regex: /grats|congratulations|gz/,
+        regex: /grats|congratulations|\bgz\b/,
         getAudio: () => getCongratulations()
     },
     {
