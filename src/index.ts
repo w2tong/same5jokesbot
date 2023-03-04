@@ -253,14 +253,11 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
 // On channel move/mute/deafen
 client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
 
-    // Return if incorrect guild
-    if (oldState.guild.id !== process.env.GUILD_ID) return;
-
     // Return if user is a bot
     if (oldState.member?.user.bot) return;
 
     // Message when Azi leaves or chance when someone else leaves
-    if ((newState.member?.id == process.env.AZI_ID || Math.random() < 0.10) && newState.channelId == null) {
+    if ((newState.member?.id == process.env.AZI_ID || Math.random() < 0.10) && newState.channelId == null && oldState.guild.id === process.env.GUILD_ID) {
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
             mainChannel.send('You made Azi leave.').catch((e) => console.log(`Error sending to mainChannel: ${e}`));
         }
