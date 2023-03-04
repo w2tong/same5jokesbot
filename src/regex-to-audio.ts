@@ -73,7 +73,7 @@ const regexToAudio = [
         getAudio: () => 'obliterated'
     },
     {
-        regex: /good morning donda/,
+        regex: /good morning,? donda/,
         getAudio: () => 'good_morning_donda'
     },
     {
