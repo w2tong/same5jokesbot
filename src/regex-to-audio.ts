@@ -11,6 +11,11 @@ function getShutUp(): string {
     return shutUp[getRandomRange(shutUp.length)];
 }
 
+const letsGo = ['ryze_lets_go_lets_go', 'dababy_lets_go'];
+function getLetsGo(): string {
+    return letsGo[getRandomRange(letsGo.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -212,7 +217,7 @@ const regexToAudio = [
     },
     {
         regex: /let'?s go/,
-        getAudio: () => 'ryze_lets_go_lets_go'
+        getAudio: () => getLetsGo()
     },
     {
         regex: /obamn?a/,
