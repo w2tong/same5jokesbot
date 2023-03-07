@@ -254,6 +254,10 @@ const regexToAudio = [
     {
         regex: /library|be (quiet|silent)/,
         getAudio: () => 'this_is_library'
+    },
+    {
+        regex: /hiding/,
+        getAudio: () => 'twitch_i_was_hiding'
     }
 ];
 
