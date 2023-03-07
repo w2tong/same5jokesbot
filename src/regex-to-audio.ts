@@ -229,6 +229,10 @@ const regexToAudio = [
     {
         regex: /wrap|finger/,
         getAudio: () => 'wrapped_around_your_finger'
+    },
+    {
+        regex: /manwa|manga|anime|v.*tuber|get a life/,
+        getAudio: () => 'dr_disrespect_get_a_life'
     }
 ];
 
