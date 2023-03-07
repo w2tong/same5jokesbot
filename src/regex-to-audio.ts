@@ -246,6 +246,10 @@ const regexToAudio = [
     {
         regex: /giga/,
         getAudio: () => 'gigachad'
+    },
+    {
+        regex: /jinx/,
+        getAudio: () => 'jinx'
     }
 ];
 
