@@ -250,6 +250,10 @@ const regexToAudio = [
     {
         regex: /jinx/,
         getAudio: () => 'jinx'
+    },
+    {
+        regex: /library|be (quiet|silent)/,
+        getAudio: () => 'this_is_library'
     }
 ];
 
