@@ -258,6 +258,10 @@ const regexToAudio = [
     {
         regex: /hiding/,
         getAudio: () => 'twitch_i_was_hiding'
+    },
+    {
+        regex: /short/,
+        getAudio: () => 'veigar_short_joke'
     }
 ];
 
