@@ -231,7 +231,7 @@ const regexToAudio = [
         getAudio: () => 'wrapped_around_your_finger'
     },
     {
-        regex: /manwa|manga|anime|v.*tuber|get a life/,
+        regex: /manwa|manua|manga|anime|v.*tuber|get a life|gura|amelia watson|iron mouse/,
         getAudio: () => 'dr_disrespect_get_a_life'
     }
 ];
