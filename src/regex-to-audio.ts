@@ -11,6 +11,11 @@ function getShutUp(): string {
     return shutUp[getRandomRange(shutUp.length)];
 }
 
+const letsGo = ['ryze_lets_go_lets_go', 'dababy_lets_go'];
+function getLetsGo(): string {
+    return letsGo[getRandomRange(letsGo.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -212,7 +217,7 @@ const regexToAudio = [
     },
     {
         regex: /let'?s go/,
-        getAudio: () => 'ryze_lets_go_lets_go'
+        getAudio: () => getLetsGo()
     },
     {
         regex: /obamn?a/,
@@ -231,8 +236,36 @@ const regexToAudio = [
         getAudio: () => 'wrapped_around_your_finger'
     },
     {
-        regex: /manwa|manga|anime|v.*tuber|get a life/,
+        regex: /manwa|manua|manga|anime|v.*tuber|get a life|gura|amelia watson|iron mouse/,
         getAudio: () => 'dr_disrespect_get_a_life'
+    },
+    {
+        regex: /game over/,
+        getAudio: () => 'game_over_man'
+    },
+    {
+        regex: /giga/,
+        getAudio: () => 'gigachad'
+    },
+    {
+        regex: /jinx/,
+        getAudio: () => 'jinx'
+    },
+    {
+        regex: /library|be (quiet|silent)/,
+        getAudio: () => 'this_is_library'
+    },
+    {
+        regex: /hiding/,
+        getAudio: () => 'twitch_i_was_hiding'
+    },
+    {
+        regex: /short/,
+        getAudio: () => 'veigar_short_joke'
+    },
+    {
+        regex: /silence/,
+        getAudio: () => 'dota2_silence'
     }
 ];
 
