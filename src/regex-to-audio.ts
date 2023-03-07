@@ -262,6 +262,10 @@ const regexToAudio = [
     {
         regex: /short/,
         getAudio: () => 'veigar_short_joke'
+    },
+    {
+        regex: /silence/,
+        getAudio: () => 'dota2_silence'
     }
 ];
 
