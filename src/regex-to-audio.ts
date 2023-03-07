@@ -242,6 +242,10 @@ const regexToAudio = [
     {
         regex: /game over/,
         getAudio: () => 'game_over_man'
+    },
+    {
+        regex: /giga/,
+        getAudio: () => 'gigachad'
     }
 ];
 
