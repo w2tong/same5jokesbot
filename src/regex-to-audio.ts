@@ -277,7 +277,7 @@ const regexToAudio = [
         getAudio: () => 'let_him_cook'
     },
     {
-        regex: /i('?m| am a dwarf)|diggy diggy hole/,
+        regex: /i('?m| am) a dwarf|diggy diggy hole/,
         getAudio: () => 'diggy_diggy_hole'
     }
 
