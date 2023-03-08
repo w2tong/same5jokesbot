@@ -26,7 +26,7 @@ const regexToAudio = [
         getAudio: () => 'thunder_vs_lightning_full'
     },
     {
-        regex: /demon/,
+        regex: /demon time/,
         getAudio: () => 'demontime'
     },
     {
@@ -34,7 +34,7 @@ const regexToAudio = [
         getAudio: () => 'VillagerCWhat3'
     },
     {
-        regex: /((yo)?u) (no|know)|sigh|yuno/,
+        regex: /sigh|yuno/,
         getAudio: () => 'sykkuno'
     },
     {
@@ -50,7 +50,7 @@ const regexToAudio = [
         getAudio: () => 'suction'
     },
     {
-        regex: /stop/,
+        regex: /time (to|2) stop/,
         getAudio: () => 'itstimetostop'
     },
     {
@@ -106,7 +106,7 @@ const regexToAudio = [
         getAudio: () => 'im_blind_not_deaf'
     },
     {
-        regex: /they came|behind/,
+        regex: /they came|from behind/,
         getAudio: () => 'they_came_from_behind'
     },
     {
