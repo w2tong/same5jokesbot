@@ -16,6 +16,11 @@ function getLetsGo(): string {
     return letsGo[getRandomRange(letsGo.length)];
 }
 
+const valor = ['quinn_to_me', 'quinn_what_do_you_see_up_there']
+function getValor(): string {
+    return valor[getRandomRange(valor.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -26,7 +31,7 @@ const regexToAudio = [
         getAudio: () => 'thunder_vs_lightning_full'
     },
     {
-        regex: /demon/,
+        regex: /demon time/,
         getAudio: () => 'demontime'
     },
     {
@@ -34,7 +39,7 @@ const regexToAudio = [
         getAudio: () => 'VillagerCWhat3'
     },
     {
-        regex: /((yo)?u) (no|know)|sigh|yuno/,
+        regex: /sigh|yuno/,
         getAudio: () => 'sykkuno'
     },
     {
@@ -50,7 +55,7 @@ const regexToAudio = [
         getAudio: () => 'suction'
     },
     {
-        regex: /stop/,
+        regex: /time (to|2) stop/,
         getAudio: () => 'itstimetostop'
     },
     {
@@ -106,7 +111,7 @@ const regexToAudio = [
         getAudio: () => 'im_blind_not_deaf'
     },
     {
-        regex: /they came|behind/,
+        regex: /they came|from behind/,
         getAudio: () => 'they_came_from_behind'
     },
     {
@@ -213,7 +218,7 @@ const regexToAudio = [
     },
     {
         regex: /valor/,
-        getAudio: () => 'quinn_what_do_you_see_up_there'
+        getAudio: () => getValor()
     },
     {
         regex: /let'?s go/,
@@ -236,7 +241,7 @@ const regexToAudio = [
         getAudio: () => 'wrapped_around_your_finger'
     },
     {
-        regex: /manwa|manua|manga|anime|v.*tuber|get a life|gura|amelia watson|iron mouse/,
+        regex: /manwa|manua|manhua|manga|anime|v.*tuber|get a life|gura|amelia watson|iron mouse/,
         getAudio: () => 'dr_disrespect_get_a_life'
     },
     {
@@ -266,7 +271,16 @@ const regexToAudio = [
     {
         regex: /silence/,
         getAudio: () => 'dota2_silence'
+    },
+    {
+        regex: /let him cook/,
+        getAudio: () => 'let_him_cook'
+    },
+    {
+        regex: /i('?m| am a dwarf)|diggy diggy hole/,
+        getAudio: () => 'diggy_diggy_hole'
     }
+
 ];
 
 export default regexToAudio;
