@@ -266,6 +266,10 @@ const regexToAudio = [
     {
         regex: /silence/,
         getAudio: () => 'dota2_silence'
+    },
+    {
+        regex: /let him cook/,
+        getAudio: () => 'let_him_cook'
     }
 ];
 
