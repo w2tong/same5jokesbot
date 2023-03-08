@@ -16,6 +16,11 @@ function getLetsGo(): string {
     return letsGo[getRandomRange(letsGo.length)];
 }
 
+const valor = ['quinn_to_me', 'quinn_what_do_you_see_up_there']
+function getValor(): string {
+    return valor[getRandomRange(valor.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -213,7 +218,7 @@ const regexToAudio = [
     },
     {
         regex: /valor/,
-        getAudio: () => 'quinn_what_do_you_see_up_there'
+        getAudio: () => getValor()
     },
     {
         regex: /let'?s go/,
