@@ -114,11 +114,12 @@ function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPl
     }
 
     // Temp fix for Discord UDP packet issue
-    connection.on('stateChange', (oldState, newState) => {
-        Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
-        Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
-    });
-
+    if (connection.listenerCount('stateChange') === 0) {
+        connection.on('stateChange', (oldState, newState) => {
+            Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
+            Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
+        });
+    }
     return connection;
 }
 
