@@ -32,6 +32,7 @@ const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) =
 }
 
 // Creates VoiceConnection and add event listeners
+let isRateLimited = false;
 function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer): VoiceConnection {
     const connection = joinVoiceChannel(voiceConnection);
     connection.setMaxListeners(1);
@@ -152,15 +153,6 @@ function createPlayer(): AudioPlayer {
     return player;
 }
 
-let isRateLimited = false;
-// Join voice channel and play audio
-//Create voice connection and add event listeners
-async function createVoiceConnectionAndAudioPlayer(voiceConnection: voiceConnection) {
-    const player = createPlayer();
-    const connection = createVoiceConnection(voiceConnection, player);
-    return { connection, player };
-}
-
 async function playAudioFile(connection: VoiceConnection, player: AudioPlayer, audioFile: string, username?: string): Promise<void> {
     connection.subscribe(player);
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFile}`);
@@ -208,7 +200,8 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
                 adapterCreator: message.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+            const player = createAudioPlayer();
+            const connection = createVoiceConnection(voiceConnection, player);
             await playAudioFile(connection, player, audio, message.member.user.username);
             break;
         }
@@ -230,7 +223,8 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
         const audioFile = interaction.options.getString('audio') ?? ''
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
         interaction.reply({ content: reply, ephemeral: true });
-        const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+        const player = createAudioPlayer();
+        const connection = createVoiceConnection(voiceConnection, player);
         await playAudioFile(connection, player, audioFile, interaction.member.user.username)
     }
     // Reply with a number between 1 and 100 (or min and max)
@@ -265,7 +259,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             adapterCreator: newState.guild.voiceAdapterCreator,
             selfDeaf: false
         }
-        const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+        const player = createAudioPlayer();
+        const connection = createVoiceConnection(voiceConnection, player);
         await playAudioFile(connection, player, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
@@ -279,7 +274,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
                 adapterCreator: newState.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            const { connection, player } = await createVoiceConnectionAndAudioPlayer(voiceConnection);
+            const player = createAudioPlayer();
+            const connection = createVoiceConnection(voiceConnection, player);
             await playAudioFile(connection, player, 'good_morning_donda', oldState.member?.user.username);
         }
     }
