@@ -26,6 +26,11 @@ interface voiceConnection {
     selfDeaf: boolean
 }
 
+const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
+    const newUdp = Reflect.get(newNetworkState, 'udp');
+    clearInterval(newUdp?.keepAliveInterval);
+}
+
 // Creates VoiceConnection and add event listeners
 function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer): VoiceConnection {
     const connection = joinVoiceChannel(voiceConnection);
@@ -109,20 +114,10 @@ function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPl
     }
 
     // Temp fix for Discord UDP packet issue
-    if (connection.listenerCount('stateChange') === 0) {
-        connection.on('stateChange', (oldState, newState) => {
-            const oldNetworking = Reflect.get(oldState, 'networking');
-            const newNetworking = Reflect.get(newState, 'networking');
-
-            const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
-                const newUdp = Reflect.get(newNetworkState, 'udp');
-                clearInterval(newUdp?.keepAliveInterval);
-            }
-
-            oldNetworking?.off('stateChange', networkStateChangeHandler);
-            newNetworking?.on('stateChange', networkStateChangeHandler);
-        });
-    }
+    connection.on('stateChange', (oldState, newState) => {
+        Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
+        Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
+    });
 
     return connection;
 }
