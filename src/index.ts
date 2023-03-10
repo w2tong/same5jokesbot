@@ -3,7 +3,7 @@ import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPl
 import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import cron from 'cron';
+import createCronJobs from './create-cronjobs';
 import regexToText from './regex-to-text';
 import regexToAudio from './regex-to-audio';
 import regexToReact from './regex-to-react';
@@ -281,69 +281,6 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     }
 });
 
-// Cronjobs
-// Hourly water and posture check cronjob
-// const waterPostureCheckScheduledMessage = new cron.CronJob('00 00 * * * *', (): void => {
-//     const channel = client.channels.cache.get('899162908498468934');
-//     if (channel && channel instanceof TextChannel) {
-//         channel.send('<@&899160433548722176> Water Check. Posture Check.');
-//     }
-//     else {
-//         console.log('Water/Posture Check channel not found.');
-//     }
-// });
-// waterPostureCheckScheduledMessage.start();
-
-// Daily Wordle reminder cronjob
-const wordleScheduledMessage = new cron.CronJob(
-    '00 00 00 * * *',
-    (): void => {
-        const channel = client.channels.cache.get('933772784948101120');
-        if (channel && channel.type === ChannelType.GuildText) {
-            channel.send('Wordle time POGCRAZY');
-        }
-        else {
-            console.log('Wordle channel not found.');
-        }
-    },
-    null,
-    true,
-    'America/Toronto'
-);
-wordleScheduledMessage.start();
-
-// Weekly Tuesday WoW Reset cronjob
-// const WoWResetScheduledMessage = new cron.CronJob(
-//     '00 00 17 * * 2',
-//     (): void => {
-//         const channel = client.channels.cache.get('158049091434184705');
-//         if (channel && channel.type === ChannelType.GuildText) {
-//             channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking');
-//         }
-//         else {
-//             console.log('WoW text channel not found.');
-//         }
-//     },
-//     null,
-//     true,
-//     'America/Toronto'
-// );
-// WoWResetScheduledMessage.start();
-
-// Weekly Tuesday Div 2 / Sons of the Forest Session
-const TuesdayScheduledMessage = new cron.CronJob(
-    '00 00 21 * * 2',
-    (): void => {
-        if (mainChannel) {
-            mainChannel.send('Where Sons of the Forest/Divnity: Original Sin 2');
-        }
-    },
-    null,
-    true,
-    'America/Toronto'
-);
-TuesdayScheduledMessage.start();
-
 // Login with bot token
 client.login(process.env.BOT_TOKEN);
 client.once(Events.ClientReady, (): void => {
@@ -362,6 +299,9 @@ client.once(Events.ClientReady, (): void => {
     if (channel?.type === ChannelType.GuildText) {
         voiceLogChannel = channel;
     }
+
+    // Cronjobs
+    createCronJobs(client)
 
     console.log('Same5JokesBot online.');
 });
