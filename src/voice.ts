@@ -6,7 +6,7 @@ import { getMomentCurrentTimeEST } from "./util";
 // @ts-ignore
 import Transcriber from 'discord-speech-to-text';
 
-const timeout = 60000; // Timeout in milliseconds 
+const timeout = 600000; // Timeout in milliseconds 
 let timeoutId: NodeJS.Timer | null = null;
 const transcriber = new Transcriber(process.env.WITAI_KEY);
 
