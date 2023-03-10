@@ -4,7 +4,7 @@ import regexToReact from '../regex-to-react';
 import regexToText from '../regex-to-text';
 import { createPlayer, createVoiceConnection, playAudioFile } from '../voice';
 
-export default async function execute(message: Message) {
+export default async (message: Message) => {
     // Don't respond to bots
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
