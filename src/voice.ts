@@ -1,4 +1,4 @@
-import { ChannelType, Client, TextChannel } from "discord.js";
+import { Client, TextChannel } from "discord.js";
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionState, VoiceConnectionStatus } from "@discordjs/voice";
 import { join } from 'node:path';
 import regexToAudio from "./regex-to-audio";
@@ -9,7 +9,7 @@ import Transcriber from 'discord-speech-to-text';
 let timeoutId: NodeJS.Timer | null = null;
 const transcriber = new Transcriber(process.env.WITAI_KEY);
 
-const networkStateChangeHandler = (oldNetworkState: VoiceConnectionState, newNetworkState: VoiceConnectionState) => {
+const networkStateChangeHandler = (_oldNetworkState: VoiceConnectionState, newNetworkState: VoiceConnectionState) => {
     const newUdp = Reflect.get(newNetworkState, 'udp');
     clearInterval(newUdp?.keepAliveInterval);
 }
