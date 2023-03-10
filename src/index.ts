@@ -5,8 +5,8 @@ import createCronJobs from './create-cronjobs';
 import { getEmotes } from './emotes';
 import { getMomentCurrentTimeEST } from './util'
 import { createPlayer, createVoiceConnection, playAudioFile } from './voice'
-import messageCreateHandler from './events/messageCreate';
-import interactionCreateHandler from './events/interactionCreate';
+import messageCreateHandler from './events/messageCreateHandler';
+import interactionCreateHandler from './events/interactionCreateHandler';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 let mainChannel: TextChannel | undefined;
