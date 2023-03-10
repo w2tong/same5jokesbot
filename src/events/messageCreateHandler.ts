@@ -18,7 +18,7 @@ export default async (message: Message) => {
     for (const regexReact of regexToReact) {
         const react = regexReact.getReact()
         if (react && regexReact.regex.test(command)) {
-            message.react(react);
+            message.react(react).catch(e => console.log(e));
         }
     }
     // Text replies
