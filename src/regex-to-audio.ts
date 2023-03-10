@@ -273,14 +273,17 @@ const regexToAudio = [
         getAudio: () => 'dota2_silence'
     },
     {
-        regex: /let him cook/,
+        regex: /let (him|me) cook/,
         getAudio: () => 'let_him_cook'
     },
     {
         regex: /i('?m| am) a dwarf|diggy diggy hole/,
         getAudio: () => 'diggy_diggy_hole'
+    },
+    {
+        regex: /i gotta go|i'?m leaving|since we'?re not doing anything/,
+        getAudio: () => 'discord_disconnect'
     }
-
 ];
 
 export default regexToAudio;
