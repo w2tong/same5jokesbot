@@ -63,17 +63,17 @@ function createCronJobs(client: Client) {
 
     const waterPostureChannel = client.channels.cache.get(waterPostureChannelId);
     if (waterPostureChannel && waterPostureChannel.type === ChannelType.GuildText) {
-        createWaterPostureCronJob(waterPostureChannel).start();
+        // createWaterPostureCronJob(waterPostureChannel).start();
     }
 
     const wordleChannel = client.channels.cache.get(wordleChannelId);
     if (wordleChannel && wordleChannel.type === ChannelType.GuildText) {
-        createWordleCronJob(wordleChannel).start();
+        // createWordleCronJob(wordleChannel).start();
     }
 
     const mainChannel = client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
     if (mainChannel && mainChannel.type === ChannelType.GuildText) {
-        createWoWResetCronJob(mainChannel).start();
+        // createWoWResetCronJob(mainChannel).start();
         createTuesdayScheduleCronJob(mainChannel).start();
     }
 }
