@@ -11,7 +11,6 @@ import { createPlayer, createVoiceConnection, playAudioFile } from './voice'
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 let mainChannel: TextChannel | undefined;
-let voiceLogChannel: TextChannel;
 
 // Responses to text messages
 client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
@@ -54,7 +53,7 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
                 selfDeaf: false
             }
             const player = createPlayer();
-            const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
+            const connection = createVoiceConnection(voiceConnection, player);
             await playAudioFile(connection, player, audio, message.member.user.username);
             break;
         }
@@ -77,7 +76,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
         interaction.reply({ content: reply, ephemeral: true });
         const player = createPlayer();
-        const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
+        const connection = createVoiceConnection(voiceConnection, player);
         await playAudioFile(connection, player, audioFile, interaction.member.user.username)
     }
     // Reply with a number between 1 and 100 (or min and max)
@@ -113,7 +112,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             selfDeaf: false
         }
         const player = createPlayer();
-        const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
+        const connection = createVoiceConnection(voiceConnection, player);
         await playAudioFile(connection, player, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
@@ -128,7 +127,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
                 selfDeaf: false
             }
             const player = createPlayer();
-            const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
+            const connection = createVoiceConnection(voiceConnection, player);
             await playAudioFile(connection, player, 'good_morning_donda', oldState.member?.user.username);
         }
     }
@@ -146,14 +145,11 @@ client.once(Events.ClientReady, (): void => {
     if (channel?.type === ChannelType.GuildText) {
         mainChannel = channel;
     }
-    // Get voice log channel
-    channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID ?? '');
-    if (channel?.type === ChannelType.GuildText) {
-        voiceLogChannel = channel;
-    }
 
     // Cronjobs
     createCronJobs(client)
 
     console.log('Same5JokesBot online.');
 });
+
+export default client
