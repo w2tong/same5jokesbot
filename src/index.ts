@@ -28,7 +28,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
         interaction.reply({ content: reply, ephemeral: true });
         const player = createPlayer();
-        const connection = createVoiceConnection(voiceConnection, player);
+        const connection = createVoiceConnection(voiceConnection, player, interaction.client);
         await playAudioFile(connection, player, audioFile, interaction.member.user.username)
     }
     // Reply with a number between 1 and 100 (or min and max)
@@ -64,7 +64,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             selfDeaf: false
         }
         const player = createPlayer();
-        const connection = createVoiceConnection(voiceConnection, player);
+        const connection = createVoiceConnection(voiceConnection, player, newState.client);
         await playAudioFile(connection, player, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
@@ -79,7 +79,7 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
                 selfDeaf: false
             }
             const player = createPlayer();
-            const connection = createVoiceConnection(voiceConnection, player);
+            const connection = createVoiceConnection(voiceConnection, player, newState.client);
             await playAudioFile(connection, player, 'good_morning_donda', oldState.member?.user.username);
         }
     }
@@ -103,5 +103,3 @@ client.once(Events.ClientReady, (): void => {
 
     console.log('Same5JokesBot online.');
 });
-
-export default client;

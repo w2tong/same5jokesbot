@@ -44,7 +44,7 @@ export default async function execute(message: Message) {
                 selfDeaf: false
             }
             const player = createPlayer();
-            const connection = createVoiceConnection(voiceConnection, player);
+            const connection = createVoiceConnection(voiceConnection, player, message.client);
             await playAudioFile(connection, player, audio, message.member.user.username);
             break;
         }
