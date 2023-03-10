@@ -279,8 +279,11 @@ const regexToAudio = [
     {
         regex: /i('?m| am) a dwarf|diggy diggy hole/,
         getAudio: () => 'diggy_diggy_hole'
+    },
+    {
+        regex: /i gotta go|i'?m leaving|since we'?re not doing anything/,
+        getAudio: () => 'discord_disconnect'
     }
-
 ];
 
 export default regexToAudio;
