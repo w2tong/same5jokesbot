@@ -8,7 +8,7 @@ function createWaterPostureCronJob(channel: TextChannel): CronJob {
     return createTorontoCronJob(
         '00 00 * * * *',
         (): void => {
-            channel.send('<@&899160433548722176> Water Check. Posture Check.');
+            channel.send('<@&899160433548722176> Water Check. Posture Check.').catch(e => console.log(e));
         }
     );
 }
@@ -18,7 +18,7 @@ function createWordleCronJob(channel: TextChannel): CronJob {
     return createTorontoCronJob(
         '00 00 00 * * *',
         (): void => {
-            channel.send('Wordle time POGCRAZY');
+            channel.send('Wordle time POGCRAZY').catch(e => console.log(e));
         }
     );
 }
@@ -28,7 +28,7 @@ function createWoWResetCronJob(channel: TextChannel): CronJob {
     return createTorontoCronJob(
         '00 00 17 * * 2',
         (): void => {
-            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking');
+            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking').catch(e => console.log(e));
         }
     );
 }
@@ -39,7 +39,7 @@ function createTuesdayScheduleCronJob(channel: TextChannel): CronJob {
         '00 00 21 * * 2',
         (): void => {
             if (channel) {
-                channel.send('Where Sons of the Forest/Divnity: Original Sin 2');
+                channel.send('Where Sons of the Forest/Divnity: Original Sin 2').catch(e => console.log(e));
             }
         }
     )
