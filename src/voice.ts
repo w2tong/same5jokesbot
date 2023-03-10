@@ -1,7 +1,6 @@
-import { ChannelType, TextChannel } from "discord.js";
+import { ChannelType, Client, TextChannel } from "discord.js";
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionState, VoiceConnectionStatus } from "@discordjs/voice";
 import { join } from 'node:path';
-import client from './index'
 import regexToAudio from "./regex-to-audio";
 import { getMomentCurrentTimeEST } from "./util";
 // @ts-ignore
@@ -60,7 +59,7 @@ interface voiceConnection {
 
 // Creates VoiceConnection and add event listeners
 let isRateLimited = false;
-function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer): VoiceConnection {
+function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer, client: Client): VoiceConnection {
     const connection = joinVoiceChannel(voiceConnection);
     connection.setMaxListeners(1);
     connection.receiver.speaking.setMaxListeners(1);
