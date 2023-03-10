@@ -23,6 +23,6 @@ export default async (interaction: Interaction): Promise<void> => {
     else if (commandName === 'roll') {
         const min = interaction.options.getInteger('min') ?? 1;
         const max = interaction.options.getInteger('max') ?? 100;
-        interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString());
+        interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString()).catch(e => console.log(e));
     }
 }
