@@ -1,6 +1,4 @@
 import { Client, GatewayIntentBits, Message, TextChannel, Interaction, GuildMember, ChannelType, Events } from 'discord.js';
-import { VoiceConnection, VoiceConnectionStatus, joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, AudioPlayer } from '@discordjs/voice';
-import { join } from 'node:path';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import createCronJobs from './create-cronjobs';
@@ -9,156 +7,11 @@ import regexToAudio from './regex-to-audio';
 import regexToReact from './regex-to-react';
 import { getEmotes } from './emotes';
 import { getMomentCurrentTimeEST } from './util'
-// @ts-ignore
-import Transcriber from 'discord-speech-to-text';
+import { createPlayer, createVoiceConnection, playAudioFile } from './voice'
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 let mainChannel: TextChannel | undefined;
-let voiceLogChannel: TextChannel | undefined;
-
-let timeoutId: NodeJS.Timer | null = null;
-const transcriber = new Transcriber(process.env.WITAI_KEY);
-
-interface voiceConnection {
-    channelId: string,
-    guildId: string,
-    adapterCreator: DiscordGatewayAdapterCreator,
-    selfDeaf: boolean
-}
-
-const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
-    const newUdp = Reflect.get(newNetworkState, 'udp');
-    clearInterval(newUdp?.keepAliveInterval);
-}
-
-// Creates VoiceConnection and add event listeners
-let isRateLimited = false;
-function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer): VoiceConnection {
-    const connection = joinVoiceChannel(voiceConnection);
-    connection.setMaxListeners(1);
-    connection.receiver.speaking.setMaxListeners(1);
-
-    // Add event listener on receiving voice input
-    if (connection.receiver.speaking.listenerCount('start') === 0) {
-        connection.receiver.speaking.on('start', async (userId) => {
-            // Return if speaker is a bot
-            if (client.users.cache.get(userId)?.bot) return;
-            transcriber.listen(connection.receiver, userId, client.users.cache.get(userId)).then((data: any) => {
-
-                // Send rate limited message and return
-                if (Object.keys(data.transcript).length === 0) {
-                    if (isRateLimited === false) {
-                        isRateLimited = true;
-                        if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`);
-                    }
-                    return;
-                }
-                // Process text
-                isRateLimited = false;
-                // Return if no text
-                if (!data.transcript.text) return;
-                const text = data.transcript.text.toLowerCase();
-                const username = client.users.cache.get(userId)?.username;
-
-                // Log voice messages to console and discord channel
-                const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`
-                console.log(voiceTextLog);
-                if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
-
-                // Stop audio voice command
-                if (/hey bot stop/.test(text)) {
-                    player.stop();
-                    return;
-                }
-
-                // Return if audio is already playing
-                if (player.state.status === AudioPlayerStatus.Playing) return;
-
-                // Play any audio where text matches regex
-                for (let regexAudio of regexToAudio) {
-                    const audio = regexAudio.getAudio();
-                    if (regexAudio.regex.test(text) && audio) {
-                        playAudioFile(connection, player, audio, username);
-                        break;
-                    }
-                }
-            });
-        });
-    }
-
-    // Remove listeners on disconnect
-    if (connection.listenerCount(VoiceConnectionStatus.Disconnected) === 0) {
-        connection.on(VoiceConnectionStatus.Disconnected, async () => {
-            try {
-                await Promise.race([
-                    entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
-                    entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
-                ]);
-                // Seems to be reconnecting to a new channel - ignore disconnect
-            }
-            catch (e) {
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                    timeoutId = null;
-                }
-                // Seems to be a real disconnect which SHOULDN'T be recovered from
-                try {
-                    player.stop();
-                    connection.destroy();
-                }
-                catch (e) {
-                    console.log(e)
-                }
-            }
-        })
-
-    }
-
-    // Temp fix for Discord UDP packet issue
-    if (connection.listenerCount('stateChange') === 0) {
-        connection.on('stateChange', (oldState, newState) => {
-            Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
-            Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
-        });
-    }
-    return connection;
-}
-
-// Creates AudioPlayer and add event listeners
-function createPlayer(): AudioPlayer {
-    const player = createAudioPlayer();
-    // Disconnect after 15 min of inactivity
-    // Reset timeout when audio playing
-    player.on(AudioPlayerStatus.Playing, (): void => {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-            timeoutId = null;
-        }
-    });
-    // Start timeout timer when idle
-    player.on(AudioPlayerStatus.Idle, (): void => {
-        timeoutId = setTimeout(() => {
-            const connection = getVoiceConnection(process.env.GUILD_ID ?? '')
-            try {
-                player.stop();
-                connection?.destroy();
-            }
-            catch (e) {
-                console.log(e)
-            }
-            timeoutId = null;
-        }, 900000);
-    });
-
-    return player;
-}
-
-async function playAudioFile(connection: VoiceConnection, player: AudioPlayer, audioFile: string, username?: string): Promise<void> {
-    connection.subscribe(player);
-    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFile}`);
-    const resource = createAudioResource(join(__dirname, `audio/${audioFile}.mp3`));
-    player.play(resource);
-}
+let voiceLogChannel: TextChannel;
 
 // Responses to text messages
 client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
@@ -200,8 +53,8 @@ client.on(Events.MessageCreate, async (message: Message): Promise<void> => {
                 adapterCreator: message.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            const player = createAudioPlayer();
-            const connection = createVoiceConnection(voiceConnection, player);
+            const player = createPlayer();
+            const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
             await playAudioFile(connection, player, audio, message.member.user.username);
             break;
         }
@@ -223,8 +76,8 @@ client.on(Events.InteractionCreate, async (interaction: Interaction): Promise<vo
         const audioFile = interaction.options.getString('audio') ?? ''
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
         interaction.reply({ content: reply, ephemeral: true });
-        const player = createAudioPlayer();
-        const connection = createVoiceConnection(voiceConnection, player);
+        const player = createPlayer();
+        const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
         await playAudioFile(connection, player, audioFile, interaction.member.user.username)
     }
     // Reply with a number between 1 and 100 (or min and max)
@@ -259,8 +112,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
             adapterCreator: newState.guild.voiceAdapterCreator,
             selfDeaf: false
         }
-        const player = createAudioPlayer();
-        const connection = createVoiceConnection(voiceConnection, player);
+        const player = createPlayer();
+        const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
         await playAudioFile(connection, player, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
@@ -274,8 +127,8 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
                 adapterCreator: newState.guild.voiceAdapterCreator,
                 selfDeaf: false
             }
-            const player = createAudioPlayer();
-            const connection = createVoiceConnection(voiceConnection, player);
+            const player = createPlayer();
+            const connection = createVoiceConnection(voiceConnection, player, client, voiceLogChannel);
             await playAudioFile(connection, player, 'good_morning_donda', oldState.member?.user.username);
         }
     }
@@ -293,7 +146,6 @@ client.once(Events.ClientReady, (): void => {
     if (channel?.type === ChannelType.GuildText) {
         mainChannel = channel;
     }
-
     // Get voice log channel
     channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID ?? '');
     if (channel?.type === ChannelType.GuildText) {
