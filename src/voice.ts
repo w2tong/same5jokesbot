@@ -1,6 +1,7 @@
-import { Client, TextChannel } from "discord.js";
+import { ChannelType, TextChannel } from "discord.js";
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionState, VoiceConnectionStatus } from "@discordjs/voice";
 import { join } from 'node:path';
+import client from './index'
 import regexToAudio from "./regex-to-audio";
 import { getMomentCurrentTimeEST } from "./util";
 // @ts-ignore
@@ -37,7 +38,7 @@ function createPlayer(): AudioPlayer {
                 console.log(e)
             }
             timeoutId = null;
-        }, 600000);
+        }, 5000);
     });
 
     return player;
@@ -59,10 +60,17 @@ interface voiceConnection {
 
 // Creates VoiceConnection and add event listeners
 let isRateLimited = false;
-function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer, client: Client, voiceLogChannel: TextChannel): VoiceConnection {
+function createVoiceConnection(voiceConnection: voiceConnection, player: AudioPlayer): VoiceConnection {
     const connection = joinVoiceChannel(voiceConnection);
     connection.setMaxListeners(1);
     connection.receiver.speaking.setMaxListeners(1);
+
+    // Get voice log channel
+    let voiceLogChannel: TextChannel;
+    const channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID ?? '');
+    if (channel?.type === ChannelType.GuildText) {
+        voiceLogChannel = channel;
+    }
 
     // Add event listener on receiving voice input
     if (connection.receiver.speaking.listenerCount('start') === 0) {
