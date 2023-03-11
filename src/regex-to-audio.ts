@@ -197,7 +197,7 @@ const regexToAudio = [
         getAudio: () => 'disgustang'
     },
     {
-        regex: /all the|alda/,
+        regex: /\ball the\b|alda/,
         getAudio: () => 'small_things'
     },
     {
