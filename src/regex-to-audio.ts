@@ -91,7 +91,7 @@ const regexToAudio = [
         getAudio: () => 'good_morning_donda_short'
     },
     {
-        regex: /(not|doesn\'t) look.*good|watch this/,
+        regex: /(not|doesn\'t) look.*good|but watch this/,
         getAudio: () => 'guga'
     },
     {
