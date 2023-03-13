@@ -103,7 +103,7 @@ const regexToAudio = [
         getAudio: () => 'YOUWANTEDTO'
     },
     {
-        regex: /forget|forgot|forgor|(i'?m|i am) walking here/,
+        regex: /forget|forgot|forgor|(i'?m|i am) walking here|don'?t you/,
         getAudio: () => 'fugetaboutit'
     },
     {
