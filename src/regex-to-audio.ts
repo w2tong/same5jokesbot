@@ -288,6 +288,10 @@ const regexToAudio = [
     {
         regex: /i gotta go|i'?m leaving|since we'?re not doing anything/,
         getAudio: () => 'discord_disconnect'
+    },
+    {
+        regex: /father/,
+        getAudio: () => 'father'
     }
 ];
 
