@@ -21,6 +21,11 @@ function getValor(): string {
     return valor[getRandomRange(valor.length)];
 }
 
+const dog = ['whatthedogdoin', 'i_am_a_doggie']
+function getDog(): string {
+    return dog[getRandomRange(dog.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -60,7 +65,7 @@ const regexToAudio = [
     },
     {
         regex: /dog/,
-        getAudio: () => 'whatthedogdoin'
+        getAudio: () => getDog()
     },
     {
         regex: /bean|badlands|chugs|eric booker/,
