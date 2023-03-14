@@ -296,6 +296,10 @@ const regexToAudio = [
     {
         regex: /oink|pig/,
         getAudio: () => 'pig'
+    },
+    {
+        regex: /that'?s it|i'?m dead/,
+        getAudio: () => 'thats_it_im_dead'
     }
 ];
 
