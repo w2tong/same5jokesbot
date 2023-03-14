@@ -292,6 +292,10 @@ const regexToAudio = [
     {
         regex: /father/,
         getAudio: () => 'father'
+    },
+    {
+        regex: /oink|pig/,
+        getAudio: () => 'pig'
     }
 ];
 
