@@ -1,12 +1,12 @@
 import moment from "moment-timezone";
 import { getRandomRange } from './util'
 
-const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13']
+const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13'];
 function getCongratulations(): string {
     return congratulations[getRandomRange(congratulations.length)];
 }
 
-const shutUp = ['smosh_shut_up', 'imaqtpie_shut_up']
+const shutUp = ['smosh_shut_up', 'imaqtpie_shut_up'];
 function getShutUp(): string {
     return shutUp[getRandomRange(shutUp.length)];
 }
@@ -16,9 +16,19 @@ function getLetsGo(): string {
     return letsGo[getRandomRange(letsGo.length)];
 }
 
-const valor = ['quinn_to_me', 'quinn_what_do_you_see_up_there']
+const valor = ['quinn_to_me', 'quinn_what_do_you_see_up_there'];
 function getValor(): string {
     return valor[getRandomRange(valor.length)];
+}
+
+const dog = ['whatthedogdoin', 'i_am_a_doggie'];
+function getDog(): string {
+    return dog[getRandomRange(dog.length)];
+}
+
+const mask = ['bane_mask', 'dream_mask'];
+function getMask(): string {
+    return mask[getRandomRange(mask.length)];
 }
 
 const regexToAudio = [
@@ -60,7 +70,7 @@ const regexToAudio = [
     },
     {
         regex: /dog/,
-        getAudio: () => 'whatthedogdoin'
+        getAudio: () => getDog()
     },
     {
         regex: /bean|badlands|chugs|eric booker/,
@@ -91,7 +101,7 @@ const regexToAudio = [
         getAudio: () => 'good_morning_donda_short'
     },
     {
-        regex: /(not|doesn\'t) look.*good|watch this/,
+        regex: /(not|doesn\'t) look.*good|but watch this/,
         getAudio: () => 'guga'
     },
     {
@@ -103,7 +113,7 @@ const regexToAudio = [
         getAudio: () => 'YOUWANTEDTO'
     },
     {
-        regex: /forget|forgot|forgor|(i'?m|i am) walking here/,
+        regex: /forget|forgot|forgor|(i'?m|i am) walking here|don'?t you/,
         getAudio: () => 'fugetaboutit'
     },
     {
@@ -182,7 +192,7 @@ const regexToAudio = [
     },
     {
         regex: /mask/,
-        getAudio: () => 'bane_mask'
+        getAudio: () => getMask()
     },
     {
         regex: /(for|4)\s+(yo)?u/,
@@ -197,7 +207,7 @@ const regexToAudio = [
         getAudio: () => 'disgustang'
     },
     {
-        regex: /all the|alda/,
+        regex: /\ball the\b|alda/,
         getAudio: () => 'small_things'
     },
     {
@@ -283,6 +293,26 @@ const regexToAudio = [
     {
         regex: /i gotta go|i'?m leaving|since we'?re not doing anything/,
         getAudio: () => 'discord_disconnect'
+    },
+    {
+        regex: /father/,
+        getAudio: () => 'father'
+    },
+    {
+        regex: /oink|pig/,
+        getAudio: () => 'pig'
+    },
+    {
+        regex: /that'?s it|i'?m dead/,
+        getAudio: () => 'thats_it_im_dead'
+    },
+    {
+        regex: /why (nu|new)\s*(nu|new)/,
+        getAudio: () => 'im_ripping_out_my_hair'
+    },
+    {
+        regex: /ripping out my hair/,
+        getAudio: () => 'why_nunu_why'
     }
 ];
 

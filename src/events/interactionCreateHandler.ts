@@ -1,5 +1,5 @@
 import { GuildMember, Interaction } from "discord.js";
-import { createPlayer, createVoiceConnection, playAudioFile } from "../voice";
+import { joinVoice, playAudioFile } from '../voice';
 
 export default async (interaction: Interaction): Promise<void> => {
     if (!interaction.isChatInputCommand()) return;
@@ -9,15 +9,13 @@ export default async (interaction: Interaction): Promise<void> => {
         const voiceConnection = {
             channelId: interaction.member.voice.channel.id,
             guildId: interaction.guild.id,
-            adapterCreator: interaction.guild.voiceAdapterCreator,
-            selfDeaf: false
+            adapterCreator: interaction.guild.voiceAdapterCreator
         }
         const audioFile = interaction.options.getString('audio') ?? ''
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
         interaction.reply({ content: reply, ephemeral: true });
-        const player = createPlayer();
-        const connection = createVoiceConnection(voiceConnection, player, interaction.client);
-        await playAudioFile(connection, player, audioFile, interaction.member.user.username)
+        joinVoice(voiceConnection, interaction.client);
+        await playAudioFile(interaction.guild.id, audioFile, interaction.member.user.username)
     }
     // Reply with a number between 1 and 100 (or min and max)
     else if (commandName === 'roll') {
