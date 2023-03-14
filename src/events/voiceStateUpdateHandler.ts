@@ -1,6 +1,6 @@
 import { ChannelType, VoiceState } from "discord.js";
 import { getMomentCurrentTimeEST } from "../util";
-import { createPlayer, createVoiceConnection, playAudioFile } from "../voice";
+import { joinVoice, playAudioFile } from '../voice';
 
 export default async (oldState: VoiceState, newState: VoiceState) => {
 
@@ -24,12 +24,10 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
         const voiceConnection = {
             channelId: newState.channelId,
             guildId: newState.guild.id,
-            adapterCreator: newState.guild.voiceAdapterCreator,
-            selfDeaf: false
+            adapterCreator: newState.guild.voiceAdapterCreator
         }
-        const player = createPlayer();
-        const connection = createVoiceConnection(voiceConnection, player, newState.client);
-        await playAudioFile(connection, player, 'teleporting_fat_guy_short', oldState.member?.user.username);
+        joinVoice(voiceConnection, newState.client);
+        await playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
     // Play Good Morning Donda when joining channel in the morning
@@ -39,12 +37,10 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
             const voiceConnection = {
                 channelId: newState.channelId,
                 guildId: newState.guild.id,
-                adapterCreator: newState.guild.voiceAdapterCreator,
-                selfDeaf: false
+                adapterCreator: newState.guild.voiceAdapterCreator
             }
-            const player = createPlayer();
-            const connection = createVoiceConnection(voiceConnection, player, newState.client);
-            await playAudioFile(connection, player, 'good_morning_donda', oldState.member?.user.username);
+            joinVoice(voiceConnection, newState.client);
+            await playAudioFile(newState.guild.id, 'good_morning_donda', oldState.member?.user.username);
         }
     }
 }
