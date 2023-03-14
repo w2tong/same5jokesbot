@@ -2,7 +2,7 @@ import { ChannelType, Events, Message } from 'discord.js'
 import regexToAudio from '../regex-to-audio';
 import regexToReact from '../regex-to-react';
 import regexToText from '../regex-to-text';
-import { createPlayer, createVoiceConnection, playAudioFile } from '../voice';
+import { joinVoice, playAudioFile } from '../voice';
 
 export default async (message: Message) => {
     // Don't respond to bots
@@ -40,12 +40,10 @@ export default async (message: Message) => {
             const voiceConnection = {
                 channelId: message.member.voice.channel.id,
                 guildId: message.guild.id,
-                adapterCreator: message.guild.voiceAdapterCreator,
-                selfDeaf: false
+                adapterCreator: message.guild.voiceAdapterCreator
             }
-            const player = createPlayer();
-            const connection = createVoiceConnection(voiceConnection, player, message.client);
-            await playAudioFile(connection, player, audio, message.member.user.username);
+            joinVoice(voiceConnection, message.client);
+            await playAudioFile(message.guild.id, audio, message.member.user.username);
             break;
         }
     }
