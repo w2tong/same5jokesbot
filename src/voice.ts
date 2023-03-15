@@ -50,9 +50,11 @@ function createPlayer(connection: VoiceConnection, timeoutId: Timer, guildId: st
 }
 
 async function playAudioFile(guildId: string, audioFile: string, username?: string): Promise<void> {
+    const player = guildConnections[guildId].player;
+    if (!player) return;
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFile}`);
     const resource = createAudioResource(join(__dirname, `audio/${audioFile}.mp3`));
-    guildConnections[guildId].player.play(resource);
+    player.play(resource);
 }
 
 // Creates VoiceConnection and add event listeners
