@@ -4,8 +4,11 @@ import { joinVoice, playAudioFile } from '../voice';
 
 export default async (oldState: VoiceState, newState: VoiceState) => {
 
-    // Return if user is a bot
+    // Stop if user is a bot
     if (oldState.member?.user.bot) return;
+
+    // Stop if user moves to AFK channel
+    if (newState.guild.afkChannelId === newState.channelId) return;
 
     // Message when Azi leaves or chance when someone else leaves
     if ((newState.member?.id == process.env.AZI_ID || Math.random() < 0.10) && newState.channelId == null && oldState.guild.id === process.env.GUILD_ID) {
@@ -16,7 +19,7 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
         }
     }
 
-    // Return if voice state update is itself
+    // Stop if voice state update is itself
     if (oldState.id === newState.client.user?.id) return;
 
     // Play teleporting fat guy when moving between channels
