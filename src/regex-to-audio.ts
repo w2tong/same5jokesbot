@@ -313,6 +313,14 @@ const regexToAudio = [
     {
         regex: /ripping out my hair/,
         getAudio: () => 'why_nunu_why'
+    },
+    {
+        regex: /sneez|bless you|hocus pocus/,
+        getAudio: () => 'train_sneeze'
+    },
+    {
+        regex: /(hear|listen).*slow mode|slow.*(it|that|sneeze).*down/,
+        getAudio: () => 'train_sneeze_slow'
     }
 ];
 
