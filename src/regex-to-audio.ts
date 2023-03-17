@@ -319,7 +319,7 @@ const regexToAudio = [
         getAudio: () => 'train_sneeze'
     },
     {
-        regex: /(hear|listen).*slow mode|slow.*(it|that|sneeze).*down/,
+        regex: /slow mo(de)?|slow.*(it|that|sneeze).*down/,
         getAudio: () => 'train_sneeze_slow'
     }
 ];
