@@ -30,3 +30,7 @@ client.once(Events.ClientReady, (): void => {
 
     console.log('Same5JokesBot online.');
 });
+
+client.on(Events.ShardError, error => {
+    console.error('A websocket connection encountered an error:', error);
+});
