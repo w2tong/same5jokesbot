@@ -32,5 +32,5 @@ client.once(Events.ClientReady, (): void => {
 });
 
 client.on(Events.ShardError, error => {
-    console.error('A websocket connection encountered an error:', error);
+    console.log('A websocket connection encountered an error:', error);
 });
