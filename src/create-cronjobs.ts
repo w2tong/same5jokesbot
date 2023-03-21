@@ -2,13 +2,21 @@ import { CronCommand, CronJob } from 'cron';
 import { ChannelType, Client, TextChannel } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
+import { loggers } from 'winston';
+
+const logger = loggers.get('error-logger');
 
 // Hourly water and posture check cronjob
 function createWaterPostureCronJob(channel: TextChannel): CronJob {
     return createTorontoCronJob(
         '00 00 * * * *',
         (): void => {
-            channel.send('<@&899160433548722176> Water Check. Posture Check.').catch(e => console.log(e));
+            channel.send('<@&899160433548722176> Water Check. Posture Check.')
+                .catch((err: Error) => logger.log({
+                    level: 'error',
+                    message: err.message,
+                    stack: err.stack
+                }));
         }
     );
 }
@@ -18,7 +26,12 @@ function createWordleCronJob(channel: TextChannel): CronJob {
     return createTorontoCronJob(
         '00 00 00 * * *',
         (): void => {
-            channel.send('Wordle time POGCRAZY').catch(e => console.log(e));
+            channel.send('Wordle time POGCRAZY')
+                .catch((err: Error) => logger.log({
+                    level: 'error',
+                    message: err.message,
+                    stack: err.stack
+                }));
         }
     );
 }
@@ -28,7 +41,12 @@ function createWoWResetCronJob(channel: TextChannel): CronJob {
     return createTorontoCronJob(
         '00 00 17 * * 2',
         (): void => {
-            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking').catch(e => console.log(e));
+            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking')
+                .catch((err: Error) => logger.log({
+                    level: 'error',
+                    message: err.message,
+                    stack: err.stack
+                }));
         }
     );
 }
@@ -39,10 +57,15 @@ function createTuesdayScheduleCronJob(channel: TextChannel): CronJob {
         '00 00 21 * * 2',
         (): void => {
             if (channel) {
-                channel.send('Where Sons of the Forest/Divnity: Original Sin 2').catch(e => console.log(e));
+                channel.send('Where Sons of the Forest/Divnity: Original Sin 2')
+                    .catch((err: Error) => logger.log({
+                        level: 'error',
+                        message: err.message,
+                        stack: err.stack
+                    }));
             }
         }
-    )
+    );
 }
 
 // Create cronjob with Toronto timezone
@@ -53,7 +76,7 @@ function createTorontoCronJob(cronTime: string, cronCommand: CronCommand): CronJ
         null,
         true,
         'America/Toronto'
-    )
+    );
 }
 
 const waterPostureChannelId = '899162908498468934';
