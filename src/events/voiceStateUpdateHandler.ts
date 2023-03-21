@@ -1,8 +1,11 @@
-import { ChannelType, VoiceState } from "discord.js";
-import { getMomentCurrentTimeEST } from "../util";
+import { ChannelType, VoiceState } from 'discord.js';
+import { getMomentCurrentTimeEST } from '../util';
 import { joinVoice, playAudioFile } from '../voice';
+import { loggers } from 'winston';
 
-export default async (oldState: VoiceState, newState: VoiceState) => {
+const logger = loggers.get('error-logger');
+
+export default (oldState: VoiceState, newState: VoiceState) => {
 
     // Stop if user is a bot
     if (oldState.member?.user.bot) return;
@@ -15,7 +18,11 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
         // Get main channel
         const mainChannel = newState.client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
-            mainChannel.send('You made Azi leave.').catch((e) => console.log(`Error sending to mainChannel: ${e}`));
+            mainChannel.send('You made Azi leave.').catch((err: Error) => logger.log({
+                level: 'error',
+                message: err.message,
+                stack: err.stack
+            }));
         }
     }
 
@@ -28,9 +35,9 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
             channelId: newState.channelId,
             guildId: newState.guild.id,
             adapterCreator: newState.guild.voiceAdapterCreator
-        }
+        };
         joinVoice(voiceConnection, newState.client);
-        await playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.username);
+        playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
     // Play Good Morning Donda when joining channel in the morning
@@ -41,9 +48,9 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
                 channelId: newState.channelId,
                 guildId: newState.guild.id,
                 adapterCreator: newState.guild.voiceAdapterCreator
-            }
+            };
             joinVoice(voiceConnection, newState.client);
-            await playAudioFile(newState.guild.id, 'good_morning_donda', oldState.member?.user.username);
+            playAudioFile(newState.guild.id, 'good_morning_donda', oldState.member?.user.username);
         }
     }
-}
+};

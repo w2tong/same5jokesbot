@@ -6,7 +6,7 @@ function getRandomRange(max: number): number {
 }
 
 function getMomentCurrentTimeEST() {
-    return moment().utc().tz('America/Toronto')
+    return moment().utc().tz('America/Toronto');
 }
 
-export { getRandomRange, getMomentCurrentTimeEST }
+export { getRandomRange, getMomentCurrentTimeEST };

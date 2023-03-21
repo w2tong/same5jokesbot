@@ -1,5 +1,5 @@
-import moment from "moment-timezone";
-import { getRandomRange } from './util'
+import moment from 'moment-timezone';
+import { getRandomRange } from './util';
 
 const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13'];
 function getCongratulations(): string {
@@ -101,7 +101,7 @@ const regexToAudio = [
         getAudio: () => 'good_morning_donda_short'
     },
     {
-        regex: /(not|doesn\'t) look.*good|but watch this/,
+        regex: /(not|doesn'?t) look.*good|but watch this/,
         getAudio: () => 'guga'
     },
     {
@@ -157,9 +157,9 @@ const regexToAudio = [
         getAudio: () => {
             const hour = moment().utc().tz('America/Toronto').hour();
             if (hour >= 4 && hour < 12) {
-                return 'breakfast'
+                return 'breakfast';
             }
-            return ''
+            return '';
         }
     },
     {

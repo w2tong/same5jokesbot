@@ -1,9 +1,11 @@
-import { ChannelType, Client, TextChannel } from "discord.js";
-import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
+import { ChannelType, Client, TextChannel } from 'discord.js';
+import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
-import regexToAudio from "./regex-to-audio";
-import { getMomentCurrentTimeEST } from "./util";
-// @ts-ignore
+import regexToAudio from './regex-to-audio';
+import { getMomentCurrentTimeEST } from './util';
+import { loggers } from 'winston';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
 import Transcriber from 'discord-speech-to-text';
 
 type Timer = NodeJS.Timer | null;
@@ -18,9 +20,17 @@ interface voiceConnection {
     adapterCreator: DiscordGatewayAdapterCreator
 }
 
+interface transcriberData {
+    transcript: {
+        text: string
+    }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 const transcriber = new Transcriber(process.env.WITAI_KEY);
 const timeout = 600_000; // Timeout in milliseconds 
-let guildConnections: { [key: string]: GuildConnection } = {};
+const guildConnections: { [key: string]: GuildConnection } = {};
+const logger = loggers.get('error-logger');
 
 // Creates AudioPlayer and add event listeners
 function createPlayer(connection: VoiceConnection, timeoutId: Timer, guildId: string): AudioPlayer {
@@ -36,11 +46,11 @@ function createPlayer(connection: VoiceConnection, timeoutId: Timer, guildId: st
     player.on(AudioPlayerStatus.Idle, (): void => {
         timeoutId = setTimeout(() => {
             player.stop();
-            delete guildConnections[guildId]
+            delete guildConnections[guildId];
             try {
                 connection.destroy();
             } catch (e) {
-                console.log(e)
+                console.log(e);
             }
             timeoutId = null;
         }, timeout);
@@ -49,10 +59,10 @@ function createPlayer(connection: VoiceConnection, timeoutId: Timer, guildId: st
     return player;
 }
 
-async function playAudioFile(guildId: string, audioFile: string, username?: string): Promise<void> {
+function playAudioFile(guildId: string, audioFile: string, username?: string) {
     const player = guildConnections[guildId].player;
     if (!player) return;
-    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username} played ${audioFile}`);
+    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username ?? ''} played ${audioFile}`);
     const resource = createAudioResource(join(__dirname, `audio/${audioFile}.mp3`));
     player.play(resource);
 }
@@ -76,7 +86,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
         connection,
         player,
         timeoutId: null
-    }
+    };
 
     // Get voice log channel
     let voiceLogChannel: TextChannel;
@@ -86,43 +96,52 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     }
 
     // Add event listener on receiving voice input
-    connection.receiver.speaking.on('start', async (userId) => {
+    connection.receiver.speaking.on('start', (userId) => {
         const user = client.users.cache.get(userId);
         // Return if speaker is a bot
         if (user?.bot) return;
-        transcriber.listen(connection.receiver, userId, user).then((data: any) => {
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        transcriber.listen(connection.receiver, userId, user).then((data: transcriberData) => {
+    
             // Send rate limited message and return
             if (Object.keys(data.transcript).length === 0) {
                 if (isRateLimited === false) {
                     isRateLimited = true;
-                    if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`);
+                    if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`).catch((err: Error) => logger.log({
+                        level: 'error',
+                        message: err.message,
+                        stack: err.stack
+                    }));
                 }
                 return;
             }
-
+    
             // Process text
             isRateLimited = false;
             if (!data.transcript.text) return; // Return if no text
             const text = data.transcript.text.toLowerCase();
             const username = user?.username;
-
+    
             // Log voice messages to console and discord channel
-            const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`
+            const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`;
             console.log(voiceTextLog);
-            if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch((e) => console.log(`Error sending to voiceLogChannel: ${e}`));
-
+            if (voiceLogChannel) voiceLogChannel.send(voiceTextLog)
+                .catch(e => logger.log({
+                    level: 'error',
+                    message: `Error sending to voiceLogChannel: ${e}`
+                }));
+    
             // Stop audio voice command
             if (/hey bot stop/.test(text)) {
                 player.stop();
                 return;
             }
-
+    
             // Return if audio is already playing
             if (player.state.status === AudioPlayerStatus.Playing) return;
-
+    
             // Play any audio where text matches regex
-            for (let regexAudio of regexToAudio) {
+            for (const regexAudio of regexToAudio) {
                 const audio = regexAudio.getAudio();
                 if (regexAudio.regex.test(text) && audio) {
                     playAudioFile(guildId, audio, username);
@@ -133,28 +152,30 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     });
 
     // Remove listeners on disconnect
-    connection.on(VoiceConnectionStatus.Disconnected, async () => {
-        try {
-            await Promise.race([
-                entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
-                entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
-            ]);
-            // Seems to be reconnecting to a new channel - ignore disconnect
-        } catch (e) {
-            // Seems to be a real disconnect which SHOULDN'T be recovered from
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-                timeoutId = null;
-            }
-            player.stop();
-            delete guildConnections[guildId]
+    connection.on(VoiceConnectionStatus.Disconnected, () => {
+        void (async () => {
             try {
-                connection.destroy();
+                await Promise.race([
+                    entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+                    entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+                ]);
+                // Seems to be reconnecting to a new channel - ignore disconnect
             } catch (e) {
-                console.log(e)
+                // Seems to be a real disconnect which SHOULDN'T be recovered from
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                }
+                player.stop();
+                delete guildConnections[guildId];
+                try {
+                    connection.destroy();
+                } catch (e) {
+                    console.log(e);
+                }
             }
-        }
-    })
+        })();
+    });
 }
 
-export { joinVoice, playAudioFile }
+export { joinVoice, playAudioFile };
