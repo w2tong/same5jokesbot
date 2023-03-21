@@ -6,6 +6,7 @@ import { getEmotes } from './emotes';
 import messageCreateHandler from './events/messageCreateHandler';
 import interactionCreateHandler from './events/interactionCreateHandler';
 import voiceStateUpdateHandler from './events/voiceStateUpdateHandler';
+import winston from 'winston';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 
@@ -31,6 +32,27 @@ client.once(Events.ClientReady, (): void => {
     console.log('Same5JokesBot online.');
 });
 
+const format = winston.format.printf(({ level, message, timestamp }) => {
+    return `${timestamp} ${level}: ${message}`;
+});
+
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: "MMM-DD-YYYY HH:mm:ss",
+        }),
+        format
+    ),
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'logs/error.log' })
+    ]
+});
+
+
 client.on(Events.ShardError, error => {
-    console.log('A websocket connection encountered an error:', error);
+    logger.log({
+        level: 'error',
+        message: `${error}`
+    });
 });
