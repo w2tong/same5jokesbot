@@ -17,6 +17,6 @@ const regexToReact = [
         regex: /anime|vtuber/,
         getReact: () => emotes.dansGame ?? ''
     }
-]
+];
 
 export default regexToReact;
