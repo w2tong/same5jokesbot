@@ -321,6 +321,18 @@ const regexToAudio = [
     {
         regex: /slow mo(de)?|slow.*(it|that|sneeze).*down/,
         getAudio: () => 'train_sneeze_slow'
+    },
+    {
+        regex: /(fou?r)\s*s(e|i)nd?/,
+        getAudio: () => 'boys'
+    },
+    {
+        regex: /whopper,? whopper,? whopper,? whopper/,
+        getAudio: () => 'whopper_whopper'
+    },
+    {
+        regex: /whopper/,
+        getAudio: () => 'whopper_whopper_short'
     }
 ];
 
