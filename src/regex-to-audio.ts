@@ -345,6 +345,10 @@ const regexToAudio = [
     {
         regex: /f.*cked/,
         getAudio: () => 'what_a_fd_up_day'
+    },
+    {
+        regex: /i (didn'?t|did not)|it'?s not true|it'?s bullshit|hi,? mark|/,
+        getAudio: () => 'oh_hi_mark'
     }
 ];
 
