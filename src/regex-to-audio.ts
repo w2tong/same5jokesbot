@@ -333,6 +333,10 @@ const regexToAudio = [
     {
         regex: /whopper/,
         getAudio: () => 'whopper_whopper_short'
+    },
+    {
+        regex: /hard.*core/,
+        getAudio: () => 'keep_it_hardcore'
     }
 ];
 
