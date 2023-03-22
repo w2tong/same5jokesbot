@@ -1,5 +1,5 @@
 import { emotes } from './emotes';
-import { getRandomRange } from './util'
+import { getRandomRange } from './util';
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
@@ -25,22 +25,22 @@ function getNextYear(): number {
     return new Date().getFullYear() + 1;
 }
 
-const life = ['is Strange', 'is Peculiar', 'of Luxury']
+const life = ['is Strange', 'is Peculiar', 'of Luxury'];
 function getLifeAdjective(): string {
     return life[getRandomRange(life.length)];
 }
 
-const sonsOf = ['the Forest', 'Anarchy']
+const sonsOf = ['the Forest', 'Anarchy'];
 function getSonsOf(): string {
     return sonsOf[getRandomRange(sonsOf.length)];
 }
 
-const DND = ['Dungeons and Dragons?', 'Dark and Darker?', 'Where\'s Albert?']
+const DND = ['Dungeons and Dragons?', 'Dark and Darker?', 'Where\'s Albert?'];
 function getDND(): string {
     return DND[getRandomRange(DND.length)];
 }
 
-const val = ['orant?', 'heim?']
+const val = ['orant?', 'heim?'];
 function getVal(): string {
     return val[getRandomRange(val.length)];
 }
@@ -68,7 +68,7 @@ const regexToText = [
             }
             else {
                 if (disperseStreak > 1) {
-                    res = `Disperse Streak: ${disperseStreak} - ${username}'s fault.\n${res}`
+                    res = `Disperse Streak: ${disperseStreak} - ${username}'s fault.\n${res}`;
                 }
                 disperseStreak = 0;
             }
@@ -117,7 +117,8 @@ const regexToText = [
     },
     {
         regex: /hell\s*halt/,
-        getText: () => `I'm a leak, I'm a leak. ${emotes.sadge ?? ''}`
+        getText: () => `I'm a leak, I'm a leak. ${emotes.sadge.toString()}`
+        
     },
     {
         regex: /shut.*up/,
@@ -177,7 +178,7 @@ const regexToText = [
     },
     {
         regex: /dark/,
-        getText: () => `and Darker.`
+        getText: () => 'and Darker.'
     },
     {
         regex: /\bdnd\b/,
@@ -193,7 +194,7 @@ const regexToText = [
     },
     {
         regex: /\bha\s*ha\b/,
-        getText: () => 'That\s crazy.'
+        getText: () => 'That\'s crazy.'
     },
     {
         regex: /that'?s crazy/,
@@ -227,14 +228,14 @@ const regexToText = [
     {
         regex: /\b(big|strong|handsome|tall|smart|rich|funny)\b/,
 
-        getText: (message: string, _username: string) => {
-            let arr = ['big', 'strong', 'handsome', 'tall', 'smart', 'rich', 'funny'];
+        getText: (message: string) => {
+            const arr = ['big', 'strong', 'handsome', 'tall', 'smart', 'rich', 'funny'];
             for (let i = 0; i < arr.length; i++) {
                 if (message.includes(arr[i])) {
                     arr.splice(i, 1);
                 }
             }
-            let str = arr.join(', ');
+            const str = arr.join(', ');
             return `${str.charAt(0).toUpperCase()}${str.slice(1)}.`;
         }
     }

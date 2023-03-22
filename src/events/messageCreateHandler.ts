@@ -1,10 +1,13 @@
-import { ChannelType, Events, Message } from 'discord.js'
+import { ChannelType, Message } from 'discord.js';
 import regexToAudio from '../regex-to-audio';
 import regexToReact from '../regex-to-react';
 import regexToText from '../regex-to-text';
 import { joinVoice, playAudioFile } from '../voice';
+import { loggers } from 'winston';
 
-export default async (message: Message) => {
+const logger = loggers.get('error-logger');
+
+export default (message: Message) => {
     // Don't respond to bots
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
@@ -16,14 +19,18 @@ export default async (message: Message) => {
 
     //React with emoji
     for (const regexReact of regexToReact) {
-        const react = regexReact.getReact()
+        const react = regexReact.getReact();
         if (react && regexReact.regex.test(command)) {
-            message.react(react).catch(e => console.log(e));
+            message.react(react).catch((err: Error) => logger.log({
+                level: 'error',
+                message: err.message,
+                stack: err.stack
+            }));
         }
     }
     // Text replies
     let botMessage = '';
-    for (let regexText of regexToText) {
+    for (const regexText of regexToText) {
         if (regexText.regex.test(command) && message.member) {
             const text = regexText.getText(command, message.member?.displayName);
             botMessage += `${text}\n`;
@@ -31,20 +38,24 @@ export default async (message: Message) => {
     }
     // Send message
     if (botMessage) {
-        message.channel.send(botMessage).catch((e) => console.log(`Error sending message: ${e}`));;
+        message.channel.send(botMessage).catch((err: Error) => logger.log({
+            level: 'error',
+            message: err.message,
+            stack: err.stack
+        }));
     }
     // Audio replies
-    for (let regexAudio of regexToAudio) {
+    for (const regexAudio of regexToAudio) {
         const audio = regexAudio.getAudio();
         if (regexAudio.regex.test(command) && audio && message.member && message.member.voice.channel && message.guild) {
             const voiceConnection = {
                 channelId: message.member.voice.channel.id,
                 guildId: message.guild.id,
                 adapterCreator: message.guild.voiceAdapterCreator
-            }
+            };
             joinVoice(voiceConnection, message.client);
-            await playAudioFile(message.guild.id, audio, message.member.user.username);
+            playAudioFile(message.guild.id, audio, message.member.user.username);
             break;
         }
     }
-}
+};
