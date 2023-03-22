@@ -347,8 +347,12 @@ const regexToAudio = [
         getAudio: () => 'what_a_fd_up_day'
     },
     {
-        regex: /i (didn'?t|did not)|it'?s not true|it'?s bullshit|hi,? mark|/,
+        regex: /i (didn'?t|did not)|it'?s not true|it'?s bullshit|hi,? mark/,
         getAudio: () => 'oh_hi_mark'
+    },
+    {
+        regex: /where (are they|is she)/,
+        getAudio: () => 'batman_where_are_they'
     }
 ];
 
