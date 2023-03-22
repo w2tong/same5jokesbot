@@ -342,7 +342,10 @@ const regexToAudio = [
         regex: /to the arena/,
         getAudio: () => 'xin_zhao_to_the_arena'
     },
-    
+    {
+        regex: /f.*cked/,
+        getAudio: () => 'what_a_fd_up_day'
+    }
 ];
 
 export default regexToAudio;
