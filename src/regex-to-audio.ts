@@ -337,7 +337,12 @@ const regexToAudio = [
     {
         regex: /hard.*core/,
         getAudio: () => 'keep_it_hardcore'
-    }
+    },
+    {
+        regex: /to the arena/,
+        getAudio: () => 'xin_zhao_to_the_arena'
+    },
+    
 ];
 
 export default regexToAudio;
