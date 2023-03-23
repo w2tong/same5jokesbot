@@ -353,6 +353,10 @@ const regexToAudio = [
     {
         regex: /where (are they|is she)/,
         getAudio: () => 'batman_where_are_they'
+    },
+    {
+        regex: /(j|g)erry/,
+        getAudio: () => 'jerry'
     }
 ];
 
