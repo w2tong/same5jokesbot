@@ -8,8 +8,9 @@ oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_21_9' });
 let connection: oracledb.Connection;
 oracledb.autoCommit = true;
 
-async function initOracleDB() {
+const selectExecuteOptions = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 
+async function initOracleDB() {
     try {
         connection = await oracledb.getConnection({
             user: process.env.ORACLEDB_USER,
@@ -46,22 +47,25 @@ async function initOracleDB() {
     }
 }
 
-async function updateDisperseStreak(streak: number) {
-    const result = await connection.execute('SELECT last_name FROM employees', {streak: streak});
+function updateDisperseStreakHighScore(guildId: string, userId: string, streak: number) {
+    connection.execute(queries.updateDisperseStreakHighScore, {guildId, userId, streak}).catch((err: Error) => {
+        logger.error({
+            message: `oracledb.ts - updateDisperseStreakHighScore ${err.message}`,
+            stack: err.stack
+        });
+    });
 }
 
-interface DisperseStreak {
-    streak: number,
-    userId: string
+interface DisperseStreakHighscore {
+    STREAK: number,
+    USER_ID: string
 }
-async function getDisperseStreak(guildId: string): Promise<DisperseStreak> {
-    const result = await connection.execute('SELECT last_name FROM employees', {guildId});
-    // return result;
-    const dummyStreak = {
-        streak: 1,
-        userId: '158048359591051274'
-    };
-    return dummyStreak;
+async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStreakHighscore|null> {
+    const result: oracledb.Result<DisperseStreakHighscore> = await connection.execute(queries.getDisperseStreakHighScore, {guildId}, selectExecuteOptions);
+    if (result && result.rows) {
+        return result.rows[0];
+    }
+    return null;
 }
 
 interface GamersCounter {
@@ -71,14 +75,14 @@ interface GamersCounter {
     RISE_UP: number
 }
 async function getGamersCounter(userId: string): Promise<GamersCounter|null> {
-    const result: oracledb.Result<GamersCounter> = await connection.execute(queries.getGamersCounter, {userId}, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+    const result: oracledb.Result<GamersCounter> = await connection.execute(queries.getGamersCounter, {userId}, selectExecuteOptions);
     if (result && result.rows) {
         return result.rows[0];
     }
     return null;
 }
 
-async function updateGamersCounter(userId: string, gamersWord: string) {
+function updateGamersCounter(userId: string, gamersWord: string) {
     let query = '';
     switch(gamersWord) {
     case 'Discharge!':
@@ -91,12 +95,12 @@ async function updateGamersCounter(userId: string, gamersWord: string) {
         query = queries.updateGamersCounterRiseUp;
         break;
     }
-    await connection.execute(query, {userId}).catch((err: Error) => {
+    connection.execute(query, {userId}).catch((err: Error) => {
         logger.error({
-            message: err.message,
+            message: `oracledb.ts - updateGamersCounter: ${err.message}`,
             stack: err.stack
         });
     });
 }
 
-export {getDisperseStreak, getGamersCounter, initOracleDB, updateDisperseStreak, updateGamersCounter};
+export {getDisperseStreakHighscore, getGamersCounter, initOracleDB, updateDisperseStreakHighScore, updateGamersCounter};

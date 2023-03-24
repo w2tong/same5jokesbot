@@ -56,7 +56,7 @@ const rollCommand = new SlashCommandBuilder()
     .addIntegerOption((option) => option.setName('max').setDescription('Enter an integer'));
 
 const getDisperseStreakCommand = new SlashCommandBuilder()
-    .setName('get-disperse-streak')
+    .setName('get-disperse-highscore')
     .setDescription('Gets server\'s disperse streak highscore.');
 
 const getGamersStatsCommand = new SlashCommandBuilder()
