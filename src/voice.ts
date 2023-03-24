@@ -1,9 +1,9 @@
 import { ChannelType, Client, TextChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
+import logger from './logger';
 import regexToAudio from './regex-to-audio';
 import { getMomentCurrentTimeEST } from './util';
-import { loggers } from 'winston';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
@@ -30,7 +30,6 @@ interface transcriberData {
 const transcriber = new Transcriber(process.env.WITAI_KEY);
 const timeout = 600_000; // Timeout in milliseconds 
 const guildConnections: { [key: string]: GuildConnection } = {};
-const logger = loggers.get('error-logger');
 
 // Creates AudioPlayer and add event listeners
 function createPlayer(connection: VoiceConnection, timeoutId: Timer, guildId: string): AudioPlayer {
@@ -107,8 +106,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             if (Object.keys(data.transcript).length === 0) {
                 if (isRateLimited === false) {
                     isRateLimited = true;
-                    if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`).catch((err: Error) => logger.log({
-                        level: 'error',
+                    if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`).catch((err: Error) => logger.error({
                         message: err.message,
                         stack: err.stack
                     }));
@@ -126,9 +124,9 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`;
             console.log(voiceTextLog);
             if (voiceLogChannel) voiceLogChannel.send(voiceTextLog)
-                .catch(e => logger.log({
-                    level: 'error',
-                    message: `Error sending to voiceLogChannel: ${e}`
+                .catch((err: Error) => logger.error({
+                    message: `Error sending to voiceLogChannel: ${err.message}`,
+                    stack: err.stack
                 }));
     
             // Stop audio voice command

@@ -1,10 +1,11 @@
-import { GuildMember, Interaction } from 'discord.js';
+import { EmbedBuilder, GuildMember, Interaction } from 'discord.js';
+import logger from '../logger';
+import { getDisperseStreak, getGamersCounter } from '../oracledb';
 import { joinVoice, playAudioFile } from '../voice';
-import { loggers } from 'winston';
 
-const logger = loggers.get('error-logger');
+const decimalPlaces = 2;
 
-export default (interaction: Interaction) => {
+export default async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
     const { commandName } = interaction;
     // Play audio
@@ -16,22 +17,61 @@ export default (interaction: Interaction) => {
         };
         const audioFile = interaction.options.getString('audio') ?? '';
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
-        interaction.reply({ content: reply, ephemeral: true }).catch((err: Error) => logger.log({
-            level: 'error',
+        interaction.reply({ content: reply, ephemeral: true }).catch((err: Error) => logger.error({
             message: err.message,
             stack: err.stack
         }));
         joinVoice(voiceConnection, interaction.client);
         playAudioFile(interaction.guild.id, audioFile, interaction.member.user.username);
     }
+
     // Reply with a number between 1 and 100 (or min and max)
     else if (commandName === 'roll') {
         const min = interaction.options.getInteger('min') ?? 1;
         const max = interaction.options.getInteger('max') ?? 100;
-        interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString()).catch((err: Error) => logger.log({
-            level: 'error',
+        interaction.reply(Math.floor(Math.random() * (max + 1 - min) + min).toString()).catch((err: Error) => logger.error({
             message: err.message,
             stack: err.stack
         }));
+    }
+
+    else if (commandName === 'get-disperse-streak') {
+        if (!interaction.guild) return;
+        const disperseStreak = await getDisperseStreak(interaction.guild.id);
+        const username = (await interaction.client.users.fetch(disperseStreak.userId)).username;
+        const reply = `${interaction.guild.name}'s highest Disperse streak is ***${disperseStreak.streak}*** by **${username}**.`;
+
+        interaction.reply(reply).catch((err: Error) => logger.error({
+            message: err.message,
+            stack: err.stack
+        }));
+    }
+
+    else if (commandName === 'get-gamers-stats') {
+        const gamerCounter = await getGamersCounter(interaction.user.id);
+        if (!gamerCounter) {
+            interaction.reply('No stats available.').catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
+        else {
+            
+            const sum = gamerCounter.DISCHARGE + gamerCounter.DISPERSE + gamerCounter.RISE_UP;
+            const dischargePercent = (gamerCounter.DISCHARGE / sum * 100).toFixed(decimalPlaces);
+            const dispersePercent = (gamerCounter.DISPERSE / sum * 100).toFixed(decimalPlaces);
+            const riseUpPercent = (gamerCounter.RISE_UP / sum * 100).toFixed(decimalPlaces);
+            const gamersStatsEmbed = new EmbedBuilder()
+                .setTitle(`${interaction.member?.user.username}'s Gamers Stats`)
+                .addFields(
+                    { name: 'Gamers', value: 'Discharge!\nDisperse!\nRise up!', inline: true },
+                    { name: 'Hits', value: `${gamerCounter.DISCHARGE}\n${gamerCounter.DISPERSE}\n${gamerCounter.RISE_UP}`, inline: true },
+                    { name: 'Hit Rate', value: `${dischargePercent}%\n${dispersePercent}%\n${riseUpPercent}%`, inline: true },
+                );
+            interaction.reply({ embeds: [gamersStatsEmbed]}).catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
     }
 };

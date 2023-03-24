@@ -1,4 +1,6 @@
 import { emotes } from './emotes';
+import logger from './logger';
+import { updateGamersCounter } from './oracledb';
 import { getRandomRange } from './util';
 
 // Where is Andy random response
@@ -61,7 +63,7 @@ const regexToText = [
     },
     {
         regex: /gamers/,
-        getText: (_message: string, username: string) => {
+        getText: (userId: string, _message: string, username: string) => {
             let res = getGamersResponse();
             if (res === 'Disperse!') {
                 disperseStreak++;
@@ -72,6 +74,12 @@ const regexToText = [
                 }
                 disperseStreak = 0;
             }
+            updateGamersCounter(userId, res).catch((err: Error) => {
+                logger.error({
+                    message: err.message,
+                    stack: err.stack
+                });
+            });
             return res;
         }
     },
@@ -228,7 +236,7 @@ const regexToText = [
     {
         regex: /\b(big|strong|handsome|tall|smart|rich|funny)\b/,
 
-        getText: (message: string) => {
+        getText: (_userId: string, message: string) => {
             const arr = ['big', 'strong', 'handsome', 'tall', 'smart', 'rich', 'funny'];
             for (let i = 0; i < arr.length; i++) {
                 if (message.includes(arr[i])) {
