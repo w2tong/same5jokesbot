@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, Interaction } from 'discord.js';
 import logger from '../logger';
-import { getDisperseStreakHighscore, getGamersCounter } from '../oracledb';
+import { getDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter } from '../oracledb';
 import { joinVoice, playAudioFile } from '../voice';
 
 const decimalPlaces = 2;
@@ -35,6 +35,24 @@ export default async (interaction: Interaction) => {
         }));
     }
 
+    else if (commandName === 'get-disperse-breaks') {
+        const disperseStreakBreaks = await getDisperseStreakBreaks(interaction.user.id);
+        if (!disperseStreakBreaks) {
+            interaction.reply('You have no streak breaks! Congratulations!').catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
+        else {
+            const reply = `${interaction.user.username}'s Disperse breaks count is **${disperseStreakBreaks.BREAKS}** and score is **${disperseStreakBreaks.SCORE}**.`;
+
+            interaction.reply(reply).catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
+    }
+
     else if (commandName === 'get-disperse-highscore') {
         if (!interaction.guild) return;
         const disperseStreak = await getDisperseStreakHighscore(interaction.guild.id);
@@ -45,8 +63,8 @@ export default async (interaction: Interaction) => {
             }));
         }
         else {
-            const username = (await interaction.client.users.fetch(disperseStreak?.USER_ID)).username;
-            const reply = `${interaction.guild.name}'s highest Disperse streak is ***${disperseStreak?.STREAK}*** by **${username}**.`;
+            const username = (await interaction.client.users.fetch(disperseStreak.USER_ID)).username;
+            const reply = `${interaction.guild.name}'s highest Disperse streak is ***${disperseStreak.STREAK}*** by **${username}**.`;
 
             interaction.reply(reply).catch((err: Error) => logger.error({
                 message: err.message,
@@ -70,7 +88,7 @@ export default async (interaction: Interaction) => {
             const dispersePercent = (gamerCounter.DISPERSE / sum * 100).toFixed(decimalPlaces);
             const riseUpPercent = (gamerCounter.RISE_UP / sum * 100).toFixed(decimalPlaces);
             const gamersStatsEmbed = new EmbedBuilder()
-                .setTitle(`${interaction.member?.user.username}'s Gamers Stats`)
+                .setTitle(`${interaction.user.username}'s Gamers Stats`)
                 .addFields(
                     { name: 'Gamers', value: 'Discharge!\nDisperse!\nRise up!', inline: true },
                     { name: 'Hits', value: `${gamerCounter.DISCHARGE}\n${gamerCounter.DISPERSE}\n${gamerCounter.RISE_UP}`, inline: true },

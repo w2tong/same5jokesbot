@@ -55,6 +55,10 @@ const rollCommand = new SlashCommandBuilder()
     .addIntegerOption((option) => option.setName('min').setDescription('Enter an integer'))
     .addIntegerOption((option) => option.setName('max').setDescription('Enter an integer'));
 
+const getDisperseBreaksCommand = new SlashCommandBuilder()
+    .setName('get-disperse-breaks')
+    .setDescription('Gets your stats on disperse streak breaks.');
+
 const getDisperseStreakCommand = new SlashCommandBuilder()
     .setName('get-disperse-highscore')
     .setDescription('Gets server\'s disperse streak highscore.');
@@ -63,7 +67,7 @@ const getGamersStatsCommand = new SlashCommandBuilder()
     .setName('get-gamers-stats')
     .setDescription('Gets your Gamer stats for this server.');
 
-const commands = [playCommand, rollCommand, getDisperseStreakCommand, getGamersStatsCommand].map((command) => command.toJSON());
+const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand].map((command) => command.toJSON());
 
 if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {
     const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
