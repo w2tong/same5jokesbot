@@ -2,9 +2,7 @@ import { CronCommand, CronJob } from 'cron';
 import { ChannelType, Client, TextChannel } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { loggers } from 'winston';
-
-const logger = loggers.get('error-logger');
+import logger from './logger';
 
 // Hourly water and posture check cronjob
 function createWaterPostureCronJob(channel: TextChannel): CronJob {
@@ -12,8 +10,7 @@ function createWaterPostureCronJob(channel: TextChannel): CronJob {
         '00 00 * * * *',
         (): void => {
             channel.send('<@&899160433548722176> Water Check. Posture Check.')
-                .catch((err: Error) => logger.log({
-                    level: 'error',
+                .catch((err: Error) => logger.error({
                     message: err.message,
                     stack: err.stack
                 }));
@@ -27,8 +24,7 @@ function createWordleCronJob(channel: TextChannel): CronJob {
         '00 00 00 * * *',
         (): void => {
             channel.send('Wordle time POGCRAZY')
-                .catch((err: Error) => logger.log({
-                    level: 'error',
+                .catch((err: Error) => logger.error({
                     message: err.message,
                     stack: err.stack
                 }));
@@ -42,8 +38,7 @@ function createWoWResetCronJob(channel: TextChannel): CronJob {
         '00 00 17 * * 2',
         (): void => {
             channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking')
-                .catch((err: Error) => logger.log({
-                    level: 'error',
+                .catch((err: Error) => logger.error({
                     message: err.message,
                     stack: err.stack
                 }));
@@ -58,8 +53,7 @@ function createTuesdayScheduleCronJob(channel: TextChannel): CronJob {
         (): void => {
             if (channel) {
                 channel.send('Where Sons of the Forest/Divnity: Original Sin 2')
-                    .catch((err: Error) => logger.log({
-                        level: 'error',
+                    .catch((err: Error) => logger.error({
                         message: err.message,
                         stack: err.stack
                     }));
