@@ -60,7 +60,7 @@ const regexToText = [
         getText: () => getTranslation()
     },
     {
-        regex: /gamers/,
+        regex: /^gamers$/,
         getText: async (userId: string, _message: string, username: string, guildId: string) => {
             let res = getGamersResponse();
             updateGamersCounter(userId, res);
