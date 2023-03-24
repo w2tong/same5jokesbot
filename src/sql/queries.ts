@@ -1,13 +1,5 @@
-const createDisperseStreakHighscoreTable = `
-CREATE TABLE disperse_streak_highscore (
-    guild_id VARCHAR2(255) PRIMARY KEY,
-    user_id VARCHAR2(255) NOT NULL,
-    score NUMBER DEFAULT 0
-)
-`;
-
-const createDisperseStreakCurrentScoreTable = `
-CREATE TABLE disperse_streak_current_score (
+const createDisperseCurrentStreakTable = `
+CREATE TABLE disperse_current_streak (
     guild_id VARCHAR2(255) PRIMARY KEY,
     user_id VARCHAR2(255) NOT NULL,
     streak NUMBER DEFAULT 0
@@ -17,8 +9,16 @@ CREATE TABLE disperse_streak_current_score (
 const createDisperseStreakBreaksTable = `
 CREATE TABLE disperse_streak_breaks (
     user_id VARCHAR2(255) PRIMARY KEY,
-    count NUMBER DEFAULT 0,
-    streak NUMBER DEFAULT 0
+    breaks NUMBER DEFAULT 0,
+    score NUMBER DEFAULT 0
+)
+`;
+
+const createDisperseStreakHighscoreTable = `
+CREATE TABLE disperse_streak_highscore (
+    guild_id VARCHAR2(255) PRIMARY KEY,
+    user_id VARCHAR2(255) NOT NULL,
+    score NUMBER DEFAULT 0
 )
 `;
 
@@ -30,10 +30,43 @@ CREATE TABLE gamers_counter (
     rise_up NUMBER DEFAULT 0
 )
 `;
+// DISPERSE_CURRENT_STREAK
+const getDisperseCurrentStreak = `
+SELECT user_id, streak FROM disperse_current_streak
+WHERE guild_id = :guildId
+`;
+
+const updateDisperseCurrentStreak = `
+MERGE INTO disperse_current_streak dest
+    USING( SELECT :guildId AS guild_id, :userId AS user_id, :streak AS streak FROM dual) src
+        ON( dest.guild_id = src.guild_id )
+    WHEN MATCHED THEN
+            UPDATE SET user_id = src.user_id, streak = src.streak
+    WHEN NOT MATCHED THEN
+        INSERT( guild_id, user_id, streak ) 
+        VALUES( src.guild_id, src.user_id, src.streak )
+`;
+
+//DISPERSE_STREAK_BREAKS
+const getDisperseStreakBreaks = `
+SELECT breaks, score FROM disperse_streak_breaks
+WHERE user_id = :userId
+`;
+
+const updateDisperseStreakBreaks = `
+MERGE INTO disperse_streak_breaks dest
+    USING( SELECT :userId AS user_id, :score AS score FROM dual) src
+        ON( dest.user_id = src.user_id )
+    WHEN MATCHED THEN
+        UPDATE SET breaks = dest.breaks + 1, score = dest.score + src.score
+    WHEN NOT MATCHED THEN
+        INSERT( user_id, breaks, score ) 
+        VALUES( src.user_id, 1, src.score )
+`;
 
 //DISPERSE_STREAK_HIGHSCORE
 const getDisperseStreakHighScore = `
-SELECT * FROM disperse_streak_highscore
+SELECT user_id, streak FROM disperse_streak_highscore
 WHERE guild_id = :guildId
 `;
 
@@ -51,7 +84,7 @@ MERGE INTO disperse_streak_highscore dest
 
 // GAMERS_COUNTER queries
 const getGamersCounter = `
-SELECT * FROM gamers_counter
+SELECT discharge, disperse, rise_up FROM gamers_counter
 WHERE user_id = :userId
 `;
 
@@ -88,4 +121,4 @@ MERGE INTO gamers_counter dest
         VALUES( src.user_id, 1 )
 `;
 
-export default { createDisperseStreakHighscoreTable, createDisperseStreakCurrentScoreTable, createDisperseStreakBreaksTable, createGamersCounterTable, getDisperseStreakHighScore, updateDisperseStreakHighScore, getGamersCounter, updateGamersCounterDischarge, updateGamersCounterDisperse, updateGamersCounterRiseUp };
+export default { createDisperseCurrentStreakTable, createDisperseStreakBreaksTable, createDisperseStreakHighscoreTable, createGamersCounterTable, getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighScore, updateDisperseStreakHighScore, getGamersCounter, updateGamersCounterDischarge, updateGamersCounterDisperse, updateGamersCounterRiseUp };

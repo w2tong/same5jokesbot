@@ -18,19 +18,19 @@ async function initOracleDB() {
             connectString: process.env.ORACLEDB_CONN_STR
         });
 
-        connection.execute(queries.createDisperseStreakHighscoreTable).catch((err: Error) => {
-            logger.error({
-                message: err.message,
-                stack: err.stack
-            });
-        });
-        connection.execute(queries.createDisperseStreakCurrentScoreTable).catch((err: Error) => {
+        connection.execute(queries.createDisperseCurrentStreakTable).catch((err: Error) => {
             logger.error({
                 message: err.message,
                 stack: err.stack
             });
         });
         connection.execute(queries.createDisperseStreakBreaksTable).catch((err: Error) => {
+            logger.error({
+                message: err.message,
+                stack: err.stack
+            });
+        });
+        connection.execute(queries.createDisperseStreakHighscoreTable).catch((err: Error) => {
             logger.error({
                 message: err.message,
                 stack: err.stack
@@ -47,18 +47,51 @@ async function initOracleDB() {
     }
 }
 
-function updateDisperseStreakHighScore(guildId: string, userId: string, streak: number) {
-    connection.execute(queries.updateDisperseStreakHighScore, {guildId, userId, streak}).catch((err: Error) => {
+interface DisperseCurrentStreak {
+    USER_ID: string,
+    STREAK: number
+}
+async function getDisperseCurrentStreak(guildId: string): Promise<DisperseCurrentStreak> {
+    const result: oracledb.Result<DisperseCurrentStreak> = await connection.execute(queries.getDisperseCurrentStreak, {guildId}, selectExecuteOptions);
+    if (result && result.rows && result.rows[0]) {
+        return result.rows[0];
+    }
+    return {USER_ID: '', STREAK: 0};
+}
+
+function updateDisperseCurrentStreak(guildId: string, userId: string, streak: number) {
+    connection.execute(queries.updateDisperseCurrentStreak, {guildId, userId, streak}).catch((err: Error) => {
         logger.error({
-            message: `oracledb.ts - updateDisperseStreakHighScore ${err.message}`,
+            message: `oracledb.ts - updateDisperseCurrentStreak ${err.message}`,
+            stack: err.stack
+        });
+    });
+}
+
+interface DisperseStreakBreaks{
+    BREAKS: number,
+    SCORE: number
+}
+async function getDisperseStreakBreaks(userId: string): Promise<DisperseStreakBreaks|null> {
+    const result: oracledb.Result<DisperseStreakBreaks> = await connection.execute(queries.getDisperseStreakBreaks, {userId}, selectExecuteOptions);
+    if (result && result.rows && result.rows[0]) {
+        return result.rows[0];
+    }
+    return null;
+}
+
+function updateDisperseStreakBreaks(userId: string, score: number) {
+    connection.execute(queries.updateDisperseStreakBreaks, {userId, score}).catch((err: Error) => {
+        logger.error({
+            message: `oracledb.ts - updateDisperseStreakBreaks ${err.message}`,
             stack: err.stack
         });
     });
 }
 
 interface DisperseStreakHighscore {
-    STREAK: number,
-    USER_ID: string
+    USER_ID: string,
+    STREAK: number
 }
 async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStreakHighscore|null> {
     const result: oracledb.Result<DisperseStreakHighscore> = await connection.execute(queries.getDisperseStreakHighScore, {guildId}, selectExecuteOptions);
@@ -68,8 +101,16 @@ async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStre
     return null;
 }
 
+function updateDisperseStreakHighScore(guildId: string, userId: string, streak: number) {
+    connection.execute(queries.updateDisperseStreakHighScore, {guildId, userId, streak}).catch((err: Error) => {
+        logger.error({
+            message: `oracledb.ts - updateDisperseStreakHighScore ${err.message}`,
+            stack: err.stack
+        });
+    });
+}
+
 interface GamersCounter {
-    USER_ID: number,
     DISCHARGE: number,
     DISPERSE: number,
     RISE_UP: number
@@ -103,4 +144,4 @@ function updateGamersCounter(userId: string, gamersWord: string) {
     });
 }
 
-export {getDisperseStreakHighscore, getGamersCounter, initOracleDB, updateDisperseStreakHighScore, updateGamersCounter};
+export {getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, initOracleDB, updateDisperseStreakHighScore, updateGamersCounter};

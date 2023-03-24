@@ -1,6 +1,5 @@
 import { emotes } from './emotes';
-import logger from './logger';
-import { updateDisperseStreakHighScore, updateGamersCounter } from './oracledb';
+import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from './oracledb';
 import { getRandomRange } from './util';
 
 // Where is Andy random response
@@ -17,11 +16,10 @@ function getTranslation(): string {
     return translations[getRandomRange(translations.length)];
 }
 
-const gamers = ['Rise up!', 'Disperse!', 'Discharge!', 'Disperse!'];
+const gamers = ['Rise up!', 'Disperse!', 'Discharge!', 'Disperse!', 'Disperse!'];
 function getGamersResponse(): string {
     return gamers[getRandomRange(gamers.length)];
 }
-let disperseStreak = 0;
 
 function getNextYear(): number {
     return new Date().getFullYear() + 1;
@@ -63,18 +61,20 @@ const regexToText = [
     },
     {
         regex: /gamers/,
-        getText: (userId: string, _message: string, username: string, guildId: string) => {
+        getText: async (userId: string, _message: string, username: string, guildId: string) => {
             let res = getGamersResponse();
             updateGamersCounter(userId, res);
+            const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
             if (res === 'Disperse!') {
-                disperseStreak++;
+                updateDisperseCurrentStreak(guildId, userId, disperseCurrentStreak.STREAK+1);
             }
             else {
-                if (disperseStreak > 1) {
-                    res = `Disperse Streak: ${disperseStreak} - ${username}'s fault.\n${res}`;
-                    updateDisperseStreakHighScore(guildId, userId, disperseStreak);
+                if (disperseCurrentStreak.STREAK > 1) {
+                    res = `Disperse Streak: ${disperseCurrentStreak.STREAK} - ${username}'s fault.\n${res}`;
+                    updateDisperseStreakHighScore(guildId, disperseCurrentStreak.USER_ID, disperseCurrentStreak.STREAK);
+                    updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
-                disperseStreak = 0;
+                updateDisperseCurrentStreak(guildId, userId, 0);
             }
             return res;
         }

@@ -5,7 +5,7 @@ import regexToReact from '../regex-to-react';
 import regexToText from '../regex-to-text';
 import { joinVoice, playAudioFile } from '../voice';
 
-export default (message: Message) => {
+export default async (message: Message) => {
     // Don't respond to bots
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
@@ -29,7 +29,7 @@ export default (message: Message) => {
     let botMessage = '';
     for (const regexText of regexToText) {
         if (regexText.regex.test(command) && message.member) {
-            const text = regexText.getText(message.member.id, command, message.member.displayName, message.member.guild.id);
+            const text = await regexText.getText(message.member.id, command, message.member.displayName, message.member.guild.id);
             botMessage += `${text}\n`;
         }
     }
