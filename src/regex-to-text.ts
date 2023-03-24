@@ -1,6 +1,6 @@
 import { emotes } from './emotes';
 import logger from './logger';
-import { updateGamersCounter } from './oracledb';
+import { updateDisperseStreakHighScore, updateGamersCounter } from './oracledb';
 import { getRandomRange } from './util';
 
 // Where is Andy random response
@@ -17,7 +17,7 @@ function getTranslation(): string {
     return translations[getRandomRange(translations.length)];
 }
 
-const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
+const gamers = ['Rise up!', 'Disperse!', 'Discharge!', 'Disperse!'];
 function getGamersResponse(): string {
     return gamers[getRandomRange(gamers.length)];
 }
@@ -63,23 +63,19 @@ const regexToText = [
     },
     {
         regex: /gamers/,
-        getText: (userId: string, _message: string, username: string) => {
+        getText: (userId: string, _message: string, username: string, guildId: string) => {
             let res = getGamersResponse();
+            updateGamersCounter(userId, res);
             if (res === 'Disperse!') {
                 disperseStreak++;
             }
             else {
                 if (disperseStreak > 1) {
                     res = `Disperse Streak: ${disperseStreak} - ${username}'s fault.\n${res}`;
+                    updateDisperseStreakHighScore(guildId, userId, disperseStreak);
                 }
                 disperseStreak = 0;
             }
-            updateGamersCounter(userId, res).catch((err: Error) => {
-                logger.error({
-                    message: err.message,
-                    stack: err.stack
-                });
-            });
             return res;
         }
     },

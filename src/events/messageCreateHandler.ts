@@ -29,7 +29,7 @@ export default (message: Message) => {
     let botMessage = '';
     for (const regexText of regexToText) {
         if (regexText.regex.test(command) && message.member) {
-            const text = regexText.getText(message.member.id, command, message.member.displayName);
+            const text = regexText.getText(message.member.id, command, message.member.displayName, message.member.guild.id);
             botMessage += `${text}\n`;
         }
     }

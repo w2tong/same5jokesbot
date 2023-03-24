@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, Interaction } from 'discord.js';
 import logger from '../logger';
-import { getDisperseStreak, getGamersCounter } from '../oracledb';
+import { getDisperseStreakHighscore, getGamersCounter } from '../oracledb';
 import { joinVoice, playAudioFile } from '../voice';
 
 const decimalPlaces = 2;
@@ -35,16 +35,24 @@ export default async (interaction: Interaction) => {
         }));
     }
 
-    else if (commandName === 'get-disperse-streak') {
+    else if (commandName === 'get-disperse-highscore') {
         if (!interaction.guild) return;
-        const disperseStreak = await getDisperseStreak(interaction.guild.id);
-        const username = (await interaction.client.users.fetch(disperseStreak.userId)).username;
-        const reply = `${interaction.guild.name}'s highest Disperse streak is ***${disperseStreak.streak}*** by **${username}**.`;
+        const disperseStreak = await getDisperseStreakHighscore(interaction.guild.id);
+        if (!disperseStreak) {
+            interaction.reply('No disperse streak highscore exists on this server.').catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
+        else {
+            const username = (await interaction.client.users.fetch(disperseStreak?.USER_ID)).username;
+            const reply = `${interaction.guild.name}'s highest Disperse streak is ***${disperseStreak?.STREAK}*** by **${username}**.`;
 
-        interaction.reply(reply).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+            interaction.reply(reply).catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
     }
 
     else if (commandName === 'get-gamers-stats') {
