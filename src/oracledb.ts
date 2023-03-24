@@ -4,7 +4,10 @@ import oracledb from 'oracledb';
 import logger from './logger';
 import queries from './sql/queries';
 
-oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
+if (process.env.ORACLE_CLIENT_DIR) {
+    oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
+}
+
 let connection: oracledb.Connection;
 oracledb.autoCommit = true;
 
