@@ -67,11 +67,11 @@ const regexToText = [
             const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
             if (res === 'Disperse!') {
                 updateDisperseCurrentStreak(guildId, userId, disperseCurrentStreak.STREAK+1);
+                updateDisperseStreakHighScore(guildId, disperseCurrentStreak.USER_ID, disperseCurrentStreak.STREAK);
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
                     res = `Disperse Streak: ${disperseCurrentStreak.STREAK} - ${username}'s fault.\n${res}`;
-                    updateDisperseStreakHighScore(guildId, disperseCurrentStreak.USER_ID, disperseCurrentStreak.STREAK);
                     updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
                 updateDisperseCurrentStreak(guildId, userId, 0);
