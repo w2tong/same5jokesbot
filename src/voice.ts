@@ -71,7 +71,7 @@ let isRateLimited = false;
 function joinVoice(voiceConnection: voiceConnection, client: Client) {
     const guildId = voiceConnection.guildId;
     if (getVoiceConnection(guildId)) {
-        const connection = joinVoiceChannel(voiceConnection);
+        const connection = joinVoiceChannel({ ...voiceConnection, selfDeaf: false });
         guildConnections[guildId].connection = connection;
         return;
     }
