@@ -68,9 +68,14 @@ export default async (interaction: Interaction) => {
         }
         else {
             const username = (await interaction.client.users.fetch(disperseStreak.USER_ID)).username;
-            const reply = `${interaction.guild.name}'s highest Disperse streak is ***${disperseStreak.STREAK}*** by **${username}**.`;
+            const disperseHighscoreEmbed = new EmbedBuilder()
+                .setTitle(`${interaction.guild.name}'s Disperse Streak Highscore`)
+                .addFields(
+                    { name: 'Streak', value: `${disperseStreak.STREAK}`, inline: true },
+                    { name: 'Record Holder', value: `${username}`, inline: true }
+                );
 
-            interaction.reply(reply).catch((err: Error) => logger.error({
+            interaction.reply({ embeds: [disperseHighscoreEmbed] }).catch((err: Error) => logger.error({
                 message: err.message,
                 stack: err.stack
             }));
