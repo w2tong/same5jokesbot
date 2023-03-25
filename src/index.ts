@@ -3,10 +3,11 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import createCronJobs from './create-cronjobs';
 import { getEmotes } from './emotes';
+import { initOracleDB } from './oracledb';
+import logger from './logger';
 import messageCreateHandler from './events/messageCreateHandler';
 import interactionCreateHandler from './events/interactionCreateHandler';
 import voiceStateUpdateHandler from './events/voiceStateUpdateHandler';
-import winston from 'winston';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 
@@ -21,8 +22,7 @@ client.on(Events.VoiceStateUpdate, voiceStateUpdateHandler);
 
 // Login with bot token
 client.login(process.env.BOT_TOKEN).catch((err: Error) => {
-    logger.log({
-        level: 'error',
+    logger.error({
         message: err.message,
         stack: err.stack
     });
@@ -36,31 +36,19 @@ client.once(Events.ClientReady, (): void => {
     // Cronjobs
     createCronJobs(client);
 
+    // Init db
+    initOracleDB().catch((err: Error) => {
+        logger.error({
+            message: err.message,
+            stack: err.stack
+        });
+    });
+
     console.log('Same5JokesBot online.');
 });
 
-const format = winston.format.printf(({ timestamp, level, message, stack }) => {
-    return `${timestamp} ${level}: ${message}\n${stack}`;
-});
-
-const logger = winston.createLogger({
-    format: winston.format.combine(
-        winston.format.errors({ stack: true }),
-        winston.format.timestamp({
-            format: 'MMM-DD-YYYY HH:mm:ss',
-        }),
-        format
-    ),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'logs/error.log' })
-    ]
-});
-winston.loggers.add('error-logger', logger);
-
 client.on(Events.ShardError, err => {
-    logger.log({
-        level: 'error',
+    logger.error({
         message: err.message,
         stack: err.stack
     });

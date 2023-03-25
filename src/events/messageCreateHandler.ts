@@ -1,13 +1,11 @@
 import { ChannelType, Message } from 'discord.js';
+import logger from '../logger';
 import regexToAudio from '../regex-to-audio';
 import regexToReact from '../regex-to-react';
 import regexToText from '../regex-to-text';
 import { joinVoice, playAudioFile } from '../voice';
-import { loggers } from 'winston';
 
-const logger = loggers.get('error-logger');
-
-export default (message: Message) => {
+export default async (message: Message) => {
     // Don't respond to bots
     if (message.author.bot) return;
     // Don't respond to Bot Abuser role
@@ -21,8 +19,7 @@ export default (message: Message) => {
     for (const regexReact of regexToReact) {
         const react = regexReact.getReact();
         if (react && regexReact.regex.test(command)) {
-            message.react(react).catch((err: Error) => logger.log({
-                level: 'error',
+            message.react(react).catch((err: Error) => logger.error({
                 message: err.message,
                 stack: err.stack
             }));
@@ -32,14 +29,13 @@ export default (message: Message) => {
     let botMessage = '';
     for (const regexText of regexToText) {
         if (regexText.regex.test(command) && message.member) {
-            const text = regexText.getText(command, message.member?.displayName);
+            const text = await regexText.getText(message.member.id, command, message.member.displayName, message.member.guild.id);
             botMessage += `${text}\n`;
         }
     }
     // Send message
     if (botMessage) {
-        message.channel.send(botMessage).catch((err: Error) => logger.log({
-            level: 'error',
+        message.channel.send(botMessage).catch((err: Error) => logger.error({
             message: err.message,
             stack: err.stack
         }));
