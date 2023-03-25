@@ -1,4 +1,5 @@
 import { emotes } from './emotes';
+import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from './oracledb';
 import { getRandomRange } from './util';
 
 // Where is Andy random response
@@ -19,7 +20,6 @@ const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
 function getGamersResponse(): string {
     return gamers[getRandomRange(gamers.length)];
 }
-let disperseStreak = 0;
 
 function getNextYear(): number {
     return new Date().getFullYear() + 1;
@@ -60,17 +60,21 @@ const regexToText = [
         getText: () => getTranslation()
     },
     {
-        regex: /gamers/,
-        getText: (_message: string, username: string) => {
+        regex: /^gamers$/,
+        getText: async (userId: string, _message: string, username: string, guildId: string) => {
             let res = getGamersResponse();
+            updateGamersCounter(userId, res);
+            const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
             if (res === 'Disperse!') {
-                disperseStreak++;
+                updateDisperseCurrentStreak(guildId, userId, disperseCurrentStreak.STREAK+1);
+                updateDisperseStreakHighScore(guildId, disperseCurrentStreak.USER_ID, disperseCurrentStreak.STREAK);
             }
             else {
-                if (disperseStreak > 1) {
-                    res = `Disperse Streak: ${disperseStreak} - ${username}'s fault.\n${res}`;
+                if (disperseCurrentStreak.STREAK > 1) {
+                    res = `Disperse Streak: ${disperseCurrentStreak.STREAK} - ${username}'s fault.\n${res}`;
+                    updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
-                disperseStreak = 0;
+                updateDisperseCurrentStreak(guildId, userId, 0);
             }
             return res;
         }
@@ -228,7 +232,7 @@ const regexToText = [
     {
         regex: /\b(big|strong|handsome|tall|smart|rich|funny)\b/,
 
-        getText: (message: string) => {
+        getText: (_userId: string, message: string) => {
             const arr = ['big', 'strong', 'handsome', 'tall', 'smart', 'rich', 'funny'];
             for (let i = 0; i < arr.length; i++) {
                 if (message.includes(arr[i])) {

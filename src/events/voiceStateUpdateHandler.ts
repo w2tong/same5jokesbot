@@ -1,9 +1,7 @@
 import { ChannelType, VoiceState } from 'discord.js';
+import logger from '../logger';
 import { getMomentCurrentTimeEST } from '../util';
 import { joinVoice, playAudioFile } from '../voice';
-import { loggers } from 'winston';
-
-const logger = loggers.get('error-logger');
 
 export default (oldState: VoiceState, newState: VoiceState) => {
 
@@ -18,8 +16,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         // Get main channel
         const mainChannel = newState.client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
-            mainChannel.send('You made Azi leave.').catch((err: Error) => logger.log({
-                level: 'error',
+            mainChannel.send('You made Azi leave.').catch((err: Error) => logger.error({
                 message: err.message,
                 stack: err.stack
             }));
