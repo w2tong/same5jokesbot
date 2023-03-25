@@ -44,9 +44,13 @@ export default async (interaction: Interaction) => {
             }));
         }
         else {
-            const reply = `${interaction.user.username}'s Disperse breaks count is **${disperseStreakBreaks.BREAKS}** and score is **${disperseStreakBreaks.SCORE}**.`;
-
-            interaction.reply(reply).catch((err: Error) => logger.error({
+            const disperseBreaksEmbed = new EmbedBuilder()
+                .setTitle(`${interaction.user.username}'s Disperse Breaks`)
+                .addFields(
+                    { name: '# of breaks', value: `${disperseStreakBreaks.BREAKS}`, inline: true },
+                    { name: 'Sum of streaks broken', value: `${disperseStreakBreaks.SCORE}`, inline: true }
+                );
+            interaction.reply({ embeds: [disperseBreaksEmbed] }).catch((err: Error) => logger.error({
                 message: err.message,
                 stack: err.stack
             }));
@@ -82,7 +86,6 @@ export default async (interaction: Interaction) => {
             }));
         }
         else {
-            
             const sum = gamerCounter.DISCHARGE + gamerCounter.DISPERSE + gamerCounter.RISE_UP;
             const dischargePercent = (gamerCounter.DISCHARGE / sum * 100).toFixed(decimalPlaces);
             const dispersePercent = (gamerCounter.DISPERSE / sum * 100).toFixed(decimalPlaces);
@@ -92,9 +95,9 @@ export default async (interaction: Interaction) => {
                 .addFields(
                     { name: 'Gamers', value: 'Discharge!\nDisperse!\nRise up!', inline: true },
                     { name: 'Hits', value: `${gamerCounter.DISCHARGE}\n${gamerCounter.DISPERSE}\n${gamerCounter.RISE_UP}`, inline: true },
-                    { name: 'Hit Rate', value: `${dischargePercent}%\n${dispersePercent}%\n${riseUpPercent}%`, inline: true },
+                    { name: 'Hit Rate', value: `${dischargePercent}%\n${dispersePercent}%\n${riseUpPercent}%`, inline: true }
                 );
-            interaction.reply({ embeds: [gamersStatsEmbed]}).catch((err: Error) => logger.error({
+            interaction.reply({ embeds: [gamersStatsEmbed] }).catch((err: Error) => logger.error({
                 message: err.message,
                 stack: err.stack
             }));
