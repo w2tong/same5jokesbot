@@ -376,6 +376,10 @@ const regexToAudio = [
     {
         regex: /wedg(ie|y)|wechi/,
         getAudio: () => 'wedgie'
+    },
+    {
+        regex: /killer/,
+        getAudio: () => 'killer'
     }
 ];
 
