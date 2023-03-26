@@ -1,6 +1,6 @@
-import { emotes } from './emotes';
-import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from './sql/oracledb';
-import { getRandomRange } from './util';
+import { emotes } from '../../emotes';
+import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from '../../sql/oracledb';
+import { getRandomRange } from '../../util';
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
