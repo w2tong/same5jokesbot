@@ -338,7 +338,7 @@ const regexToAudio = [
         }
     },
     {
-        regex: /(fou?r)\s*s(e|i)nd?/,
+        regex: /(for|four|force)\s*(send?|sin|and|in)/,
         getAudio: () => 'boys'
     },
     {
@@ -358,7 +358,7 @@ const regexToAudio = [
         getAudio: () => 'xin_zhao_to_the_arena'
     },
     {
-        regex: /f.*cked/,
+        regex: /f(ri|u)cked/,
         getAudio: () => 'what_a_fd_up_day'
     },
     {
@@ -372,6 +372,22 @@ const regexToAudio = [
     {
         regex: /(j|g)erry/,
         getAudio: () => 'jerry'
+    },
+    {
+        regex: /wedg(ie|y)|wechi/,
+        getAudio: () => 'wedgie'
+    },
+    {
+        regex: /killer/,
+        getAudio: () => 'killer'
+    },
+    {
+        regex: /potion/,
+        getAudio: () => 'potion_seller'
+    },
+    {
+        regex: /dopa|don't put down/,
+        getAudio: () => 'dopa_down'
     }
 ];
 
