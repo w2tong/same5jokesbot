@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import oracledb from 'oracledb';
-import logger from './logger';
-import queries from './sql/queries';
+import logger from '../logger';
+import queries from './queries';
 
 if (process.env.ORACLE_CLIENT_DIR) {
     oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
