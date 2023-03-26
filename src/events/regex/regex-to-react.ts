@@ -1,4 +1,4 @@
-import { emotes } from './emotes';
+import { emotes } from '../../emotes';
 
 const regexToReact = [
     {

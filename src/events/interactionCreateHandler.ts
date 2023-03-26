@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, Interaction } from 'discord.js';
 import logger from '../logger';
-import { getDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter } from '../oracledb';
+import { getDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter } from '../sql/oracledb';
 import { joinVoice, playAudioFile } from '../voice';
 
 const decimalPlaces = 2;
