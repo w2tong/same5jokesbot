@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import { updateKnitCount, updateSneezeCount } from '../../sql/oracledb';
 import { getRandomRange } from '../../util';
 
 const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13'];
@@ -180,7 +181,10 @@ const regexToAudio = [
     },
     {
         regex: /arthur|knit/,
-        getAudio: () => 'arthur_knitter'
+        getAudio: (userId: string) => {
+            updateKnitCount(userId);
+            return 'arthur_knitter';
+        }
     },
     {
         regex: /zoomin|foreign|\bt(yler)?\s?(1|one)/,
@@ -316,11 +320,18 @@ const regexToAudio = [
     },
     {
         regex: /sneez|bless you|hocus pocus/,
-        getAudio: () => 'train_sneeze'
+        getAudio: (userId :string) => {
+            updateSneezeCount(userId);
+            return 'train_sneeze';
+        }
     },
     {
         regex: /slow mo(de)?|slow.*(it|that|sneeze).*down/,
-        getAudio: () => 'train_sneeze_slow'
+        //updateSneezeCount
+        getAudio: (userId :string) => {
+            updateSneezeCount(userId);
+            return 'train_sneeze_slow';
+        }
     },
     {
         regex: /(fou?r)\s*s(e|i)nd?/,

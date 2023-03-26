@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import { create } from 'node:domain';
 dotenv.config();
 import oracledb from 'oracledb';
 import logger from '../logger';
@@ -21,30 +22,14 @@ async function initOracleDB() {
             connectString: process.env.ORACLEDB_CONN_STR
         });
 
-        connection.execute(queries.createDisperseCurrentStreakTable).catch((err: Error) => {
-            logger.error({
-                message: err.message,
-                stack: err.stack
+        for(const createTable of queries.createTable) {
+            connection.execute(createTable).catch((err: Error) => {
+                // logger.error({
+                //     message: err.message,
+                //     stack: err.stack
+                // });
             });
-        });
-        connection.execute(queries.createDisperseStreakBreaksTable).catch((err: Error) => {
-            logger.error({
-                message: err.message,
-                stack: err.stack
-            });
-        });
-        connection.execute(queries.createDisperseStreakHighscoreTable).catch((err: Error) => {
-            logger.error({
-                message: err.message,
-                stack: err.stack
-            });
-        });
-        connection.execute(queries.createGamersCounterTable).catch((err: Error) => {
-            logger.error({
-                message: err.message,
-                stack: err.stack
-            });
-        });
+        }
     } catch (err) {
         console.log(err);
     }
@@ -147,4 +132,44 @@ function updateGamersCounter(userId: string, gamersWord: string) {
     });
 }
 
-export {getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, initOracleDB, updateDisperseStreakHighScore, updateGamersCounter};
+interface KnitCount {
+    COUNT: number;
+}
+async function getKnitCount(userId: string): Promise<KnitCount|null> {
+    const result: oracledb.Result<KnitCount> = await connection.execute(queries.getKnitCount, {userId}, selectExecuteOptions);
+    if (result && result.rows) {
+        return result.rows[0];
+    }
+    return null;
+}
+
+function updateKnitCount(userId: string) {
+    connection.execute(queries.updateKnitCount, {userId}).catch((err: Error) => {
+        logger.error({
+            message: `oracledb.ts - updateKnitCount ${err.message}`,
+            stack: err.stack
+        });
+    });
+}
+
+interface SneezeCount {
+    COUNT: number;
+}
+async function getSneezeCount(userId: string): Promise<SneezeCount|null> {
+    const result: oracledb.Result<KnitCount> = await connection.execute(queries.getSneezeCount, {userId}, selectExecuteOptions);
+    if (result && result.rows) {
+        return result.rows[0];
+    }
+    return null;
+}
+
+function updateSneezeCount(userId: string) {
+    connection.execute(queries.updateSneezeCount, {userId}).catch((err: Error) => {
+        logger.error({
+            message: `oracledb.ts - updateSneezeCount ${err.message}`,
+            stack: err.stack
+        });
+    });
+}
+
+export {getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, initOracleDB, updateDisperseStreakHighScore, updateGamersCounter, getKnitCount, updateKnitCount, getSneezeCount, updateSneezeCount};

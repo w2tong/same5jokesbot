@@ -1,6 +1,6 @@
 import { EmbedBuilder, GuildMember, Interaction } from 'discord.js';
 import logger from '../logger';
-import { getDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter } from '../sql/oracledb';
+import { getDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, getKnitCount, getSneezeCount } from '../sql/oracledb';
 import { joinVoice, playAudioFile } from '../voice';
 
 const decimalPlaces = 2;
@@ -22,7 +22,7 @@ export default async (interaction: Interaction) => {
             stack: err.stack
         }));
         joinVoice(voiceConnection, interaction.client);
-        playAudioFile(interaction.guild.id, audioFile, interaction.member.user.username);
+        playAudioFile(interaction.guild.id, audioFile, interaction.user.username);
     }
 
     // Reply with a number between 1 and 100 (or min and max)
@@ -107,5 +107,29 @@ export default async (interaction: Interaction) => {
                 stack: err.stack
             }));
         }
+    }
+
+    else if (commandName === 'get-knit-count') {
+        let knits = 0;
+        const knitCount = await getKnitCount(interaction.user.id);
+        if (knitCount) {
+            knits = knitCount.COUNT;
+        }
+        interaction.reply(`**${knits}** knits.`).catch((err: Error) => logger.error({
+            message: err.message,
+            stack: err.stack
+        }));
+    }
+
+    else if (commandName === 'get-sneeze-count') {
+        let sneezes = 0;
+        const sneezeCount = await getSneezeCount(interaction.user.id);
+        if (sneezeCount) {
+            sneezes = sneezeCount.COUNT;
+        }
+        interaction.reply(`**${sneezes}** sneezes.`).catch((err: Error) => logger.error({
+            message: err.message,
+            stack: err.stack
+        }));
     }
 };
