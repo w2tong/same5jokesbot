@@ -2,7 +2,7 @@ import { ChannelType, Client, TextChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import logger from './logger';
-import regexToAudio from './regex-to-audio';
+import regexToAudio from './events/regex/regex-to-audio';
 import { getMomentCurrentTimeEST } from './util';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore

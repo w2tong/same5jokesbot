@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import createCronJobs from './create-cronjobs';
 import { getEmotes } from './emotes';
-import { initOracleDB } from './oracledb';
+import { initOracleDB } from './sql/oracledb';
 import logger from './logger';
 import messageCreateHandler from './events/messageCreateHandler';
 import interactionCreateHandler from './events/interactionCreateHandler';
