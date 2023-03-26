@@ -380,6 +380,14 @@ const regexToAudio = [
     {
         regex: /killer/,
         getAudio: () => 'killer'
+    },
+    {
+        regex: /potion/,
+        getAudio: () => 'potion_seller'
+    },
+    {
+        regex: /dopa|don't put down/,
+        getAudio: () => 'dopa_down'
     }
 ];
 
