@@ -42,7 +42,7 @@ export default async (message: Message) => {
     }
     // Audio replies
     for (const regexAudio of regexToAudio) {
-        const audio = regexAudio.getAudio();
+        const audio = regexAudio.getAudio(message.author.id);
         if (regexAudio.regex.test(command) && audio && message.member && message.member.voice.channel && message.guild) {
             const voiceConnection = {
                 channelId: message.member.voice.channel.id,
@@ -50,7 +50,7 @@ export default async (message: Message) => {
                 adapterCreator: message.guild.voiceAdapterCreator
             };
             joinVoice(voiceConnection, message.client);
-            playAudioFile(message.guild.id, audio, message.member.user.username);
+            playAudioFile(message.guild.id, audio, message.author.username);
             break;
         }
     }

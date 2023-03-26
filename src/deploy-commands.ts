@@ -67,7 +67,15 @@ const getGamersStatsCommand = new SlashCommandBuilder()
     .setName('get-gamers-stats')
     .setDescription('Gets your Gamer stats for this server.');
 
-const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand].map((command) => command.toJSON());
+const getKintCountCommand = new SlashCommandBuilder()
+    .setName('get-knit-count')
+    .setDescription('Gets your Gamer stats for this server.');
+
+const getSneezeCountCommand = new SlashCommandBuilder()
+    .setName('get-sneeze-count')
+    .setDescription('Gets your Gamer stats for this server.');
+
+const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand, getKintCountCommand, getSneezeCountCommand].map((command) => command.toJSON());
 
 if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {
     const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
