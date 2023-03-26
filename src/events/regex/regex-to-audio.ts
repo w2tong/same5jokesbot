@@ -215,6 +215,10 @@ const regexToAudio = [
         getAudio: () => 'small_things'
     },
     {
+        regex: /small things/,
+        getAudio: () => 'all_the'
+    },
+    {
         regex: /uh guys/,
         getAudio: () => 'uh_guys'
     },
