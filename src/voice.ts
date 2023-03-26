@@ -1,4 +1,4 @@
-import { ChannelType, Client, TextChannel } from 'discord.js';
+import { ChannelType, Client, Message, TextChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import logger from './logger';
@@ -68,6 +68,7 @@ function playAudioFile(guildId: string, audioFile: string, username?: string) {
 
 // Creates VoiceConnection and add event listeners
 let isRateLimited = false;
+let rateLimitedMessage: Message|null = null;
 function joinVoice(voiceConnection: voiceConnection, client: Client) {
     const guildId = voiceConnection.guildId;
     if (getVoiceConnection(guildId)) {
@@ -106,16 +107,29 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             if (Object.keys(data.transcript).length === 0) {
                 if (isRateLimited === false) {
                     isRateLimited = true;
-                    if (voiceLogChannel) voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`).catch((err: Error) => logger.error({
-                        message: err.message,
-                        stack: err.stack
-                    }));
+                    if (voiceLogChannel) {
+                        voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`)
+                            .then((message) => {
+                                rateLimitedMessage = message;
+                            })
+                            .catch((err: Error) => logger.error({
+                                message: err.message,
+                                stack: err.stack
+                            }));
+                    }
                 }
                 return;
             }
     
             // Process text
             isRateLimited = false;
+            if (rateLimitedMessage) {
+                rateLimitedMessage.delete().catch((err: Error) => logger.error({
+                    message: err.message,
+                    stack: err.stack
+                }));
+                rateLimitedMessage = null;
+            }
             if (!data.transcript.text) return; // Return if no text
             const text = data.transcript.text.toLowerCase();
             const username = user?.username;
