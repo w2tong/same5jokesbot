@@ -1,5 +1,5 @@
 import { emotes } from './emotes';
-import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from './oracledb';
+import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from './sql/oracledb';
 import { getRandomRange } from './util';
 
 // Where is Andy random response
@@ -71,7 +71,7 @@ const regexToText = [
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
-                    res = `Disperse Streak: ${disperseCurrentStreak.STREAK} - ${username}'s fault.\n${res}`;
+                    res = `Disperse Streak: ${disperseCurrentStreak.STREAK} broken by ${username}.\n${res}`;
                     updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
                 updateDisperseCurrentStreak(guildId, userId, 0);
