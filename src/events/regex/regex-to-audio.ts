@@ -338,7 +338,7 @@ const regexToAudio = [
         }
     },
     {
-        regex: /(fou?r)\s*s(e|i)nd?/,
+        regex: /(for|four|force)\s*(send?|sin|and|in)/,
         getAudio: () => 'boys'
     },
     {
