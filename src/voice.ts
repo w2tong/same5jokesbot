@@ -140,8 +140,8 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     
             // Play any audio where text matches regex
             for (const regexAudio of regexToAudio) {
-                const audio = regexAudio.getAudio();
-                if (regexAudio.regex.test(text) && audio) {
+                if (regexAudio.regex.test(text)) {
+                    const audio = regexAudio.getAudio(userId);
                     playAudioFile(guildId, audio, username);
                     break;
                 }

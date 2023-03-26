@@ -1,3 +1,4 @@
+// DISPERSE_CURRENT_STREAK
 const createDisperseCurrentStreakTable = `
 CREATE TABLE disperse_current_streak (
     guild_id VARCHAR2(255) PRIMARY KEY,
@@ -6,31 +7,6 @@ CREATE TABLE disperse_current_streak (
 )
 `;
 
-const createDisperseStreakBreaksTable = `
-CREATE TABLE disperse_streak_breaks (
-    user_id VARCHAR2(255) PRIMARY KEY,
-    breaks NUMBER DEFAULT 0,
-    score NUMBER DEFAULT 0
-)
-`;
-
-const createDisperseStreakHighscoreTable = `
-CREATE TABLE disperse_streak_highscore (
-    guild_id VARCHAR2(255) PRIMARY KEY,
-    user_id VARCHAR2(255) NOT NULL,
-    score NUMBER DEFAULT 0
-)
-`;
-
-const createGamersCounterTable = `
-CREATE TABLE gamers_counter (
-    user_id VARCHAR2(255) PRIMARY KEY,
-    discharge NUMBER DEFAULT 0,
-    disperse NUMBER DEFAULT 0,
-    rise_up NUMBER DEFAULT 0
-)
-`;
-// DISPERSE_CURRENT_STREAK
 const getDisperseCurrentStreak = `
 SELECT user_id, streak FROM disperse_current_streak
 WHERE guild_id = :guildId
@@ -48,6 +24,14 @@ MERGE INTO disperse_current_streak dest
 `;
 
 //DISPERSE_STREAK_BREAKS
+const createDisperseStreakBreaksTable = `
+CREATE TABLE disperse_streak_breaks (
+    user_id VARCHAR2(255) PRIMARY KEY,
+    breaks NUMBER DEFAULT 0,
+    score NUMBER DEFAULT 0
+)
+`;
+
 const getDisperseStreakBreaks = `
 SELECT breaks, score FROM disperse_streak_breaks
 WHERE user_id = :userId
@@ -65,6 +49,14 @@ MERGE INTO disperse_streak_breaks dest
 `;
 
 //DISPERSE_STREAK_HIGHSCORE
+const createDisperseStreakHighscoreTable = `
+CREATE TABLE disperse_streak_highscore (
+    guild_id VARCHAR2(255) PRIMARY KEY,
+    user_id VARCHAR2(255) NOT NULL,
+    score NUMBER DEFAULT 0
+)
+`;
+
 const getDisperseStreakHighScore = `
 SELECT user_id, streak FROM disperse_streak_highscore
 WHERE guild_id = :guildId
@@ -83,6 +75,15 @@ MERGE INTO disperse_streak_highscore dest
 `;
 
 // GAMERS_COUNTER queries
+const createGamersCounterTable = `
+CREATE TABLE gamers_counter (
+    user_id VARCHAR2(255) PRIMARY KEY,
+    discharge NUMBER DEFAULT 0,
+    disperse NUMBER DEFAULT 0,
+    rise_up NUMBER DEFAULT 0
+)
+`;
+
 const getGamersCounter = `
 SELECT discharge, disperse, rise_up FROM gamers_counter
 WHERE user_id = :userId
@@ -121,4 +122,54 @@ MERGE INTO gamers_counter dest
         VALUES( src.user_id, 1 )
 `;
 
-export default { createDisperseCurrentStreakTable, createDisperseStreakBreaksTable, createDisperseStreakHighscoreTable, createGamersCounterTable, getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighScore, updateDisperseStreakHighScore, getGamersCounter, updateGamersCounterDischarge, updateGamersCounterDisperse, updateGamersCounterRiseUp };
+// KNIT_COUNT queries
+const createKnitCountTable = `
+CREATE TABLE knit_count (
+    user_id VARCHAR2(255) PRIMARY KEY,
+    count NUMBER DEFAULT 0
+)
+`;
+
+const getKnitCount = `
+SELECT count FROM knit_count
+WHERE user_id = :userId
+`;
+
+const updateKnitCount = `
+MERGE INTO knit_count dest
+    USING( SELECT :userId AS user_id FROM dual) src
+        ON( dest.user_id = src.user_id )
+    WHEN MATCHED THEN
+        UPDATE SET count = dest.count + 1
+    WHEN NOT MATCHED THEN
+        INSERT( user_id, count ) 
+        VALUES( src.user_id, 1 )
+`;
+
+// KNIT_SNEEZE queries
+const createSneezeCountTable = `
+CREATE TABLE sneeze_count (
+    user_id VARCHAR2(255) PRIMARY KEY,
+    count NUMBER DEFAULT 0
+)
+`;
+
+const getSneezeCount = `
+SELECT count FROM sneeze_count
+WHERE user_id = :userId
+`;
+
+const updateSneezeCount = `
+MERGE INTO sneeze_count dest
+    USING( SELECT :userId AS user_id FROM dual) src
+        ON( dest.user_id = src.user_id )
+    WHEN MATCHED THEN
+        UPDATE SET count = dest.count + 1
+    WHEN NOT MATCHED THEN
+        INSERT( user_id, count ) 
+        VALUES( src.user_id, 1 )
+`;
+
+export default { 
+    createTable: [ createDisperseCurrentStreakTable, createDisperseStreakBreaksTable, createDisperseStreakHighscoreTable, createGamersCounterTable, createKnitCountTable, createSneezeCountTable ],
+    getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighScore, updateDisperseStreakHighScore, getGamersCounter, updateGamersCounterDischarge, updateGamersCounterDisperse, updateGamersCounterRiseUp, getKnitCount, updateKnitCount, getSneezeCount, updateSneezeCount };
