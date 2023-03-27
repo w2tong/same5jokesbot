@@ -122,7 +122,7 @@ export default async (interaction: Interaction) => {
             let dispersePercentField = '';
             let totalField = '';
             for (let i = 0; i < topDisperseRate.length; i++) {
-                namesField += `${i}. ${(await interaction.client.users.fetch(topDisperseRate[i].USER_ID)).username}\n`;
+                namesField += `${i+1}. ${(await interaction.client.users.fetch(topDisperseRate[i].USER_ID)).username}\n`;
                 dispersePercentField += `${topDisperseRate[i].DISPERSE_PC.toFixed(2)}%\n`;
                 totalField += `${topDisperseRate[i].SUM}\n`;
             }
