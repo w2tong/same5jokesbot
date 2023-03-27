@@ -85,12 +85,14 @@ const getSneezeCountCommand = new SlashCommandBuilder()
 
 const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand, getTopDisperseRate, getTopDisperseStreakBreaks, getKnitCountCommand, getSneezeCountCommand].map((command) => command.toJSON());
 
-if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {
-    const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
-    rest
-        .put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), {
+async function registerCommands() {
+    if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {
+        const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
+        await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), {
             body: commands,
-        })
-        .then(() => console.log('Successfully registered application commands.'))
-        .catch(console.error);
+        });
+        console.log('Successfully registered application commands.');
+    }
 }
+
+void registerCommands();
