@@ -144,7 +144,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 }));
     
             // Stop audio voice command
-            if (/hey bot stop/.test(text)) {
+            if (/bot stop/.test(text)) {
                 player.stop();
                 return;
             }
