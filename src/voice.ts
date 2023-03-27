@@ -30,6 +30,8 @@ interface transcriberData {
 const transcriber = new Transcriber(process.env.WITAI_KEY);
 const timeout = 600_000; // Timeout in milliseconds 
 const guildConnections: { [key: string]: GuildConnection } = {};
+const speakingTimeout = 100;
+const userSpeakingTimeout = new Set();
 
 // Creates AudioPlayer and add event listeners
 function createPlayer(connection: VoiceConnection, timeoutId: Timer, guildId: string): AudioPlayer {
@@ -71,17 +73,20 @@ let isRateLimited = false;
 let rateLimitedMessage: Message|null = null;
 function joinVoice(voiceConnection: voiceConnection, client: Client) {
     const guildId = voiceConnection.guildId;
+
+    // Only update connection if connection to guild already exists
     if (getVoiceConnection(guildId)&& guildConnections[guildId]) {
         const connection = joinVoiceChannel({ ...voiceConnection, selfDeaf: false });
         guildConnections[guildId].connection = connection;
         return;
     }
+
+    // Add connection, player and event listeners if new connection
     const connection = joinVoiceChannel({ ...voiceConnection, selfDeaf: false });
     let timeoutId: Timer = null;
     const player = createPlayer(connection, timeoutId, guildId);
     connection.subscribe(player);
 
-    // Add player, connection, timeoutId to guildConnections
     guildConnections[guildId] = {
         connection,
         player,
@@ -97,6 +102,15 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
 
     // Add event listener on receiving voice input
     connection.receiver.speaking.on('start', (userId) => {
+
+        // Add timeout to prevent multiple voice activations from same user
+        if (userSpeakingTimeout.has(userId)) return;
+        userSpeakingTimeout.add(userId);
+        setTimeout(() => {
+            userSpeakingTimeout.delete(userId);
+        }, speakingTimeout);
+
+        // Get user
         const user = client.users.cache.get(userId);
         // Return if speaker is a bot
         if (user?.bot) return;
