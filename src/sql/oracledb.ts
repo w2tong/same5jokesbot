@@ -36,8 +36,8 @@ async function initOracleDB() {
 }
 
 interface DisperseCurrentStreak {
-    USER_ID: string,
-    STREAK: number
+    USER_ID: string;
+    STREAK: number;
 }
 async function getDisperseCurrentStreak(guildId: string): Promise<DisperseCurrentStreak> {
     const result: oracledb.Result<DisperseCurrentStreak> = await connection.execute(queries.getDisperseCurrentStreak, {guildId}, selectExecuteOptions);
@@ -57,8 +57,8 @@ function updateDisperseCurrentStreak(guildId: string, userId: string, streak: nu
 }
 
 interface DisperseStreakBreaks{
-    BREAKS: number,
-    SCORE: number
+    BREAKS: number;
+    SCORE: number;
 }
 async function getDisperseStreakBreaks(userId: string): Promise<DisperseStreakBreaks|null> {
     const result: oracledb.Result<DisperseStreakBreaks> = await connection.execute(queries.getDisperseStreakBreaks, {userId}, selectExecuteOptions);
@@ -78,8 +78,8 @@ function updateDisperseStreakBreaks(userId: string, score: number) {
 }
 
 interface DisperseStreakHighscore {
-    USER_ID: string,
-    STREAK: number
+    USER_ID: string;
+    STREAK: number;
 }
 async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStreakHighscore|null> {
     const result: oracledb.Result<DisperseStreakHighscore> = await connection.execute(queries.getDisperseStreakHighScore, {guildId}, selectExecuteOptions);
@@ -99,9 +99,9 @@ function updateDisperseStreakHighScore(guildId: string, userId: string, streak: 
 }
 
 interface GamersCounter {
-    DISCHARGE: number,
-    DISPERSE: number,
-    RISE_UP: number
+    DISCHARGE: number;
+    DISPERSE: number;
+    RISE_UP: number;
 }
 async function getGamersCounter(userId: string): Promise<GamersCounter|null> {
     const result: oracledb.Result<GamersCounter> = await connection.execute(queries.getGamersCounter, {userId}, selectExecuteOptions);
@@ -109,6 +109,19 @@ async function getGamersCounter(userId: string): Promise<GamersCounter|null> {
         return result.rows[0];
     }
     return null;
+}
+
+interface TopDisperseRate {
+    USER_ID: string;
+    SUM: number;
+    DISPERSE_PC: number;
+}
+async function getTopDisperseRate(): Promise<Array<TopDisperseRate>> {
+    const result: oracledb.Result<TopDisperseRate> = await connection.execute(queries.getTopDisperseRate, {}, selectExecuteOptions);
+    if (result && result.rows) {
+        return result.rows;
+    }
+    return [];
 }
 
 function updateGamersCounter(userId: string, gamersWord: string) {
@@ -172,4 +185,4 @@ function updateSneezeCount(userId: string) {
     });
 }
 
-export {getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, initOracleDB, updateDisperseStreakHighScore, updateGamersCounter, getKnitCount, updateKnitCount, getSneezeCount, updateSneezeCount};
+export {initOracleDB, getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, getTopDisperseRate, updateDisperseStreakHighScore, updateGamersCounter, getKnitCount, updateKnitCount, getSneezeCount, updateSneezeCount};
