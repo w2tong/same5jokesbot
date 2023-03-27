@@ -67,7 +67,7 @@ const regexToText = [
             const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
             if (res === 'Disperse!') {
                 updateDisperseCurrentStreak(guildId, userId, disperseCurrentStreak.STREAK+1);
-                updateDisperseStreakHighScore(guildId, disperseCurrentStreak.USER_ID, disperseCurrentStreak.STREAK);
+                updateDisperseStreakHighScore(guildId, disperseCurrentStreak.USER_ID, disperseCurrentStreak.STREAK+1);
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
