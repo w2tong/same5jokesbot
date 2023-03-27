@@ -32,6 +32,11 @@ function getMask(): string {
     return mask[getRandomRange(mask.length)];
 }
 
+const noNoNo = ['no_no_no_not_like_that', 'jerry_no_no_no'];
+function getNoNoNo(): string {
+    return noNoNo[getRandomRange(noNoNo.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -127,7 +132,7 @@ const regexToAudio = [
     },
     {
         regex: /no,?\s*no,?\s*no|not like that/,
-        getAudio: () => 'no_no_no_not_like_that'
+        getAudio: () => getNoNoNo()
     },
     {
         regex: /soda/,
