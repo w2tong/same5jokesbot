@@ -71,6 +71,10 @@ const getTopDisperseRate = new SlashCommandBuilder()
     .setName('top-disperse-rate')
     .setDescription('Gets disperse rate of all users.');
 
+const getTopDisperseStreakBreaks = new SlashCommandBuilder()
+    .setName('top-disperse-streak-breaks')
+    .setDescription('Gets streak breaks of all users.');
+
 const getKnitCountCommand = new SlashCommandBuilder()
     .setName('knit-count')
     .setDescription('Gets your knit count for this server.');
@@ -79,7 +83,7 @@ const getSneezeCountCommand = new SlashCommandBuilder()
     .setName('sneeze-count')
     .setDescription('Gets your sneeze count for this server.');
 
-const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand, getTopDisperseRate, getKnitCountCommand, getSneezeCountCommand].map((command) => command.toJSON());
+const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand, getTopDisperseRate, getTopDisperseStreakBreaks, getKnitCountCommand, getSneezeCountCommand].map((command) => command.toJSON());
 
 if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {
     const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
