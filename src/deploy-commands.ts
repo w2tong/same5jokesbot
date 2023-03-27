@@ -56,26 +56,34 @@ const rollCommand = new SlashCommandBuilder()
     .addIntegerOption((option) => option.setName('max').setDescription('Enter an integer'));
 
 const getDisperseBreaksCommand = new SlashCommandBuilder()
-    .setName('get-disperse-breaks')
+    .setName('disperse-breaks')
     .setDescription('Gets your stats on disperse streak breaks.');
 
 const getDisperseStreakCommand = new SlashCommandBuilder()
-    .setName('get-disperse-highscore')
+    .setName('disperse-highscore')
     .setDescription('Gets server\'s disperse streak highscore.');
 
 const getGamersStatsCommand = new SlashCommandBuilder()
-    .setName('get-gamers-stats')
+    .setName('gamers-stats')
     .setDescription('Gets your Gamer stats for this server.');
 
-const getKintCountCommand = new SlashCommandBuilder()
-    .setName('get-knit-count')
-    .setDescription('Gets your Gamer stats for this server.');
+const getTopDisperseRate = new SlashCommandBuilder()
+    .setName('top-disperse-rate')
+    .setDescription('Gets disperse rate of all users.');
+
+const getTopDisperseStreakBreaks = new SlashCommandBuilder()
+    .setName('top-disperse-streak-breaks')
+    .setDescription('Gets streak breaks of all users.');
+
+const getKnitCountCommand = new SlashCommandBuilder()
+    .setName('knit-count')
+    .setDescription('Gets your knit count for this server.');
 
 const getSneezeCountCommand = new SlashCommandBuilder()
-    .setName('get-sneeze-count')
-    .setDescription('Gets your Gamer stats for this server.');
+    .setName('sneeze-count')
+    .setDescription('Gets your sneeze count for this server.');
 
-const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand, getKintCountCommand, getSneezeCountCommand].map((command) => command.toJSON());
+const commands = [playCommand, rollCommand, getDisperseBreaksCommand, getDisperseStreakCommand, getGamersStatsCommand, getTopDisperseRate, getTopDisperseStreakBreaks, getKnitCountCommand, getSneezeCountCommand].map((command) => command.toJSON());
 
 if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {
     const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
