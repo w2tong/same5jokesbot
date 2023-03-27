@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-import { create } from 'node:domain';
 dotenv.config();
 import oracledb from 'oracledb';
 import logger from '../logger';
