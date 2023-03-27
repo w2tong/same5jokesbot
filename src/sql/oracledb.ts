@@ -23,6 +23,7 @@ async function initOracleDB() {
 
         for(const createTable of queries.createTable) {
             connection.execute(createTable).catch((err: Error) => {
+                console.log(err);
                 // logger.error({
                 //     message: err.message,
                 //     stack: err.stack
