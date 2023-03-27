@@ -10,20 +10,20 @@ import Transcriber from 'discord-speech-to-text';
 
 type Timer = NodeJS.Timer | null;
 interface GuildConnection {
-    connection: VoiceConnection,
-    player: AudioPlayer,
-    timeoutId: Timer
+    connection: VoiceConnection;
+    player: AudioPlayer;
+    timeoutId: Timer;
 }
 interface voiceConnection {
-    channelId: string,
-    guildId: string,
-    adapterCreator: DiscordGatewayAdapterCreator
+    channelId: string;
+    guildId: string;
+    adapterCreator: DiscordGatewayAdapterCreator;
 }
 
 interface transcriberData {
     transcript: {
-        text: string
-    }
+        text: string;
+    };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
