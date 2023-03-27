@@ -185,7 +185,7 @@ const regexToAudio = [
         getAudio: () => 'guga_everybody'
     },
     {
-        regex: /arthur|knit/,
+        regex: /arthur|knit|fuchsia/,
         getAudio: (userId: string) => {
             updateKnitCount(userId);
             return 'arthur_knitter';
