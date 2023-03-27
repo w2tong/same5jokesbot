@@ -89,6 +89,14 @@ SELECT discharge, disperse, rise_up FROM gamers_counter
 WHERE user_id = :userId
 `;
 
+const getTopDisperseRate = `
+SELECT gc.user_id, disperse/total.sum*100 AS disperse_pc, sum
+FROM (SELECT user_id, discharge + disperse + rise_up AS sum FROM gamers_counter) total
+JOIN gamers_counter gc
+ON total.user_id = gc.user_id
+ORDER BY disperse_pc DESC
+`;
+
 const updateGamersCounterDischarge = `
 MERGE INTO gamers_counter dest
     USING( SELECT :userId AS user_id FROM dual) src
@@ -172,4 +180,4 @@ MERGE INTO sneeze_count dest
 
 export default { 
     createTable: [ createDisperseCurrentStreakTable, createDisperseStreakBreaksTable, createDisperseStreakHighscoreTable, createGamersCounterTable, createKnitCountTable, createSneezeCountTable ],
-    getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighScore, updateDisperseStreakHighScore, getGamersCounter, updateGamersCounterDischarge, updateGamersCounterDisperse, updateGamersCounterRiseUp, getKnitCount, updateKnitCount, getSneezeCount, updateSneezeCount };
+    getDisperseCurrentStreak, updateDisperseCurrentStreak, getDisperseStreakBreaks, updateDisperseStreakBreaks, getDisperseStreakHighScore, updateDisperseStreakHighScore, getGamersCounter, getTopDisperseRate, updateGamersCounterDischarge, updateGamersCounterDisperse, updateGamersCounterRiseUp, getKnitCount, updateKnitCount, getSneezeCount, updateSneezeCount };

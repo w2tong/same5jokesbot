@@ -1,8 +1,8 @@
 import { EmbedBuilder, GuildMember, Interaction } from 'discord.js';
 import logger from '../logger';
-import { getDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, getKnitCount, getSneezeCount } from '../sql/oracledb';
+import { getDisperseStreakBreaks, getDisperseStreakHighscore, getGamersCounter, getKnitCount, getSneezeCount, getTopDisperseRate } from '../sql/oracledb';
 import { joinVoice, playAudioFile } from '../voice';
-
+ 
 const decimalPlaces = 2;
 
 export default async (interaction: Interaction) => {
@@ -35,7 +35,7 @@ export default async (interaction: Interaction) => {
         }));
     }
 
-    else if (commandName === 'get-disperse-breaks') {
+    else if (commandName === 'disperse-breaks') {
         const disperseStreakBreaks = await getDisperseStreakBreaks(interaction.user.id);
         if (!disperseStreakBreaks) {
             interaction.reply('You have no streak breaks! Congratulations!').catch((err: Error) => logger.error({
@@ -57,7 +57,7 @@ export default async (interaction: Interaction) => {
         }
     }
 
-    else if (commandName === 'get-disperse-highscore') {
+    else if (commandName === 'disperse-highscore') {
         if (!interaction.guild) return;
         const disperseStreak = await getDisperseStreakHighscore(interaction.guild.id);
         if (!disperseStreak) {
@@ -82,7 +82,7 @@ export default async (interaction: Interaction) => {
         }
     }
 
-    else if (commandName === 'get-gamers-stats') {
+    else if (commandName === 'gamers-stats') {
         const gamerCounter = await getGamersCounter(interaction.user.id);
         if (!gamerCounter) {
             interaction.reply('No stats available.').catch((err: Error) => logger.error({
@@ -109,7 +109,39 @@ export default async (interaction: Interaction) => {
         }
     }
 
-    else if (commandName === 'get-knit-count') {
+    else if (commandName === 'top-disperse-rate') {
+        const topDisperseRate = await getTopDisperseRate();
+        if (topDisperseRate.length === 0) {
+            interaction.reply('No stats available.').catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
+        else {
+            let namesField = '';
+            let dispersePercentField = '';
+            let totalField = '';
+            for (let i = 0; i < topDisperseRate.length; i++) {
+                namesField += `${i}. ${(await interaction.client.users.fetch(topDisperseRate[i].USER_ID)).username}\n`;
+                dispersePercentField += `${topDisperseRate[i].DISPERSE_PC.toFixed(2)}%\n`;
+                totalField += `${topDisperseRate[i].SUM}\n`;
+            }
+            
+            const rowDisperseRateEmbed = new EmbedBuilder()
+                .setTitle('Top Disperse Rates')
+                .addFields(
+                    { name: 'Name', value: namesField, inline: true },
+                    { name: 'Disperse %', value: dispersePercentField, inline: true },
+                    { name: 'Gamers Total', value: totalField, inline: true }
+                );
+            interaction.reply({ embeds: [rowDisperseRateEmbed] }).catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        }
+    }
+
+    else if (commandName === 'knit-count') {
         let knits = 0;
         const knitCount = await getKnitCount(interaction.user.id);
         if (knitCount) {
@@ -121,7 +153,7 @@ export default async (interaction: Interaction) => {
         }));
     }
 
-    else if (commandName === 'get-sneeze-count') {
+    else if (commandName === 'sneeze-count') {
         let sneezes = 0;
         const sneezeCount = await getSneezeCount(interaction.user.id);
         if (sneezeCount) {
