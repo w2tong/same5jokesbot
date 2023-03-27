@@ -28,7 +28,7 @@ interface transcriberData {
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 const transcriber = new Transcriber(process.env.WITAI_KEY);
-const timeout = 600_000; // Timeout in milliseconds 
+const timeout = 900_000; // Timeout in milliseconds 
 const guildConnections: { [key: string]: GuildConnection } = {};
 const speakingTimeout = 100;
 const userSpeakingTimeout = new Set();
