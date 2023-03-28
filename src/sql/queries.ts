@@ -2,25 +2,25 @@
 const createDisperseCurrentStreakTable = `
 CREATE TABLE disperse_current_streak (
     guild_id VARCHAR2(255) PRIMARY KEY,
-    user_id VARCHAR2(255) NOT NULL,
+    user_ids VARCHAR2(1000) NOT NULL,
     streak NUMBER DEFAULT 0
 )
 `;
 
 const getDisperseCurrentStreak = `
-SELECT user_id, streak FROM disperse_current_streak
+SELECT user_ids, streak FROM disperse_current_streak
 WHERE guild_id = :guildId
 `;
 
 const updateDisperseCurrentStreak = `
 MERGE INTO disperse_current_streak dest
-    USING( SELECT :guildId AS guild_id, :userId AS user_id, :streak AS streak FROM dual) src
+    USING( SELECT :guildId AS guild_id, :userIds AS user_ids, :streak AS streak FROM dual) src
         ON( dest.guild_id = src.guild_id )
     WHEN MATCHED THEN
-            UPDATE SET user_id = src.user_id, streak = src.streak
+            UPDATE SET user_ids = src.user_ids, streak = src.streak
     WHEN NOT MATCHED THEN
-        INSERT( guild_id, user_id, streak ) 
-        VALUES( src.guild_id, src.user_id, src.streak )
+        INSERT( guild_id, user_ids, streak ) 
+        VALUES( src.guild_id, src.user_ids, src.streak )
 `;
 
 //DISPERSE_STREAK_BREAKS
@@ -52,26 +52,26 @@ MERGE INTO disperse_streak_breaks dest
 const createDisperseStreakHighscoreTable = `
 CREATE TABLE disperse_streak_highscore (
     guild_id VARCHAR2(255) PRIMARY KEY,
-    user_id VARCHAR2(255) NOT NULL,
-    score NUMBER DEFAULT 0
+    user_ids VARCHAR2(255) NOT NULL,
+    streak NUMBER DEFAULT 0
 )
 `;
 
 const getDisperseStreakHighScore = `
-SELECT user_id, streak FROM disperse_streak_highscore
+SELECT user_ids, streak FROM disperse_streak_highscore
 WHERE guild_id = :guildId
 `;
 
 const updateDisperseStreakHighScore = `
 MERGE INTO disperse_streak_highscore dest
-    USING( SELECT :guildId AS guild_id, :userId AS user_id, :streak AS streak FROM dual) src
+    USING( SELECT :guildId AS guild_id, :userIds AS user_ids, :streak AS streak FROM dual) src
         ON( dest.guild_id = src.guild_id )
     WHEN MATCHED THEN
-            UPDATE SET user_id = src.user_id, streak = src.streak
+            UPDATE SET user_ids = src.user_ids, streak = src.streak
             WHERE src.streak > dest.streak
     WHEN NOT MATCHED THEN
-        INSERT( guild_id, user_id, streak ) 
-        VALUES( src.guild_id, src.user_id, src.streak )
+        INSERT( guild_id, user_ids, streak ) 
+        VALUES( src.guild_id, src.user_ids, src.streak )
 `;
 
 // GAMERS_COUNTER queries

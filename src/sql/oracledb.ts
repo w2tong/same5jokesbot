@@ -36,7 +36,7 @@ async function initOracleDB() {
 }
 
 interface DisperseCurrentStreak {
-    USER_ID: string;
+    USER_IDS: string;
     STREAK: number;
 }
 async function getDisperseCurrentStreak(guildId: string): Promise<DisperseCurrentStreak> {
@@ -44,11 +44,11 @@ async function getDisperseCurrentStreak(guildId: string): Promise<DisperseCurren
     if (result && result.rows && result.rows[0]) {
         return result.rows[0];
     }
-    return {USER_ID: '', STREAK: 0};
+    return {USER_IDS: '', STREAK: 0};
 }
 
-function updateDisperseCurrentStreak(guildId: string, userId: string, streak: number) {
-    connection.execute(queries.updateDisperseCurrentStreak, {guildId, userId, streak}).catch((err: Error) => {
+function updateDisperseCurrentStreak(guildId: string, userIds: string, streak: number) {
+    connection.execute(queries.updateDisperseCurrentStreak, {guildId, userIds, streak}).catch((err: Error) => {
         logger.error({
             message: `oracledb.ts - updateDisperseCurrentStreak ${err.message}`,
             stack: err.stack
@@ -78,7 +78,7 @@ function updateDisperseStreakBreaks(userId: string, score: number) {
 }
 
 interface DisperseStreakHighscore {
-    USER_ID: string;
+    USER_IDS: string;
     STREAK: number;
 }
 async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStreakHighscore|null> {
@@ -89,8 +89,8 @@ async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStre
     return null;
 }
 
-function updateDisperseStreakHighScore(guildId: string, userId: string, streak: number) {
-    connection.execute(queries.updateDisperseStreakHighScore, {guildId, userId, streak}).catch((err: Error) => {
+function updateDisperseStreakHighScore(guildId: string, userIds: string, streak: number) {
+    connection.execute(queries.updateDisperseStreakHighScore, {guildId, userIds, streak}).catch((err: Error) => {
         logger.error({
             message: `oracledb.ts - updateDisperseStreakHighScore ${err.message}`,
             stack: err.stack
