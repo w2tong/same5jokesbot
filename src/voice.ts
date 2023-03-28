@@ -60,6 +60,7 @@ function createPlayer(connection: VoiceConnection, guildId: string): AudioPlayer
 }
 
 function playAudioFile(guildId: string, audioFile: string, username?: string) {
+    if (!audioFile) return;
     const player = guildConnections[guildId].player;
     if (!player) return;
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username ?? ''} played ${audioFile}`);
