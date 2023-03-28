@@ -31,6 +31,16 @@ const guildConnections: { [key: string]: GuildConnection } = {};
 const speakingTimeout = 100;
 const userSpeakingTimeout = new Set();
 
+function disconnectVoice(guildId: string) {
+    guildConnections[guildId].player.stop();
+    try {
+        guildConnections[guildId].connection.destroy();
+    } catch (e) {
+        logger.error(e);
+    }
+    delete guildConnections[guildId];
+}
+
 // Creates AudioPlayer and add event listeners
 function createPlayer(connection: VoiceConnection, guildId: string): AudioPlayer {
     const player = createAudioPlayer();
@@ -44,14 +54,7 @@ function createPlayer(connection: VoiceConnection, guildId: string): AudioPlayer
     // Start timeout timer when idle
     player.on(AudioPlayerStatus.Idle, (): void => {
         guildConnections[guildId].timeoutId = setTimeout(() => {
-            player.stop();
-            delete guildConnections[guildId];
-            try {
-                connection.destroy();
-            } catch (e) {
-                logger.error(e);
-            }
-            guildConnections[guildId].timeoutId = undefined;
+            disconnectVoice(guildId);
         }, timeout);
         
     });
@@ -187,18 +190,8 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 // Seems to be reconnecting to a new channel - ignore disconnect
             } catch (e) {
                 // Seems to be a real disconnect which SHOULDN'T be recovered from
-                
-                if (guildConnections[guildId].timeoutId) {
-                    clearTimeout(guildConnections[guildId].timeoutId);
-                    guildConnections[guildId].timeoutId = undefined;
-                }
-                player.stop();
-                delete guildConnections[guildId];
-                try {
-                    connection.destroy();
-                } catch (e) {
-                    console.log(e);
-                }
+                clearTimeout(guildConnections[guildId].timeoutId);
+                disconnectVoice(guildId);
             }
         })();
     });
