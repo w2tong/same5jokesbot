@@ -393,6 +393,10 @@ const regexToAudio = [
     {
         regex: /dopa|don't put down/,
         getAudio: () => 'dopa_down'
+    },
+    {
+        regex: /\ba tip\b/,
+        getAudio: () => 'and_a_spear_behind_it'
     }
 ];
 
