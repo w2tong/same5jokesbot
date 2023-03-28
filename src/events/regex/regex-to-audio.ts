@@ -402,6 +402,10 @@ const regexToAudio = [
     {
         regex: /\ba tip\b/,
         getAudio: () => 'and_a_spear_behind_it'
+    },
+    {
+        regex: /disconnect|\bdc\b/,
+        getAudio: () => 'he_disconnected'
     }
 ];
 
