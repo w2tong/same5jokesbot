@@ -42,8 +42,8 @@ export default async (message: Message) => {
     }
     // Audio replies
     for (const regexAudio of regexToAudio) {
-        const audio = regexAudio.getAudio(message.author.id);
-        if (regexAudio.regex.test(command) && audio && message.member && message.member.voice.channel && message.guild) {
+        if (regexAudio.regex.test(command) && message.member && message.member.voice.channel && message.guild) {
+            const audio = regexAudio.getAudio(message.author.id);
             const voiceConnection = {
                 channelId: message.member.voice.channel.id,
                 guildId: message.guild.id,
