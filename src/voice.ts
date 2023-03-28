@@ -32,17 +32,15 @@ const speakingTimeout = 100;
 const userSpeakingTimeout = new Set();
 
 function disconnectVoice(guildId: string) {
+    if (!guildConnections[guildId]) return;
+    guildConnections[guildId].connection.destroy();
     guildConnections[guildId].player.stop();
-    try {
-        guildConnections[guildId].connection.destroy();
-    } catch (e) {
-        logger.error(e);
-    }
+    clearTimeout(guildConnections[guildId].timeoutId);
     delete guildConnections[guildId];
 }
 
 // Creates AudioPlayer and add event listeners
-function createPlayer(connection: VoiceConnection, guildId: string): AudioPlayer {
+function createPlayer(guildId: string): AudioPlayer {
     const player = createAudioPlayer();
     // Reset timeout when audio playing
     player.on(AudioPlayerStatus.Playing, (): void => {
@@ -86,7 +84,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
 
     // Add connection, player and event listeners if new connection
     const connection = joinVoiceChannel({ ...voiceConnection, selfDeaf: false });
-    const player = createPlayer(connection, guildId);
+    const player = createPlayer(guildId);
     connection.subscribe(player);
 
     guildConnections[guildId] = {
@@ -190,7 +188,6 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 // Seems to be reconnecting to a new channel - ignore disconnect
             } catch (e) {
                 // Seems to be a real disconnect which SHOULDN'T be recovered from
-                clearTimeout(guildConnections[guildId].timeoutId);
                 disconnectVoice(guildId);
             }
         })();
