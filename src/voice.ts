@@ -8,18 +8,16 @@ import { getMomentCurrentTimeEST } from './util';
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
 
-type Timer = NodeJS.Timer | null;
 interface GuildConnection {
     connection: VoiceConnection;
     player: AudioPlayer;
-    timeoutId: Timer;
+    timeoutId: NodeJS.Timer | undefined;
 }
 interface voiceConnection {
     channelId: string;
     guildId: string;
     adapterCreator: DiscordGatewayAdapterCreator;
 }
-
 interface transcriberData {
     transcript: {
         text: string;
@@ -34,27 +32,28 @@ const speakingTimeout = 100;
 const userSpeakingTimeout = new Set();
 
 // Creates AudioPlayer and add event listeners
-function createPlayer(connection: VoiceConnection, timeoutId: Timer, guildId: string): AudioPlayer {
+function createPlayer(connection: VoiceConnection, guildId: string): AudioPlayer {
     const player = createAudioPlayer();
     // Reset timeout when audio playing
     player.on(AudioPlayerStatus.Playing, (): void => {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-            timeoutId = null;
+        if (guildConnections[guildId] && guildConnections[guildId].timeoutId) {
+            clearTimeout(guildConnections[guildId].timeoutId);
+            guildConnections[guildId].timeoutId = undefined;
         }
     });
     // Start timeout timer when idle
     player.on(AudioPlayerStatus.Idle, (): void => {
-        timeoutId = setTimeout(() => {
+        guildConnections[guildId].timeoutId = setTimeout(() => {
             player.stop();
             delete guildConnections[guildId];
             try {
                 connection.destroy();
             } catch (e) {
-                console.log(e);
+                logger.error(e);
             }
-            timeoutId = null;
+            guildConnections[guildId].timeoutId = undefined;
         }, timeout);
+        
     });
 
     return player;
@@ -83,14 +82,13 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
 
     // Add connection, player and event listeners if new connection
     const connection = joinVoiceChannel({ ...voiceConnection, selfDeaf: false });
-    let timeoutId: Timer = null;
-    const player = createPlayer(connection, timeoutId, guildId);
+    const player = createPlayer(connection, guildId);
     connection.subscribe(player);
 
     guildConnections[guildId] = {
         connection,
         player,
-        timeoutId: null
+        timeoutId: undefined
     };
 
     // Get voice log channel
@@ -188,9 +186,10 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 // Seems to be reconnecting to a new channel - ignore disconnect
             } catch (e) {
                 // Seems to be a real disconnect which SHOULDN'T be recovered from
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                    timeoutId = null;
+                
+                if (guildConnections[guildId].timeoutId) {
+                    clearTimeout(guildConnections[guildId].timeoutId);
+                    guildConnections[guildId].timeoutId = undefined;
                 }
                 player.stop();
                 delete guildConnections[guildId];
