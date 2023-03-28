@@ -158,7 +158,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 }));
     
             // Stop audio voice command
-            if (/bot stop/.test(text)) {
+            if (/bot,? (stop|shut up)/.test(text)) {
                 player.stop();
                 return;
             }
