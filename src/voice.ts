@@ -162,6 +162,11 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 player.stop();
                 return;
             }
+
+            if (/bot,? (leave|dc|disconnect|get out|disperse)/.test(text)) {
+                disconnectVoice(guildId);
+                return;
+            }
     
             // Return if audio is already playing
             if (player.state.status === AudioPlayerStatus.Playing) return;
