@@ -37,6 +37,11 @@ function getNoNoNo(): string {
     return noNoNo[getRandomRange(noNoNo.length)];
 }
 
+const blind = ['im_blind_not_deaf', 'smelly_enemy'];
+function getBlind(): string {
+    return blind[getRandomRange(blind.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -123,8 +128,8 @@ const regexToAudio = [
         getAudio: () => 'fugetaboutit'
     },
     {
-        regex: /blind|deaf|can'?t see/,
-        getAudio: () => 'im_blind_not_deaf'
+        regex: /blind|can'?t see/,
+        getAudio: () => getBlind()
     },
     {
         regex: /they came|from behind/,
