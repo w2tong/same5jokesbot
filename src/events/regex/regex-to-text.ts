@@ -66,10 +66,7 @@ const regexToText = [
             updateGamersCounter(userId, res);
             const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
             if (res === 'Disperse!') {
-                let userIds = `${disperseCurrentStreak.USER_IDS}`;
-                if (disperseCurrentStreak.STREAK > 0) {
-                    userIds += `,${userId}`;
-                }
+                const userIds = (disperseCurrentStreak.STREAK === 0) ? userId : `${disperseCurrentStreak.USER_IDS},${userId}`;
                 updateDisperseCurrentStreak(guildId, userIds, disperseCurrentStreak.STREAK+1);
                 updateDisperseStreakHighScore(guildId, userIds, disperseCurrentStreak.STREAK+1);
             }
