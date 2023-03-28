@@ -16,7 +16,7 @@ function getTranslation(): string {
     return translations[getRandomRange(translations.length)];
 }
 
-const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
+const gamers = ['Rise up!', 'Disperse!', 'Discharge!', 'Disperse!'];
 function getGamersResponse(): string {
     return gamers[getRandomRange(gamers.length)];
 }
@@ -66,12 +66,16 @@ const regexToText = [
             updateGamersCounter(userId, res);
             const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
             if (res === 'Disperse!') {
-                updateDisperseCurrentStreak(guildId, userId, disperseCurrentStreak.STREAK+1);
-                updateDisperseStreakHighScore(guildId, disperseCurrentStreak.USER_ID, disperseCurrentStreak.STREAK+1);
+                let userIds = `${disperseCurrentStreak.USER_IDS}`;
+                if (disperseCurrentStreak.STREAK > 0) {
+                    userIds += `,${userId}`;
+                }
+                updateDisperseCurrentStreak(guildId, userIds, disperseCurrentStreak.STREAK+1);
+                updateDisperseStreakHighScore(guildId, userIds, disperseCurrentStreak.STREAK+1);
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
-                    res = `Disperse Streak: ${disperseCurrentStreak.STREAK} broken by ${username}.\n${res}`;
+                    res = `${res}\nDisperse Streak: **${disperseCurrentStreak.STREAK}** broken by **${username}**`;
                     updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
                 updateDisperseCurrentStreak(guildId, userId, 0);
