@@ -2,7 +2,7 @@ import { ChannelType, Client, Message, TextChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import logger from './logger';
-import regexToAudio from './regex-responses/audio';
+import getAudioResponse from './regex-responses/audio';
 import { getMomentCurrentTimeEST } from './util';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
@@ -172,13 +172,8 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             if (player.state.status === AudioPlayerStatus.Playing) return;
     
             // Play any audio where text matches regex
-            for (const regexAudio of regexToAudio) {
-                if (regexAudio.regex.test(text)) {
-                    const audio = regexAudio.getAudio(userId);
-                    playAudioFile(guildId, audio, username);
-                    break;
-                }
-            }
+            const audio = getAudioResponse(text, userId);
+            playAudioFile(guildId, audio, username);
         });
     });
 

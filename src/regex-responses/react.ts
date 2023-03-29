@@ -1,6 +1,7 @@
+import { GuildEmoji } from 'discord.js';
 import { emotes } from '../emotes';
 
-export default [
+const regexToReact = [
     {
         regex: /cooler/,
         getReact: () => '🐟'
@@ -18,3 +19,12 @@ export default [
         getReact: () => emotes.dansGame ?? ''
     }
 ];
+
+export default (command: string): GuildEmoji | string => {
+    for (const regexReact of regexToReact) {
+        if (regexReact.regex.test(command)) {
+            return regexReact.getReact();
+        }
+    }
+    return '';
+};
