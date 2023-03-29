@@ -1,6 +1,6 @@
-import { emotes } from '../../emotes';
-import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from '../../sql/oracledb';
-import { getRandomRange } from '../../util';
+import { emotes } from '../emotes';
+import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from '../sql/oracledb';
+import { getRandomRange } from '../util';
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
@@ -50,7 +50,7 @@ function whereIsWayne(): string {
     return `${wayneAction[getRandomRange(wayneAction.length)]}.`;
 }
 
-const regexToText = [
+export default [
     {
         regex: /where.*andy/,
         getText: () => whereIsAndy()
@@ -245,5 +245,3 @@ const regexToText = [
         }
     }
 ];
-
-export default regexToText;

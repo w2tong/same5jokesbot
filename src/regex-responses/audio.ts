@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
-import { updateKnitCount, updateSneezeCount } from '../../sql/oracledb';
-import { getRandomRange } from '../../util';
+import { updateKnitCount, updateSneezeCount } from '../sql/oracledb';
+import { getRandomRange } from '../util';
 
 const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13'];
 function getCongratulations(): string {
@@ -42,7 +42,7 @@ function getBlind(): string {
     return blind[getRandomRange(blind.length)];
 }
 
-const regexToAudio = [
+export default [
     {
         regex: /w(oah|hoa)/,
         getAudio: () => 'basementgang'
@@ -408,5 +408,3 @@ const regexToAudio = [
         getAudio: () => 'he_disconnected'
     }
 ];
-
-export default regexToAudio;

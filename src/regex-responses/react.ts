@@ -1,6 +1,6 @@
-import { emotes } from '../../emotes';
+import { emotes } from '../emotes';
 
-const regexToReact = [
+export default [
     {
         regex: /cooler/,
         getReact: () => '🐟'
@@ -18,5 +18,3 @@ const regexToReact = [
         getReact: () => emotes.dansGame ?? ''
     }
 ];
-
-export default regexToReact;
