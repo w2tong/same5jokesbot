@@ -42,7 +42,7 @@ function getBlind(): string {
     return blind[getRandomRange(blind.length)];
 }
 
-export default [
+const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
         getAudio: () => 'basementgang'
@@ -408,3 +408,12 @@ export default [
         getAudio: () => 'he_disconnected'
     }
 ];
+
+export default (command: string, userId: string) => {
+    for (const regexAudio of regexToAudio) {
+        if (regexAudio.regex.test(command)) {
+            return regexAudio.getAudio(userId);
+        }
+    }
+    return '';
+};

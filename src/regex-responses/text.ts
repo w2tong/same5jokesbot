@@ -50,7 +50,7 @@ function whereIsWayne(): string {
     return `${wayneAction[getRandomRange(wayneAction.length)]}.`;
 }
 
-export default [
+const regexToText = [
     {
         regex: /where.*andy/,
         getText: () => whereIsAndy()
@@ -61,7 +61,7 @@ export default [
     },
     {
         regex: /^gamers$/,
-        getText: async (userId: string, _message: string, username: string, guildId: string) => {
+        getText: async (_command: string, userId: string, username: string, guildId: string) => {
             let res = getGamersResponse();
             updateGamersCounter(userId, res);
             const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
@@ -233,10 +233,10 @@ export default [
     {
         regex: /\b(big|strong|handsome|tall|smart|rich|funny)\b/,
 
-        getText: (_userId: string, message: string) => {
+        getText: (command: string) => {
             const arr = ['big', 'strong', 'handsome', 'tall', 'smart', 'rich', 'funny'];
             for (let i = 0; i < arr.length; i++) {
-                if (message.includes(arr[i])) {
+                if (command.includes(arr[i])) {
                     arr.splice(i, 1);
                 }
             }
@@ -245,3 +245,14 @@ export default [
         }
     }
 ];
+
+export default async (command: string, userId: string, username: string, guildId: string): Promise<string> => {
+    let botMessage = '';
+    for (const regexText of regexToText) {
+        if (regexText.regex.test(command)) {
+            const text = await regexText.getText(command, userId, username, guildId);
+            botMessage += `${text}\n`;
+        }
+    }
+    return botMessage;
+};
