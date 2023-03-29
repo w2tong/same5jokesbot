@@ -5,9 +5,9 @@ import createCronJobs from './create-cronjobs';
 import { getEmotes } from './emotes';
 import { initOracleDB } from './sql/oracledb';
 import logger from './logger';
-import messageCreateHandler from './events/messageCreateHandler';
-import interactionCreateHandler from './events/interactionCreateHandler';
-import voiceStateUpdateHandler from './events/voiceStateUpdateHandler';
+import messageCreateHandler from './events/messageCreate';
+import interactionCreateHandler from './events/interactionCreate';
+import voiceStateUpdateHandler from './events/voiceStateUpdate';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 

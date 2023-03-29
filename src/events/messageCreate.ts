@@ -1,8 +1,8 @@
 import { ChannelType, Message } from 'discord.js';
 import logger from '../logger';
-import regexToAudio from './regex/regex-to-audio';
-import regexToReact from './regex/regex-to-react';
-import regexToText from './regex/regex-to-text';
+import regexToAudio from '../regex-responses/audio';
+import regexToReact from '../regex-responses/react';
+import regexToText from '../regex-responses/text';
 import { joinVoice, playAudioFile } from '../voice';
 
 export default async (message: Message) => {
