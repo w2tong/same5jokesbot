@@ -23,7 +23,7 @@ async function initOracleDB() {
     const connection = await oracledb.getConnection();
     for(const query of createTableQueries) {
         connection.execute(query).catch((err: Error) => {
-            console.log(err);
+            // console.log(err);
             // logger.error({
             //     message: err.message,
             //     stack: err.stack

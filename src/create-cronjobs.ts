@@ -2,75 +2,51 @@ import { CronCommand, CronJob } from 'cron';
 import { ChannelType, Client, TextChannel } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
+import schedule from 'node-schedule';
 import logger from './logger';
 
 // Hourly water and posture check cronjob
-function createWaterPostureCronJob(channel: TextChannel): CronJob {
-    return createTorontoCronJob(
-        '00 00 * * * *',
-        (): void => {
-            channel.send('<@&899160433548722176> Water Check. Posture Check.')
-                .catch((err: Error) => logger.error({
-                    message: err.message,
-                    stack: err.stack
-                }));
-        }
-    );
+function createWaterPostureCronJob(channel: TextChannel) {
+    schedule.scheduleJob({second: 0, minute: 0, tz: 'est'}, function() {
+        channel.send('<@&899160433548722176> Water Check. Posture Check.')
+            .catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+    });
 }
 
 // Daily Wordle reminder cronjob
-function createWordleCronJob(channel: TextChannel): CronJob {
-    return createTorontoCronJob(
-        '00 00 00 * * *',
-        (): void => {
-            channel.send('Wordle time POGCRAZY')
-                .catch((err: Error) => logger.error({
-                    message: err.message,
-                    stack: err.stack
-                }));
-        }
-    );
+function createWordleCronJob(channel: TextChannel) {
+    schedule.scheduleJob({second: 0, minute: 0, hour: 0, tz: 'est'}, function() {
+        channel.send('Wordle time POGCRAZY')
+            .catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+    });
 }
 
 // Weekly Tuesday WoW Reset cronjob
-function createWoWResetCronJob(channel: TextChannel): CronJob {
-    return createTorontoCronJob(
-        '00 00 17 * * 2',
-        (): void => {
-            channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking')
-                .catch((err: Error) => logger.error({
-                    message: err.message,
-                    stack: err.stack
-                }));
-        }
-    );
+function createWoWResetCronJob(channel: TextChannel) {
+    schedule.scheduleJob({second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'est'}, function() {
+        channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking')
+            .catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+    });
 }
 
 // Weekly Tuesday Div 2 / Sons of the Forest Session
-function createTuesdayScheduleCronJob(channel: TextChannel): CronJob {
-    return createTorontoCronJob(
-        '00 00 21 * * 2',
-        (): void => {
-            if (channel) {
-                channel.send('Where Sons of the Forest/Divnity: Original Sin 2')
-                    .catch((err: Error) => logger.error({
-                        message: err.message,
-                        stack: err.stack
-                    }));
-            }
-        }
-    );
-}
-
-// Create cronjob with Toronto timezone
-function createTorontoCronJob(cronTime: string, cronCommand: CronCommand): CronJob {
-    return new CronJob(
-        cronTime,
-        cronCommand,
-        null,
-        true,
-        'America/Toronto'
-    );
+function createTuesdayScheduleCronJob(channel: TextChannel) {
+    schedule.scheduleJob({second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'est'}, function() {
+        channel.send('Where Sons of the Forest/Divnity: Original Sin 2')
+            .catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+    });
 }
 
 const waterPostureChannelId = '899162908498468934';
@@ -80,18 +56,18 @@ function createCronJobs(client: Client) {
 
     const waterPostureChannel = client.channels.cache.get(waterPostureChannelId);
     if (waterPostureChannel && waterPostureChannel.type === ChannelType.GuildText) {
-        // createWaterPostureCronJob(waterPostureChannel).start();
+        // createWaterPostureCronJob(waterPostureChannel);
     }
 
     const wordleChannel = client.channels.cache.get(wordleChannelId);
     if (wordleChannel && wordleChannel.type === ChannelType.GuildText) {
-        // createWordleCronJob(wordleChannel).start();
+        // createWordleCronJob(wordleChannel);
     }
 
     const mainChannel = client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
     if (mainChannel && mainChannel.type === ChannelType.GuildText) {
-        // createWoWResetCronJob(mainChannel).start();
-        createTuesdayScheduleCronJob(mainChannel).start();
+        // createWoWResetCronJob(mainChannel);
+        createTuesdayScheduleCronJob(mainChannel);
     }
 }
 
