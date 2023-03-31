@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import logger from '../logger';
-import { getKnitCount } from '../sql/oracledb';
+import { getKnitCount } from '../sql/knit-count';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     let knits = 0;
@@ -18,6 +18,6 @@ const name = 'knit-count';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Gets your knit count for this server.');
+    .setDescription('Gets your knit count.');
 
 export default { execute, name, commandBuilder };

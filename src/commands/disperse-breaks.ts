@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import logger from '../logger';
-import { getDisperseStreakBreaks } from '../sql/oracledb';
+import { getDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const disperseStreakBreaks = await getDisperseStreakBreaks(interaction.user.id);

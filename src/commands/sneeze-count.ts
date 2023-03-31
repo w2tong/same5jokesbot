@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import logger from '../logger';
-import { getSneezeCount } from '../sql/oracledb';
+import { getSneezeCount } from '../sql/sneeze-count';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     let sneezes = 0;
@@ -18,6 +18,6 @@ const name = 'sneeze-count';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Gets your sneeze count for this server.');
+    .setDescription('Gets your sneeze count.');
 
 export default { execute, name, commandBuilder };
