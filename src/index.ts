@@ -28,7 +28,7 @@ client.login(process.env.BOT_TOKEN).catch((err: Error) => {
     });
 });
 
-client.once(Events.ClientReady, (): void => {
+client.once(Events.ClientReady, () => {
 
     // Add emotes from server to emotes object
     getEmotes(client);
@@ -37,12 +37,7 @@ client.once(Events.ClientReady, (): void => {
     createCronJobs(client);
 
     // Init db
-    initOracleDB().catch((err: Error) => {
-        logger.error({
-            message: err.message,
-            stack: err.stack
-        });
-    });
+    void initOracleDB();
 
     console.log('Same5JokesBot online.');
 });

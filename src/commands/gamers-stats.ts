@@ -1,11 +1,11 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import logger from '../logger';
-import { getGamersCounter } from '../sql/oracledb';
+import { getGamersStats } from '../sql/gamers-stats';
 
 const decimalPlaces = 2;
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    const gamerCounter = await getGamersCounter(interaction.user.id);
+    const gamerCounter = await getGamersStats(interaction.user.id);
     if (!gamerCounter) {
         interaction.reply('No stats available.').catch((err: Error) => logger.error({
             message: err.message,

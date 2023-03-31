@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import logger from '../logger';
-import { getDisperseStreakHighscore } from '../sql/oracledb';
+import { getDisperseStreakHighscore } from '../sql/disperse-streak-highscore';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;

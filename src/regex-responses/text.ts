@@ -1,6 +1,10 @@
 import { emotes } from '../emotes';
-import { getDisperseCurrentStreak, updateDisperseCurrentStreak, updateDisperseStreakBreaks, updateDisperseStreakHighScore, updateGamersCounter } from '../sql/oracledb';
+import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/current-disperse-streak';
+import { updateDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
+import { updateDisperseStreakHighScore } from '../sql/disperse-streak-highscore';
+import { updateGamersStats } from '../sql/gamers-stats';
 import { getRandomRange } from '../util';
+import logger from '../logger';
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
@@ -63,19 +67,19 @@ const regexToText = [
         regex: /^gamers$/,
         getText: async (_command: string, userId: string, username: string, guildId: string) => {
             let res = getGamersResponse();
-            updateGamersCounter(userId, res);
-            const disperseCurrentStreak = await getDisperseCurrentStreak(guildId);
+            updateGamersStats(userId, res).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
+            const disperseCurrentStreak = await getCurrentDisperseStreak(guildId);
             if (res === 'Disperse!') {
                 const userIds = (disperseCurrentStreak.STREAK === 0) ? userId : `${disperseCurrentStreak.USER_IDS},${userId}`;
-                updateDisperseCurrentStreak(guildId, userIds, disperseCurrentStreak.STREAK+1);
-                updateDisperseStreakHighScore(guildId, userIds, disperseCurrentStreak.STREAK+1);
+                updateCurrentDisperseStreak(guildId, userIds, disperseCurrentStreak.STREAK+1).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
+                updateDisperseStreakHighScore(guildId, userIds, disperseCurrentStreak.STREAK+1).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
                     res = `${res}\nDisperse Streak: **${disperseCurrentStreak.STREAK}** broken by **${username}**`;
-                    updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
+                    updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
                 }
-                updateDisperseCurrentStreak(guildId, userId, 0);
+                updateCurrentDisperseStreak(guildId, userId, 0).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
             }
             return res;
         }
