@@ -1,10 +1,10 @@
 import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { createReminder } from '../reminders';
+import { newReminder } from '../reminders';
 import logger from '../logger';
 import parseDate from '../parse-date';
 import { getTimestampEST } from '../util';
 
-function execute(interaction: ChatInputCommandInteraction) {
+async function execute(interaction: ChatInputCommandInteraction) {
     const mention = interaction.options.getMentionable('mention');
     const msg = interaction.options.getString('message');
     const time = interaction.options.getNumber('time');
@@ -14,7 +14,7 @@ function execute(interaction: ChatInputCommandInteraction) {
     let reply = '';
     if (interaction.channel && interaction.channel.type === ChannelType.GuildText && time && timeUnit) {
         const date = parseDate(time, timeUnit);
-        createReminder(interaction.channel, date, message);
+        await newReminder(interaction.channel, date, message);
         reply = `Reminder created.\n**Time**: \`${getTimestampEST(date)}\`\n**Message**: ${message}`;
     }
     else {
@@ -36,6 +36,7 @@ const commandBuilder = new SlashCommandBuilder()
     .addStringOption((option) => option.setName('time-unit').setDescription('Time unit (eg. seconds, minutes, hours).').setRequired(true).addChoices(
         {name: 'minutes', value: 'minute'},
         {name: 'hours', value: 'hour'},
+        {name: 'days', value: 'day'}
     ))
     .addStringOption((option) => option.setName('message').setDescription('Message').setRequired(true));
 

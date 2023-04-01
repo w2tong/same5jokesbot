@@ -4,6 +4,7 @@ dotenv.config();
 import createCronJobs from './create-cronjobs';
 import { getEmotes } from './emotes';
 import { initOracleDB } from './sql/oracledb';
+import { loadReminders } from './reminders';
 import logger from './logger';
 import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
@@ -28,7 +29,7 @@ client.login(process.env.BOT_TOKEN).catch((err: Error) => {
     });
 });
 
-client.once(Events.ClientReady, () => {
+client.once(Events.ClientReady, async () => {
 
     // Add emotes from server to emotes object
     getEmotes(client);
@@ -37,7 +38,8 @@ client.once(Events.ClientReady, () => {
     createCronJobs(client);
 
     // Init db
-    void initOracleDB();
+    await initOracleDB();
+    void loadReminders(client);
 
     console.log('Same5JokesBot online.');
 });
