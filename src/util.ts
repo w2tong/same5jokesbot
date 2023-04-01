@@ -9,4 +9,8 @@ function getMomentCurrentTimeEST() {
     return moment().utc().tz('America/Toronto');
 }
 
-export { getRandomRange, getMomentCurrentTimeEST };
+function getTimestampEST(date: Date) {
+    return moment(date).utc().tz('America/Toronto').format('MMM D, h:mm:ss a');
+}
+
+export { getRandomRange, getMomentCurrentTimeEST, getTimestampEST };
