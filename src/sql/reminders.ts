@@ -7,7 +7,7 @@ CREATE TABLE reminders (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     channel_id VARCHAR2(255),
     time TIMESTAMP,
-    message VARCHAR2(255)
+    message VARCHAR2(1000)
 )
 `;
 
