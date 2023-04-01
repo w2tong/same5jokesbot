@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { newReminder } from '../reminders';
 import logger from '../logger';
 import parseDate from '../parse-date';
@@ -11,14 +11,25 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const timeUnit = interaction.options.getString('time-unit');
     const message = `${mention} ${msg}`;
     
-    let reply = '';
+    let reply = 'Error creating reminder.';
     if (interaction.channel && interaction.channel.type === ChannelType.GuildText && time && timeUnit) {
         const date = parseDate(time, timeUnit);
-        await newReminder(interaction.channel, date, message);
-        reply = `Reminder created.\n**Time**: \`${getTimestampEST(date)}\`\n**Message**: ${message}`;
-    }
-    else {
-        reply = 'Error creating reminder';
+        try {
+            await newReminder(interaction.channel, date, message);
+            const embed = new EmbedBuilder()
+                .setTitle('Reminder')
+                .addFields(
+                    { name: 'Time', value: `${getTimestampEST(date)}` },
+                    { name: 'Message', value: `${message}` }
+                );
+            interaction.reply({embeds: [embed]}).catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+            return;
+        } catch (err){
+            reply += `\n${err}`;
+        }
     }
     interaction.reply({content: reply, ephemeral: true}).catch((err: Error) => logger.error({
         message: err.message,
