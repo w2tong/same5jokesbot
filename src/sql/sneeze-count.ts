@@ -22,7 +22,7 @@ async function getSneezeCount(userId: string): Promise<SneezeCount|null> {
     const result: oracledb.Result<SneezeCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
     connection.close().catch((err: Error) => {
         logger.error({
-            message: `updateKnitCount ${err.message}`,
+            message: `getSneezeCount ${err.message}`,
             stack: err.stack
         });
     });
@@ -45,12 +45,7 @@ MERGE INTO sneeze_count dest
 
 async function updateSneezeCount(userId: string) {
     const connection = await oracledb.getConnection();
-    connection.execute(updateQuery, {userId}).catch((err: Error) => {
-        logger.error({
-            message: `updateSneezeCount ${err.message}`,
-            stack: err.stack
-        });
-    });
+    await connection.execute(updateQuery, {userId});
     connection.close().catch((err: Error) => {
         logger.error({
             message: `updateKnitCount ${err.message}`,
