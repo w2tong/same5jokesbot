@@ -39,7 +39,7 @@ client.once(Events.ClientReady, async () => {
 
     // Init db
     await initOracleDB();
-    void loadReminders(client);
+    await loadReminders(client);
 
     console.log('Same5JokesBot online.');
 });

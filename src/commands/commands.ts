@@ -9,6 +9,7 @@ import topDisperseBreaks from './top-disperse-breaks';
 import knitCount from './knit-count';
 import sneezeCount from './sneeze-count';
 import remind from './remind';
+import deleteReminder from './delete-reminder';
 
 const commands = [
     {execute: play.execute, name: play.name},
@@ -21,7 +22,8 @@ const commands = [
     {execute: topDisperseBreaks.execute, name: topDisperseBreaks.name},
     {execute: knitCount.execute, name: knitCount.name},
     {execute: sneezeCount.execute, name: sneezeCount.name},
-    {execute: remind.execute, name: remind.name}
+    {execute: remind.execute, name: remind.name},
+    {execute: deleteReminder.execute, name: deleteReminder.name}
 ];
 
 const commandBuilders = [
@@ -35,7 +37,8 @@ const commandBuilders = [
     topDisperseBreaks.commandBuilder,
     knitCount.commandBuilder,
     sneezeCount.commandBuilder,
-    remind.commandBuilder
+    remind.commandBuilder,
+    deleteReminder.commandBuilder
 ];
 
 export { commands, commandBuilders };
