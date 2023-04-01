@@ -2,7 +2,10 @@ import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBui
 import { newReminder } from '../reminders';
 import logger from '../logger';
 import parseDate from '../parse-date';
+import { getUserRemindersCount } from '../sql/reminders';
 import { getTimestampEST } from '../util';
+
+const MAX_REMINDERS = 5;
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const mention = interaction.options.getMentionable('mention');
@@ -11,11 +14,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const timeUnit = interaction.options.getString('time-unit');
     const message = `${mention} ${msg}`;
     
+    const count = await getUserRemindersCount(interaction.user.id);
     let reply = 'Error creating reminder.';
-    if (interaction.channel && interaction.channel.type === ChannelType.GuildText && time && timeUnit) {
+    if (count >= MAX_REMINDERS) {
+        reply += `\nMax number of reminders is ${MAX_REMINDERS}.`;
+    }
+    else if (interaction.channel && interaction.channel.type === ChannelType.GuildText && time && timeUnit) {
         const date = parseDate(time, timeUnit);
         try {
-            await newReminder(interaction.channel, date, message);
+            await newReminder(interaction.user.id ,interaction.channel, date, message);
             const embed = new EmbedBuilder()
                 .setTitle('Reminder')
                 .addFields(

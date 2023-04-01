@@ -3,19 +3,33 @@ import schedule from 'node-schedule';
 import logger from './logger';
 import { getReminders, insertReminder, deleteReminder } from './sql/reminders';
 
-function createReminder(id: number, channel: TextChannel, date: Date, message: string) {
-    const job = schedule.scheduleJob(date, function() {
-        channel.send(message).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
-    });
+function scheduleReminder(channel: TextChannel, date: Date, message: string, id?: string) {
+    let job: schedule.Job;
+    if (id) {
+        job = schedule.scheduleJob(id, date, function() {
+            channel.send(message).catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        });
+    }
+    else {
+        job = schedule.scheduleJob(date, function() {
+            channel.send(message).catch((err: Error) => logger.error({
+                message: err.message,
+                stack: err.stack
+            }));
+        });
+    }
+
     job.on('success',  () => {
-        deleteReminder(id).catch((err: Error) => logger.error({
+        deleteReminder(job.name).catch((err: Error) => logger.error({
             message: err.message,
             stack: err.stack
         }));
     });
+
+    return job.name;
 }
 
 async function loadReminders(client: Client) {
@@ -30,16 +44,14 @@ async function loadReminders(client: Client) {
             }));
         }
         else if (channel.type === ChannelType.GuildText) {
-            createReminder(reminder.ID, channel, date, reminder.MESSAGE);
+            scheduleReminder(channel, date, reminder.MESSAGE, reminder.ID);
         }
     }
 }
 
-async function newReminder(channel: TextChannel, date: Date, message: string) {
-    const id = await insertReminder(channel.id, date.toISOString().slice(0, 19).replace('T', ' '), message);
-    if (id) {
-        createReminder(id, channel, date, message);
-    }
+async function newReminder(userId:string, channel: TextChannel, date: Date, message: string) {
+    const id = scheduleReminder(channel, date, message);
+    await insertReminder(id, userId, channel.id, date.toISOString().slice(0, 19).replace('T', ' '), message);
 }
 
 export { loadReminders, newReminder };
