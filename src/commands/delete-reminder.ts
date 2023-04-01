@@ -28,47 +28,46 @@ async function execute(interaction: ChatInputCommandInteraction) {
             message: err.message,
             stack: err.stack
         }));
+
+        if (interaction.channel) {
+        
+            const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30000 });
+    
+            collector.on('collect', async i => {
+                if (i.user.id === interaction.user.id) {
+                    const num = parseInt(i.customId)-1;
+                    try {
+                        await deleteReminder(reminders[num].ID);
+                        i.update({ content: `Reminder ${i.customId} deleted.`, components: [], embeds: embeds.slice(num,num+1) }).catch((err: Error) => logger.error({
+                            message: err.message,
+                            stack: err.stack
+                        }));
+                    }
+                    catch {
+                        i.update({ content: 'Error deleting reminder.', components: [], embeds: [] }).catch((err: Error) => logger.error({
+                            message: err.message,
+                            stack: err.stack
+                        }));
+                    }
+                }
+                collector.stop();
+            });
+    
+            collector.on('end', collected => {
+                if (collected.size === 0) {
+                    interaction.deleteReply().catch((err: Error) => logger.error({
+                        message: err.message,
+                        stack: err.stack
+                    }));
+                }
+            });
+        }
     }
     else {
         interaction.reply({content: 'You have no reminders to delete.', ephemeral: true}).catch((err: Error) => logger.error({
             message: err.message,
             stack: err.stack
         }));
-    }
-
-    
-    if (interaction.channel) {
-        
-        const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30000 });
-
-        collector.on('collect', async i => {
-            if (i.user.id === interaction.user.id) {
-                const num = parseInt(i.customId)-1;
-                try {
-                    await deleteReminder(reminders[num].ID);
-                    i.update({ content: `Reminder ${i.customId} deleted.`, components: [], embeds: embeds.slice(num,num+1) }).catch((err: Error) => logger.error({
-                        message: err.message,
-                        stack: err.stack
-                    }));
-                }
-                catch {
-                    i.update({ content: 'Error deleting reminder.', components: [], embeds: [] }).catch((err: Error) => logger.error({
-                        message: err.message,
-                        stack: err.stack
-                    }));
-                }
-            }
-            collector.stop();
-        });
-
-        collector.on('end', collected => {
-            if (collected.size === 0) {
-                interaction.deleteReply().catch((err: Error) => logger.error({
-                    message: err.message,
-                    stack: err.stack
-                }));
-            }
-        });
     }
 }
 
