@@ -8,6 +8,7 @@ import topDisperseRate from './top-disperse-rate';
 import topDisperseBreaks from './top-disperse-breaks';
 import knitCount from './knit-count';
 import sneezeCount from './sneeze-count';
+import remind from './remind';
 
 const commands = [
     {execute: play.execute, name: play.name},
@@ -19,7 +20,8 @@ const commands = [
     {execute: topDisperseRate.execute, name: topDisperseRate.name},
     {execute: topDisperseBreaks.execute, name: topDisperseBreaks.name},
     {execute: knitCount.execute, name: knitCount.name},
-    {execute: sneezeCount.execute, name: sneezeCount.name}
+    {execute: sneezeCount.execute, name: sneezeCount.name},
+    {execute: remind.execute, name: remind.name}
 ];
 
 const commandBuilders = [
@@ -32,7 +34,8 @@ const commandBuilders = [
     topDisperseRate.commandBuilder,
     topDisperseBreaks.commandBuilder,
     knitCount.commandBuilder,
-    sneezeCount.commandBuilder
+    sneezeCount.commandBuilder,
+    remind.commandBuilder
 ];
 
 export { commands, commandBuilders };
