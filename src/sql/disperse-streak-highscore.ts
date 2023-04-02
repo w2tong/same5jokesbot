@@ -53,7 +53,7 @@ async function updateDisperseStreakHighScore(guildId: string, userIds: string, s
         void connection.close();
     }
     catch (err) {
-        logError(`getTopDisperseStreakBreaks: ${err}`);
+        logError(`updateDisperseStreakHighScore: ${err}`);
     }
 }
 
