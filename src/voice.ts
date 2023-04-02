@@ -1,7 +1,7 @@
 import { ChannelType, Client, Message, TextChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
-import logger from './logger';
+import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
 import { getMomentCurrentTimeEST } from './util';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -123,13 +123,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                     isRateLimited = true;
                     if (voiceLogChannel) {
                         voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`)
-                            .then((message) => {
-                                rateLimitedMessage = message;
-                            })
-                            .catch((err: Error) => logger.error({
-                                message: err.message,
-                                stack: err.stack
-                            }));
+                            .then((message) => { rateLimitedMessage = message; }).catch(logError);
                     }
                 }
                 return;
@@ -138,10 +132,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             // Process text
             isRateLimited = false;
             if (rateLimitedMessage) {
-                rateLimitedMessage.delete().catch((err: Error) => logger.error({
-                    message: err.message,
-                    stack: err.stack
-                }));
+                rateLimitedMessage.delete().catch(logError);
                 rateLimitedMessage = null;
             }
             if (!data.transcript.text) return; // Return if no text
@@ -151,11 +142,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             // Log voice messages to console and discord channel
             const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`;
             console.log(voiceTextLog);
-            if (voiceLogChannel) voiceLogChannel.send(voiceTextLog)
-                .catch((err: Error) => logger.error({
-                    message: `Error sending to voiceLogChannel: ${err.message}`,
-                    stack: err.stack
-                }));
+            if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(logError);
     
             // Stop audio voice command
             if (/bot,? (stop|shut up)/.test(text)) {

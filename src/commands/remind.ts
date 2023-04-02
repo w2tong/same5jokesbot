@@ -1,6 +1,5 @@
 import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { newReminder } from '../reminders';
-import logger from '../logger';
 import parseDate from '../parse-date';
 import { getUserRemindersCount } from '../sql/reminders';
 import { getTimestampEST } from '../util';
@@ -21,27 +20,18 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
     else if (interaction.channel && interaction.channel.type === ChannelType.GuildText && time && timeUnit) {
         const date = parseDate(time, timeUnit);
-        try {
-            await newReminder(interaction.user.id ,interaction.channel, date, message);
+        if (await newReminder(interaction.user.id ,interaction.channel, date, message) === true) {
             const embed = new EmbedBuilder()
                 .setTitle('Reminder')
                 .addFields(
                     { name: 'Time', value: `${getTimestampEST(date)}` },
                     { name: 'Message', value: `${message}` }
                 );
-            interaction.reply({embeds: [embed]}).catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+            void interaction.reply({embeds: [embed]});
             return;
-        } catch (err){
-            reply += `\n${err}`;
         }
     }
-    interaction.reply({content: reply, ephemeral: true}).catch((err: Error) => logger.error({
-        message: err.message,
-        stack: err.stack
-    }));
+    void interaction.reply({content: reply, ephemeral: true});
 }
 
 const name = 'remind';

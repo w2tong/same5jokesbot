@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
-import logger from '../logger';
 import { joinVoice, playAudioFile } from '../voice';
 
 function execute(interaction: ChatInputCommandInteraction) {
@@ -11,10 +10,7 @@ function execute(interaction: ChatInputCommandInteraction) {
         };
         const audioFile = interaction.options.getString('audio') ?? '';
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
-        interaction.reply({ content: reply, ephemeral: true }).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply({ content: reply, ephemeral: true });
         joinVoice(voiceConnection, interaction.client);
         playAudioFile(interaction.guild.id, audioFile, interaction.user.username);
     }

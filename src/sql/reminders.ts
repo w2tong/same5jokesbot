@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import logger from '../logger';
+import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
 const createTableRemindersQuery = `
@@ -23,18 +23,18 @@ interface Reminder {
     MESSAGE: string;
 }
 async function getReminders(): Promise<Array<Reminder>> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<Reminder> = await connection.execute(getQuery, {}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getReminders ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows;
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<Reminder> = await connection.execute(getQuery, {}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows;
+        }
+        return [];
     }
-    return [];
+    catch (err) {
+        throw new Error(`getReminders: ${err}`);
+    }
 }
 
 const insertQuery = `
@@ -44,14 +44,16 @@ RETURN id into :id
 `;
 
 async function insertReminder(id: string, userId: string, channelId: string, time: string, message: string) {
-    const connection = await oracledb.getConnection();
-    await connection.execute(insertQuery, {id, userId, channelId, time, message});
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `insertReminder ${err.message}`,
-            stack: err.stack
-        });
-    });
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(insertQuery, {id, userId, channelId, time, message});
+        void connection.close();
+        return true;
+    }
+    catch (err) {
+        logError(`insertReminder: ${err}`);
+        return false;
+    }
 }
 
 const deleteQuery = `
@@ -59,14 +61,16 @@ DELETE FROM reminders
 WHERE id = :id
 `;
 async function deleteReminder(id: string) {
-    const connection = await oracledb.getConnection();
-    await connection.execute(deleteQuery, {id});
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `deleteReminder ${err.message}`,
-            stack: err.stack
-        });
-    });
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(deleteQuery, {id});
+        void connection.close();
+        return true;
+    }
+    catch (err) {
+        logError(`deleteReminder: ${err}`);
+        return false;
+    }
 }
 
 const getUserQuery = `
@@ -76,18 +80,19 @@ ORDER BY time ASC
 FETCH NEXT 5 ROWS ONLY
 `;
 async function getUserReminders(userId: string): Promise<Array<Reminder>> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<Reminder> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getUserReminders ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows;
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<Reminder> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows;
+        }
+        return [];
     }
-    return [];
+    catch (err) {
+        throw new Error(`getUserReminders: ${err}`);
+    }
+
 }
 
 interface ReminderCount {
@@ -98,18 +103,18 @@ SELECT count(*) AS count FROM reminders
 WHERE user_id = :userId
 `;
 async function getUserRemindersCount(userId: string): Promise<number> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<ReminderCount> = await connection.execute(getUserCountQuery, {userId}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getUserRemindersCount ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows[0].COUNT;
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<ReminderCount> = await connection.execute(getUserCountQuery, {userId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows[0].COUNT;
+        }
+        return 0;
     }
-    return 0;
+    catch (err) {
+        throw new Error(`getUserRemindersCount: ${err}`);
+    }
 }
 
 export { createTableRemindersQuery, getReminders, insertReminder, deleteReminder, getUserReminders, getUserRemindersCount };

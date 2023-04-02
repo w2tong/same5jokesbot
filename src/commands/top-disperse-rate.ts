@@ -1,14 +1,10 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import logger from '../logger';
 import { getTopDisperseRate } from '../sql/gamers-stats';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const topDisperseRate = await getTopDisperseRate();
     if (topDisperseRate.length === 0) {
-        interaction.reply('No stats available.').catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply('No stats available.');
     }
     else {
         let namesField = '';
@@ -27,10 +23,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: 'Disperse %', value: dispersePercentField, inline: true },
                 { name: 'Gamers Total', value: totalField, inline: true }
             );
-        interaction.reply({ embeds: [rowDisperseRateEmbed] }).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply({ embeds: [rowDisperseRateEmbed] });
     }
 }
 

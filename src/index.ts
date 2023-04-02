@@ -5,7 +5,7 @@ import createCronJobs from './create-cronjobs';
 import { getEmotes } from './emotes';
 import { initOracleDB } from './sql/oracledb';
 import { loadReminders } from './reminders';
-import logger from './logger';
+import { logError } from './logger';
 import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
 import voiceStateUpdateHandler from './events/voiceStateUpdate';
@@ -22,12 +22,7 @@ client.on(Events.InteractionCreate, interactionCreateHandler);
 client.on(Events.VoiceStateUpdate, voiceStateUpdateHandler);
 
 // Login with bot token
-client.login(process.env.BOT_TOKEN).catch((err: Error) => {
-    logger.error({
-        message: err.message,
-        stack: err.stack
-    });
-});
+client.login(process.env.BOT_TOKEN).catch(logError);
 
 client.once(Events.ClientReady, async () => {
 
@@ -45,8 +40,5 @@ client.once(Events.ClientReady, async () => {
 });
 
 client.on(Events.ShardError, err => {
-    logger.error({
-        message: err.message,
-        stack: err.stack
-    });
+    logError(err);
 });

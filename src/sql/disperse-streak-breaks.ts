@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import logger from '../logger';
+import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
 //DISPERSE_STREAK_BREAKS
@@ -21,18 +21,18 @@ interface DisperseStreakBreaks{
     SCORE: number;
 }
 async function getDisperseStreakBreaks(userId: string): Promise<DisperseStreakBreaks|null> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<DisperseStreakBreaks> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getDisperseStreakBreaks ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows && result.rows[0]) {
-        return result.rows[0];
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<DisperseStreakBreaks> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows && result.rows[0]) {
+            return result.rows[0];
+        }
+        return null;
     }
-    return null;
+    catch (err) {
+        throw new Error(`getDisperseStreakBreaks: ${err}`);
+    }
 }
 
 const updateQuery = `
@@ -47,14 +47,15 @@ MERGE INTO disperse_streak_breaks dest
 `;
 
 async function updateDisperseStreakBreaks(userId: string, score: number) {
-    const connection = await oracledb.getConnection();
-    await connection.execute(updateQuery, {userId, score});
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `updateDisperseStreakBreaks ${err.message}`,
-            stack: err.stack
-        });
-    });
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(updateQuery, {userId, score});
+        void connection.close();
+    }
+    catch (err) {
+        logError(`updateCurrentDisperseStreak: ${err}`);
+    }
+    
 }
 
 const getTopDisperseStreakBreaksQuery =`
@@ -68,18 +69,18 @@ interface TopDisperseStreakBreaks {
     SCORE: number;
 }
 async function getTopDisperseStreakBreaks(): Promise<Array<TopDisperseStreakBreaks>> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<TopDisperseStreakBreaks> = await connection.execute(getTopDisperseStreakBreaksQuery, {}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getTopDisperseStreakBreaks ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows;
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<TopDisperseStreakBreaks> = await connection.execute(getTopDisperseStreakBreaksQuery, {}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows;
+        }
+        return [];
     }
-    return [];
+    catch (err) {
+        throw new Error(`getTopDisperseStreakBreaks: ${err}`);
+    }
 }
 
 export { createTableDisperseStreakBreaksQuery, getDisperseStreakBreaks, updateDisperseStreakBreaks, getTopDisperseStreakBreaks };

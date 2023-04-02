@@ -1,5 +1,5 @@
 import { ChannelType, Message } from 'discord.js';
-import logger from '../logger';
+import { logError } from '../logger';
 import getAudioResponse from '../regex-responses/audio';
 import getReactResponse from '../regex-responses/react';
 import getTextResponse from '../regex-responses/text';
@@ -19,20 +19,14 @@ export default async (message: Message) => {
     if (message.guildId) {
         const botMessage = await getTextResponse(command, message.author.id, message.author.username, message.guildId);
         if (botMessage) {
-            message.channel.send(botMessage).catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+            message.channel.send(botMessage).catch(logError);
         }
     }
 
     //Get emoji and react to message
     const react = getReactResponse(command);
     if (react) {
-        message.react(react).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        message.react(react).catch(logError);
     }
 
     // Audio replies

@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import logger from '../logger';
 import { getKnitCount } from '../sql/knit-count';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -8,10 +7,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     if (knitCount) {
         knits = knitCount.COUNT;
     }
-    interaction.reply(`**${knits}** knits.`).catch((err: Error) => logger.error({
-        message: err.message,
-        stack: err.stack
-    }));
+    void interaction.reply(`**${knits}** knits.`);
 }
 
 const name = 'knit-count';

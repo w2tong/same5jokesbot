@@ -1,6 +1,6 @@
 import oracledb from 'oracledb';
-import logger from '../logger';
 import { selectExecuteOptions } from './query-options';
+import { logError } from '../logger';
 
 const createTableCurrentDisperseStreakQuery = `
 CREATE TABLE current_disperse_streak (
@@ -20,18 +20,18 @@ interface DisperseCurrentStreak {
     STREAK: number;
 }
 async function getCurrentDisperseStreak(guildId: string): Promise<DisperseCurrentStreak> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<DisperseCurrentStreak> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getCurrentDisperseStreak ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows && result.rows[0]) {
-        return result.rows[0];
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<DisperseCurrentStreak> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows && result.rows[0]) {
+            return result.rows[0];
+        }
+        return {USER_IDS: '', STREAK: 0};
     }
-    return {USER_IDS: '', STREAK: 0};
+    catch (err) {
+        throw new Error(`getCurrentDisperseStreak: ${err}`);
+    }
 }
 
 const updateQuery = `
@@ -46,14 +46,14 @@ MERGE INTO current_disperse_streak dest
 `;
 
 async function updateCurrentDisperseStreak(guildId: string, userIds: string, streak: number) {
-    const connection = await oracledb.getConnection();
-    await connection.execute(updateQuery, {guildId, userIds, streak});
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `updateCurrentDisperseStreak ${err.message}`,
-            stack: err.stack
-        });
-    });
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(updateQuery, {guildId, userIds, streak});
+        void connection.close();
+    }
+    catch (err) {
+        logError(`updateCurrentDisperseStreak: ${err}`);
+    }
 }
 
 

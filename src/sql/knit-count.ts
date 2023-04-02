@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import logger from '../logger';
+import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
 // KNIT_SNEEZE queries
@@ -19,18 +19,19 @@ interface KnitCount {
     COUNT: number;
 }
 async function getKnitCount(userId: string): Promise<KnitCount|null> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<KnitCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getKnitCount ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows[0];
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<KnitCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows[0];
+        }
+        return null;
     }
-    return null;
+    catch (err) {
+        throw new Error(`getKnitCount: ${err}`);
+    }
+
 }
 
 const updateQuery = `
@@ -45,14 +46,14 @@ MERGE INTO knit_count dest
 `;
 
 async function updateKnitCount(userId: string) {
-    const connection = await oracledb.getConnection();
-    await connection.execute(updateQuery, {userId});
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `updateKnitCount ${err.message}`,
-            stack: err.stack
-        });
-    });
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(updateQuery, {userId});
+        void connection.close();
+    }
+    catch (err) {
+        logError(`updateKnitCount: ${err}`);
+    }
 }
 
 export { createTableKnitCountQuery, getKnitCount, updateKnitCount };

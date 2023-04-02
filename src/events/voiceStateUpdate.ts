@@ -1,5 +1,5 @@
 import { ChannelType, VoiceState } from 'discord.js';
-import logger from '../logger';
+import { logError } from '../logger';
 import { getMomentCurrentTimeEST } from '../util';
 import { joinVoice, playAudioFile } from '../voice';
 
@@ -16,10 +16,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         // Get main channel
         const mainChannel = newState.client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
         if (mainChannel && mainChannel.type === ChannelType.GuildText) {
-            mainChannel.send('You made Azi leave.').catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+            mainChannel.send('You made Azi leave.').catch(logError);
         }
     }
 

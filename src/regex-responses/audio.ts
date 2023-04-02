@@ -1,5 +1,4 @@
 import moment from 'moment-timezone';
-import logger from '../logger';
 import { updateKnitCount } from '../sql/knit-count';
 import { updateSneezeCount } from '../sql/sneeze-count';
 import { getRandomRange } from '../util';
@@ -194,10 +193,7 @@ const regexToAudio = [
     {
         regex: /arthur|knit|fuchsia/,
         getAudio: (userId: string) => {
-            updateKnitCount(userId).catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+            void updateKnitCount(userId);
             return 'arthur_knitter';
         }
     },
@@ -340,10 +336,7 @@ const regexToAudio = [
     {
         regex: /sneez|bless you|hocus pocus/,
         getAudio: (userId :string) => {
-            updateSneezeCount(userId).catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+            void updateSneezeCount(userId);
             return 'train_sneeze';
         }
     },
@@ -351,10 +344,7 @@ const regexToAudio = [
         regex: /slow mo(de)?|slow.*(it|that|sneeze).*down/,
         //updateSneezeCount
         getAudio: (userId :string) => {
-            updateSneezeCount(userId).catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+            void updateSneezeCount(userId);
             return 'train_sneeze_slow';
         }
     },
