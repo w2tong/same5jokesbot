@@ -2,49 +2,33 @@ import { ChannelType, Client, TextChannel } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import schedule from 'node-schedule';
-import logger from './logger';
+import { logError } from './logger';
 
 // Hourly water and posture check cronjob
 function createWaterPostureCronJob(channel: TextChannel) {
     schedule.scheduleJob({second: 0, minute: 0, tz: 'est'}, function() {
-        channel.send('<@&899160433548722176> Water Check. Posture Check.')
-            .catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+        channel.send('<@&899160433548722176> Water Check. Posture Check.').catch(logError);
     });
 }
 
 // Daily Wordle reminder cronjob
 function createWordleCronJob(channel: TextChannel) {
     schedule.scheduleJob({second: 0, minute: 0, hour: 0, tz: 'est'}, function() {
-        channel.send('Wordle time POGCRAZY')
-            .catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+        channel.send('Wordle time POGCRAZY').catch(logError);
     });
 }
 
 // Weekly Tuesday WoW Reset cronjob
 function createWoWResetCronJob(channel: TextChannel) {
     schedule.scheduleJob({second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'est'}, function() {
-        channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking')
-            .catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+        channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking').catch(logError);
     });
 }
 
 // Weekly Tuesday Div 2 / Sons of the Forest Session
 function createTuesdayScheduleCronJob(channel: TextChannel) {
     schedule.scheduleJob({second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'est'}, function() {
-        channel.send('Where Sons of the Forest/Divnity: Original Sin 2')
-            .catch((err: Error) => logger.error({
-                message: err.message,
-                stack: err.stack
-            }));
+        channel.send('Where Sons of the Forest/Divnity: Original Sin 2').catch(logError);
     });
 }
 

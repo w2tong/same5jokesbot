@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import logger from '../logger';
+import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
 // GAMERS_COUNTER queries
@@ -23,18 +23,18 @@ interface GamersCounter {
     RISE_UP: number;
 }
 async function getGamersStats(userId: string): Promise<GamersCounter|null> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<GamersCounter> = await connection.execute(query, {userId}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getGamersStats ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows[0];
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GamersCounter> = await connection.execute(query, {userId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows[0];
+        }
+        return null;
     }
-    return null;
+    catch (err) {
+        throw new Error(`getGamersStats: ${err}`);
+    }
 }
 
 const updateDischargeQuery = `
@@ -83,14 +83,15 @@ async function updateGamersStats(userId: string, gamersWord: string) {
         query = updateRiseUpQuery;
         break;
     }
-    const connection = await oracledb.getConnection();
-    await connection.execute(query, {userId});
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `updateGamersStats ${err.message}`,
-            stack: err.stack
-        });
-    });
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(query, {userId});
+        void connection.close();
+    }
+    catch (err) {
+        logError(`updateGamersStats: ${err}`);
+    }
+
 }
 
 const getTopDisperseRateQuery = `
@@ -107,18 +108,18 @@ interface TopDisperseRate {
     DISPERSE_PC: number;
 }
 async function getTopDisperseRate(): Promise<Array<TopDisperseRate>> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateQuery, {}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getTopDisperseRate ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows;
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateQuery, {}, selectExecuteOptions);
+        void connection.close;
+        if (result && result.rows) {
+            return result.rows;
+        }
+        return [];
     }
-    return [];
+    catch (err) {
+        throw new Error(`getTopDisperseRate: ${err}`);
+    }
 }
 
 export { createTableGamersStatsQuery, getGamersStats, updateGamersStats, getTopDisperseRate };

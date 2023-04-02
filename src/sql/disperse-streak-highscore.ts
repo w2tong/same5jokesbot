@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import logger from '../logger';
+import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
 const createTableDisperseStreakHighscoreQuery = `
@@ -20,18 +20,18 @@ interface DisperseStreakHighscore {
     STREAK: number;
 }
 async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStreakHighscore|null> {
-    const connection = await oracledb.getConnection();
-    const result: oracledb.Result<DisperseStreakHighscore> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `getDisperseStreakHighscore ${err.message}`,
-            stack: err.stack
-        });
-    });
-    if (result && result.rows) {
-        return result.rows[0];
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<DisperseStreakHighscore> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows[0];
+        }
+        return null;
     }
-    return null;
+    catch (err) {
+        throw new Error(`getDisperseStreakHighscore: ${err}`);
+    }
 }
 
 const updateQuery = `
@@ -47,14 +47,14 @@ MERGE INTO disperse_streak_highscore dest
 `;
 
 async function updateDisperseStreakHighScore(guildId: string, userIds: string, streak: number) {
-    const connection = await oracledb.getConnection();
-    await connection.execute(updateQuery, {guildId, userIds, streak});
-    connection.close().catch((err: Error) => {
-        logger.error({
-            message: `updateDisperseStreakHighScore ${err.message}`,
-            stack: err.stack
-        });
-    });
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(updateQuery, {guildId, userIds, streak});
+        void connection.close();
+    }
+    catch (err) {
+        logError(`getTopDisperseStreakBreaks: ${err}`);
+    }
 }
 
 export { createTableDisperseStreakHighscoreQuery, getDisperseStreakHighscore, updateDisperseStreakHighScore };

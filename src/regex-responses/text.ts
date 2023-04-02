@@ -4,7 +4,7 @@ import { updateDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
 import { updateDisperseStreakHighScore } from '../sql/disperse-streak-highscore';
 import { updateGamersStats } from '../sql/gamers-stats';
 import { getRandomRange } from '../util';
-import logger from '../logger';
+import { logError } from '../logger';
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
@@ -72,19 +72,19 @@ const regexToText = [
         regex: /^gamers$/,
         getText: async (_command: string, userId: string, username: string, guildId: string) => {
             let res = getGamersResponse();
-            updateGamersStats(userId, res).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
+            void updateGamersStats(userId, res);
             const disperseCurrentStreak = await getCurrentDisperseStreak(guildId);
             if (res === 'Disperse!') {
                 const userIds = (disperseCurrentStreak.STREAK === 0) ? userId : `${disperseCurrentStreak.USER_IDS},${userId}`;
-                updateCurrentDisperseStreak(guildId, userIds, disperseCurrentStreak.STREAK+1).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
-                updateDisperseStreakHighScore(guildId, userIds, disperseCurrentStreak.STREAK+1).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
+                void updateCurrentDisperseStreak(guildId, userIds, disperseCurrentStreak.STREAK+1);
+                void updateDisperseStreakHighScore(guildId, userIds, disperseCurrentStreak.STREAK+1);
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
                     res = `${res}\nDisperse Streak: **${disperseCurrentStreak.STREAK}** broken by **${username}**`;
-                    updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
+                    void updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
-                updateCurrentDisperseStreak(guildId, userId, 0).catch((err: Error) => { logger.error({ message: `${err.message}`, stack: err.stack }); });
+                void updateCurrentDisperseStreak(guildId, userId, 0);
             }
             return res;
         }
@@ -263,8 +263,12 @@ export default async (command: string, userId: string, username: string, guildId
     let botMessage = '';
     for (const regexText of regexToText) {
         if (regexText.regex.test(command)) {
-            const text = await regexText.getText(command, userId, username, guildId);
-            botMessage += `${text}\n`;
+            try {
+                const text = await regexText.getText(command, userId, username, guildId);
+                botMessage += `${text}\n`;
+            } catch(err) {
+                logError(err);
+            }
         }
     }
     return botMessage;

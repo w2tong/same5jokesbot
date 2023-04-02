@@ -1,15 +1,11 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import logger from '../logger';
 import { getDisperseStreakHighscore } from '../sql/disperse-streak-highscore';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
     const disperseStreak = await getDisperseStreakHighscore(interaction.guild.id);
     if (!disperseStreak) {
-        interaction.reply('No disperse streak highscore exists on this server.').catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply('No disperse streak highscore exists on this server.');
     }
     else {
         const userIds= disperseStreak.USER_IDS.split(',');
@@ -24,18 +20,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
             if (usernamesMap[username] > 1) usernames += `(${usernamesMap[username]})`;
             usernames += '\n';
         }
-
+    
         const disperseHighscoreEmbed = new EmbedBuilder()
             .setTitle(`${interaction.guild.name}'s Disperse Streak Highscore`)
             .addFields(
                 { name: 'Streak', value: `${disperseStreak.STREAK}`, inline: true },
                 { name: 'Dispersers', value: `${usernames}`, inline: true }
             );
-
-        interaction.reply({ embeds: [disperseHighscoreEmbed] }).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+    
+        void interaction.reply({ embeds: [disperseHighscoreEmbed] });
     }
 }
 

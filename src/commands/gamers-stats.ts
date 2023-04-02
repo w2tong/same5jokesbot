@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import logger from '../logger';
 import { getGamersStats } from '../sql/gamers-stats';
 
 const decimalPlaces = 2;
@@ -7,10 +6,7 @@ const decimalPlaces = 2;
 async function execute(interaction: ChatInputCommandInteraction) {
     const gamerCounter = await getGamersStats(interaction.user.id);
     if (!gamerCounter) {
-        interaction.reply('No stats available.').catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply('No stats available.');
     }
     else {
         const sum = gamerCounter.DISCHARGE + gamerCounter.DISPERSE + gamerCounter.RISE_UP;
@@ -24,10 +20,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: 'Hits', value: `${gamerCounter.DISCHARGE}\n${gamerCounter.DISPERSE}\n${gamerCounter.RISE_UP}`, inline: true },
                 { name: 'Hit Rate', value: `${dischargePercent}%\n${dispersePercent}%\n${riseUpPercent}%`, inline: true }
             );
-        interaction.reply({ embeds: [gamersStatsEmbed] }).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply({ embeds: [gamersStatsEmbed] });
     }
 }
 

@@ -1,14 +1,10 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import logger from '../logger';
 import { getDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const disperseStreakBreaks = await getDisperseStreakBreaks(interaction.user.id);
     if (!disperseStreakBreaks) {
-        interaction.reply('You have no streak breaks! Congratulations!').catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply('You have no streak breaks! Congratulations!');
     }
     else {
         const disperseBreaksEmbed = new EmbedBuilder()
@@ -17,10 +13,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: '# of breaks', value: `${disperseStreakBreaks.BREAKS}`, inline: true },
                 { name: 'Sum of streaks broken', value: `${disperseStreakBreaks.SCORE}`, inline: true }
             );
-        interaction.reply({ embeds: [disperseBreaksEmbed] }).catch((err: Error) => logger.error({
-            message: err.message,
-            stack: err.stack
-        }));
+        void interaction.reply({ embeds: [disperseBreaksEmbed] });
     }
 }
 
