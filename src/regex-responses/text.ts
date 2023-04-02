@@ -54,6 +54,11 @@ function whereIsWayne(): string {
     return `${wayneAction[getRandomRange(wayneAction.length)]}.`;
 }
 
+const alam = ['will be readyt in like 25 mb', 'Nt try again tmr', 'great alam everybody'];
+function getAlam(): string {
+    return `${alam[getRandomRange(alam.length)]}`;
+}
+
 const regexToText = [
     {
         regex: /where.*andy/,
@@ -247,6 +252,10 @@ const regexToText = [
             const str = arr.join(', ');
             return `${str.charAt(0).toUpperCase()}${str.slice(1)}.`;
         }
+    },
+    {
+        regex: /\balam\b/,
+        getText: () => getAlam()
     }
 ];
 
