@@ -220,7 +220,7 @@ const regexToText = [
     },
     // Images
     {
-        regex: /166/,
+        regex: /\b166\b/,
         getText: () => 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png'
     },
     {
