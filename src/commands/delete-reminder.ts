@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getTimestampEST } from '../util';
+import { convertDateToUnixTimestamp } from '../util';
 import { deleteReminder, getUserReminders } from '../sql/reminders';
 import { logError } from '../logger';
 
@@ -15,10 +15,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 .setLabel(`Delete Reminder ${i+1}`)
                 .setStyle(ButtonStyle.Danger),
         );
+        const unixTimestamp = convertDateToUnixTimestamp(new Date(`${reminders[i].TIME} UTC`));
         const embed = new EmbedBuilder()
             .setTitle(`Reminder ${i+1}`)
             .addFields(
-                { name: 'Time', value: `${getTimestampEST(new Date(reminders[i].TIME))}` },
+                { name: 'Time', value: `<t:${unixTimestamp}> <t:${unixTimestamp}:R>` },
                 { name: 'Message', value: `${reminders[i].MESSAGE}` }
             );
         embeds.push(embed);

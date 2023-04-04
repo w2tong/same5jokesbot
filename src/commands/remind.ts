@@ -2,7 +2,7 @@ import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBui
 import { newReminder } from '../reminders';
 import parseDate from '../parse-date';
 import { getUserRemindersCount } from '../sql/reminders';
-import { getTimestampEST } from '../util';
+import { convertDateToUnixTimestamp } from '../util';
 
 const MAX_REMINDERS = 5;
 
@@ -20,11 +20,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
     else if (interaction.channel && interaction.channel.type === ChannelType.GuildText && time && timeUnit) {
         const date = parseDate(time, timeUnit);
+        const unixTimestamp = convertDateToUnixTimestamp(date);
         if (await newReminder(interaction.user.id ,interaction.channel, date, message) === true) {
             const embed = new EmbedBuilder()
                 .setTitle('Reminder')
                 .addFields(
-                    { name: 'Time', value: `${getTimestampEST(date)}` },
+                    { name: 'Time', value: `<t:${unixTimestamp}> <t:${unixTimestamp}:R>` },
                     { name: 'Message', value: `${message}` }
                 );
             void interaction.reply({embeds: [embed]});

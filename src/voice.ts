@@ -3,7 +3,7 @@ import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource,
 import { join } from 'node:path';
 import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
-import { getMomentCurrentTimeEST } from './util';
+import { convertDateToUnixTimestamp } from './util';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
@@ -122,7 +122,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 if (isRateLimited === false) {
                     isRateLimited = true;
                     if (voiceLogChannel) {
-                        voiceLogChannel.send(`[${getMomentCurrentTimeEST().format('h:mm:ss a')}] Rate limited. Try again in 1 minute.`)
+                        voiceLogChannel.send(`<t:${convertDateToUnixTimestamp(new Date())}:T> Rate limited. Try again in 1 minute.`)
                             .then((message) => { rateLimitedMessage = message; }).catch(logError);
                     }
                 }
@@ -140,7 +140,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             const username = user?.username;
     
             // Log voice messages to console and discord channel
-            const voiceTextLog = `[${getMomentCurrentTimeEST().format('h:mm:ss a')}] ${username}: ${text}`;
+            const voiceTextLog = `<t:${convertDateToUnixTimestamp(new Date())}:T> **${username}**: ${text}`;
             console.log(voiceTextLog);
             if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(logError);
     
