@@ -9,8 +9,8 @@ function getMomentCurrentTimeEST() {
     return moment().utc().tz('America/Toronto');
 }
 
-function getTimestampEST(date: Date) {
-    return moment(date).utc().tz('America/Toronto').format('MMM D, h:mm:ss a');
+function convertDateToUnixTimestamp(date: Date) {
+    return Math.floor(date.getTime()/1000);
 }
 
-export { getRandomRange, getMomentCurrentTimeEST, getTimestampEST };
+export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp };
