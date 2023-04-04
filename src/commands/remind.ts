@@ -11,7 +11,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const msg = interaction.options.getString('message');
     const time = interaction.options.getNumber('time');
     const timeUnit = interaction.options.getString('time-unit');
-    const message = `${mention} ${msg}`;
+    const message = `${mention} ${msg} (sent by ${interaction.user.username})`;
     
     const count = await getUserRemindersCount(interaction.user.id);
     let reply = 'Error creating reminder.';
