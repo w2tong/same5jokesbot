@@ -1,5 +1,5 @@
 # Same5JokesBot
-Discord bot for the same 5 jokes
+Discord bot that says the same 5 jokes.
 
 Dev
 ```shell
