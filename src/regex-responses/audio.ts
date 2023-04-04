@@ -187,7 +187,7 @@ const regexToAudio = [
         getAudio: () => 'i_am_under_the_water'
     },
     {
-        regex: /everybody/,
+        regex: /everybody|cheers|take care|amazing|that'?s what i'?m talking about|all right/,
         getAudio: () => 'guga_everybody'
     },
     {
