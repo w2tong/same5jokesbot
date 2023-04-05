@@ -6,28 +6,28 @@ import { logError } from './logger';
 
 // Hourly water and posture check cronjob
 function createWaterPostureCronJob(channel: TextChannel) {
-    schedule.scheduleJob({second: 0, minute: 0, tz: 'est'}, function() {
+    schedule.scheduleJob({ second: 0, minute: 0, tz: 'America/Toronto' }, function() {
         channel.send('<@&899160433548722176> Water Check. Posture Check.').catch(logError);
     });
 }
 
 // Daily Wordle reminder cronjob
 function createWordleCronJob(channel: TextChannel) {
-    schedule.scheduleJob({second: 0, minute: 0, hour: 0, tz: 'est'}, function() {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, function() {
         channel.send('Wordle time POGCRAZY').catch(logError);
     });
 }
 
 // Weekly Tuesday WoW Reset cronjob
 function createWoWResetCronJob(channel: TextChannel) {
-    schedule.scheduleJob({second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'est'}, function() {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'America/Toronto' }, function() {
         channel.send('When Mythic+/Vault of the Incarnates/World Boss/PvP/Timewalking').catch(logError);
     });
 }
 
 // Weekly Tuesday Div 2 / Sons of the Forest Session
 function createTuesdayScheduleCronJob(channel: TextChannel) {
-    schedule.scheduleJob({second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'est'}, function() {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'America/Toronto' }, function() {
         channel.send('Where Sons of the Forest/Divnity: Original Sin 2').catch(logError);
     });
 }
