@@ -349,7 +349,7 @@ const regexToAudio = [
         }
     },
     {
-        regex: /(for|four|force)\s*(send?|sin|and|in)/,
+        regex: /(for|four|force?)\s*(send?|sin|and|in|son|cen|ing)/,
         getAudio: () => 'boys'
     },
     {
