@@ -54,14 +54,14 @@ function createPlayer(guildId: string): AudioPlayer {
         guildConnections[guildId].timeoutId = setTimeout(() => {
             disconnectVoice(guildId);
         }, timeout);
-        
     });
-
+    
     return player;
 }
 
 function playAudioFile(guildId: string, audioFile: string, username?: string) {
     if (!audioFile) return;
+    if (!guildConnections[guildId]) return;
     const player = guildConnections[guildId].player;
     if (!player) return;
     console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username ?? ''} played ${audioFile}`);
