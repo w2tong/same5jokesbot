@@ -181,4 +181,4 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     });
 }
 
-export { joinVoice, playAudioFile };
+export { disconnectVoice, joinVoice, playAudioFile  };
