@@ -141,7 +141,6 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     
             // Log voice messages to console and discord channel
             const voiceTextLog = `<t:${convertDateToUnixTimestamp(new Date())}:T> **${username}**: ${text}`;
-            console.log(voiceTextLog);
             if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(logError);
     
             // Stop audio voice command
