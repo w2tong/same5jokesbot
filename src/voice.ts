@@ -39,6 +39,11 @@ function disconnectVoice(guildId: string) {
     delete guildConnections[guildId];
 }
 
+function isInGuildVoice(guildId: string) {
+    if (guildConnections[guildId]) return true;
+    return false;
+}
+
 // Creates AudioPlayer and add event listeners
 function createPlayer(guildId: string): AudioPlayer {
     const player = createAudioPlayer();
@@ -180,4 +185,4 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     });
 }
 
-export { disconnectVoice, joinVoice, playAudioFile  };
+export { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile };
