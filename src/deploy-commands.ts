@@ -1,8 +1,8 @@
 import { REST } from 'discord.js';
 import { Routes } from 'discord-api-types/v9';
 import * as dotenv from 'dotenv';
-import { commandBuilders } from './commands/commands';
 dotenv.config();
+import { commandBuilders } from './commands/commands';
 
 const commands = commandBuilders.map((command) => command.toJSON());
 

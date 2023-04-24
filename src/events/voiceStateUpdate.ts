@@ -1,5 +1,6 @@
 import { ChannelType, VoiceState } from 'discord.js';
 import { logError } from '../logger';
+import userIntros from './user-intros';
 import { getMomentCurrentTimeEST } from '../util';
 import { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile } from '../voice';
 import * as dotenv from 'dotenv';
@@ -53,10 +54,11 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.username);
     }
 
-    // Play Good Morning Donda when joining channel in the morning
+    // User joins voice channel
     if (newState.channelId && oldState.channelId === null) {
+        // Play Good Morning Donda when joining channel in the morning
         const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
-        if (hour >= 4 && hour < 12) {
+        if (hour >= 6 && hour < 12) {
             const voiceConnection = {
                 channelId: newState.channelId,
                 guildId: newState.guild.id,
@@ -65,5 +67,22 @@ export default (oldState: VoiceState, newState: VoiceState) => {
             joinVoice(voiceConnection, newState.client);
             playAudioFile(newState.guild.id, 'good_morning_donda', oldState.member?.user.username);
         }
+        // Play user intro
+        else {
+            console.log('user intro');
+            const userId = oldState.member?.id;
+            console.log(userId);
+            console.log(userIntros);
+            if (userId && userIntros[userId]) {
+                const voiceConnection = {
+                    channelId: newState.channelId,
+                    guildId: newState.guild.id,
+                    adapterCreator: newState.guild.voiceAdapterCreator
+                };
+                joinVoice(voiceConnection, newState.client);
+                playAudioFile(newState.guild.id, userIntros[userId], oldState.member?.user.username);
+            }
+        }
+        userIntros;
     }
 };
