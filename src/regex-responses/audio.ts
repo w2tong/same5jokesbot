@@ -407,6 +407,10 @@ const regexToAudio = [
     {
         regex: /disconnect|\bdc\b/,
         getAudio: () => 'he_disconnected'
+    },
+    {
+        regex: /\baudi\b/,
+        getAudio: () => 'audi'
     }
 ];
 
