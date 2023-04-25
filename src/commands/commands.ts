@@ -10,6 +10,7 @@ import knitCount from './knit-count';
 import sneezeCount from './sneeze-count';
 import remind from './remind';
 import deleteReminder from './delete-reminder';
+import timeInVoice from './time-in-voice';
 
 const commands = [
     {execute: play.execute, name: play.name},
@@ -23,7 +24,8 @@ const commands = [
     {execute: knitCount.execute, name: knitCount.name},
     {execute: sneezeCount.execute, name: sneezeCount.name},
     {execute: remind.execute, name: remind.name},
-    {execute: deleteReminder.execute, name: deleteReminder.name}
+    {execute: deleteReminder.execute, name: deleteReminder.name},
+    {execute: timeInVoice.execute, name: timeInVoice.name}
 ];
 
 const commandBuilders = [
@@ -38,7 +40,8 @@ const commandBuilders = [
     knitCount.commandBuilder,
     sneezeCount.commandBuilder,
     remind.commandBuilder,
-    deleteReminder.commandBuilder
+    deleteReminder.commandBuilder,
+    timeInVoice.commandBuilder
 ];
 
 export { commands, commandBuilders };

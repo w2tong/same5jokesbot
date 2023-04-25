@@ -4,7 +4,10 @@ import userIntros from './user-intros';
 import { getMomentCurrentTimeEST } from '../util';
 import { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile } from '../voice';
 import * as dotenv from 'dotenv';
+import { updateTimeInVoice } from '../sql/time-in-voice';
 dotenv.config();
+
+const userJoinTime: {[key:string]: number} = {};
 
 export default (oldState: VoiceState, newState: VoiceState) => {
 
@@ -28,6 +31,15 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         });
         if (count === 1) {
             disconnectVoice(oldState.guild.id);
+        }
+    }
+
+    // User leaves voice channel/moves to AFK channel
+    if (newState.channelId === null || newState.channelId === newState.guild.afkChannelId) {
+        const userId = oldState.member?.id;
+        if (userId && userJoinTime[userId]) {
+            void updateTimeInVoice(userId, newState.guild.id, Date.now() - userJoinTime[userId]);
+            delete userJoinTime[userId];
         }
     }
 
@@ -59,6 +71,14 @@ export default (oldState: VoiceState, newState: VoiceState) => {
 
     // User joins voice channel
     if (newState.channelId && oldState.channelId === null) {
+        const userId = oldState.member?.id;
+        
+        // Add user join time
+        if (userId) {
+            userJoinTime[userId] = Date.now();
+        }
+        
+
         // Play Good Morning Donda when joining channel in the morning
         const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
         if (hour >= 6 && hour < 12) {
@@ -70,9 +90,10 @@ export default (oldState: VoiceState, newState: VoiceState) => {
             joinVoice(voiceConnection, newState.client);
             playAudioFile(newState.guild.id, 'good_morning_donda', oldState.member?.user.username);
         }
+
         // Play user intro
         else {
-            const userId = oldState.member?.id;
+            
             if (userId && userIntros[userId]) {
                 const voiceConnection = {
                     channelId: newState.channelId,
