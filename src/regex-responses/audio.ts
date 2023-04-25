@@ -271,7 +271,7 @@ const regexToAudio = [
     },
     {
         regex: /manwa|manua|manhua|manga|anime|v.*tuber|get a life|gura|amelia watson|iron mouse/,
-        getAudio: () => 'dr_disrespect_get_a_life'
+        getAudio: () => 'doc_get_a_life'
     },
     {
         regex: /game over/,
@@ -407,7 +407,15 @@ const regexToAudio = [
     {
         regex: /disconnect|\bdc\b/,
         getAudio: () => 'he_disconnected'
-    }
+    },
+    {
+        regex: /\baudi\b/,
+        getAudio: () => 'audi'
+    },
+    {
+        regex: /what.*is this game about/,
+        getAudio: () => 'doc_what_is_this_game_about'
+    }      
 ];
 
 export default (command: string, userId: string) => {
