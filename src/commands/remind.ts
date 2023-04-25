@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { newReminder } from '../reminders';
-import parseDate from '../parse-date';
+import { parseDate } from '../util';
 import { getUserRemindersCount } from '../sql/reminders';
 import { convertDateToUnixTimestamp } from '../util';
 
