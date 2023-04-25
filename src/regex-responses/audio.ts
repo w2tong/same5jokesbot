@@ -43,6 +43,11 @@ function getBlind(): string {
     return blind[getRandomRange(blind.length)];
 }
 
+const ohSh_t = ['oh_sh_t_a_rat', 'oh_sh_t_a_ghost'];
+function getOhSh_t(): string {
+    return blind[getRandomRange(ohSh_t.length)];
+}
+
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
@@ -419,6 +424,22 @@ const regexToAudio = [
     {
         regex: /chinese motorcycle/,
         getAudio: () => 'doc_chinese_motorcycle'
+    },
+    {
+        regex: /oh sh.t a rat/,
+        getAudio: () => 'oh_sh_t_a_rat'
+    },
+    {
+        regex: /oh sh.t a ghost/,
+        getAudio: () => 'oh_sh_t_a_ghost'
+    },
+    {
+        regex: /oh sh.t/,
+        getAudio: () => getOhSh_t()
+    },
+    {
+        regex: /(yo)?u should/,
+        getAudio: () => 'NOW'
     }
 ];
 
