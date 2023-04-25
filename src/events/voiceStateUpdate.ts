@@ -44,7 +44,10 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     }
 
     // Play teleporting fat guy when moving between channels
-    if (oldState.channelId && newState.channelId && oldState.channelId != newState.channelId) {
+    if (
+        oldState.channelId && newState.channelId && oldState.channelId != newState.channelId &&
+        oldState.member && oldState.member.roles.cache.some(role => role.name === 'FAT')
+    ) {
         const voiceConnection = {
             channelId: newState.channelId,
             guildId: newState.guild.id,
@@ -69,10 +72,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         }
         // Play user intro
         else {
-            console.log('user intro');
             const userId = oldState.member?.id;
-            console.log(userId);
-            console.log(userIntros);
             if (userId && userIntros[userId]) {
                 const voiceConnection = {
                     channelId: newState.channelId,
