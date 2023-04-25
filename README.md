@@ -1,7 +1,28 @@
 # Same5JokesBot
-Discord bot that says the same 5 jokes.
+Same5JokesBot is a discord bot written TypeScript using the discord.js library. Same5JokesBot contains jokes specifically for the Wholesome Sisters discord server.
+## Features
+- Text commands to get text responses or play audio
+- Voice commands using [wit.ai](https://wit.ai/)
+- Users stats
+  - Number of uses for slash commands and playing audio
+  - Time spent in voice channels
+- Reminders for users
 
 ## Installation
+
+### Install dependencies
+```shell
+npm i
+```
+
+### Setting up Oracle DB
+https://www.oracle.com/database/technologies/appdev/quickstartnodejs.html
+
+### Setting up [wit.ai](https://wit.ai/) for Voice Recognition
+1. Create a [wit.ai](https://wit.ai/) account by logging into Facebook. and create a new app. 
+2. Create a new app.
+3. Navigate to Manangement > Settings and copy the "Client Access Token" into your .env file.
+
 ### .env File
 Place .env file in the root directory
 ```
@@ -22,15 +43,6 @@ ORACLEDB_CONN_STR=connection string
 MAIN_CHANNEL_ID=text channel id
 VOICE_LOG_CHANNEL_ID=text channel id
 ```
-
-### Setting up Oracle DB
-Install Oracle Instant Client for your environment<br/>
-https://www.oracle.com/database/technologies/instant-client.html
-
-### Setting up [wit.ai](https://wit.ai/)
-1. Create a [wit.ai](https://wit.ai/) account by logging into Facebook. and create a new app. 
-2. Create a new app.
-3. Navigate to Manangement > Settings and copy the "Client Access Token" into your .env file.
 
 ## Deployment
 ### Run in dev
