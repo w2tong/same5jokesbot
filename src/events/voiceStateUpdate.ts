@@ -38,7 +38,8 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     if (newState.channelId === null || newState.channelId === newState.guild.afkChannelId) {
         const userId = oldState.member?.id;
         if (userId && userJoinTime[userId]) {
-            void updateTimeInVoice(userId, newState.guild.id, Date.now() - userJoinTime[userId]);
+            const date = new Date(userJoinTime[userId]).toISOString().slice(0, 10);
+            void updateTimeInVoice(userId, newState.guild.id, date, Date.now() - userJoinTime[userId]);
             delete userJoinTime[userId];
         }
     }
@@ -93,7 +94,6 @@ export default (oldState: VoiceState, newState: VoiceState) => {
 
         // Play user intro
         else {
-            
             if (userId && userIntros[userId]) {
                 const voiceConnection = {
                     channelId: newState.channelId,
