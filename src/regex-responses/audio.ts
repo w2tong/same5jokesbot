@@ -415,7 +415,11 @@ const regexToAudio = [
     {
         regex: /what.*is this game about/,
         getAudio: () => 'doc_what_is_this_game_about'
-    }      
+    },
+    {
+        regex: /chinese motorcycle/,
+        getAudio: () => 'doc_chinese_motorcycle'
+    }
 ];
 
 export default (command: string, userId: string) => {
