@@ -13,4 +13,13 @@ function convertDateToUnixTimestamp(date: Date) {
     return Math.floor(date.getTime()/1000);
 }
 
-export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp };
+const timeInMS: {[key: string]: number} = {
+    minute: 60_000,
+    hour: 3_600_000,
+    day: 86_400_000
+};
+function parseDate(num: number, time: string) {
+    return new Date(Date.now() + timeInMS[time] * num);
+}
+
+export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, parseDate };
