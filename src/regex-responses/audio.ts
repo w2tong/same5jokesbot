@@ -411,7 +411,11 @@ const regexToAudio = [
     {
         regex: /\baudi\b/,
         getAudio: () => 'audi'
-    }
+    },
+    {
+        regex: /what.*is this game about/,
+        getAudio: () => 'doc_what_is_this_game_about'
+    }      
 ];
 
 export default (command: string, userId: string) => {
