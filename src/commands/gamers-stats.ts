@@ -4,7 +4,10 @@ import { getGamersStats } from '../sql/gamers-stats';
 const decimalPlaces = 2;
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    const gamerCounter = await getGamersStats(interaction.user.id);
+    const date = new Date();
+    const month = interaction.options.getString('month') ?? (date.getMonth() + 1).toString();
+    const year = (interaction.options.getNumber('year') ?? date.getFullYear()).toString();
+    const gamerCounter = await getGamersStats(interaction.user.id, month, year);
     if (!gamerCounter) {
         void interaction.reply('No stats available.');
     }
@@ -14,7 +17,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const dispersePercent = (gamerCounter.DISPERSE / sum * 100).toFixed(decimalPlaces);
         const riseUpPercent = (gamerCounter.RISE_UP / sum * 100).toFixed(decimalPlaces);
         const gamersStatsEmbed = new EmbedBuilder()
-            .setTitle(`${interaction.user.username}'s Gamers Stats`)
+            .setTitle(`${interaction.user.username}'s Gamers Stats (${month}/${year})`)
             .addFields(
                 { name: 'Gamers', value: 'Discharge!\nDisperse!\nRise up!', inline: true },
                 { name: 'Hits', value: `${gamerCounter.DISCHARGE}\n${gamerCounter.DISPERSE}\n${gamerCounter.RISE_UP}`, inline: true },
@@ -28,6 +31,21 @@ const name = 'gamers-stats';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Gets your Gamer stats for this server.');
+    .setDescription('Gets your Gamer stats for this server.')
+    .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
+        {name: 'January', value: '1'},
+        {name: 'February', value: '2'},
+        {name: 'March', value: '3'},
+        {name: 'April', value: '4'},
+        {name: 'May', value: '5'},
+        {name: 'June', value: '6'},
+        {name: 'March', value: '7'},
+        {name: 'July', value: '8'},
+        {name: 'August', value: '9'},
+        {name: 'Septemper', value: '10'},
+        {name: 'November', value: '11'},
+        {name: 'December', value: '12'}
+    ))
+    .addStringOption((option) => option.setName('year').setDescription('Select a year'));
 
 export default { execute, name, commandBuilder };

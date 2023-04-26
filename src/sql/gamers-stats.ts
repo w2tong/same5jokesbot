@@ -17,7 +17,7 @@ CREATE TABLE gamers_stats (
 const query = `
 SELECT discharge, disperse, rise_up FROM gamers_stats
 WHERE user_id = :userId
-AND month_year = TRUNC(SYSDATE, 'MONTH')
+AND month_year = TO_DATE(:monthYear, 'yyyy/mm')
 `;
 
 interface GamersCounter {
@@ -25,10 +25,11 @@ interface GamersCounter {
     DISPERSE: number;
     RISE_UP: number;
 }
-async function getGamersStats(userId: string): Promise<GamersCounter|null> {
+async function getGamersStats(userId: string, month: string, year: string): Promise<GamersCounter|null> {
     try {
+        const monthYear = `${year}/${month}`;
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<GamersCounter> = await connection.execute(query, {userId}, selectExecuteOptions);
+        const result: oracledb.Result<GamersCounter> = await connection.execute(query, {userId, monthYear}, selectExecuteOptions);
         void connection.close();
         if (result && result.rows) {
             return result.rows[0];
@@ -100,11 +101,11 @@ async function updateGamersStats(userId: string, gamersWord: string) {
 const getTopDisperseRateQuery = `
 SELECT gc.user_id, disperse/total.sum*100 AS disperse_pc, sum
 FROM (
-    SELECT user_id, discharge + disperse + rise_up AS sum FROM gamers_stats
-    WHERE month_year = TRUNC(SYSDATE, 'MONTH')
+    SELECT user_id, month_year, discharge + disperse + rise_up AS sum FROM gamers_stats
+    WHERE month_year = TO_DATE(:monthYear, 'yyyy/mm')
     ) total
 JOIN gamers_stats gc
-ON total.user_id = gc.user_id
+ON total.user_id = gc.user_id AND total.month_year = gc.month_year
 ORDER BY disperse_pc DESC
 `;
 
@@ -113,10 +114,11 @@ interface TopDisperseRate {
     SUM: number;
     DISPERSE_PC: number;
 }
-async function getTopDisperseRate(): Promise<Array<TopDisperseRate>> {
+async function getTopDisperseRate(month: string, year: string): Promise<Array<TopDisperseRate>> {
     try {
+        const monthYear = `${year}/${month}`;
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateQuery, {}, selectExecuteOptions);
+        const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateQuery, {monthYear}, selectExecuteOptions);
         void connection.close;
         if (result && result.rows) {
             return result.rows;
