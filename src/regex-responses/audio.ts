@@ -45,7 +45,7 @@ function getBlind(): string {
 
 const ohSh_t = ['oh_sh_t_a_rat', 'oh_sh_t_a_ghost'];
 function getOhSh_t(): string {
-    return blind[getRandomRange(ohSh_t.length)];
+    return ohSh_t[getRandomRange(ohSh_t.length)];
 }
 
 const regexToAudio = [
