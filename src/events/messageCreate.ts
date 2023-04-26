@@ -39,7 +39,7 @@ export default async (message: Message) => {
                 adapterCreator: message.guild.voiceAdapterCreator
             };
             joinVoice(voiceConnection, message.client);
-            playAudioFile(message.guild.id, audio, message.author.username);
+            playAudioFile(message.guild.id, audio, message.author.id);
         }
     }
 };

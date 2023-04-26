@@ -12,7 +12,7 @@ function execute(interaction: ChatInputCommandInteraction) {
         const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
         void interaction.reply({ content: reply, ephemeral: true });
         joinVoice(voiceConnection, interaction.client);
-        playAudioFile(interaction.guild.id, audioFile, interaction.user.username);
+        playAudioFile(interaction.guild.id, audioFile, interaction.user.id);
     }
 }
 

@@ -7,6 +7,7 @@ import { convertDateToUnixTimestamp } from './util';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
+import { updateAudioCount } from './sql/audio-count';
 
 interface GuildConnection {
     connection: VoiceConnection;
@@ -64,12 +65,12 @@ function createPlayer(guildId: string): AudioPlayer {
     return player;
 }
 
-function playAudioFile(guildId: string, audioFile: string, username?: string) {
+function playAudioFile(guildId: string, audioFile: string, userId: string) {
     if (!audioFile) return;
     if (!guildConnections[guildId]) return;
     const player = guildConnections[guildId].player;
     if (!player) return;
-    console.log(`[${new Date().toLocaleTimeString('en-US')}] ${username ?? ''} played ${audioFile}`);
+    void updateAudioCount(userId, audioFile);
     const resource = createAudioResource(join(__dirname, `audio/${audioFile}.mp3`));
     player.play(resource);
 }
@@ -164,7 +165,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     
             // Play any audio where text matches regex
             const audio = getAudioResponse(text, userId);
-            playAudioFile(guildId, audio, username);
+            playAudioFile(guildId, audio, userId);
         });
     });
 

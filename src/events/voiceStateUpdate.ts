@@ -67,7 +67,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
             adapterCreator: newState.guild.voiceAdapterCreator
         };
         joinVoice(voiceConnection, newState.client);
-        playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.username);
+        playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.id);
     }
 
     // User joins voice channel
@@ -78,18 +78,17 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         if (userId) {
             userJoinTime[userId] = Date.now();
         }
-        
 
         // Play Good Morning Donda when joining channel in the morning
         const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
-        if (hour >= 6 && hour < 12) {
+        if (hour >= 6 && hour < 12 && userId) {
             const voiceConnection = {
                 channelId: newState.channelId,
                 guildId: newState.guild.id,
                 adapterCreator: newState.guild.voiceAdapterCreator
             };
             joinVoice(voiceConnection, newState.client);
-            playAudioFile(newState.guild.id, 'good_morning_donda', oldState.member?.user.username);
+            playAudioFile(newState.guild.id, 'good_morning_donda', userId);
         }
 
         // Play user intro
@@ -101,7 +100,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
                     adapterCreator: newState.guild.voiceAdapterCreator
                 };
                 joinVoice(voiceConnection, newState.client);
-                playAudioFile(newState.guild.id, userIntros[userId], oldState.member?.user.username);
+                playAudioFile(newState.guild.id, userIntros[userId], userId);
             }
         }
         userIntros;
