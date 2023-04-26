@@ -9,6 +9,7 @@ import { createTableKnitCountQuery } from './knit-count';
 import { createTableSneezeCountQuery } from './sneeze-count';
 import { createTableRemindersQuery } from './reminders';
 import { createTableTimeInVoiceQuery } from './time-in-voice';
+import { createTableAudioCount } from './audio-count';
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
 oracledb.autoCommit = true;
@@ -20,7 +21,7 @@ async function initOracleDB() {
         connectString: process.env.ORACLEDB_CONN_STR
     });
 
-    const createTableQueries = [createTableCurrentDisperseStreakQuery, createTableDisperseStreakBreaksQuery, createTableDisperseStreakHighscoreQuery, createTableGamersStatsQuery, createTableKnitCountQuery, createTableSneezeCountQuery, createTableRemindersQuery, createTableTimeInVoiceQuery];
+    const createTableQueries = [createTableCurrentDisperseStreakQuery, createTableDisperseStreakBreaksQuery, createTableDisperseStreakHighscoreQuery, createTableGamersStatsQuery, createTableKnitCountQuery, createTableSneezeCountQuery, createTableRemindersQuery, createTableTimeInVoiceQuery, createTableAudioCount];
 
     const connection = await oracledb.getConnection();
     for(const query of createTableQueries) {
