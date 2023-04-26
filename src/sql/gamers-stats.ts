@@ -5,16 +5,19 @@ import { selectExecuteOptions } from './query-options';
 // GAMERS_COUNTER queries
 const createTableGamersStatsQuery = `
 CREATE TABLE gamers_stats (
-    user_id VARCHAR2(255) PRIMARY KEY,
+    user_id VARCHAR2(255) NOT NULL,
+    month_year DATE NOT NULL,
     discharge NUMBER DEFAULT 0,
     disperse NUMBER DEFAULT 0,
-    rise_up NUMBER DEFAULT 0
+    rise_up NUMBER DEFAULT 0,
+    CONSTRAINT pk_gamers_stats PRIMARY KEY (user_id, month_year)
 )
 `;
 
 const query = `
 SELECT discharge, disperse, rise_up FROM gamers_stats
 WHERE user_id = :userId
+AND month_year = TRUNC(SYSDATE, 'MONTH')
 `;
 
 interface GamersCounter {
@@ -40,34 +43,34 @@ async function getGamersStats(userId: string): Promise<GamersCounter|null> {
 const updateDischargeQuery = `
 MERGE INTO gamers_stats dest
     USING( SELECT :userId AS user_id FROM dual) src
-        ON( dest.user_id = src.user_id )
+        ON( dest.user_id = src.user_id AND dest.month_year = TRUNC(SYSDATE, 'MONTH') )
     WHEN MATCHED THEN
         UPDATE SET discharge = dest.discharge + 1
     WHEN NOT MATCHED THEN
-        INSERT( user_id, discharge ) 
-        VALUES( src.user_id, 1 )
+        INSERT( user_id, month_year, discharge ) 
+        VALUES( src.user_id, TRUNC(SYSDATE, 'MONTH'), 1 )
 `;
 
 const updateDisperseQuery = `
 MERGE INTO gamers_stats dest
     USING( SELECT :userId AS user_id FROM dual) src
-        ON( dest.user_id = src.user_id )
+        ON( dest.user_id = src.user_id AND dest.month_year = TRUNC(SYSDATE, 'MONTH') )
     WHEN MATCHED THEN
         UPDATE SET disperse = dest.disperse + 1
     WHEN NOT MATCHED THEN
-        INSERT( user_id, disperse ) 
-        VALUES( src.user_id, 1 )
+        INSERT( user_id, month_year, disperse ) 
+        VALUES( src.user_id, TRUNC(SYSDATE, 'MONTH'), 1 )
 `;
 
 const updateRiseUpQuery = `
 MERGE INTO gamers_stats dest
     USING( SELECT :userId AS user_id FROM dual) src
-        ON( dest.user_id = src.user_id )
+        ON( dest.user_id = src.user_id AND dest.month_year = TRUNC(SYSDATE, 'MONTH') )
     WHEN MATCHED THEN
         UPDATE SET rise_up = dest.rise_up + 1
     WHEN NOT MATCHED THEN
-        INSERT( user_id, rise_up ) 
-        VALUES( src.user_id, 1 )
+        INSERT( user_id, month_year, rise_up ) 
+        VALUES( src.user_id, TRUNC(SYSDATE, 'MONTH'), 1 )
 `;
 
 async function updateGamersStats(userId: string, gamersWord: string) {
@@ -96,7 +99,10 @@ async function updateGamersStats(userId: string, gamersWord: string) {
 
 const getTopDisperseRateQuery = `
 SELECT gc.user_id, disperse/total.sum*100 AS disperse_pc, sum
-FROM (SELECT user_id, discharge + disperse + rise_up AS sum FROM gamers_stats) total
+FROM (
+    SELECT user_id, discharge + disperse + rise_up AS sum FROM gamers_stats
+    WHERE month_year = TRUNC(SYSDATE, 'MONTH')
+    ) total
 JOIN gamers_stats gc
 ON total.user_id = gc.user_id
 ORDER BY disperse_pc DESC
