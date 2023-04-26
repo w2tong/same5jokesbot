@@ -94,7 +94,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
 
         // Play user intro
         else {
-            if (userId && userIntros[userId]) {
+            if (userId && userIntros[userId] && userIntros[userId]) {
                 const voiceConnection = {
                     channelId: newState.channelId,
                     guildId: newState.guild.id,
