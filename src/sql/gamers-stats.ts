@@ -43,35 +43,35 @@ async function getGamersStats(userId: string, month: string, year: string): Prom
 
 const updateDischargeQuery = `
 MERGE INTO gamers_stats dest
-    USING( SELECT :userId AS user_id FROM dual) src
-        ON( dest.user_id = src.user_id AND dest.month_year = TRUNC(SYSDATE, 'MONTH') )
+    USING( SELECT :userId AS user_id, TRUNC(SYSDATE, 'MONTH') AS month_year FROM dual) src
+        ON( dest.user_id = src.user_id AND dest.month_year = src.month_year )
     WHEN MATCHED THEN
         UPDATE SET discharge = dest.discharge + 1
     WHEN NOT MATCHED THEN
-        INSERT( user_id, month_year, discharge ) 
-        VALUES( src.user_id, TRUNC(SYSDATE, 'MONTH'), 1 )
+        INSERT( user_id, month_year, discharge )
+        VALUES( src.user_id, src.month_year, 1 )
 `;
 
 const updateDisperseQuery = `
 MERGE INTO gamers_stats dest
-    USING( SELECT :userId AS user_id FROM dual) src
-        ON( dest.user_id = src.user_id AND dest.month_year = TRUNC(SYSDATE, 'MONTH') )
+    USING( SELECT :userId AS user_id, TRUNC(SYSDATE, 'MONTH') AS month_year FROM dual) src
+        ON( dest.user_id = src.user_id AND dest.month_year = src.month_year )
     WHEN MATCHED THEN
         UPDATE SET disperse = dest.disperse + 1
     WHEN NOT MATCHED THEN
         INSERT( user_id, month_year, disperse ) 
-        VALUES( src.user_id, TRUNC(SYSDATE, 'MONTH'), 1 )
+        VALUES( src.user_id, src.month_year, 1 )
 `;
 
 const updateRiseUpQuery = `
 MERGE INTO gamers_stats dest
-    USING( SELECT :userId AS user_id FROM dual) src
-        ON( dest.user_id = src.user_id AND dest.month_year = TRUNC(SYSDATE, 'MONTH') )
+    USING( SELECT :userId AS user_id, TRUNC(SYSDATE, 'MONTH') AS month_year FROM dual) src
+        ON( dest.user_id = src.user_id AND dest.month_year = src.month_year )
     WHEN MATCHED THEN
         UPDATE SET rise_up = dest.rise_up + 1
     WHEN NOT MATCHED THEN
         INSERT( user_id, month_year, rise_up ) 
-        VALUES( src.user_id, TRUNC(SYSDATE, 'MONTH'), 1 )
+        VALUES( src.user_id, src.month_year, 1 )
 `;
 
 async function updateGamersStats(userId: string, gamersWord: string) {
