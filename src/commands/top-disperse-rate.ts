@@ -2,7 +2,10 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from '
 import { getTopDisperseRate } from '../sql/gamers-stats';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    const topDisperseRate = await getTopDisperseRate();
+    const date = new Date();
+    const month = interaction.options.getString('month') ?? (date.getMonth() + 1).toString();
+    const year = (interaction.options.getNumber('year') ?? date.getFullYear()).toString();
+    const topDisperseRate = await getTopDisperseRate(month, year);
     if (topDisperseRate.length === 0) {
         void interaction.reply('No stats available.');
     }
@@ -17,7 +20,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
             
         const rowDisperseRateEmbed = new EmbedBuilder()
-            .setTitle('Top Disperse Rates')
+            .setTitle(`Top Disperse Rates (${month}/${year})`)
             .addFields(
                 { name: 'Name', value: namesField, inline: true },
                 { name: 'Disperse %', value: dispersePercentField, inline: true },
@@ -31,6 +34,21 @@ const name = 'top-disperse-rate';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Gets disperse rate of all users.');
+    .setDescription('Gets disperse rate of all users.')
+    .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
+        {name: 'January', value: '1'},
+        {name: 'February', value: '2'},
+        {name: 'March', value: '3'},
+        {name: 'April', value: '4'},
+        {name: 'May', value: '5'},
+        {name: 'June', value: '6'},
+        {name: 'March', value: '7'},
+        {name: 'July', value: '8'},
+        {name: 'August', value: '9'},
+        {name: 'Septemper', value: '10'},
+        {name: 'November', value: '11'},
+        {name: 'December', value: '12'}
+    ))
+    .addStringOption((option) => option.setName('year').setDescription('Select a year'));
 
 export default { execute, name, commandBuilder };
