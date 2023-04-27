@@ -62,17 +62,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
         // Create arrays for last 30 days and time in voice
         const days: Array<string> = [];
         const times = new Array<number>(30).fill(0);
-        const today = new Date(new Date().toDateString());
-        today.setDate(today.getDate() - 30 + 1);
+        const currDay = new Date(new Date().toDateString());
+        currDay.setDate(currDay.getDate() - 30 + 1);
         for (let i = 0; i < 30; i++) {
-            const result = new Date(today);
-            result.setDate(today.getDate() + i);
-            if (rowsMap[result.toString()]) {
-                times[i] = rowsMap[result.toString()]/60_000;
+            currDay.setDate(currDay.getDate() + 1);
+            if (rowsMap[currDay.toString()]) {
+                times[i] = rowsMap[currDay.toString()]/60_000;
             }
-            days.push(`${result.getMonth()+1}/${result.getDate()}`);
+            days.push(`${currDay.getMonth()+1}/${currDay.getDate()}`);
         }
-        console.log(days, times);
         const file = new AttachmentBuilder(await createChartBuffer(interaction.user.username, days, times)).setName('chart.png');
         void interaction.reply({files: [file]});
     }
