@@ -31,7 +31,6 @@ async function getKnitCount(userId: string): Promise<KnitCount|null> {
     catch (err) {
         throw new Error(`getKnitCount: ${err}`);
     }
-
 }
 
 const updateQuery = `

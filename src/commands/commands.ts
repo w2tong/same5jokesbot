@@ -12,6 +12,7 @@ import remind from './remind';
 import deleteReminder from './delete-reminder';
 import timeInVoice from './time-in-voice';
 import timeInVoiceLineGraph from './time-in-voice-line-graph';
+import audioCountPieChart from './audio-count-pie-chart';
 
 const commands = [
     {execute: play.execute, name: play.name},
@@ -27,7 +28,8 @@ const commands = [
     {execute: remind.execute, name: remind.name},
     {execute: deleteReminder.execute, name: deleteReminder.name},
     {execute: timeInVoice.execute, name: timeInVoice.name},
-    {execute: timeInVoiceLineGraph.execute, name: timeInVoiceLineGraph.name}
+    {execute: timeInVoiceLineGraph.execute, name: timeInVoiceLineGraph.name},
+    {execute: audioCountPieChart.execute, name: audioCountPieChart.name}
 ];
 
 const commandBuilders = [
@@ -44,7 +46,8 @@ const commandBuilders = [
     remind.commandBuilder,
     deleteReminder.commandBuilder,
     timeInVoice.commandBuilder,
-    timeInVoiceLineGraph.commandBuilder
+    timeInVoiceLineGraph.commandBuilder,
+    audioCountPieChart.commandBuilder
 ];
 
 export { commands, commandBuilders };

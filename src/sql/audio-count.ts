@@ -1,5 +1,6 @@
 import oracledb from 'oracledb';
 import { logError } from '../logger';
+import { selectExecuteOptions } from './query-options';
 
 const createTableAudioCount = `
 CREATE TABLE audio_count (
@@ -10,6 +11,32 @@ CREATE TABLE audio_count (
     CONSTRAINT pk_audio_count PRIMARY KEY (user_id, audio, month_year)
 )
 `;
+
+const getQuery = `
+SELECT audio, SUM(count) AS count FROM audio_count
+WHERE user_id = :userId
+GROUP BY audio
+ORDER BY count DESC
+`;
+
+interface AudioCount {
+    AUDIO: string;
+    COUNT: number;
+}
+async function getAudioCountTotal(userId: string): Promise<Array<AudioCount>|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<AudioCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows;
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getAudioCountTotal: ${err}`);
+    }
+}
 
 const updateQuery = `
 MERGE INTO audio_count dest
@@ -33,4 +60,4 @@ async function updateAudioCount(userId: string, audio: string) {
     }
 }
 
-export { createTableAudioCount, updateAudioCount };
+export { createTableAudioCount, getAudioCountTotal, updateAudioCount };

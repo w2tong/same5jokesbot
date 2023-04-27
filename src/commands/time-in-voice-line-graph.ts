@@ -1,12 +1,10 @@
 import { ChartConfiguration } from 'chart.js';
-import { ChartCallback, ChartJSNodeCanvas } from 'chartjs-node-canvas';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getLast30DaysTimeInVoice } from '../sql/time-in-voice';
+import { createChartBuffer } from '../chart';
 
-async function createChartBuffer(username: string, days: Array<string>, times: Array<number>) {
-    const width = 1280;
-    const height = 720;
-    const configuration: ChartConfiguration = {
+function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
+    return {
         type: 'line',
         data: {
             labels: days,
@@ -14,6 +12,7 @@ async function createChartBuffer(username: string, days: Array<string>, times: A
                 label: `${username}'s Time Spent in Voice in Last 30 Days`,
                 data: times,
                 borderColor: 'rgb(75, 144, 192)',
+                backgroundColor: 'black',
                 tension: 0.1
             }]
         },
@@ -40,13 +39,6 @@ async function createChartBuffer(username: string, days: Array<string>, times: A
             }
         }
     };
-    const chartCallback: ChartCallback = (ChartJS) => {
-        ChartJS.defaults.responsive = true;
-        ChartJS.defaults.maintainAspectRatio = false;
-        ChartJS.defaults.font.size = 16;
-    };
-    const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, backgroundColour: 'white', chartCallback });
-    return await chartJSNodeCanvas.renderToBuffer(configuration);
 }
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -62,18 +54,17 @@ async function execute(interaction: ChatInputCommandInteraction) {
         // Create arrays for last 30 days and time in voice
         const days: Array<string> = [];
         const times = new Array<number>(30).fill(0);
-        const today = new Date(new Date().toDateString());
-        today.setDate(today.getDate() - 30 + 1);
+        const currDay = new Date(new Date().toDateString());
+        currDay.setDate(currDay.getDate() - 30 + 1);
         for (let i = 0; i < 30; i++) {
-            const result = new Date(today);
-            result.setDate(today.getDate() + i);
-            if (rowsMap[result.toString()]) {
-                times[i] = rowsMap[result.toString()]/60_000;
+            currDay.setDate(currDay.getDate() + 1);
+            if (rowsMap[currDay.toString()]) {
+                times[i] = rowsMap[currDay.toString()]/60_000;
             }
-            days.push(`${result.getMonth()+1}/${result.getDate()}`);
+            days.push(`${currDay.getMonth()+1}/${currDay.getDate()}`);
         }
-        console.log(days, times);
-        const file = new AttachmentBuilder(await createChartBuffer(interaction.user.username, days, times)).setName('chart.png');
+        const config = createChartConfiguration(interaction.user.username, days, times);
+        const file = new AttachmentBuilder(await createChartBuffer(config)).setName(`time-in-voice-line-graph-${interaction.user.username}-${new Date().toISOString()}.png`);
         void interaction.reply({files: [file]});
     }
     else {
