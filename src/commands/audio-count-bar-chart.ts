@@ -2,34 +2,51 @@ import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getAudioCountTotal } from '../sql/audio-count';
 import { createChartBuffer } from '../chart';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 function createChartConfiguration(username: string, audio: Array<string>, count: Array<number>): ChartConfiguration {
     return {
-        type: 'pie',
+        type: 'bar',
         data: {
             labels: audio,
             datasets: [{
-                label: 'My First Dataset',
                 data: count,
+                borderColor: 'white'
             }]
         },
         options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Audio',
+                        font: {
+                            size: 18
+                        }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Uses',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            },
             plugins: {
+                title: {
+                    display: true,
+                    text: `${username}'s Audio Usage`
+                },
+                legend: {
+                    display: false
+                },
                 autocolors: {
                     mode: 'data'
-                },
-                datalabels: {
-                    color: 'white',
-                    font: {
-                        size: 32
-                    },
-                    textStrokeColor: 'black',
-                    textStrokeWidth: 4
                 }
             }
-        },
-        plugins: [ChartDataLabels]
+        }
     };
 }
 
@@ -44,7 +61,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
         const config = createChartConfiguration(interaction.user.username, audio, count);
         const buffer = await createChartBuffer(config);
-        const file = new AttachmentBuilder(buffer).setName(`audio-count-pie-chart-${interaction.user.username}-${new Date().toISOString()}.png`);
+        const file = new AttachmentBuilder(buffer).setName(`${name}-${interaction.user.username}-${new Date().toISOString()}.png`);
         void interaction.reply({files: [file]});
     }
     else {
@@ -52,11 +69,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'audio-count-pie-chart';
+const name = 'audio-count-bar-chart';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Creates a pie chart of your audio use.');
+    .setDescription('Creates a bar chart of your audio use.');
 
 export default { execute, name, commandBuilder };
 
