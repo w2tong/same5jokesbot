@@ -79,7 +79,7 @@ async function getLast30DaysTimeInVoice(userId: string, guildId: string): Promis
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoiceByDate> = await connection.execute(getLast30DaysQuery, {userId, guildId}, selectExecuteOptions);
         void connection.close();
-        if (result && result.rows) {
+        if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
         return null;

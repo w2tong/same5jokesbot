@@ -34,7 +34,8 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                         font: {
                             size: 18
                         }
-                    }
+                    },
+                    min: 0
                 }
             },
             plugins: {
@@ -65,7 +66,8 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guildId) return;
-    const rows = await getLast30DaysTimeInVoice(interaction.user.id, interaction.guildId);
+    const user = interaction.options.getUser('user') ?? interaction.user;
+    const rows = await getLast30DaysTimeInVoice(user.id, interaction.guildId);
     if (rows) {
         // Create map of day to milliseconds
         const rowsMap: {[key: string]: number} = {};
@@ -85,8 +87,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
             }
             days.push(`${currDay.getMonth()+1}/${currDay.getDate()}`);
         }
-        const config = createChartConfiguration(interaction.user.username, days, times);
-        const file = new AttachmentBuilder(await createChartBuffer(config)).setName(`${name}-${interaction.user.username}-${new Date().toISOString()}.png`);
+        const config = createChartConfiguration(user.username, days, times);
+        const file = new AttachmentBuilder(await createChartBuffer(config)).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
         void interaction.reply({files: [file]});
     }
     else {
@@ -98,7 +100,8 @@ const name = 'time-in-voice-line-graph';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Creates a line graph of your time in a voice channel in this guild for the last 30 days.');
+    .setDescription('Creates a line graph of your time in a voice channel in this guild for the last 30 days.')
+    .addUserOption((option) => option.setName('user').setDescription('The user'));
 
 export default { execute, name, commandBuilder };
 
