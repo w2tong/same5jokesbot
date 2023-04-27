@@ -32,7 +32,6 @@ SELECT SUM(milliseconds) AS milliseconds FROM time_in_voice
 WHERE user_id = :userId AND guild_id = :guildId
 `;
 
-
 interface TimeInVoice {
     MILLISECONDS: number;
 }
@@ -50,6 +49,7 @@ async function getTimeInVoice(userId: string, guildId: string, dateRange?: strin
             query = getYearQuery;
             break;
         }
+
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoice> = await connection.execute(query, {userId, guildId}, selectExecuteOptions);
         void connection.close();
@@ -60,6 +60,32 @@ async function getTimeInVoice(userId: string, guildId: string, dateRange?: strin
     }
     catch (err) {
         throw new Error(`getTimeInVoice: ${err}`);
+    }
+}
+
+interface TimeInVoiceByDate {
+    START_DATE: string;
+    MILLISECONDS: number;
+}
+const getLast30DaysQuery = `
+SELECT start_date, milliseconds FROM time_in_voice
+WHERE user_id = :userId AND guild_id = :guildId
+AND start_date > SYSDATE-30
+ORDER BY start_date ASC
+`;
+
+async function getLast30DaysTimeInVoice(userId: string, guildId: string): Promise<Array<TimeInVoiceByDate>|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<TimeInVoiceByDate> = await connection.execute(getLast30DaysQuery, {userId, guildId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows;
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getLast30DaysQuery: ${err}`);
     }
 }
 
@@ -85,4 +111,4 @@ async function updateTimeInVoice(userId: string, guildId: string, startDate:stri
     }
 }
 
-export { createTableTimeInVoiceQuery, getTimeInVoice, updateTimeInVoice };
+export { createTableTimeInVoiceQuery, getTimeInVoice, getLast30DaysTimeInVoice, updateTimeInVoice };
