@@ -11,6 +11,7 @@ import sneezeCount from './sneeze-count';
 import remind from './remind';
 import deleteReminder from './delete-reminder';
 import timeInVoice from './time-in-voice';
+import timeInVoiceLineGraph from './time-in-voice-line-graph';
 
 const commands = [
     {execute: play.execute, name: play.name},
@@ -25,7 +26,8 @@ const commands = [
     {execute: sneezeCount.execute, name: sneezeCount.name},
     {execute: remind.execute, name: remind.name},
     {execute: deleteReminder.execute, name: deleteReminder.name},
-    {execute: timeInVoice.execute, name: timeInVoice.name}
+    {execute: timeInVoice.execute, name: timeInVoice.name},
+    {execute: timeInVoiceLineGraph.execute, name: timeInVoiceLineGraph.name}
 ];
 
 const commandBuilders = [
@@ -41,7 +43,8 @@ const commandBuilders = [
     sneezeCount.commandBuilder,
     remind.commandBuilder,
     deleteReminder.commandBuilder,
-    timeInVoice.commandBuilder
+    timeInVoice.commandBuilder,
+    timeInVoiceLineGraph.commandBuilder
 ];
 
 export { commands, commandBuilders };
