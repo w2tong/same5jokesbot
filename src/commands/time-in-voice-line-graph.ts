@@ -2,6 +2,7 @@ import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getLast30DaysTimeInVoice } from '../sql/time-in-voice';
 import { createChartBuffer } from '../chart';
+import datalabels from 'chartjs-plugin-datalabels';
 
 function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
     return {
@@ -9,7 +10,6 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
         data: {
             labels: days,
             datasets: [{
-                label: `${username}'s Time Spent in Voice in Last 30 Days`,
                 data: times,
                 borderColor: 'rgb(75, 144, 192)',
                 backgroundColor: 'black',
@@ -36,8 +36,30 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                         }
                     }
                 }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: `${username}'s Time Spent in Voice in Last 30 Days`
+                },
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                    align: 'end',
+                    anchor: 'end',
+                    backgroundColor: 'rgb(75, 144, 192)',
+                    borderRadius: 4,
+                    color: 'white',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: Math.trunc,
+                    padding: 4
+                }
             }
-        }
+        },
+        plugins: [datalabels]
     };
 }
 
@@ -64,7 +86,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             days.push(`${currDay.getMonth()+1}/${currDay.getDate()}`);
         }
         const config = createChartConfiguration(interaction.user.username, days, times);
-        const file = new AttachmentBuilder(await createChartBuffer(config)).setName(`time-in-voice-line-graph-${interaction.user.username}-${new Date().toISOString()}.png`);
+        const file = new AttachmentBuilder(await createChartBuffer(config)).setName(`${name}-${interaction.user.username}-${new Date().toISOString()}.png`);
         void interaction.reply({files: [file]});
     }
     else {
