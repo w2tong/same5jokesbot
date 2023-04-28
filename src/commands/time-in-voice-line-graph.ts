@@ -2,7 +2,6 @@ import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getLast30DaysTimeInVoice } from '../sql/time-in-voice';
 import { createChartBuffer } from '../chart';
-import datalabels from 'chartjs-plugin-datalabels';
 
 function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
     return {
@@ -16,7 +15,6 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                 tension: 0.1
             }]
         },
-        plugins: [datalabels],
         options: {
             scales: {
                 x: {
@@ -46,6 +44,9 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                 },
                 legend: {
                     display: false
+                },
+                autocolors: {
+                    enabled: false
                 },
                 datalabels: {
                     align: 'end',
