@@ -2,7 +2,6 @@ import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getAudioCountTotal } from '../sql/audio-count';
 import { createChartBuffer } from '../chart';
-import datalabels from 'chartjs-plugin-datalabels';
 
 function createChartConfiguration(username: string, audio: Array<string>, count: Array<number>): ChartConfiguration {
     return {
@@ -13,7 +12,6 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
                 data: count
             }]
         },
-        plugins: [datalabels],
         options: {
             scales: {
                 x: {
@@ -48,7 +46,7 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
                 },
                 datalabels: {
                     align: 'end',
-                    anchor: 'start',
+                    anchor: 'end',
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     backgroundColor: context => context.dataset.borderColor,
