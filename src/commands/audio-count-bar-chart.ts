@@ -10,8 +10,7 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
         data: {
             labels: audio,
             datasets: [{
-                data: count,
-                borderColor: 'white'
+                data: count
             }]
         },
         plugins: [datalabels],
@@ -48,8 +47,11 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
                     mode: 'data'
                 },
                 datalabels: {
-                    align: 'start',
+                    align: 'end',
                     anchor: 'start',
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    backgroundColor: context => context.dataset.borderColor,
                     borderRadius: 4,
                     color: 'white',
                     font: {
