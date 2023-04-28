@@ -16,6 +16,7 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                 tension: 0.1
             }]
         },
+        plugins: [datalabels],
         options: {
             scales: {
                 x: {
@@ -59,8 +60,7 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                     padding: 4
                 }
             }
-        },
-        plugins: [datalabels]
+        }
     };
 }
 

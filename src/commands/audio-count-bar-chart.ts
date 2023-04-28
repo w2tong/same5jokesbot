@@ -2,6 +2,7 @@ import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getAudioCountTotal } from '../sql/audio-count';
 import { createChartBuffer } from '../chart';
+import datalabels from 'chartjs-plugin-datalabels';
 
 function createChartConfiguration(username: string, audio: Array<string>, count: Array<number>): ChartConfiguration {
     return {
@@ -13,6 +14,7 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
                 borderColor: 'white'
             }]
         },
+        plugins: [datalabels],
         options: {
             scales: {
                 x: {
@@ -44,6 +46,17 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
                 },
                 autocolors: {
                     mode: 'data'
+                },
+                datalabels: {
+                    align: 'start',
+                    anchor: 'start',
+                    borderRadius: 4,
+                    color: 'white',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    padding: 4
                 }
             }
         }
