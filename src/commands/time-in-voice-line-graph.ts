@@ -80,7 +80,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const days: Array<string> = [];
         const times = new Array<number>(30).fill(0);
         const currDay = new Date(new Date().toDateString());
-        currDay.setDate(currDay.getDate() - 30 + 1);
+        currDay.setDate(currDay.getDate() - 30);
         for (let i = 0; i < 30; i++) {
             currDay.setDate(currDay.getDate() + 1);
             if (rowsMap[currDay.toString()]) {
