@@ -1,13 +1,25 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getGamersStats } from '../sql/gamers-stats';
+import { getGamersStatsMonthYear, getGamersStatsYear } from '../sql/gamers-stats';
 
 const decimalPlaces = 2;
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const date = new Date();
-    const month = interaction.options.getString('month') ?? (date.getMonth() + 1).toString();
-    const year = (interaction.options.getNumber('year') ?? date.getFullYear()).toString();
-    const gamerCounter = await getGamersStats(interaction.user.id, month, year);
+    let month = interaction.options.getString('month');
+    const year = interaction.options.getNumber('year');
+    let gamerCounter;
+    let dateStr;
+    if (year && !month) {
+        gamerCounter = await getGamersStatsYear(interaction.user.id, year.toString());
+        dateStr = year;
+    }
+    else {
+        const yearStr = (year ?? date.getFullYear()).toString();
+        month = month ?? (date.getMonth() + 1).toString();
+        gamerCounter = await getGamersStatsMonthYear(interaction.user.id, month, yearStr);
+        dateStr = `${month}/${yearStr}`;
+    }
+    
     if (!gamerCounter) {
         void interaction.reply('No stats available.');
     }
@@ -17,7 +29,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const dispersePercent = (gamerCounter.DISPERSE / sum * 100).toFixed(decimalPlaces);
         const riseUpPercent = (gamerCounter.RISE_UP / sum * 100).toFixed(decimalPlaces);
         const gamersStatsEmbed = new EmbedBuilder()
-            .setTitle(`${interaction.user.username}'s Gamers Stats (${month}/${year})`)
+            .setTitle(`${interaction.user.username}'s Gamers Stats (${dateStr})`)
             .addFields(
                 { name: 'Gamers', value: 'Discharge!\nDisperse!\nRise up!', inline: true },
                 { name: 'Hits', value: `${gamerCounter.DISCHARGE}\n${gamerCounter.DISPERSE}\n${gamerCounter.RISE_UP}`, inline: true },
@@ -46,6 +58,6 @@ const commandBuilder = new SlashCommandBuilder()
         {name: 'November', value: '11'},
         {name: 'December', value: '12'}
     ))
-    .addStringOption((option) => option.setName('year').setDescription('Select a year'));
+    .addNumberOption((option) => option.setName('year').setDescription('Select a year'));
 
 export default { execute, name, commandBuilder };
