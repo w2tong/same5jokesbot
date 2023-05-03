@@ -67,17 +67,44 @@ interface TimeInVoiceByDate {
     START_DATE: string;
     MILLISECONDS: number;
 }
-const getLast30DaysQuery = `
+const getUserLast30DaysQuery = `
 SELECT start_date, milliseconds FROM time_in_voice
 WHERE user_id = :userId AND guild_id = :guildId
 AND start_date > SYSDATE-30
 ORDER BY start_date ASC
 `;
 
-async function getLast30DaysTimeInVoice(userId: string, guildId: string): Promise<Array<TimeInVoiceByDate>|null> {
+async function getUserLast30DaysTimeInVoice(userId: string, guildId: string): Promise<Array<TimeInVoiceByDate>|null> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<TimeInVoiceByDate> = await connection.execute(getLast30DaysQuery, {userId, guildId}, selectExecuteOptions);
+        const result: oracledb.Result<TimeInVoiceByDate> = await connection.execute(getUserLast30DaysQuery, {userId, guildId}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getLast30DaysQuery: ${err}`);
+    }
+}
+
+interface TimeInVoiceByUser {
+    USER_ID: string;
+    MILLISECONDS: number;
+}
+const getGuildLast30DaysQuery = `
+SELECT user_id, SUM(milliseconds) AS milliseconds FROM time_in_voice
+WHERE guild_id = :guildId
+AND start_date > SYSDATE-30
+GROUP BY user_id
+ORDER BY milliseconds DESC
+`;
+
+async function getGuildLast30DaysTimeInVoice(guildId: string): Promise<Array<TimeInVoiceByUser>|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<TimeInVoiceByUser> = await connection.execute(getGuildLast30DaysQuery, {guildId}, selectExecuteOptions);
         void connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
@@ -111,4 +138,4 @@ async function updateTimeInVoice(userId: string, guildId: string, startDate:stri
     }
 }
 
-export { createTableTimeInVoiceQuery, getTimeInVoice, getLast30DaysTimeInVoice, updateTimeInVoice };
+export { createTableTimeInVoiceQuery, getTimeInVoice, getUserLast30DaysTimeInVoice, getGuildLast30DaysTimeInVoice, updateTimeInVoice };

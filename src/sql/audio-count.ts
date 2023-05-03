@@ -17,6 +17,7 @@ SELECT audio, SUM(count) AS count FROM audio_count
 WHERE user_id = :userId
 GROUP BY audio
 ORDER BY count DESC
+FETCH FIRST 20 ROWS ONLY
 `;
 
 interface AudioCount {

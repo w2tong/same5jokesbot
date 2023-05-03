@@ -1,7 +1,8 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getLast30DaysTimeInVoice } from '../sql/time-in-voice';
+import { getUserLast30DaysTimeInVoice } from '../sql/time-in-voice';
 import { createChartBuffer } from '../chart';
+import { timeInMS } from '../util';
 
 function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
     return {
@@ -29,7 +30,7 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                 y: {
                     title: {
                         display: true,
-                        text: 'Minutes',
+                        text: 'Hours',
                         font: {
                             size: 18
                         }
@@ -57,7 +58,7 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
                     font: {
                         weight: 'bold'
                     },
-                    formatter: Math.trunc,
+                    formatter: (value: number) => value.toFixed(1),
                     padding: 4
                 }
             }
@@ -68,7 +69,7 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guildId) return;
     const user = interaction.options.getUser('user') ?? interaction.user;
-    const rows = await getLast30DaysTimeInVoice(user.id, interaction.guildId);
+    const rows = await getUserLast30DaysTimeInVoice(user.id, interaction.guildId);
     if (rows) {
         // Create map of day to milliseconds
         const rowsMap: {[key: string]: number} = {};
@@ -84,7 +85,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         for (let i = 0; i < 30; i++) {
             currDay.setDate(currDay.getDate() + 1);
             if (rowsMap[currDay.toString()]) {
-                times[i] = rowsMap[currDay.toString()]/60_000;
+                times[i] = rowsMap[currDay.toString()] / timeInMS.hour;
             }
             days.push(`${currDay.getMonth()+1}/${currDay.getDate()}`);
         }
