@@ -14,22 +14,44 @@ CREATE TABLE gamers_stats (
 )
 `;
 
-const query = `
-SELECT discharge, disperse, rise_up FROM gamers_stats
-WHERE user_id = :userId
-AND month_year = TO_DATE(:monthYear, 'yyyy/mm')
-`;
-
 interface GamersCounter {
     DISCHARGE: number;
     DISPERSE: number;
     RISE_UP: number;
 }
-async function getGamersStats(userId: string, month: string, year: string): Promise<GamersCounter|null> {
+
+const monthYearQuery = `
+SELECT discharge, disperse, rise_up FROM gamers_stats
+WHERE user_id = :userId
+AND month_year = TO_DATE(:monthYear, 'yyyy/mm')
+`;
+
+async function getGamersStatsMonthYear(userId: string, month: string, year: string): Promise<GamersCounter|null> {
     try {
         const monthYear = `${year}/${month}`;
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<GamersCounter> = await connection.execute(query, {userId, monthYear}, selectExecuteOptions);
+        const result: oracledb.Result<GamersCounter> = await connection.execute(monthYearQuery, {userId, monthYear}, selectExecuteOptions);
+        void connection.close();
+        if (result && result.rows) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getGamersStats: ${err}`);
+    }
+}
+
+const yearQuery = `
+SELECT SUM(discharge) AS discharge, SUM(disperse) AS disperse, SUM(rise_up) AS rise_up FROM gamers_stats
+WHERE user_id = :userId
+AND EXTRACT(YEAR FROM month_year) = :year
+`;
+
+async function getGamersStatsYear(userId: string, year: string): Promise<GamersCounter|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GamersCounter> = await connection.execute(yearQuery, {userId, year}, selectExecuteOptions);
         void connection.close();
         if (result && result.rows) {
             return result.rows[0];
@@ -130,4 +152,4 @@ async function getTopDisperseRate(month: string, year: string): Promise<Array<To
     }
 }
 
-export { createTableGamersStatsQuery, getGamersStats, updateGamersStats, getTopDisperseRate };
+export { createTableGamersStatsQuery, getGamersStatsMonthYear, getGamersStatsYear, updateGamersStats, getTopDisperseRate };
