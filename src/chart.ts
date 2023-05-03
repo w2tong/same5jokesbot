@@ -7,8 +7,9 @@ const chartCallback: ChartCallback = (ChartJS) => {
     ChartJS.defaults.responsive = false;
     ChartJS.defaults.maintainAspectRatio = false;
     ChartJS.defaults.font.size = 16;
+    ChartJS.defaults.layout.padding = 25;
 };
-const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 1280, height: 720, backgroundColour: 'white', chartCallback, 
+const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 1600, height: 900, backgroundColour: 'white', chartCallback, 
     plugins: {
         modern: [autocolors, datalabels]
     } 

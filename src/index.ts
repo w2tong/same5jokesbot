@@ -5,6 +5,7 @@ import createCronJobs from './create-cronjobs';
 import { getEmotes } from './emotes';
 import { initOracleDB } from './sql/oracledb';
 import { loadReminders } from './reminders';
+import timeInVoice from './time-in-voice';
 import { logError } from './logger';
 import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
@@ -35,6 +36,9 @@ client.once(Events.ClientReady, async () => {
     // Init db
     await initOracleDB();
     await loadReminders(client);
+
+    // Init users in voice channels
+    timeInVoice.initUsers(client);
 
     console.log('Same5JokesBot online.');
 });
