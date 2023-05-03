@@ -1,13 +1,11 @@
 import { ChannelType, VoiceState } from 'discord.js';
 import { logError } from '../logger';
+import timeInVoice from '../time-in-voice';
 import userIntros from './user-intros';
 import { getMomentCurrentTimeEST } from '../util';
 import { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile } from '../voice';
 import * as dotenv from 'dotenv';
-import { updateTimeInVoice } from '../sql/time-in-voice';
 dotenv.config();
-
-const userJoinTime: {[key:string]: number} = {};
 
 export default (oldState: VoiceState, newState: VoiceState) => {
 
@@ -37,11 +35,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     // User leaves voice channel/moves to AFK channel
     if (newState.channelId === null || newState.channelId === newState.guild.afkChannelId) {
         const userId = oldState.member?.id;
-        if (userId && userJoinTime[userId]) {
-            const date = new Date(userJoinTime[userId]).toISOString().slice(0, 10);
-            void updateTimeInVoice(userId, newState.guild.id, date, Date.now() - userJoinTime[userId]);
-            delete userJoinTime[userId];
-        }
+        if (userId) timeInVoice.userLeave(userId);
     }
 
     // Stop if user moves to AFK channel
@@ -76,7 +70,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         
         // Add user join time
         if (userId) {
-            userJoinTime[userId] = Date.now();
+            timeInVoice.userJoin(userId, newState.guild.id);
         }
 
         // Play Good Morning Donda when joining channel in the morning

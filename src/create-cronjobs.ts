@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import schedule from 'node-schedule';
 import { logError } from './logger';
+import  timeInVoice from './time-in-voice';
+import { updateTimeInVoice } from './sql/time-in-voice';
 
 // Hourly water and posture check cronjob
 function createWaterPostureCronJob(channel: TextChannel) {
@@ -32,6 +34,17 @@ function createTuesdayScheduleCronJob(channel: TextChannel) {
     });
 }
 
+function createUpdateTimeInVoiceCronJob() {
+    schedule.scheduleJob('*/10 * * * *', function() {
+        const currTime = Date.now();
+        for (const [userId, {guildId, time}] of Object.entries(timeInVoice.userJoinTime)) {
+            const date = new Date(time).toISOString().slice(0, 10);
+            void updateTimeInVoice(userId, guildId, date, currTime - time);
+            timeInVoice.userJoinTime[userId].time = currTime;
+        }
+    });
+}
+
 const waterPostureChannelId = '899162908498468934';
 const wordleChannelId = '933772784948101120';
 
@@ -52,6 +65,8 @@ function createCronJobs(client: Client) {
         // createWoWResetCronJob(mainChannel);
         createTuesdayScheduleCronJob(mainChannel);
     }
+
+    createUpdateTimeInVoiceCronJob();
 }
 
 export default createCronJobs;
