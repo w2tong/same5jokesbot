@@ -13,11 +13,12 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
             }]
         },
         options: {
+            indexAxis: 'y',
             scales: {
                 x: {
                     title: {
                         display: true,
-                        text: 'Audio',
+                        text: 'Uses',
                         font: {
                             size: 18
                         }
@@ -26,7 +27,7 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
                 y: {
                     title: {
                         display: true,
-                        text: 'Uses',
+                        text: 'Audio',
                         font: {
                             size: 18
                         }
