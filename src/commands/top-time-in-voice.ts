@@ -92,8 +92,7 @@ const name = 'top-time-in-voice';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Creates a bar chart of your audio use.')
-    .addUserOption((option) => option.setName('user').setDescription('The user'));
+    .setDescription('Creates a bar chart of the server\'s users\' time in voice.');
 
 export default { execute, name, commandBuilder };
 
