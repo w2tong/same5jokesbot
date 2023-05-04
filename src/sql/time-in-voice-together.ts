@@ -21,25 +21,26 @@ CREATE TABLE time_in_voice_together (
 `;
 
 const getQuery = `
-SELECT b.user_id, SUM(milliseconds) AS milliseconds
+SELECT b.user_id AS user_id, SUM(milliseconds) AS milliseconds
 FROM user_id_pairs a
 JOIN user_id_pairs b ON (a.pair_id = b.pair_id)
 JOIN time_in_voice_together ON (a.pair_id = time_in_voice_together.pair_id)
 WHERE :userId = a.user_id AND :userId != b.user_id
 GROUP BY b.user_id
+ORDER BY milliseconds DESC
 `;
 
 interface TimeInVoice {
     USER_ID: string,
     MILLISECONDS: number;
 }
-async function getTimeInVoiceTogether(userId: string): Promise<TimeInVoice|null> {
+async function getTimeInVoiceTogether(userId: string): Promise<Array<TimeInVoice>|null> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoice> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
         void connection.close();
         if (result && result.rows) {
-            return result.rows[0];
+            return result.rows;
         }
         return null;
     }

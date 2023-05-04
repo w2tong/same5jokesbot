@@ -14,6 +14,7 @@ import timeInVoice from './time-in-voice';
 import timeInVoiceLineGraph from './time-in-voice-line-graph';
 import audioCountBarChart from './audio-count-bar-chart';
 import topTimeInVoice from './top-time-in-voice';
+import timeInVoiceTogether from './time-in-voice-together';
 
 const commands = [
     {execute: play.execute, name: play.name},
@@ -31,7 +32,8 @@ const commands = [
     {execute: timeInVoice.execute, name: timeInVoice.name},
     {execute: timeInVoiceLineGraph.execute, name: timeInVoiceLineGraph.name},
     {execute: audioCountBarChart.execute, name: audioCountBarChart.name},
-    {execute: topTimeInVoice.execute, name: topTimeInVoice.name}
+    {execute: topTimeInVoice.execute, name: topTimeInVoice.name},
+    {execute: timeInVoiceTogether.execute, name: timeInVoiceTogether.name}
 ];
 
 const commandBuilders = [
@@ -50,7 +52,8 @@ const commandBuilders = [
     timeInVoice.commandBuilder,
     timeInVoiceLineGraph.commandBuilder,
     audioCountBarChart.commandBuilder,
-    topTimeInVoice.commandBuilder
+    topTimeInVoice.commandBuilder,
+    timeInVoiceTogether.commandBuilder
 ];
 
 export { commands, commandBuilders };
