@@ -44,7 +44,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         
         // Add user join time
         if (userId) {
-            timeInVoice.userJoin(userId, newState.channel, newState.guild.id);
+            timeInVoice.userJoin(userId, newState.channelId, newState.guild.id);
         }
 
         // Play Good Morning Donda when joining channel in the morning
@@ -77,7 +77,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     else if (oldState.guild.id === newState.guild.id && oldState.channelId && newState.channelId && oldState.channelId !== newState.guild.afkChannelId) {
         const userId = oldState.member?.id;
         if (userId && newState.channel && newState.channel.type === ChannelType.GuildVoice ) {
-            timeInVoice.userChangeChannel(userId, newState.channel);
+            timeInVoice.userChangeChannel(userId, newState.channelId);
         }
     }
 

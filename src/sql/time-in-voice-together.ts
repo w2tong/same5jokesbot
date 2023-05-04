@@ -49,7 +49,7 @@ async function getTimeInVoiceTogether(userId: string): Promise<TimeInVoice|null>
 }
 
 const insertPairsQuery = `
-INSERT( user_id, pair_id ) 
+INSERT INTO user_id_pairs( user_id, pair_id ) 
 VALUES( :userId, :pairId )
 `;
 
@@ -57,24 +57,24 @@ async function insertUserPairs(user1Id: string, user2Id: string) {
     const pairId = user1Id < user2Id ? user1Id+user2Id : user2Id+user1Id;
     try {
         const connection = await oracledb.getConnection();
-        await connection.execute(insertPairsQuery, {user1Id, pairId});
-        await connection.execute(insertPairsQuery, {user2Id, pairId});
+        await connection.execute(insertPairsQuery, {userId: user1Id, pairId});
+        await connection.execute(insertPairsQuery, {userId: user2Id, pairId});
         void connection.close();
     }
     catch (err) {
-        logError(`insertUserPairs: ${err}`);
+        //logError(`insertUserPairs: ${err}`);
     }
 }
 
 const updateTimeQuery = `
 MERGE INTO time_in_voice_together dest
     USING( SELECT :pairId AS pair_id, :guildId AS guild_id, TO_DATE(:startDate, 'yyyy/mm/dd') AS start_date, :time AS milliseconds FROM dual) src
-        ON( dest.user_id = src.user_id AND dest.guild_id = src.guild_id AND dest.start_date = src.start_date )
+        ON( dest.pair_id = src.pair_id AND dest.guild_id = src.guild_id AND dest.start_date = src.start_date )
     WHEN MATCHED THEN
         UPDATE SET milliseconds = dest.milliseconds + src.milliseconds
     WHEN NOT MATCHED THEN
         INSERT( pair_id, guild_id, start_date, milliseconds ) 
-        VALUES( src.pair_id, src.guild_id, src.start_date, sadsrc.milliseconds )
+        VALUES( src.pair_id, src.guild_id, src.start_date, src.milliseconds )
 `;
 
 async function updateTimeInVoiceTogether(user1Id: string, user2Id: string, guildId: string, startDate:string, time: number) {
@@ -85,7 +85,7 @@ async function updateTimeInVoiceTogether(user1Id: string, user2Id: string, guild
         void connection.close();
     }
     catch (err) {
-        logError(`insertUserPairs: ${err}`);
+        logError(`updateTimeInVoiceTogether: ${err}`);
     }
 }
 

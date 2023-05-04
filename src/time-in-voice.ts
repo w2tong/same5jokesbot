@@ -1,8 +1,8 @@
-import { ChannelType, Client, GuildMember, VoiceBasedChannel } from 'discord.js';
+import { ChannelType, Client, VoiceBasedChannel } from 'discord.js';
 import { updateTimeInVoice } from './sql/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether } from './sql/time-in-voice-together';
 
-const userJoinTime: {[key:string]: {guildId: string, channel: VoiceBasedChannel, time: number}} = {};
+const userJoinTime: {[key:string]: {guildId: string, channelId: string, time: number}} = {};
 
 function initUsers(client: Client) {
     const time = Date.now();
@@ -11,7 +11,7 @@ function initUsers(client: Client) {
             if (channel.type === ChannelType.GuildVoice) {
                 for (const member of channel.members.values()) {
                     if (!member.user.bot) {
-                        userJoinTime[member.id] = {guildId: guild.id, channel: channel, time};
+                        userJoinTime[member.id] = {guildId: guild.id, channelId: channel.id, time};
                     }
                 }
             }
@@ -19,14 +19,13 @@ function initUsers(client: Client) {
     }
 }
 
-function userJoin(userId: string, channel: VoiceBasedChannel, guildId: string) {
-    userJoinTime[userId] = {guildId, channel, time: Date.now()};
+function userJoin(userId: string, channelId: string, guildId: string) {
+    userJoinTime[userId] = {guildId, channelId, time: Date.now()};
 }
 
 function updatePairs(userId: string) {
-    for (const otherUser of userJoinTime[userId].channel.members.values()) {
-        const otherUserId = otherUser.id;
-        if (userId === otherUserId || otherUser.user.bot) continue;
+    const usersSameInChannel = Object.keys(userJoinTime).filter(id => userJoinTime[id].channelId === userJoinTime[userId].channelId && id !== userId);
+    for (const otherUserId of usersSameInChannel) {
         void insertUserPairs(userId, otherUserId);
         const startTime = Math.max(userJoinTime[userId].time, userJoinTime[otherUserId].time);
         const startDate = new Date(startTime).toISOString().slice(0, 10);
@@ -34,9 +33,9 @@ function updatePairs(userId: string) {
     }
 }
 
-function userChangeChannel(userId: string, channel: VoiceBasedChannel) {
+function userChangeChannel(userId: string, channelId: string,) {
     updatePairs(userId);
-    userJoinTime[userId].channel = channel;
+    userJoinTime[userId].channelId = channelId;
     userJoinTime[userId].time = Date.now();
 }
 

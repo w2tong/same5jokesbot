@@ -72,7 +72,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const rows = await getUserLast30DaysTimeInVoice(user.id, interaction.guildId);
     if (rows) {
         // Create map of day to milliseconds
-        const rowsMap: {[key: string]: number} = {};
+        const rowsMap: { [key: string]: number } = {};
         for (const row of rows) {
             rowsMap[row.START_DATE] = row.MILLISECONDS;
         }
