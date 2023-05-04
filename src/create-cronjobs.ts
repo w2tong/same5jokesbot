@@ -34,12 +34,13 @@ function createTuesdayScheduleCronJob(channel: TextChannel) {
     });
 }
 
-function createUpdateTimeInVoiceCronJob() {
+function createUpdateTimeInVoiceCronJob(client: Client) {
     schedule.scheduleJob('*/10 * * * *', function() {
         const currTime = Date.now();
-        for (const [userId, {guildId, time}] of Object.entries(timeInVoice.userJoinTime)) {
+        for (const [userId, {guildId, channel, time}] of Object.entries(timeInVoice.userJoinTime)) {
             const date = new Date(time).toISOString().slice(0, 10);
             void updateTimeInVoice(userId, guildId, date, currTime - time);
+            timeInVoice.updatePairs(userId);
             timeInVoice.userJoinTime[userId].time = currTime;
         }
     });
@@ -66,7 +67,7 @@ function createCronJobs(client: Client) {
         createTuesdayScheduleCronJob(mainChannel);
     }
 
-    createUpdateTimeInVoiceCronJob();
+    createUpdateTimeInVoiceCronJob(client);
 }
 
 export default createCronJobs;
