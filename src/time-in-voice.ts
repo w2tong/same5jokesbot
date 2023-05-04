@@ -1,4 +1,4 @@
-import { ChannelType, Client, VoiceBasedChannel } from 'discord.js';
+import { ChannelType, Client } from 'discord.js';
 import { updateTimeInVoice } from './sql/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether } from './sql/time-in-voice-together';
 
