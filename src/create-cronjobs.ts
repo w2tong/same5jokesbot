@@ -5,6 +5,7 @@ import schedule from 'node-schedule';
 import { logError } from './logger';
 import  timeInVoice from './time-in-voice';
 import { updateTimeInVoice } from './sql/time-in-voice';
+import { insertUserPairs, updateTimeInVoiceTogether } from './sql/time-in-voice-together';
 
 // Hourly water and posture check cronjob
 function createWaterPostureCronJob(channel: TextChannel) {
@@ -37,10 +38,27 @@ function createTuesdayScheduleCronJob(channel: TextChannel) {
 function createUpdateTimeInVoiceCronJob() {
     schedule.scheduleJob('*/10 * * * *', function() {
         const currTime = Date.now();
-        for (const [userId, {guildId, time}] of Object.entries(timeInVoice.userJoinTime)) {
-            const date = new Date(time).toISOString().slice(0, 10);
-            void updateTimeInVoice(userId, guildId, date, currTime - time);
-            timeInVoice.userJoinTime[userId].time = currTime;
+        const channelUserMap: { [key: string]: Array<string> } = {};
+        const userJoinTime = timeInVoice.userJoinTime;
+
+        for (const userId of Object.keys(userJoinTime)) {
+            if (!channelUserMap[userJoinTime[userId].channelId]) {
+                channelUserMap[userJoinTime[userId].channelId] = [userId];
+            }
+            else {
+                channelUserMap[userJoinTime[userId].channelId].push(userId);
+            }
+        }
+
+        for (const users of Object.values(channelUserMap)) {
+            for (let i = 0; i < users.length - 1; i++) {
+                for (let j = i + 1; j < users.length; j++) {
+                    void insertUserPairs(users[i], users[j]);
+                    const startTime = Math.max(userJoinTime[users[i]].time, userJoinTime[users[j]].time);
+                    const startDate = new Date(startTime).toISOString().slice(0, 10);
+                    void updateTimeInVoiceTogether(users[i], users[j], userJoinTime[users[i]].guildId, startDate, currTime - startTime);
+                }
+            }
         }
     });
 }

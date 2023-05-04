@@ -35,7 +35,50 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     // User leaves voice channel/moves to AFK channel
     if (newState.channelId === null || newState.channelId === newState.guild.afkChannelId) {
         const userId = oldState.member?.id;
-        if (userId) timeInVoice.userLeave(userId);
+        const members = oldState.channel?.members.values();
+        if (userId && members) timeInVoice.userLeave(userId);
+    }
+    // User joins voice channel
+    else if (newState.channel && (oldState.channelId === null || oldState.channelId === newState.guild.afkChannelId)) {
+        const userId = oldState.member?.id;
+        
+        // Add user join time
+        if (userId) {
+            timeInVoice.userJoin(userId, newState.channelId, newState.guild.id);
+        }
+
+        // Play Good Morning Donda when joining channel in the morning
+        const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
+        if (hour >= 6 && hour < 12 && userId) {
+            const voiceConnection = {
+                channelId: newState.channel.id,
+                guildId: newState.guild.id,
+                adapterCreator: newState.guild.voiceAdapterCreator
+            };
+            joinVoice(voiceConnection, newState.client);
+            playAudioFile(newState.guild.id, 'good_morning_donda', userId);
+        }
+
+        // Play user intro
+        else {
+            if (userId && userIntros[userId] && userIntros[userId]) {
+                const voiceConnection = {
+                    channelId: newState.channel.id,
+                    guildId: newState.guild.id,
+                    adapterCreator: newState.guild.voiceAdapterCreator
+                };
+                joinVoice(voiceConnection, newState.client);
+                playAudioFile(newState.guild.id, userIntros[userId], userId);
+            }
+        }
+        userIntros;
+    }
+    // User changes channels (not AFK channel)
+    else if (oldState.guild.id === newState.guild.id && oldState.channelId && newState.channelId && oldState.channelId !== newState.guild.afkChannelId) {
+        const userId = oldState.member?.id;
+        if (userId && newState.channel && newState.channel.type === ChannelType.GuildVoice ) {
+            timeInVoice.userChangeChannel(userId, newState.channelId);
+        }
     }
 
     // Stop if user moves to AFK channel
@@ -62,41 +105,5 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         };
         joinVoice(voiceConnection, newState.client);
         playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.id);
-    }
-
-    // User joins voice channel
-    if (newState.channelId && oldState.channelId === null) {
-        const userId = oldState.member?.id;
-        
-        // Add user join time
-        if (userId) {
-            timeInVoice.userJoin(userId, newState.guild.id);
-        }
-
-        // Play Good Morning Donda when joining channel in the morning
-        const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
-        if (hour >= 6 && hour < 12 && userId) {
-            const voiceConnection = {
-                channelId: newState.channelId,
-                guildId: newState.guild.id,
-                adapterCreator: newState.guild.voiceAdapterCreator
-            };
-            joinVoice(voiceConnection, newState.client);
-            playAudioFile(newState.guild.id, 'good_morning_donda', userId);
-        }
-
-        // Play user intro
-        else {
-            if (userId && userIntros[userId] && userIntros[userId]) {
-                const voiceConnection = {
-                    channelId: newState.channelId,
-                    guildId: newState.guild.id,
-                    adapterCreator: newState.guild.voiceAdapterCreator
-                };
-                joinVoice(voiceConnection, newState.client);
-                playAudioFile(newState.guild.id, userIntros[userId], userId);
-            }
-        }
-        userIntros;
     }
 };
