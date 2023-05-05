@@ -26,7 +26,7 @@ async function getReminders(): Promise<Array<Reminder>> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<Reminder> = await connection.execute(getQuery, {}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows;
         }
@@ -47,7 +47,7 @@ async function insertReminder(id: string, userId: string, channelId: string, tim
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(insertQuery, {id, userId, channelId, time, message});
-        void connection.close();
+        await connection.close();
         return true;
     }
     catch (err) {
@@ -64,7 +64,7 @@ async function deleteReminder(id: string) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(deleteQuery, {id});
-        void connection.close();
+        await connection.close();
         return true;
     }
     catch (err) {
@@ -83,7 +83,7 @@ async function getUserReminders(userId: string): Promise<Array<Reminder>> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<Reminder> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows;
         }
@@ -106,7 +106,7 @@ async function getUserRemindersCount(userId: string): Promise<number> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<ReminderCount> = await connection.execute(getUserCountQuery, {userId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows[0].COUNT;
         }

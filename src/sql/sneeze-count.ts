@@ -21,7 +21,7 @@ async function getSneezeCount(userId: string): Promise<SneezeCount|null> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<SneezeCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows[0];
         }
@@ -47,7 +47,7 @@ async function updateSneezeCount(userId: string) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {userId});
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateSneezeCount: ${err}`);

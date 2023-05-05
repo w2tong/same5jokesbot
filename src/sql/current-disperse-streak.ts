@@ -23,7 +23,7 @@ async function getCurrentDisperseStreak(guildId: string): Promise<DisperseCurren
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<DisperseCurrentStreak> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows && result.rows[0]) {
             return result.rows[0];
         }
@@ -49,7 +49,7 @@ async function updateCurrentDisperseStreak(guildId: string, userIds: string, str
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {guildId, userIds, streak});
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateCurrentDisperseStreak: ${err}`);

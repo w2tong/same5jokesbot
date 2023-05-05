@@ -52,7 +52,7 @@ async function getTimeInVoice(userId: string, guildId: string, dateRange?: strin
 
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoice> = await connection.execute(query, {userId, guildId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows[0];
         }
@@ -78,7 +78,7 @@ async function getUserLast30DaysTimeInVoice(userId: string, guildId: string): Pr
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoiceByDate> = await connection.execute(getUserLast30DaysQuery, {userId, guildId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
@@ -105,7 +105,7 @@ async function getGuildLast30DaysTimeInVoice(guildId: string): Promise<Array<Tim
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoiceByUser> = await connection.execute(getGuildLast30DaysQuery, {guildId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
@@ -136,7 +136,7 @@ async function updateTimeInVoice(timeInVoiceUpdates: Array<TimeInVoiceUpdate>) {
             queries.push(connection.execute(updateQuery, {userId, guildId, startDate, time}));
         }
         await Promise.all(queries);
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateTimeInVoice: ${err}`);

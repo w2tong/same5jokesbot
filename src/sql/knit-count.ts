@@ -22,7 +22,7 @@ async function getKnitCount(userId: string): Promise<KnitCount|null> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<KnitCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows[0];
         }
@@ -48,7 +48,7 @@ async function updateKnitCount(userId: string) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {userId});
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateKnitCount: ${err}`);
