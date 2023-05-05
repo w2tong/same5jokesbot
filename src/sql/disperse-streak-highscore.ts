@@ -23,7 +23,7 @@ async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStre
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<DisperseStreakHighscore> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows[0];
         }
@@ -50,7 +50,7 @@ async function updateDisperseStreakHighScore(guildId: string, userIds: string, s
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {guildId, userIds, streak});
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateDisperseStreakHighScore: ${err}`);

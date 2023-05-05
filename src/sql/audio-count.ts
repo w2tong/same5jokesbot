@@ -28,7 +28,7 @@ async function getAudioCountTotal(userId: string): Promise<Array<AudioCount>|nul
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<AudioCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
@@ -54,7 +54,7 @@ async function updateAudioCount(userId: string, audio: string) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {userId, audio});
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateAudioCount: ${err}`);

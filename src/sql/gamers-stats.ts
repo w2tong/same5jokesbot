@@ -31,7 +31,7 @@ async function getGamersStatsMonthYear(userId: string, month: string, year: stri
         const monthYear = `${year}/${month}`;
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<GamersCounter> = await connection.execute(monthYearQuery, {userId, monthYear}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows[0];
         }
@@ -52,7 +52,7 @@ async function getGamersStatsYear(userId: string, year: string): Promise<GamersC
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<GamersCounter> = await connection.execute(yearQuery, {userId, year}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows[0];
         }
@@ -112,7 +112,7 @@ async function updateGamersStats(userId: string, gamersWord: string) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(query, {userId});
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateGamersStats: ${err}`);

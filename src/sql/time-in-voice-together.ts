@@ -38,7 +38,7 @@ async function getTimeInVoiceTogether(userId: string): Promise<Array<TimeInVoice
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoice> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows;
         }
@@ -66,7 +66,7 @@ async function insertUserPairs(pairInserts: Array<PairInsert>) {
             queries.push(connection.execute(insertPairsQuery, {userId: userId2, pairId}));
         }
         await Promise.all(queries);
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         //logError(`insertUserPairs: ${err}`);
@@ -97,7 +97,7 @@ async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) 
             queries.push(connection.execute(updateTimeQuery, {pairId, guildId, startDate, time}));
         }
         await Promise.all(queries);
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateTimeInVoiceTogether: ${err}`);

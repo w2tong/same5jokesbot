@@ -24,7 +24,7 @@ async function getDisperseStreakBreaks(userId: string): Promise<DisperseStreakBr
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<DisperseStreakBreaks> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows && result.rows[0]) {
             return result.rows[0];
         }
@@ -50,7 +50,7 @@ async function updateDisperseStreakBreaks(userId: string, score: number) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {userId, score});
-        void connection.close();
+        await connection.close();
     }
     catch (err) {
         logError(`updateDisperseStreakBreaks: ${err}`);
@@ -72,7 +72,7 @@ async function getTopDisperseStreakBreaks(): Promise<Array<TopDisperseStreakBrea
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TopDisperseStreakBreaks> = await connection.execute(getTopDisperseStreakBreaksQuery, {}, selectExecuteOptions);
-        void connection.close();
+        await connection.close();
         if (result && result.rows) {
             return result.rows;
         }
