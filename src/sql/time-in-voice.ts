@@ -128,11 +128,12 @@ MERGE INTO time_in_voice dest
 `;
 
 type TimeInVoiceUpdate = {userId: string, guildId: string, startDate:string, time: number}
-async function updateTimeInVoice(timeInVoiceUpdates: Array<TimeInVoiceUpdate>) {
+async function updateTimeInVoice(arr: Array<TimeInVoiceUpdate>) {
+    if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();
         const queries = [];
-        for (const {userId, guildId, startDate, time} of timeInVoiceUpdates) {
+        for (const {userId, guildId, startDate, time} of arr) {
             queries.push(connection.execute(updateQuery, {userId, guildId, startDate, time}));
         }
         await Promise.all(queries);

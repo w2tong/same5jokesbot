@@ -55,12 +55,12 @@ INSERT INTO user_id_pairs( user_id, pair_id )
 VALUES( :userId, :pairId )
 `;
 
-async function insertUserPairs(pairInserts: Array<PairInsert>) {
-    
+async function insertUserPairs(arr: Array<PairInsert>) {
+    if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();
         const queries = [];
-        for (const {userId1, userId2} of pairInserts) {
+        for (const {userId1, userId2} of arr) {
             const pairId = userId1 < userId2 ? userId1+userId2 : userId2+userId1;
             queries.push(connection.execute(insertPairsQuery, {userId: userId1, pairId}));
             queries.push(connection.execute(insertPairsQuery, {userId: userId2, pairId}));
@@ -86,6 +86,7 @@ MERGE INTO time_in_voice_together dest
 
 type TimeInVoiceTogetherUpdate = {userId1: string, userId2: string, guildId: string, startDate: string, time: number}
 async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) {
+    if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();
         const pool = oracledb.getPool();
