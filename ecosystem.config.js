@@ -13,8 +13,10 @@ module.exports = {
         production: {
             host: process.env.HOST,
             user: process.env.USER,
-            ref: 'origin/main', // (use 'origin/master' for your master branch,
-            repo: 'git@github.com:w2tong/Same5JokesBot.git', // your repo url
+            key: '~/.ssh/deploy.key',
+            ssh_options: 'StrictHostKeyChecking=no',
+            ref: 'origin/main',
+            repo: 'https://github.com/w2tong/Same5JokesBot.git',
             path: '/home/opc/Same5JokesBot',
             'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production && pm2 save'
         }
