@@ -107,7 +107,6 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     }
 
     // Add event listener on receiving voice input
-    connection.receiver.speaking.setMaxListeners(64);
     connection.receiver.speaking.on('start', (userId) => {
 
         // Add timeout to prevent multiple voice activations from same user
