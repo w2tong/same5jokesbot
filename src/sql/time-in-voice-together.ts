@@ -49,17 +49,23 @@ async function getTimeInVoiceTogether(userId: string): Promise<Array<TimeInVoice
     }
 }
 
+type PairInsert = {userId1: string, userId2: string}
 const insertPairsQuery = `
 INSERT INTO user_id_pairs( user_id, pair_id ) 
 VALUES( :userId, :pairId )
 `;
 
-async function insertUserPairs(user1Id: string, user2Id: string) {
-    const pairId = user1Id < user2Id ? user1Id+user2Id : user2Id+user1Id;
+async function insertUserPairs(pairInserts: Array<PairInsert>) {
+    
     try {
         const connection = await oracledb.getConnection();
-        await connection.execute(insertPairsQuery, {userId: user1Id, pairId});
-        await connection.execute(insertPairsQuery, {userId: user2Id, pairId});
+        const queries = [];
+        for (const {userId1, userId2} of pairInserts) {
+            const pairId = userId1 < userId2 ? userId1+userId2 : userId2+userId1;
+            queries.push(connection.execute(insertPairsQuery, {userId: userId1, pairId}));
+            queries.push(connection.execute(insertPairsQuery, {userId: userId2, pairId}));
+        }
+        await Promise.all(queries);
         void connection.close();
     }
     catch (err) {
@@ -78,11 +84,16 @@ MERGE INTO time_in_voice_together dest
         VALUES( src.pair_id, src.guild_id, src.start_date, src.milliseconds )
 `;
 
-async function updateTimeInVoiceTogether(user1Id: string, user2Id: string, guildId: string, startDate:string, time: number) {
-    const pairId = user1Id < user2Id ? user1Id+user2Id : user2Id+user1Id;
+type TimeInVoiceTogetherUpdate = {userId1: string, userId2: string, guildId: string, startDate: string, time: number}
+async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) {
     try {
         const connection = await oracledb.getConnection();
-        await connection.execute(updateTimeQuery, {pairId, guildId, startDate, time});
+        const queries = [];
+        for (const {userId1, userId2, guildId, startDate, time} of arr) {
+            const pairId = userId1 < userId2 ? userId1+userId2 : userId2+userId1;
+            queries.push(connection.execute(updateTimeQuery, {pairId, guildId, startDate, time}));
+        }
+        await Promise.all(queries);
         void connection.close();
     }
     catch (err) {
@@ -90,4 +101,4 @@ async function updateTimeInVoiceTogether(user1Id: string, user2Id: string, guild
     }
 }
 
-export { createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery, getTimeInVoiceTogether, insertUserPairs, updateTimeInVoiceTogether };
+export { createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery, getTimeInVoiceTogether, insertUserPairs, updateTimeInVoiceTogether, PairInsert, TimeInVoiceTogetherUpdate };

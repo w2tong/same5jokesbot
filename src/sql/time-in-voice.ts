@@ -127,10 +127,15 @@ MERGE INTO time_in_voice dest
         VALUES( src.user_id, src.guild_id, src.start_date, src.milliseconds )
 `;
 
-async function updateTimeInVoice(userId: string, guildId: string, startDate:string, time: number) {
+type TimeInVoiceUpdate = {userId: string, guildId: string, startDate:string, time: number}
+async function updateTimeInVoice(timeInVoiceUpdates: Array<TimeInVoiceUpdate>) {
     try {
         const connection = await oracledb.getConnection();
-        await connection.execute(updateQuery, {userId, guildId, startDate, time});
+        const queries = [];
+        for (const {userId, guildId, startDate, time} of timeInVoiceUpdates) {
+            queries.push(connection.execute(updateQuery, {userId, guildId, startDate, time}));
+        }
+        await Promise.all(queries);
         void connection.close();
     }
     catch (err) {
@@ -138,4 +143,4 @@ async function updateTimeInVoice(userId: string, guildId: string, startDate:stri
     }
 }
 
-export { createTableTimeInVoiceQuery, getTimeInVoice, getUserLast30DaysTimeInVoice, getGuildLast30DaysTimeInVoice, updateTimeInVoice };
+export { createTableTimeInVoiceQuery, getTimeInVoice, getUserLast30DaysTimeInVoice, getGuildLast30DaysTimeInVoice, updateTimeInVoice, TimeInVoiceUpdate };
