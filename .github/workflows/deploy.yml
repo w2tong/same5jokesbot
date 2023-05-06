@@ -38,6 +38,16 @@ jobs:
       - name: Install PM2 
         run: npm install pm2@latest -g
 
+      - name: PM2 Deploy Production Setup
+        run: |
+          if [ ! -d /home/"${process.env.SSH_USER}"/Same5JokesBot ]; then
+            pm2 deploy production setup
+          fi
+        shell: bash
+        env:
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SSH_USER: ${{secrets.SSH_USER}}
+
       # Only needs to be run once to setup on remote server
       # - name: PM2 Deploy Production Setup
       #   run: pm2 deploy production setup
