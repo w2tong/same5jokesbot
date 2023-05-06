@@ -43,6 +43,6 @@ client.once(Events.ClientReady, async () => {
     console.log('Same5JokesBot online.');
 });
 
-client.on(Events.ShardError, err => {
-    logError(err);
-});
+// client.on(Events.ShardError, err => {
+//     logError(err);
+// });
