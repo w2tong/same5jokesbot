@@ -11,8 +11,8 @@ module.exports = {
     }],
     deploy: {
         production: {
-            host: process.env.HOST,
-            user: process.env.USER,
+            host: [process.env.SSH_KNOWN_HOSTS],
+            user: process.env.SSH_USER,
             key: '~/.ssh/deploy.key',
             ssh_options: 'StrictHostKeyChecking=no',
             ref: 'origin/main',
