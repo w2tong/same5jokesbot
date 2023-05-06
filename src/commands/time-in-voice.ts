@@ -3,15 +3,15 @@ import { getTimeInVoice } from '../sql/time-in-voice';
 import { msToString } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    if (interaction.guildId) {
-        const dateRange = interaction.options.getString('date-range');
-        const timeInVoice = await getTimeInVoice(interaction.user.id, interaction.guildId, dateRange ?? '');
-        if (timeInVoice) {
-            void interaction.reply(msToString(timeInVoice.MILLISECONDS));
-        }
-        else {
-            void interaction.reply('You have no time in voice in this guild.');
-        }
+    if (!interaction.guildId) return;
+    await interaction.deferReply();
+    const dateRange = interaction.options.getString('date-range');
+    const timeInVoice = await getTimeInVoice(interaction.user.id, interaction.guildId, dateRange ?? '');
+    if (timeInVoice) {
+        void interaction.editReply(msToString(timeInVoice.MILLISECONDS));
+    }
+    else {
+        void interaction.editReply('You have no time in voice in this guild.');
     }
 }
 

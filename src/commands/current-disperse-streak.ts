@@ -3,11 +3,9 @@ import { getCurrentDisperseStreak } from '../sql/current-disperse-streak';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
+    await interaction.deferReply();
     const currentDisperseStreak = await getCurrentDisperseStreak(interaction.guild.id);
-    if (!currentDisperseStreak) {
-        void interaction.reply('No disperse streak exists on this server.');
-    }
-    else {
+    if (currentDisperseStreak) {
         const userIds = currentDisperseStreak.USER_IDS.split(',');
         let usernames = '';
         if (currentDisperseStreak.STREAK > 0) {
@@ -33,7 +31,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: 'Dispersers', value: `${usernames}`, inline: true }
             );
     
-        void interaction.reply({ embeds: [currentDisperseStreakEmbed] });
+        void interaction.editReply({ embeds: [currentDisperseStreakEmbed] });
+    }
+    else {
+        void interaction.editReply('No disperse streak exists on this server.');
     }
 }
 

@@ -65,6 +65,7 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
 }
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
     const audioCount = await getAudioCountTotal(user.id);
     if (audioCount) {
@@ -77,10 +78,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const config = createChartConfiguration(user.username, audio, count);
         const buffer = await createChartBuffer(config);
         const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
-        void interaction.reply({files: [file]});
+        void interaction.editReply({files: [file]});
     }
     else {
-        void interaction.reply('No data.');
+        void interaction.editReply('No data.');
     }
 }
 

@@ -2,11 +2,9 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from '
 import { getTopDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     const topDisperseStreakBreaks = await getTopDisperseStreakBreaks();
-    if (topDisperseStreakBreaks.length === 0) {
-        void interaction.reply('No stats available.');
-    }
-    else {
+    if (topDisperseStreakBreaks.length) {
         let namesField = '';
         let dispersePercentField = '';
         let totalField = '';
@@ -24,7 +22,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: '# of breaks', value: dispersePercentField, inline: true },
                 { name: 'Sum of streaks broken', value: totalField, inline: true }
             );
-        void interaction.reply({ embeds: [rowDisperseRateEmbed] });
+        void interaction.editReply({ embeds: [rowDisperseRateEmbed] });
+    }
+    else {
+        void interaction.editReply('No stats available.');
     }
 }
 

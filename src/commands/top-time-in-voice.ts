@@ -69,6 +69,7 @@ function createChartConfiguration(users: Array<string>, times: Array<number>): C
 async function execute(interaction: ChatInputCommandInteraction) {
     const guildId = interaction.guildId;
     if (!guildId) return;
+    await interaction.deferReply();
     const audioCount = await getGuildLast30DaysTimeInVoice(guildId);
     if (audioCount) {
         const users = [];
@@ -81,10 +82,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const config = createChartConfiguration(users, times);
         const buffer = await createChartBuffer(config);
         const file = new AttachmentBuilder(buffer).setName(`${name}-${guildId}-${new Date().toISOString()}.png`);
-        void interaction.reply({files: [file]});
+        void interaction.editReply({files: [file]});
     }
     else {
-        void interaction.reply('No data.');
+        void interaction.editReply('No data.');
     }
 }
 

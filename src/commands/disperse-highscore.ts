@@ -3,11 +3,9 @@ import { getDisperseStreakHighscore } from '../sql/disperse-streak-highscore';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
+    await interaction.deferReply();
     const disperseStreak = await getDisperseStreakHighscore(interaction.guild.id);
-    if (!disperseStreak) {
-        void interaction.reply('No disperse streak highscore exists on this server.');
-    }
-    else {
+    if (disperseStreak) {
         const userIds= disperseStreak.USER_IDS.split(',');
         const usernamesMap: { [key: string]: number } = {};
         for (const userId of userIds) {
@@ -28,7 +26,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: 'Dispersers', value: `${usernames}`, inline: true }
             );
     
-        void interaction.reply({ embeds: [disperseHighscoreEmbed] });
+        void interaction.editReply({ embeds: [disperseHighscoreEmbed] });
+    }
+    else {
+        
+        void interaction.editReply('No disperse streak highscore exists on this server.');
     }
 }
 

@@ -4,6 +4,7 @@ import { getGamersStatsMonthYear, getGamersStatsYear } from '../sql/gamers-stats
 const decimalPlaces = 2;
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     const date = new Date();
     let month = interaction.options.getString('month');
     const year = interaction.options.getNumber('year');
@@ -20,10 +21,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         dateStr = `${month}/${yearStr}`;
     }
     
-    if (!gamerCounter) {
-        void interaction.reply('No stats available.');
-    }
-    else {
+    if (gamerCounter) {
         const sum = gamerCounter.DISCHARGE + gamerCounter.DISPERSE + gamerCounter.RISE_UP;
         const dischargePercent = (gamerCounter.DISCHARGE / sum * 100).toFixed(decimalPlaces);
         const dispersePercent = (gamerCounter.DISPERSE / sum * 100).toFixed(decimalPlaces);
@@ -35,7 +33,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: 'Hits', value: `${gamerCounter.DISCHARGE}\n${gamerCounter.DISPERSE}\n${gamerCounter.RISE_UP}`, inline: true },
                 { name: 'Hit Rate', value: `${dischargePercent}%\n${dispersePercent}%\n${riseUpPercent}%`, inline: true }
             );
-        void interaction.reply({ embeds: [gamersStatsEmbed] });
+        void interaction.editReply({ embeds: [gamersStatsEmbed] });
+    }
+    else {
+        void interaction.editReply('No stats available.');
     }
 }
 

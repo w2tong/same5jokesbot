@@ -7,6 +7,7 @@ import { convertDateToUnixTimestamp } from '../util';
 const MAX_REMINDERS = 5;
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     const mention = interaction.options.getMentionable('mention');
     const msg = interaction.options.getString('message');
     const time = interaction.options.getNumber('time');
@@ -28,11 +29,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
                     { name: 'Time', value: `<t:${unixTimestamp}> <t:${unixTimestamp}:R>` },
                     { name: 'Message', value: `${message}` }
                 );
-            void interaction.reply({embeds: [embed]});
+            void interaction.editReply({embeds: [embed]});
             return;
         }
     }
-    void interaction.reply({content: reply, ephemeral: true});
+    void interaction.editReply(reply);
 }
 
 const name = 'remind';
