@@ -1,5 +1,4 @@
-import { REST } from 'discord.js';
-import { Routes } from 'discord-api-types/v9';
+import { REST, Routes } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { commandBuilders } from './commands/commands';
