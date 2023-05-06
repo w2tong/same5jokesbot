@@ -77,7 +77,7 @@ function createUpdateTimeInVoiceCronJob() {
 }
 
 function createOracleDBLogStatisticsCronJob() {
-    schedule.scheduleJob('*/1 * * * *', function() {
+    schedule.scheduleJob('*/5 * * * *', function() {
         const pool = oracledb.getPool();
         pool.logStatistics();
     });
