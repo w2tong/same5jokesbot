@@ -1,7 +1,8 @@
 import { ChannelType, Client, TextChannel } from 'discord.js';
+import schedule from 'node-schedule';
+import oracledb from 'oracledb';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import schedule from 'node-schedule';
 import { logError } from './logger';
 import  timeInVoice from './time-in-voice';
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/time-in-voice';
@@ -75,6 +76,14 @@ function createUpdateTimeInVoiceCronJob() {
     });
 }
 
+function createOracleDBLogStatisticsCronJob() {
+    schedule.scheduleJob('*/1 * * * *', function() {
+        const pool = oracledb.getPool();
+        pool.logStatistics();
+    });
+}
+
+
 const waterPostureChannelId = '899162908498468934';
 const wordleChannelId = '933772784948101120';
 
@@ -97,6 +106,7 @@ function createCronJobs(client: Client) {
     }
 
     createUpdateTimeInVoiceCronJob();
+    createOracleDBLogStatisticsCronJob();
 }
 
 export default createCronJobs;

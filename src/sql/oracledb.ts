@@ -21,7 +21,8 @@ async function initOracleDB() {
     await oracledb.createPool({
         user: process.env.ORACLEDB_USER,
         password: process.env.ORACLEDB_PW,
-        connectString: process.env.ORACLEDB_CONN_STR
+        connectString: process.env.ORACLEDB_CONN_STR,
+        enableStatistics: true
     });
 
     const createTableQueries = [createTableCurrentDisperseStreakQuery, createTableDisperseStreakBreaksQuery, createTableDisperseStreakHighscoreQuery, createTableGamersStatsQuery, createTableKnitCountQuery, createTableSneezeCountQuery, createTableRemindersQuery, createTableTimeInVoiceQuery, createTableAudioCount, createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery];
