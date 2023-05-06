@@ -48,10 +48,6 @@ jobs:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           SSH_USER: ${{secrets.SSH_USER}}
 
-      # Only needs to be run once to setup on remote server
-      # - name: PM2 Deploy Production Setup
-      #   run: pm2 deploy production setup
-
       - name: PM2 Deploy Production
         run: pm2 deploy ecosystem.config.js production
         env:
