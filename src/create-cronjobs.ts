@@ -36,7 +36,7 @@ function createTuesdayScheduleCronJob(channel: TextChannel) {
 }
 
 function createUpdateTimeInVoiceCronJob() {
-    schedule.scheduleJob('*/1 * * * *', function() {
+    schedule.scheduleJob('*/10 * * * *', function() {
         const currTime = Date.now();
         const channelUserMap: { [key: string]: Array<string> } = {};
         const userJoinTime = timeInVoice.userJoinTime;
