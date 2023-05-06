@@ -2,12 +2,13 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getSneezeCount } from '../sql/sneeze-count';
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     let sneezes = 0;
     const sneezeCount = await getSneezeCount(interaction.user.id);
     if (sneezeCount) {
         sneezes = sneezeCount.COUNT;
     }
-    void interaction.reply(`**${sneezes}** sneezes.`);
+    void interaction.editReply(`**${sneezes}** sneezes.`);
 }
 
 const name = 'sneeze-count';

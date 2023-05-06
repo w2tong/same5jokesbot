@@ -2,14 +2,12 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from '
 import { getTopDisperseRate } from '../sql/gamers-stats';
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     const date = new Date();
     const month = interaction.options.getString('month') ?? (date.getMonth() + 1).toString();
     const year = (interaction.options.getNumber('year') ?? date.getFullYear()).toString();
     const topDisperseRate = await getTopDisperseRate(month, year);
-    if (topDisperseRate.length === 0) {
-        void interaction.reply('No stats available.');
-    }
-    else {
+    if (topDisperseRate.length) {
         let namesField = '';
         let dispersePercentField = '';
         let totalField = '';
@@ -26,7 +24,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 { name: 'Disperse %', value: dispersePercentField, inline: true },
                 { name: 'Gamers Total', value: totalField, inline: true }
             );
-        void interaction.reply({ embeds: [rowDisperseRateEmbed] });
+        void interaction.editReply({ embeds: [rowDisperseRateEmbed] });
+    }
+    else {
+        void interaction.editReply('No stats available.');
     }
 }
 

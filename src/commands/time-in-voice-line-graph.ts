@@ -68,6 +68,7 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guildId) return;
+    await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
     const rows = await getUserLast30DaysTimeInVoice(user.id, interaction.guildId);
     if (rows) {
@@ -91,10 +92,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
         const config = createChartConfiguration(user.username, days, times);
         const file = new AttachmentBuilder(await createChartBuffer(config)).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
-        void interaction.reply({files: [file]});
+        void interaction.editReply({files: [file]});
     }
     else {
-        void interaction.reply('No data.');
+        void interaction.editReply('No data.');
     }
 }
 

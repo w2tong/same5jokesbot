@@ -4,6 +4,7 @@ import { deleteReminder, getUserReminders } from '../sql/reminders';
 import { logError } from '../logger';
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply({ephemeral: true});
     const userId = interaction.user.id;
     const reminders = await getUserReminders(userId);
     const embeds: Array<EmbedBuilder> = [];
@@ -25,7 +26,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         embeds.push(embed);
     }
     if (embeds.length !== 0 && row) {
-        void interaction.reply({embeds, components: [row], ephemeral: true});
+        void interaction.editReply({embeds, components: [row]});
     
         if (interaction.channel) {
             
@@ -52,7 +53,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
     }
     else {
-        void interaction.reply({content: 'You have no reminders to delete.', ephemeral: true});
+        void interaction.editReply('You have no reminders to delete.');
     }
 }
 

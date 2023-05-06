@@ -2,18 +2,19 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from '
 import { getDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     const disperseStreakBreaks = await getDisperseStreakBreaks(interaction.user.id);
-    if (!disperseStreakBreaks) {
-        void interaction.reply('You have no streak breaks! Congratulations!');
-    }
-    else {
+    if (disperseStreakBreaks) {
         const disperseBreaksEmbed = new EmbedBuilder()
             .setTitle(`${interaction.user.username}'s Disperse Breaks`)
             .addFields(
                 { name: '# of breaks', value: `${disperseStreakBreaks.BREAKS}`, inline: true },
                 { name: 'Sum of streaks broken', value: `${disperseStreakBreaks.SCORE}`, inline: true }
             );
-        void interaction.reply({ embeds: [disperseBreaksEmbed] });
+        void interaction.editReply({ embeds: [disperseBreaksEmbed] });
+    }
+    else {
+        void interaction.editReply('You have no streak breaks! Congratulations!');
     }
 }
 

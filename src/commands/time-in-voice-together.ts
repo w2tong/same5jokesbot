@@ -67,6 +67,7 @@ function createChartConfiguration(username: string, users: Array<string>, times:
 }
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
     const timeInVoiceTogether = await getTimeInVoiceTogether(user.id);
     if (timeInVoiceTogether) {
@@ -79,10 +80,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const config = createChartConfiguration(user.username, users, times);
         const buffer = await createChartBuffer(config);
         const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
-        void interaction.reply({files: [file]});
+        void interaction.editReply({files: [file]});
     }
     else {
-        void interaction.reply('No data.');
+        void interaction.editReply('No data.');
     }
 }
 
