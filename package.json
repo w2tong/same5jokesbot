@@ -24,7 +24,7 @@
     "ws": "^7.4.6"
   },
   "scripts": {
-    "start": "export UV_THREADPOOL_SIZE=16 && ts-node src/index.ts",
+    "start": "export UV_THREADPOOL_SIZE=8 && ts-node src/index.ts",
     "dev": "nodemon src/index.ts",
     "deploy": "ts-node src/deploy-commands.ts"
   },
