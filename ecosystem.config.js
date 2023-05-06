@@ -17,7 +17,7 @@ module.exports = {
             ssh_options: 'StrictHostKeyChecking=no',
             ref: 'origin/main',
             repo: 'https://github.com/w2tong/Same5JokesBot.git',
-            path: '/home/opc/Same5JokesBot',
+            path: `/home/${process.env.SSH_USER}/Same5JokesBot`,
             'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production && pm2 save'
         }
     }
