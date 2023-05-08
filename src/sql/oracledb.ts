@@ -14,8 +14,8 @@ import { createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery } from
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
 oracledb.autoCommit = true;
-if (process.env.POOL_MIN) oracledb.poolMin = parseInt(process.env.POOL_MIN);
-if (process.env.POOL_MAX) oracledb.poolMax = parseInt(process.env.POOL_MAX);
+if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = parseInt(process.env.ORACLEDB_POOL_MIN);
+if (process.env.ORACLEDB_POOL_MAX) oracledb.poolMax = parseInt(process.env.ORACLEDB_POOL_MAX);
 
 async function initOracleDB() {
     await oracledb.createPool({
