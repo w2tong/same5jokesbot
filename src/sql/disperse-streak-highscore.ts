@@ -4,18 +4,23 @@ import { selectExecuteOptions } from './query-options';
 
 const createTableDisperseStreakHighscoreQuery = `
 CREATE TABLE disperse_streak_highscore (
-    guild_id VARCHAR2(255) PRIMARY KEY,
+    guild_id VARCHAR2(255),
+    streak_date DATE,
     user_ids VARCHAR2(255) NOT NULL,
-    streak NUMBER DEFAULT 0
+    streak NUMBER DEFAULT 0,
+    CONSTRAINT pk_disperse_streak_highscore PRIMARY KEY (guild_id, streak_date)
 )
 `;
 
 const getQuery = `
-SELECT user_ids, streak FROM disperse_streak_highscore
+SELECT streak_date, user_ids, streak FROM disperse_streak_highscore
 WHERE guild_id = :guildId
+ORDER BY streak DESC
+FETCH NEXT 1 ROWS ONLY
 `;
 
 interface DisperseStreakHighscore {
+    STREAK_DATE: string;
     USER_IDS: string;
     STREAK: number;
 }
@@ -34,27 +39,22 @@ async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStre
     }
 }
 
-const updateQuery = `
-MERGE INTO disperse_streak_highscore dest
-    USING( SELECT :guildId AS guild_id, :userIds AS user_ids, :streak AS streak FROM dual) src
-        ON( dest.guild_id = src.guild_id )
-    WHEN MATCHED THEN
-            UPDATE SET user_ids = src.user_ids, streak = src.streak
-            WHERE src.streak > dest.streak
-    WHEN NOT MATCHED THEN
-        INSERT( guild_id, user_ids, streak ) 
-        VALUES( src.guild_id, src.user_ids, src.streak )
+const insertQuery = `
+INSERT INTO disperse_streak_highscore ( guild_id, streak_date, user_ids, streak )
+SELECT :guildId, TO_DATE(:streakDate, 'yyyy/mm/dd hh:mi:ss'), :userIds, :streak FROM DUAL
+WHERE :streak >= (SELECT MAX(streak) FROM disperse_streak_highscore WHERE :guildId = guild_id)
+OR NOT EXISTS (SELECT * FROM  disperse_streak_highscore WHERE :guildId = guild_id)
 `;
 
-async function updateDisperseStreakHighScore(guildId: string, userIds: string, streak: number) {
+async function insertDisperseStreakHighScore(guildId: string, streakDate: string, userIds: string, streak: number) {
     try {
         const connection = await oracledb.getConnection();
-        await connection.execute(updateQuery, {guildId, userIds, streak});
+        await connection.execute(insertQuery, {guildId, streakDate, userIds, streak});
         await connection.close();
     }
     catch (err) {
-        logError(`updateDisperseStreakHighScore: ${err}`);
+        logError(`insertDisperseStreakHighScore: ${err}`);
     }
 }
 
-export { createTableDisperseStreakHighscoreQuery, getDisperseStreakHighscore, updateDisperseStreakHighScore };
+export { createTableDisperseStreakHighscoreQuery, getDisperseStreakHighscore, insertDisperseStreakHighScore };

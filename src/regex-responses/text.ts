@@ -1,7 +1,7 @@
 import { emotes } from '../emotes';
 import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/current-disperse-streak';
 import { updateDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
-import { updateDisperseStreakHighScore } from '../sql/disperse-streak-highscore';
+import { insertDisperseStreakHighScore } from '../sql/disperse-streak-highscore';
 import { updateGamersStats } from '../sql/gamers-stats';
 import { getRandomRange } from '../util';
 import { logError } from '../logger';
@@ -75,16 +75,18 @@ const regexToText = [
             void updateGamersStats(userId, res);
             const disperseCurrentStreak = await getCurrentDisperseStreak(guildId);
             if (res === 'Disperse!') {
+                const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 const userIds = (disperseCurrentStreak.STREAK === 0) ? userId : `${disperseCurrentStreak.USER_IDS},${userId}`;
-                void updateCurrentDisperseStreak(guildId, userIds, disperseCurrentStreak.STREAK+1);
-                void updateDisperseStreakHighScore(guildId, userIds, disperseCurrentStreak.STREAK+1);
+                void updateCurrentDisperseStreak(guildId, date, userIds, disperseCurrentStreak.STREAK+1);
+                void insertDisperseStreakHighScore(guildId, date, userIds, disperseCurrentStreak.STREAK+1);
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
                     res = `${res}\nDisperse Streak: **${disperseCurrentStreak.STREAK}** broken by **${username}**`;
                     void updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
-                void updateCurrentDisperseStreak(guildId, userId, 0);
+                const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                void updateCurrentDisperseStreak(guildId, date, userId, 0);
             }
             return res;
         }
