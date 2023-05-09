@@ -22,16 +22,22 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const dateStr = chrono.parseDate(time, {timezone: 'ET'});
         if (dateStr) {
             const date = new Date(dateStr);
-            const unixTimestamp = convertDateToUnixTimestamp(date);
-            if (await newReminder(interaction.user.id ,interaction.channel, date, message) === true) {
-                const embed = new EmbedBuilder()
-                    .setTitle('Reminder')
-                    .addFields(
-                        { name: 'Time', value: `<t:${unixTimestamp}> <t:${unixTimestamp}:R>` },
-                        { name: 'Message', value: `${message}` }
-                    );
-                void interaction.editReply({embeds: [embed]});
-                return;
+            const dateNow = new Date();
+            if (date > dateNow) {
+                const unixTimestamp = convertDateToUnixTimestamp(date);
+                if (await newReminder(interaction.user.id ,interaction.channel, date, message) === true) {
+                    const embed = new EmbedBuilder()
+                        .setTitle('Reminder')
+                        .addFields(
+                            { name: 'Time', value: `<t:${unixTimestamp}> <t:${unixTimestamp}:R>` },
+                            { name: 'Message', value: `${message}` }
+                        );
+                    void interaction.editReply({embeds: [embed]});
+                    return;
+                }
+            }
+            else {
+                void interaction.editReply('Date/time must be in the future.');
             }
         }
         else {
