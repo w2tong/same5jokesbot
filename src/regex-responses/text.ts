@@ -75,10 +75,14 @@ const regexToText = [
             void updateGamersStats(userId, res);
             const disperseCurrentStreak = await getCurrentDisperseStreak(guildId);
             if (res === 'Disperse!') {
+                const streak = disperseCurrentStreak.STREAK+1;
                 const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 const userIds = (disperseCurrentStreak.STREAK === 0) ? userId : `${disperseCurrentStreak.USER_IDS},${userId}`;
-                void updateCurrentDisperseStreak(guildId, date, userIds, disperseCurrentStreak.STREAK+1);
-                void insertDisperseStreakHighScore(guildId, date, userIds, disperseCurrentStreak.STREAK+1);
+                void updateCurrentDisperseStreak(guildId, date, userIds, streak);
+                const inserted = await insertDisperseStreakHighScore(guildId, date, userIds, streak);
+                if (inserted) {
+                    res = `${res}\nNEW HIGHSCORE: **${streak}** (or the same)`;
+                }
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
