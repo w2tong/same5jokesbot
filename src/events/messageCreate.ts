@@ -1,6 +1,7 @@
 import { ChannelType, Message } from 'discord.js';
 import { logError } from '../logger';
 import getAudioResponse from '../regex-responses/audio';
+import getImageResponse from '../regex-responses/image';
 import getReactResponse from '../regex-responses/react';
 import getTextResponse from '../regex-responses/text';
 import { joinVoice, playAudioFile } from '../voice';
@@ -18,8 +19,9 @@ export default async (message: Message) => {
     // Get text response and send message
     if (message.guildId) {
         const botMessage = await getTextResponse(command, message.author.id, message.author.username, message.guildId);
+        const images = getImageResponse(command);
         if (botMessage) {
-            message.channel.send(botMessage).catch(logError);
+            message.channel.send({content: botMessage, files: images}).catch(logError);
         }
     }
 

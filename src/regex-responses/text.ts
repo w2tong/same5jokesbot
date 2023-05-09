@@ -218,19 +218,6 @@ const regexToText = [
         regex: /voti|vault of the incarnates|vaati/,
         getText: () => 'Vidya.'
     },
-    // Images
-    {
-        regex: /\b166\b/,
-        getText: () => 'https://media.discordapp.net/attachments/158049091434184705/795546735594045450/unknown.png'
-    },
-    {
-        regex: /judge?ment/,
-        getText: () => 'https://media.discordapp.net/attachments/837434910486691873/1008836841581072454/judgment.png'
-    },
-    {
-        regex: /\bmc\b|minecraft|chernobyl/,
-        getText: () => 'https://cdn.discordapp.com/attachments/982195734046732338/1078118698222628915/mc_chernobyl.png'
-    },
     {
         regex: /since we('?re not| aren'?t) doing anything/,
         getText: () => 'I gotta go.'
