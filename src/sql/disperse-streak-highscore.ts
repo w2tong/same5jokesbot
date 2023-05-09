@@ -46,14 +46,17 @@ WHERE :streak >= (SELECT MAX(streak) FROM disperse_streak_highscore WHERE :guild
 OR NOT EXISTS (SELECT * FROM  disperse_streak_highscore WHERE :guildId = guild_id)
 `;
 
-async function insertDisperseStreakHighScore(guildId: string, streakDate: string, userIds: string, streak: number) {
+async function insertDisperseStreakHighScore(guildId: string, streakDate: string, userIds: string, streak: number): Promise<boolean> {
     try {
         const connection = await oracledb.getConnection();
-        await connection.execute(insertQuery, {guildId, streakDate, userIds, streak});
+        const result = await connection.execute(insertQuery, {guildId, streakDate, userIds, streak});
         await connection.close();
+        if (result.rowsAffected && result.rowsAffected > 0) return true;
+        return false;
     }
     catch (err) {
         logError(`insertDisperseStreakHighScore: ${err}`);
+        return false;
     }
 }
 
