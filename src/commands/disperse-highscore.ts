@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getDisperseStreakHighscore } from '../sql/disperse-streak-highscore';
+import { convertDateToUnixTimestamp } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -15,12 +16,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
         let usernames = '';
         for (const username in usernamesMap) {
             usernames += username;
-            if (usernamesMap[username] > 1) usernames += `(${usernamesMap[username]})`;
+            if (usernamesMap[username] > 1) usernames += ` (${usernamesMap[username]})`;
             usernames += '\n';
         }
     
+        const unixTimestamp = convertDateToUnixTimestamp(new Date(`${disperseStreak.STREAK_DATE} UTC`));
         const disperseHighscoreEmbed = new EmbedBuilder()
-            .setTitle(`${interaction.guild.name}'s Disperse Streak Highscore`)
+            .setTitle(`${interaction.guild.name}'s Disperse Streak Highscore <t:${unixTimestamp}:R>`)
             .addFields(
                 { name: 'Streak', value: `${disperseStreak.STREAK}`, inline: true },
                 { name: 'Dispersers', value: `${usernames}`, inline: true }
