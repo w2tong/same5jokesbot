@@ -74,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const users = [];
         const times = [];
         for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {
-            users.push(interaction.client.users.cache.get(USER_ID)?.username ?? (await interaction.client.users.fetch(USER_ID)).username);
+            users.push((interaction.client.users.cache.get(USER_ID) ?? await interaction.client.users.fetch(USER_ID)).username);
             times.push(MILLISECONDS / timeInMS.hour);
         }
         const config = createChartConfiguration(user.username, users, times);

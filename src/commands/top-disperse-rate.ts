@@ -12,8 +12,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         let dispersePercentField = '';
         let totalField = '';
         for (let i = 0; i < topDisperseRate.length; i++) {
-            namesField += `${i+1}. ${interaction.client.users.cache.get(topDisperseRate[i].USER_ID)?.username ?? (await interaction.client.users.fetch(topDisperseRate[i].USER_ID)).username}\n`;
-            dispersePercentField += `${topDisperseRate[i].DISPERSE_PC.toFixed(2)}%\n`;
+            const USER_ID = topDisperseRate[i].USER_ID;
+            const DISPERSE_PC = topDisperseRate[i].DISPERSE_PC;
+            namesField += `${i+1}. ${(interaction.client.users.cache.get(USER_ID) ?? await interaction.client.users.fetch(USER_ID)).username}\n`;
+            dispersePercentField += `${DISPERSE_PC.toFixed(2)}%\n`;
             totalField += `${topDisperseRate[i].SUM}\n`;
         }
             
