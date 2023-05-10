@@ -29,10 +29,10 @@ function createWoWResetCronJob(channel: TextChannel) {
     });
 }
 
-// Weekly Tuesday Div 2 / Sons of the Forest Session
+// Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(channel: TextChannel) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'America/Toronto' }, function() {
-        channel.send('Where Sons of the Forest/Divnity: Original Sin 2').catch(logError);
+        channel.send('Where 10.1.5').catch(logError);
     });
 }
 
