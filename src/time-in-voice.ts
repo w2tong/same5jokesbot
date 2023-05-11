@@ -1,6 +1,7 @@
 import { ChannelType, Client } from 'discord.js';
 import { updateTimeInVoice } from './sql/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/time-in-voice-together';
+import { timeInMS } from './util';
 
 const userJoinTime: {[key:string]: {guildId: string, channelId: string, time: number}} = {};
 
@@ -31,7 +32,11 @@ function updatePairs(userId: string) {
         pairInserts.push({userId1: userId, userId2: otherUserId});
         const startTime = Math.max(userJoinTime[userId].time, userJoinTime[otherUserId].time);
         const startDate = new Date(startTime).toISOString().slice(0, 10);
-        timeInVoiceTogetherUpdates.push({userId1: userId, userId2: otherUserId, guildId: userJoinTime[userId].guildId, startDate, time: Date.now() - startTime});
+        const duration = Date.now() - startTime;
+        // Only update if duration is greater than 5 minutes
+        if (duration > timeInMS.minute * 5) {
+            timeInVoiceTogetherUpdates.push({userId1: userId, userId2: otherUserId, guildId: userJoinTime[userId].guildId, startDate, time: duration});
+        }
     }
     void insertUserPairs(pairInserts);
     void updateTimeInVoiceTogether(timeInVoiceTogetherUpdates);
