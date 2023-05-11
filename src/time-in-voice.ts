@@ -43,7 +43,7 @@ function updatePairs(userId: string) {
     void updateTimeInVoiceTogether(timeInVoiceTogetherUpdates);
 }
 
-function userChangeChannel(userId: string, channelId: string,) {
+function userChangeChannel(userId: string, channelId: string) {
     const startDate = new Date(userJoinTime[userId].time).toISOString().slice(0, 10);
     const currentTime = Date.now();
     void updateTimeInVoice([{userId, guildId: userJoinTime[userId].guildId, startDate, time: currentTime- userJoinTime[userId].time}]);
