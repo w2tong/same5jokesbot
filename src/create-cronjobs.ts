@@ -37,7 +37,21 @@ function createTuesdayScheduleCronJob(channel: TextChannel) {
 }
 
 function createUpdateTimeInVoiceCronJob() {
-    schedule.scheduleJob('*/10 * * * *', function() {
+    schedule.scheduleJob('*/30 * * * *', function() {
+        const currTime = Date.now();
+        const userJoinTime = timeInVoice.userJoinTime;
+        const timeInVoiceUpdates: Array<TimeInVoiceUpdate> = [];
+        for (const [userId, {guildId, time}] of Object.entries(userJoinTime)) {
+            const startDate = new Date(time).toISOString().slice(0, 10);
+            timeInVoiceUpdates.push({userId, guildId, startDate, time: currTime - time});
+            timeInVoice.userJoinTime[userId].time = currTime;
+        }
+        void updateTimeInVoice(timeInVoiceUpdates);
+    });
+}
+
+function createUpdateTimeInVoiceTogetherCronJob() {
+    schedule.scheduleJob('15,45 * * * *', function() {
         const currTime = Date.now();
         const channelUserMap: { [key: string]: Array<string> } = {};
         const userJoinTime = timeInVoice.userJoinTime;
@@ -66,13 +80,7 @@ function createUpdateTimeInVoiceCronJob() {
         void insertUserPairs(pairInserts);
         void updateTimeInVoiceTogether(timeInVoiceTogetherUpdates);
 
-        const timeInVoiceUpdates: Array<TimeInVoiceUpdate> = [];
-        for (const [userId, {guildId, time}] of Object.entries(userJoinTime)) {
-            const startDate = new Date(time).toISOString().slice(0, 10);
-            timeInVoiceUpdates.push({userId, guildId, startDate, time: currTime - time});
-            timeInVoice.userJoinTime[userId].time = currTime;
-        }
-        void updateTimeInVoice(timeInVoiceUpdates);
+        
     });
 }
 
@@ -106,6 +114,7 @@ function createCronJobs(client: Client) {
     }
 
     createUpdateTimeInVoiceCronJob();
+    createUpdateTimeInVoiceTogetherCronJob();
     createOracleDBLogStatisticsCronJob();
 }
 
