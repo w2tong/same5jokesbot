@@ -28,15 +28,12 @@ async function initOracleDB() {
     const createTableQueries = [createTableCurrentDisperseStreakQuery, createTableDisperseStreakBreaksQuery, createTableDisperseStreakHighscoreQuery, createTableGamersStatsQuery, createTableKnitCountQuery, createTableSneezeCountQuery, createTableRemindersQuery, createTableTimeInVoiceQuery, createTableAudioCount, createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery];
 
     const connection = await oracledb.getConnection();
+    const queries = [];
     for(const query of createTableQueries) {
-        connection.execute(query).catch((err: Error) => {
-            // console.log(err);
-            // logger.error({
-            //     message: err.message,
-            //     stack: err.stack
-            // });
-        });
+        queries.push(connection.execute(query));
     }
+    await Promise.all(queries);
+    await connection.close();
 }
 
 export {initOracleDB};

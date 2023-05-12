@@ -141,7 +141,7 @@ async function getTopDisperseRate(month: string, year: string): Promise<Array<To
         const monthYear = `${year}/${month}`;
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateQuery, {monthYear}, selectExecuteOptions);
-        void connection.close;
+        await connection.close();
         if (result && result.rows) {
             return result.rows;
         }
