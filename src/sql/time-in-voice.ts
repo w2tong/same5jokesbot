@@ -132,11 +132,9 @@ async function updateTimeInVoice(arr: Array<TimeInVoiceUpdate>) {
     if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();
-        const queries = [];
         for (const {userId, guildId, startDate, time} of arr) {
-            queries.push(connection.execute(updateQuery, {userId, guildId, startDate, time}));
+            await connection.execute(updateQuery, {userId, guildId, startDate, time});
         }
-        await Promise.all(queries);
         await connection.close();
     }
     catch (err) {

@@ -28,11 +28,9 @@ async function initOracleDB() {
     const createTableQueries = [createTableCurrentDisperseStreakQuery, createTableDisperseStreakBreaksQuery, createTableDisperseStreakHighscoreQuery, createTableGamersStatsQuery, createTableKnitCountQuery, createTableSneezeCountQuery, createTableRemindersQuery, createTableTimeInVoiceQuery, createTableAudioCount, createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery];
 
     const connection = await oracledb.getConnection();
-    const queries = [];
     for(const query of createTableQueries) {
-        queries.push(connection.execute(query));
+        await connection.execute(query);
     }
-    await Promise.all(queries);
     await connection.close();
 }
 
