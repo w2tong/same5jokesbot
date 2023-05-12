@@ -11,6 +11,7 @@ import { createTableRemindersQuery } from './reminders';
 import { createTableTimeInVoiceQuery } from './time-in-voice';
 import { createTableAudioCount } from './audio-count';
 import { createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery } from './time-in-voice-together';
+import { logError } from '../logger';
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
 oracledb.autoCommit = true;
@@ -29,7 +30,7 @@ async function initOracleDB() {
 
     const connection = await oracledb.getConnection();
     for(const query of createTableQueries) {
-        await connection.execute(query);
+        connection.execute(query).catch(logError);
     }
     await connection.close();
 }
