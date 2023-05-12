@@ -59,13 +59,11 @@ async function insertUserPairs(arr: Array<PairInsert>) {
     if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();
-        const queries = [];
         for (const {userId1, userId2} of arr) {
             const pairId = userId1 < userId2 ? userId1+userId2 : userId2+userId1;
-            queries.push(connection.execute(insertPairsQuery, {userId: userId1, pairId}));
-            queries.push(connection.execute(insertPairsQuery, {userId: userId2, pairId}));
+            await connection.execute(insertPairsQuery, {userId: userId1, pairId});
+            await connection.execute(insertPairsQuery, {userId: userId2, pairId});
         }
-        await Promise.all(queries);
         await connection.close();
     }
     catch (err) {
@@ -92,12 +90,10 @@ async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) 
         const pool = oracledb.getPool();
         console.log(`connectionsInUse: ${pool.connectionsInUse}`);
         console.log(`connectionsOpen: ${pool.connectionsOpen}`);
-        const queries = [];
         for (const {userId1, userId2, guildId, startDate, time} of arr) {
             const pairId = userId1 < userId2 ? userId1+userId2 : userId2+userId1;
-            queries.push(connection.execute(updateTimeQuery, {pairId, guildId, startDate, time}));
+            await connection.execute(updateTimeQuery, {pairId, guildId, startDate, time});
         }
-        await Promise.all(queries);
         await connection.close();
     }
     catch (err) {

@@ -319,10 +319,6 @@ const regexToAudio = [
         getAudio: () => 'discord_disconnect'
     },
     {
-        regex: /father/,
-        getAudio: () => 'father'
-    },
-    {
         regex: /oink|pig/,
         getAudio: () => 'pig'
     },
