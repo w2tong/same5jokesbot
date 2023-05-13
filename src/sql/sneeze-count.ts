@@ -1,13 +1,14 @@
 import oracledb from 'oracledb';
-import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
-const createTableSneezeCountQuery = `
-CREATE TABLE sneeze_count (
-    user_id VARCHAR2(255) PRIMARY KEY,
-    count NUMBER DEFAULT 0
-)
-`;
+const createTableSneezeCount = {
+    name: 'SNEEZE_COUNT',
+    query: `
+        CREATE TABLE sneeze_count (
+            user_id VARCHAR2(255) PRIMARY KEY,
+            count NUMBER DEFAULT 0
+        )`
+};
 
 const getQuery = `
 SELECT count FROM sneeze_count
@@ -54,4 +55,4 @@ async function updateSneezeCount(userId: string) {
     }
 }
 
-export { createTableSneezeCountQuery, getSneezeCount, updateSneezeCount };
+export { createTableSneezeCount, getSneezeCount, updateSneezeCount };

@@ -1,16 +1,17 @@
 import oracledb from 'oracledb';
-import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
-const createTableRemindersQuery = `
-CREATE TABLE reminders (
-    id VARCHAR2(255) PRIMARY KEY,
-    user_id VARCHAR2(255),
-    channel_id VARCHAR2(255),
-    time TIMESTAMP,
-    message VARCHAR2(1000)
-)
-`;
+const createTableReminders = {
+    name: 'REMINDERS',
+    query: `
+        CREATE TABLE reminders (
+            id VARCHAR2(255) PRIMARY KEY,
+            user_id VARCHAR2(255),
+            channel_id VARCHAR2(255),
+            time TIMESTAMP,
+            message VARCHAR2(1000)
+        )`
+};
 
 const getQuery = `
 SELECT id, channel_id, time, message FROM reminders
@@ -117,4 +118,4 @@ async function getUserRemindersCount(userId: string): Promise<number> {
     }
 }
 
-export { createTableRemindersQuery, getReminders, insertReminder, deleteReminder, getUserReminders, getUserRemindersCount };
+export { createTableReminders, getReminders, insertReminder, deleteReminder, getUserReminders, getUserRemindersCount };

@@ -1,18 +1,18 @@
 import oracledb from 'oracledb';
-import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
-// GAMERS_COUNTER queries
-const createTableGamersStatsQuery = `
-CREATE TABLE gamers_stats (
-    user_id VARCHAR2(255) NOT NULL,
-    month_year DATE NOT NULL,
-    discharge NUMBER DEFAULT 0,
-    disperse NUMBER DEFAULT 0,
-    rise_up NUMBER DEFAULT 0,
-    CONSTRAINT pk_gamers_stats PRIMARY KEY (user_id, month_year)
-)
-`;
+const createTableGamersStats = {
+    name: 'GAMERS_STATS',
+    query: `
+        CREATE TABLE gamers_stats (
+            user_id VARCHAR2(255) NOT NULL,
+            month_year DATE NOT NULL,
+            discharge NUMBER DEFAULT 0,
+            disperse NUMBER DEFAULT 0,
+            rise_up NUMBER DEFAULT 0,
+            CONSTRAINT pk_gamers_stats PRIMARY KEY (user_id, month_year)
+        )`
+};
 
 interface GamersCounter {
     DISCHARGE: number;
@@ -152,4 +152,4 @@ async function getTopDisperseRate(month: string, year: string): Promise<Array<To
     }
 }
 
-export { createTableGamersStatsQuery, getGamersStatsMonthYear, getGamersStatsYear, updateGamersStats, getTopDisperseRate };
+export { createTableGamersStats, getGamersStatsMonthYear, getGamersStatsYear, updateGamersStats, getTopDisperseRate };

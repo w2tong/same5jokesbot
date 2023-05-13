@@ -1,14 +1,14 @@
 import oracledb from 'oracledb';
-import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
-// KNIT_SNEEZE queries
-const createTableKnitCountQuery = `
-CREATE TABLE knit_count (
-    user_id VARCHAR2(255) PRIMARY KEY,
-    count NUMBER DEFAULT 0
-)
-`;
+const createTableKnitCount = {
+    name: 'KNIT_COUNT',
+    query: `
+        CREATE TABLE knit_count (
+            user_id VARCHAR2(255) PRIMARY KEY,
+            count NUMBER DEFAULT 0
+        )`
+};
 
 const getQuery = `
 SELECT count FROM knit_count
@@ -55,4 +55,4 @@ async function updateKnitCount(userId: string) {
     }
 }
 
-export { createTableKnitCountQuery, getKnitCount, updateKnitCount };
+export { createTableKnitCount, getKnitCount, updateKnitCount };
