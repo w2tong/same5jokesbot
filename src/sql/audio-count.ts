@@ -57,7 +57,7 @@ async function updateAudioCount(userId: string, audio: string) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateAudioCount: ${err}`);
+        throw new Error(`updateAudioCount: ${err}`);
     }
 }
 

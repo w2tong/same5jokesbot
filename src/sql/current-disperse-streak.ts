@@ -54,7 +54,7 @@ async function updateCurrentDisperseStreak(guildId: string, streakDate: string, 
         await connection.close();
     }
     catch (err) {
-        logError(`updateCurrentDisperseStreak: ${err}`);
+        throw new Error(`updateCurrentDisperseStreak: ${err}`);
     }
 }
 

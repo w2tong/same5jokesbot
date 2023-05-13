@@ -53,7 +53,7 @@ async function updateDisperseStreakBreaks(userId: string, score: number) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateDisperseStreakBreaks: ${err}`);
+        throw new Error(`updateDisperseStreakBreaks: ${err}`);
     }
     
 }

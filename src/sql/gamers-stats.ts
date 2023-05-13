@@ -115,7 +115,7 @@ async function updateGamersStats(userId: string, gamersWord: string) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateGamersStats: ${err}`);
+        throw new Error(`updateGamersStats: ${err}`);
     }
 
 }

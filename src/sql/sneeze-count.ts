@@ -50,7 +50,7 @@ async function updateSneezeCount(userId: string) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateSneezeCount: ${err}`);
+        throw new Error(`updateSneezeCount: ${err}`);
     }
 }
 

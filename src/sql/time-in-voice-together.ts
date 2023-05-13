@@ -68,7 +68,7 @@ async function insertUserPairs(arr: Array<PairInsert>) {
         await connection.close();
     }
     catch (err) {
-        //logError(`insertUserPairs: ${err}`);
+        throw new Error(`insertUserPairs: ${err}`);
     }
 }
 
@@ -98,7 +98,7 @@ async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) 
         await connection.close();
     }
     catch (err) {
-        logError(`updateTimeInVoiceTogether: ${err}`);
+        throw new Error(`updateTimeInVoiceTogether: ${err}`);
     }
 }
 

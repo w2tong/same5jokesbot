@@ -51,7 +51,7 @@ async function insertReminder(id: string, userId: string, channelId: string, tim
         return true;
     }
     catch (err) {
-        logError(`insertReminder: ${err}`);
+        throw new Error(`insertReminder: ${err}`);
         return false;
     }
 }
@@ -68,7 +68,7 @@ async function deleteReminder(id: string) {
         return true;
     }
     catch (err) {
-        logError(`deleteReminder: ${err}`);
+        throw new Error(`deleteReminder: ${err}`);
         return false;
     }
 }

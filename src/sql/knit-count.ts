@@ -51,7 +51,7 @@ async function updateKnitCount(userId: string) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateKnitCount: ${err}`);
+        throw new Error(`updateKnitCount: ${err}`);
     }
 }
 

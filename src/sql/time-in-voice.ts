@@ -138,7 +138,7 @@ async function updateTimeInVoice(arr: Array<TimeInVoiceUpdate>) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateTimeInVoice: ${err}`);
+        throw new Error(`updateTimeInVoice: ${err}`);
     }
 }
 
