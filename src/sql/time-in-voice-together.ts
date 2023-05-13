@@ -52,7 +52,8 @@ async function getTimeInVoiceTogether(userId: string): Promise<Array<TimeInVoice
 type PairInsert = {userId1: string, userId2: string}
 const insertPairsQuery = `
 INSERT INTO user_id_pairs( user_id, pair_id ) 
-VALUES( :userId, :pairId )
+SELECT :userId, :pairId FROM dual
+WHERE NOT EXISTS (SELECT NULL FROM user_id_pairs WHERE :userId = user_id AND :pairId = pair_id)
 `;
 
 async function insertUserPairs(arr: Array<PairInsert>) {
