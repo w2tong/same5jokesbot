@@ -1,16 +1,17 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from './query-options';
-import { logError } from '../logger';
 
-const createTableTimeInVoiceQuery = `
-CREATE TABLE time_in_voice (
-    user_id VARCHAR2(255),
-    guild_id VARCHAR2(255),
-    start_date DATE,
-    milliseconds NUMBER DEFAULT 0,
-    CONSTRAINT pk_time_in_voice PRIMARY KEY (user_id, guild_id, start_date)
-)
-`;
+const createTableTimeInVoice = {
+    name: 'TIME_IN_VOICE',
+    query: `
+        CREATE TABLE time_in_voice (
+            user_id VARCHAR2(255),
+            guild_id VARCHAR2(255),
+            start_date DATE,
+            milliseconds NUMBER DEFAULT 0,
+            CONSTRAINT pk_time_in_voice PRIMARY KEY (user_id, guild_id, start_date)
+        )`
+};
 
 const getTodayQuery = `
 SELECT milliseconds FROM time_in_voice
@@ -138,8 +139,8 @@ async function updateTimeInVoice(arr: Array<TimeInVoiceUpdate>) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateTimeInVoice: ${err}`);
+        throw new Error(`updateTimeInVoice: ${err}`);
     }
 }
 
-export { createTableTimeInVoiceQuery, getTimeInVoice, getUserLast30DaysTimeInVoice, getGuildLast30DaysTimeInVoice, updateTimeInVoice, TimeInVoiceUpdate };
+export { createTableTimeInVoice, getTimeInVoice, getUserLast30DaysTimeInVoice, getGuildLast30DaysTimeInVoice, updateTimeInVoice, TimeInVoiceUpdate };

@@ -1,24 +1,28 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from './query-options';
-import { logError } from '../logger';
 
-const createTableUserIdPairsQuery = `
-CREATE TABLE user_id_pairs (
-    user_id VARCHAR2(255),
-    pair_id VARCHAR2(510),
-    CONSTRAINT pk_user_id_pairs PRIMARY KEY (user_id, pair_id)
-)
-`;
+const createTableUserIdPairs = {
+    name: 'USER_ID_PAIRS',
+    query: `
+        CREATE TABLE user_id_pairs (
+            user_id VARCHAR2(255),
+            pair_id VARCHAR2(510),
+            CONSTRAINT pk_user_id_pairs PRIMARY KEY (user_id, pair_id)
+        )`
+};
 
-const createTableTimeInVoiceTogetherQuery = `
-CREATE TABLE time_in_voice_together (
-    pair_id VARCHAR2(510),
-    guild_id VARCHAR2(255),
-    start_date DATE,
-    milliseconds NUMBER DEFAULT 0,
-    CONSTRAINT pk_time_in_voice_together PRIMARY KEY (pair_id, guild_id, start_date)
-)
-`;
+const createTableTimeInVoiceTogether = 
+{
+    name: 'TIME_IN_VOICE_TOGETHER',
+    query: `
+        CREATE TABLE time_in_voice_together (
+            pair_id VARCHAR2(510),
+            guild_id VARCHAR2(255),
+            start_date DATE,
+            milliseconds NUMBER DEFAULT 0,
+            CONSTRAINT pk_time_in_voice_together PRIMARY KEY (pair_id, guild_id, start_date)
+        )`
+};
 
 const getQuery = `
 SELECT b.user_id AS user_id, SUM(milliseconds) AS milliseconds
@@ -52,7 +56,8 @@ async function getTimeInVoiceTogether(userId: string): Promise<Array<TimeInVoice
 type PairInsert = {userId1: string, userId2: string}
 const insertPairsQuery = `
 INSERT INTO user_id_pairs( user_id, pair_id ) 
-VALUES( :userId, :pairId )
+SELECT :userId, :pairId FROM dual
+WHERE NOT EXISTS (SELECT NULL FROM user_id_pairs WHERE :userId = user_id AND :pairId = pair_id)
 `;
 
 async function insertUserPairs(arr: Array<PairInsert>) {
@@ -67,7 +72,7 @@ async function insertUserPairs(arr: Array<PairInsert>) {
         await connection.close();
     }
     catch (err) {
-        //logError(`insertUserPairs: ${err}`);
+        throw new Error(`insertUserPairs: ${err}`);
     }
 }
 
@@ -97,8 +102,8 @@ async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) 
         await connection.close();
     }
     catch (err) {
-        logError(`updateTimeInVoiceTogether: ${err}`);
+        throw new Error(`updateTimeInVoiceTogether: ${err}`);
     }
 }
 
-export { createTableUserIdPairsQuery, createTableTimeInVoiceTogetherQuery, getTimeInVoiceTogether, insertUserPairs, updateTimeInVoiceTogether, PairInsert, TimeInVoiceTogetherUpdate };
+export { createTableUserIdPairs, createTableTimeInVoiceTogether, getTimeInVoiceTogether, insertUserPairs, updateTimeInVoiceTogether, PairInsert, TimeInVoiceTogetherUpdate };

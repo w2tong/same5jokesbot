@@ -1,16 +1,17 @@
 import oracledb from 'oracledb';
-import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
-const createTableAudioCount = `
-CREATE TABLE audio_count (
-    user_id VARCHAR2(255),
-    audio VARCHAR2(255),
-    month_year DATE,
-    count NUMBER DEFAULT 0,
-    CONSTRAINT pk_audio_count PRIMARY KEY (user_id, audio, month_year)
-)
-`;
+const createTableAudioCount = {
+    name: 'AUDIO_COUNT',
+    query: `
+        CREATE TABLE audio_count (
+            user_id VARCHAR2(255),
+            audio VARCHAR2(255),
+            month_year DATE,
+            count NUMBER DEFAULT 0,
+            CONSTRAINT pk_audio_count PRIMARY KEY (user_id, audio, month_year)
+        )`
+};
 
 const getQuery = `
 SELECT audio, SUM(count) AS count FROM audio_count
@@ -57,7 +58,7 @@ async function updateAudioCount(userId: string, audio: string) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateAudioCount: ${err}`);
+        throw new Error(`updateAudioCount: ${err}`);
     }
 }
 

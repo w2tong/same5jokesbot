@@ -1,15 +1,16 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from './query-options';
-import { logError } from '../logger';
 
-const createTableCurrentDisperseStreakQuery = `
-CREATE TABLE current_disperse_streak (
-    guild_id VARCHAR2(255) PRIMARY KEY,
-    streak_date DATE,
-    user_ids VARCHAR2(1000) NOT NULL,
-    streak NUMBER DEFAULT 0
-)
-`;
+const createTableCurrentDisperseStreak = {
+    name: 'CURRENT_DISPERSE_STREAK',
+    query: `
+        CREATE TABLE current_disperse_streak (
+            guild_id VARCHAR2(255) PRIMARY KEY,
+            streak_date DATE,
+            user_ids VARCHAR2(1000) NOT NULL,
+            streak NUMBER DEFAULT 0
+        )`
+};
 
 const getQuery = `
 SELECT streak_date, user_ids, streak FROM current_disperse_streak
@@ -54,9 +55,9 @@ async function updateCurrentDisperseStreak(guildId: string, streakDate: string, 
         await connection.close();
     }
     catch (err) {
-        logError(`updateCurrentDisperseStreak: ${err}`);
+        throw new Error(`updateCurrentDisperseStreak: ${err}`);
     }
 }
 
 
-export { createTableCurrentDisperseStreakQuery, getCurrentDisperseStreak, updateCurrentDisperseStreak };
+export { createTableCurrentDisperseStreak, getCurrentDisperseStreak, updateCurrentDisperseStreak };

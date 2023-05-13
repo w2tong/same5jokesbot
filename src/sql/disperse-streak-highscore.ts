@@ -1,16 +1,17 @@
 import oracledb from 'oracledb';
-import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
-const createTableDisperseStreakHighscoreQuery = `
-CREATE TABLE disperse_streak_highscore (
-    guild_id VARCHAR2(255),
-    streak_date DATE,
-    user_ids VARCHAR2(255) NOT NULL,
-    streak NUMBER DEFAULT 0,
-    CONSTRAINT pk_disperse_streak_highscore PRIMARY KEY (guild_id, streak_date)
-)
-`;
+const createTableDisperseStreakHighscore = {
+    name: 'DISPERSE_STREAK_HIGHSCORE',
+    query: `
+        CREATE TABLE disperse_streak_highscore (
+            guild_id VARCHAR2(255),
+            streak_date DATE,
+            user_ids VARCHAR2(255) NOT NULL,
+            streak NUMBER DEFAULT 0,
+            CONSTRAINT pk_disperse_streak_highscore PRIMARY KEY (guild_id, streak_date)
+        )`
+};
 
 const getQuery = `
 SELECT streak_date, user_ids, streak FROM disperse_streak_highscore
@@ -41,7 +42,7 @@ async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStre
 
 const insertQuery = `
 INSERT INTO disperse_streak_highscore ( guild_id, streak_date, user_ids, streak )
-SELECT :guildId, TO_DATE(:streakDate, 'yyyy/mm/dd hh:mi:ss'), :userIds, :streak FROM DUAL
+SELECT :guildId, TO_DATE(:streakDate, 'yyyy/mm/dd hh:mi:ss'), :userIds, :streak FROM dual
 WHERE :streak >= (SELECT MAX(streak) FROM disperse_streak_highscore WHERE :guildId = guild_id)
 OR NOT EXISTS (SELECT * FROM  disperse_streak_highscore WHERE :guildId = guild_id)
 `;
@@ -55,9 +56,9 @@ async function insertDisperseStreakHighScore(guildId: string, streakDate: string
         return false;
     }
     catch (err) {
-        logError(`insertDisperseStreakHighScore: ${err}`);
+        throw new Error(`insertDisperseStreakHighScore: ${err}`);
         return false;
     }
 }
 
-export { createTableDisperseStreakHighscoreQuery, getDisperseStreakHighscore, insertDisperseStreakHighScore };
+export { createTableDisperseStreakHighscore, getDisperseStreakHighscore, insertDisperseStreakHighScore };

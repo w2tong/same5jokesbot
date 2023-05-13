@@ -1,15 +1,15 @@
 import oracledb from 'oracledb';
-import { logError } from '../logger';
 import { selectExecuteOptions } from './query-options';
 
-//DISPERSE_STREAK_BREAKS
-const createTableDisperseStreakBreaksQuery = `
-CREATE TABLE disperse_streak_breaks (
-    user_id VARCHAR2(255) PRIMARY KEY,
-    breaks NUMBER DEFAULT 0,
-    score NUMBER DEFAULT 0
-)
-`;
+const createTableDisperseStreakBreaks = {
+    name: 'DISPERSE_STREAK_BREAKS',
+    query: `
+        CREATE TABLE disperse_streak_breaks (
+            user_id VARCHAR2(255) PRIMARY KEY,
+            breaks NUMBER DEFAULT 0,
+            score NUMBER DEFAULT 0
+        )`
+};
 
 const getQuery = `
 SELECT breaks, score FROM disperse_streak_breaks
@@ -53,7 +53,7 @@ async function updateDisperseStreakBreaks(userId: string, score: number) {
         await connection.close();
     }
     catch (err) {
-        logError(`updateDisperseStreakBreaks: ${err}`);
+        throw new Error(`updateDisperseStreakBreaks: ${err}`);
     }
     
 }
@@ -83,4 +83,4 @@ async function getTopDisperseStreakBreaks(): Promise<Array<TopDisperseStreakBrea
     }
 }
 
-export { createTableDisperseStreakBreaksQuery, getDisperseStreakBreaks, updateDisperseStreakBreaks, getTopDisperseStreakBreaks };
+export { createTableDisperseStreakBreaks, getDisperseStreakBreaks, updateDisperseStreakBreaks, getTopDisperseStreakBreaks };
