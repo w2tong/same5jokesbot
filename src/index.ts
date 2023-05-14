@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Events } from 'discord.js';
+import { Client, GatewayIntentBits, Events, ChannelType } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import createCronJobs from './create-cronjobs';
@@ -45,6 +45,12 @@ client.once(Events.ClientReady, async () => {
     timeInVoice.initUsers(client);
 
     console.log('Same5JokesBot online.');
+    if (process.env.STATUS_CHANNEL_ID) {
+        const channel = client.channels.cache.get(process.env.STATUS_CHANNEL_ID) ?? await client.channels.fetch(process.env.STATUS_CHANNEL_ID);
+        if (channel?.type === ChannelType.GuildText) {
+            void channel.send('Same5JokesBot online.');
+        }
+    }
 });
 
 // client.on(Events.ShardError, err => {
