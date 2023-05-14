@@ -1,4 +1,4 @@
-import { ChannelType, Client, TextChannel } from 'discord.js';
+import { ChannelType, Client } from 'discord.js';
 import schedule from 'node-schedule';
 import oracledb from 'oracledb';
 import * as dotenv from 'dotenv';
