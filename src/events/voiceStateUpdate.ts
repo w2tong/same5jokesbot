@@ -1,4 +1,4 @@
-import { ChannelType, VoiceState } from 'discord.js';
+import { ChannelType, Client, TextChannel, VoiceState } from 'discord.js';
 import { logError } from '../logger';
 import timeInVoice from '../time-in-voice';
 import userIntros from './user-intros';
@@ -6,6 +6,17 @@ import { getMomentCurrentTimeEST } from '../util';
 import { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile } from '../voice';
 import * as dotenv from 'dotenv';
 dotenv.config();
+
+// const mainChannel: TextChannel;
+let mainChannel: TextChannel;
+async function initMainChannel(client: Client) {
+    if (process.env.MAIN_CHANNEL_ID) {
+        const channel = client.channels.cache.get(process.env.MAIN_CHANNEL_ID) ?? await client.channels.fetch(process.env.MAIN_CHANNEL_ID);
+        if (channel?.type === ChannelType.GuildText) {
+            mainChannel = channel;
+        }
+    }
+}
 
 export default (oldState: VoiceState, newState: VoiceState) => {
 
@@ -86,9 +97,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
 
     // Message when Azi leaves or chance when someone else leaves
     if ((newState.member?.id == process.env.AZI_ID || Math.random() < 0.10) && newState.channelId === null && oldState.guild.id === process.env.GUILD_ID) {
-        // Get main channel
-        const mainChannel = newState.client.channels.cache.get(process.env.MAIN_CHANNEL_ID ?? '');
-        if (mainChannel && mainChannel.type === ChannelType.GuildText) {
+        if (mainChannel) {
             mainChannel.send('You made Azi leave.').catch(logError);
         }
     }
@@ -107,3 +116,5 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.id);
     }
 };
+
+export { initMainChannel };
