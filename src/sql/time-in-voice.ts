@@ -119,7 +119,7 @@ async function getGuildLast30DaysTimeInVoice(guildId: string): Promise<Array<Tim
 
 const updateQuery = `
 MERGE INTO time_in_voice dest
-    USING( SELECT :userId AS user_id, :guildId AS guild_id, TO_DATE(:startDate, 'yyyy/mm/dd') AS start_date, :time AS milliseconds FROM dual) src
+    USING( SELECT :userId AS user_id, :guildId AS guild_id, TO_DATE(:startDate, 'YYYY/MM/DD') AS start_date, :time AS milliseconds FROM dual) src
         ON( dest.user_id = src.user_id AND dest.guild_id = src.guild_id AND dest.start_date = src.start_date )
     WHEN MATCHED THEN
         UPDATE SET milliseconds = dest.milliseconds + src.milliseconds

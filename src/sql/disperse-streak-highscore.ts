@@ -42,7 +42,7 @@ async function getDisperseStreakHighscore(guildId: string): Promise<DisperseStre
 
 const insertQuery = `
 INSERT INTO disperse_streak_highscore ( guild_id, streak_date, user_ids, streak )
-SELECT :guildId, TO_DATE(:streakDate, 'yyyy/mm/dd hh:mi:ss'), :userIds, :streak FROM dual
+SELECT :guildId, TO_DATE(:streakDate, 'YYYY/MM/DD HH24:MI:SS'), :userIds, :streak FROM dual
 WHERE :streak >= (SELECT MAX(streak) FROM disperse_streak_highscore WHERE :guildId = guild_id)
 OR NOT EXISTS (SELECT * FROM  disperse_streak_highscore WHERE :guildId = guild_id)
 `;
