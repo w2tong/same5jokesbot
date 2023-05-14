@@ -92,9 +92,6 @@ async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) 
     if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();
-        const pool = oracledb.getPool();
-        console.log(`connectionsInUse: ${pool.connectionsInUse}`);
-        console.log(`connectionsOpen: ${pool.connectionsOpen}`);
         for (const {userId1, userId2, guildId, startDate, time} of arr) {
             const pairId = userId1 < userId2 ? userId1+userId2 : userId2+userId1;
             await connection.execute(updateTimeQuery, {pairId, guildId, startDate, time});
