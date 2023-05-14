@@ -33,11 +33,8 @@ function updatePairs(userId: string) {
         pairInserts.push({userId1: userId, userId2: otherUserId});
         const startTime = Math.max(userJoinTime[userId].time, userJoinTime[otherUserId].time);
         const duration = currentTime - startTime;
-        // Only update if duration is greater than 5 minutes
-        if (duration > timeInMS.minute * 5) {
-            const startDate = new Date(startTime).toISOString().slice(0, 10);
-            timeInVoiceTogetherUpdates.push({userId1: userId, userId2: otherUserId, guildId: userJoinTime[userId].guildId, startDate, time: duration});
-        }
+        const startDate = new Date(startTime).toISOString().slice(0, 10);
+        timeInVoiceTogetherUpdates.push({userId1: userId, userId2: otherUserId, guildId: userJoinTime[userId].guildId, startDate, time: duration});
     }
     void insertUserPairs(pairInserts);
     void updateTimeInVoiceTogether(timeInVoiceTogetherUpdates);
