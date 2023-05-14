@@ -74,7 +74,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         userIntros;
     }
     // User changes channels (not AFK channel)
-    else if (oldState.guild.id === newState.guild.id && oldState.channelId && newState.channelId && oldState.channelId !== newState.guild.afkChannelId) {
+    else if (oldState.guild.id === newState.guild.id && oldState.channelId && newState.channelId && oldState.channelId !== newState.channelId && oldState.channelId !== newState.guild.afkChannelId) {
         const userId = oldState.member?.id;
         if (userId && newState.channel && newState.channel.type === ChannelType.GuildVoice ) {
             timeInVoice.userChangeChannel(userId, newState.channelId);
