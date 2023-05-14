@@ -32,6 +32,17 @@ const guildConnections: { [key: string]: GuildConnection } = {};
 const speakingTimeout = 100;
 const userSpeakingTimeout = new Set();
 
+// Get voice log channel
+let voiceLogChannel: TextChannel;
+async function initVoiceLogChannel(client: Client) {
+    if (process.env.VOICE_LOG_CHANNEL_ID) {
+        const channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID) ?? await client.channels.fetch(process.env.VOICE_LOG_CHANNEL_ID);
+        if (channel?.type === ChannelType.GuildText) {
+            voiceLogChannel = channel;
+        }
+    }
+}
+
 function disconnectVoice(guildId: string) {
     if (!guildConnections[guildId]) return;
     guildConnections[guildId].connection.destroy();
@@ -98,13 +109,6 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
         player,
         timeoutId: undefined
     };
-
-    // Get voice log channel
-    let voiceLogChannel: TextChannel;
-    const channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID ?? '');
-    if (channel?.type === ChannelType.GuildText) {
-        voiceLogChannel = channel;
-    }
 
     // Add event listener on receiving voice input
     connection.receiver.speaking.on('start', (userId) => {
@@ -186,4 +190,4 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     });
 }
 
-export { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile };
+export { initVoiceLogChannel, disconnectVoice, isInGuildVoice, joinVoice, playAudioFile };

@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Events } from 'discord.js';
+import { Client, GatewayIntentBits, Events, ChannelType } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import createCronJobs from './create-cronjobs';
@@ -9,7 +9,8 @@ import timeInVoice from './time-in-voice';
 import { logError } from './logger';
 import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
-import voiceStateUpdateHandler from './events/voiceStateUpdate';
+import voiceStateUpdateHandler, { initMainChannel } from './events/voiceStateUpdate';
+import { initVoiceLogChannel } from './voice';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 
@@ -24,8 +25,11 @@ client.on(Events.VoiceStateUpdate, voiceStateUpdateHandler);
 
 // Login with bot token
 client.login(process.env.BOT_TOKEN).catch(logError);
-
 client.once(Events.ClientReady, async () => {
+
+    // Init voice log channel
+    await initMainChannel(client);
+    await initVoiceLogChannel(client);
 
     // Add emotes from server to emotes object
     getEmotes(client);
@@ -41,6 +45,12 @@ client.once(Events.ClientReady, async () => {
     timeInVoice.initUsers(client);
 
     console.log('Same5JokesBot online.');
+    if (process.env.STATUS_CHANNEL_ID) {
+        const channel = client.channels.cache.get(process.env.STATUS_CHANNEL_ID) ?? await client.channels.fetch(process.env.STATUS_CHANNEL_ID);
+        if (channel?.type === ChannelType.GuildText) {
+            void channel.send('Same5JokesBot online.');
+        }
+    }
 });
 
 // client.on(Events.ShardError, err => {
