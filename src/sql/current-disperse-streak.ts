@@ -39,7 +39,7 @@ async function getCurrentDisperseStreak(guildId: string): Promise<DisperseCurren
 
 const updateQuery = `
 MERGE INTO current_disperse_streak dest
-    USING( SELECT :guildId AS guild_id, TO_DATE(:streakDate, 'yyyy/mm/dd hh:mi:ss') AS streak_date, :userIds AS user_ids, :streak AS streak FROM dual) src
+    USING( SELECT :guildId AS guild_id, TO_DATE(:streakDate, 'YYYY/MM/DD HH24:MI:SS') AS streak_date, :userIds AS user_ids, :streak AS streak FROM dual) src
         ON( dest.guild_id = src.guild_id )
     WHEN MATCHED THEN
             UPDATE SET user_ids = src.user_ids, streak = src.streak, streak_date = src.streak_date
