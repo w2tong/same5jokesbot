@@ -30,6 +30,7 @@ Place .env file in the root directory
 CLIENT_ID=Bot Client ID
 GUILD_ID=Guild ID
 BOT_TOKEN=Bot Token
+OWNER_USER_ID=your user id
 
 # Wit AI
 WITAI_KEY=Wit Ai Client Access Token
@@ -38,10 +39,14 @@ WITAI_KEY=Wit Ai Client Access Token
 ORACLEDB_USER=username
 ORACLEDB_PW=password
 ORACLEDB_CONN_STR=connection string
+UV_THREADPOOL_SIZE=4
+ORACLEDB_POOL_MIN=1
+ORACLEDB_POOL_MAX=4
 
 # Wholesome Sisters
 MAIN_CHANNEL_ID=text channel id
 VOICE_LOG_CHANNEL_ID=text channel id
+STATUS_CHANNEL_ID=status channel id
 ```
 
 ## Deployment
