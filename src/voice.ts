@@ -3,7 +3,7 @@ import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource,
 import { join } from 'node:path';
 import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
-import { convertDateToUnixTimestamp } from './util';
+import { convertDateToUnixTimestamp, fetchChannel } from './util';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
@@ -36,7 +36,7 @@ const userSpeakingTimeout = new Set();
 let voiceLogChannel: TextChannel;
 async function initVoiceLogChannel(client: Client) {
     if (process.env.VOICE_LOG_CHANNEL_ID) {
-        const channel = client.channels.cache.get(process.env.VOICE_LOG_CHANNEL_ID) ?? await client.channels.fetch(process.env.VOICE_LOG_CHANNEL_ID);
+        const channel = await fetchChannel(client, process.env.VOICE_LOG_CHANNEL_ID);
         if (channel?.type === ChannelType.GuildText) {
             voiceLogChannel = channel;
         }

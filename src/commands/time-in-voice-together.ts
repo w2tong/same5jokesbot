@@ -2,7 +2,7 @@ import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { createChartBuffer } from '../chart';
 import { getTimeInVoiceTogether } from '../sql/time-in-voice-together';
-import { timeInMS } from '../util';
+import { fetchUser, timeInMS } from '../util';
 
 function createChartConfiguration(username: string, users: Array<string>, times: Array<number>): ChartConfiguration {
     return {
@@ -74,7 +74,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const users = [];
         const times = [];
         for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {
-            users.push((interaction.client.users.cache.get(USER_ID) ?? await interaction.client.users.fetch(USER_ID)).username);
+            const username = (await fetchUser(interaction.client, USER_ID)).username;
+            users.push(username);
             times.push(MILLISECONDS / timeInMS.hour);
         }
         const config = createChartConfiguration(user.username, users, times);

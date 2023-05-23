@@ -7,11 +7,12 @@ import { logError } from './logger';
 import  timeInVoice from './time-in-voice';
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/time-in-voice-together';
+import { fetchChannel } from './util';
 
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'America/Toronto' }, async function() {
-        const channel = client.channels.cache.get(channelId) ?? await client.channels.fetch(channelId);
+        const channel = await fetchChannel(client, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
             channel.send('Where 10.1.5').catch(logError);
         }

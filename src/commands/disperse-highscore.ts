@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getDisperseStreakHighscore } from '../sql/disperse-streak-highscore';
-import { convertDateToUnixTimestamp } from '../util';
+import { convertDateToUnixTimestamp, fetchUser } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -10,7 +10,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const userIds= disperseStreak.USER_IDS.split(',');
         const usernamesMap: { [key: string]: number } = {};
         for (const userId of userIds) {
-            const username = (interaction.client.users.cache.get(userId) ?? await interaction.client.users.fetch(userId)).username;
+            const username = (await fetchUser(interaction.client, userId)).username;
             usernamesMap[username] = usernamesMap[username]+1 || 1;
         }
         let usernames = '';

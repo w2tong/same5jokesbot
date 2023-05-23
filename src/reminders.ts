@@ -2,6 +2,7 @@ import { ChannelType, Client, TextChannel } from 'discord.js';
 import schedule from 'node-schedule';
 import { logError } from './logger';
 import { getReminders, insertReminder, deleteReminder } from './sql/reminders';
+import { fetchChannel } from './util';
 
 function scheduleReminder(channel: TextChannel, date: Date, message: string, id?: string) {
     let job: schedule.Job;
@@ -26,7 +27,7 @@ function scheduleReminder(channel: TextChannel, date: Date, message: string, id?
 async function loadReminders(client: Client) {
     const reminders = await getReminders();
     for (const reminder of reminders) {
-        const channel = client.channels.cache.get(reminder.CHANNEL_ID) ?? await client.channels.fetch(reminder.CHANNEL_ID);
+        const channel = await fetchChannel(client, reminder.CHANNEL_ID);
         const date = new Date(`${reminder.TIME} UTC`);
         if (date < new Date() || !channel) {
             void deleteReminder(reminder.ID);

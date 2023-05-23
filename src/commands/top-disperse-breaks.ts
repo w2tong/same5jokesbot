@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getTopDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
+import { fetchUser } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -10,7 +11,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         let totalField = '';
         for (let i = 0; i < topDisperseStreakBreaks.length; i++) {
             const userId = topDisperseStreakBreaks[i].USER_ID;
-            namesField += `${i+1}. ${(interaction.client.users.cache.get(userId) ?? await interaction.client.users.fetch(userId)).username}\n`;
+            const username = (await fetchUser(interaction.client, userId)).username;
+            namesField += `${i+1} . ${username}\n`;
             dispersePercentField += `${topDisperseStreakBreaks[i].BREAKS}\n`;
             totalField += `${topDisperseStreakBreaks[i].SCORE}\n`;
         }
