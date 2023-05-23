@@ -51,6 +51,11 @@ client.once(Events.ClientReady, async () => {
             void channel.send('Same5JokesBot online.');
         }
     }
+    if (process.env.OWNER_USER_ID) {
+        const owner = client.users.cache.get(process.env.OWNER_USER_ID) ?? await client.users.fetch(process.env.OWNER_USER_ID);
+        void owner.send('Same5JokesBot online.');
+    }
+    
 });
 
 // client.on(Events.ShardError, err => {
