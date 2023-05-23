@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getCurrentDisperseStreak } from '../sql/current-disperse-streak';
-import { convertDateToUnixTimestamp } from '../util';
+import { convertDateToUnixTimestamp, fetchUser } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -12,7 +12,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (currentDisperseStreak.STREAK > 0) {
             const usernamesMap: { [key: string]: number } = {};
             for (const userId of userIds) {
-                const username = (interaction.client.users.cache.get(userId) ?? await interaction.client.users.fetch(userId)).username;
+                const username = (await fetchUser(interaction.client, userId)).username;
                 usernamesMap[username] = usernamesMap[username]+1 || 1;
             }
             for (const username in usernamesMap) {

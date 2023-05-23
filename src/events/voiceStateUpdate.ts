@@ -2,7 +2,7 @@ import { ChannelType, Client, TextChannel, VoiceState } from 'discord.js';
 import { logError } from '../logger';
 import timeInVoice from '../time-in-voice';
 import userIntros from './user-intros';
-import { getMomentCurrentTimeEST } from '../util';
+import { fetchChannel, getMomentCurrentTimeEST } from '../util';
 import { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile } from '../voice';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -11,7 +11,7 @@ dotenv.config();
 let mainChannel: TextChannel;
 async function initMainChannel(client: Client) {
     if (process.env.MAIN_CHANNEL_ID) {
-        const channel = client.channels.cache.get(process.env.MAIN_CHANNEL_ID) ?? await client.channels.fetch(process.env.MAIN_CHANNEL_ID);
+        const channel = await fetchChannel(client, process.env.MAIN_CHANNEL_ID);
         if (channel?.type === ChannelType.GuildText) {
             mainChannel = channel;
         }
