@@ -436,6 +436,10 @@ const regexToAudio = [
     {
         regex: /(yo)?u should/,
         getAudio: () => 'NOW'
+    },
+    {
+        regex: /facebook|nice job/,
+        getAudio: () => 'nice_job_team'
     }
 ];
 
