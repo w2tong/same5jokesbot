@@ -440,6 +440,14 @@ const regexToAudio = [
     {
         regex: /facebook|nice job/,
         getAudio: () => 'nice_job_team'
+    },
+    {
+        regex: /waiting for.*bus/,
+        getAudio: () => 'no_duh_im_at_the_bus_stop_too'
+    },
+    {
+        regex: /bus/,
+        getAudio: () => 'waiting_for_the_bus_too'
     }
 ];
 
