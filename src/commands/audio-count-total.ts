@@ -1,9 +1,9 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getAudioCountTotal } from '../sql/audio-count';
-import { createChartBuffer } from '../chart';
+import { createLargeChartBuffer } from '../chart';
 
-function createChartConfiguration(username: string, audio: Array<string>, count: Array<number>): ChartConfiguration {
+function createChartConfiguration(audio: Array<string>, count: Array<number>): ChartConfiguration {
     return {
         type: 'bar',
         data: {
@@ -37,7 +37,10 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
             plugins: {
                 title: {
                     display: true,
-                    text: `${username}'s Audio Usage`
+                    text: 'Total Audio Usage (top 50)',
+                    font: {
+                        size: 24
+                    }
                 },
                 legend: {
                     display: false
@@ -47,7 +50,7 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
                 },
                 datalabels: {
                     align: 'end',
-                    anchor: 'end',
+                    anchor: 'start',
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     backgroundColor: context => context.dataset.borderColor,
@@ -66,8 +69,7 @@ function createChartConfiguration(username: string, audio: Array<string>, count:
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const user = interaction.options.getUser('user') ?? interaction.user;
-    const audioCount = await getAudioCountTotal(user.id);
+    const audioCount = await getAudioCountTotal();
     if (audioCount) {
         const audio = [];
         const count = [];
@@ -75,9 +77,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
             audio.push(AUDIO);
             count.push(COUNT);
         }
-        const config = createChartConfiguration(user.username, audio, count);
-        const buffer = await createChartBuffer(config);
-        const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
+        const config = createChartConfiguration(audio, count);
+        const buffer = await createLargeChartBuffer(config);
+        const file = new AttachmentBuilder(buffer).setName(`${name}-${new Date().toISOString()}.png`);
         void interaction.editReply({files: [file]});
     }
     else {
@@ -85,12 +87,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'audio-count-bar-chart';
+const name = 'audio-count-total';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Creates a bar chart of your audio use.')
-    .addUserOption((option) => option.setName('user').setDescription('The user'));
+    .setDescription('Creates bar chart of all audio use.');
 
 export default { execute, name, commandBuilder };
 

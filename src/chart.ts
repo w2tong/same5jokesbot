@@ -6,17 +6,26 @@ import { ChartCallback, ChartJSNodeCanvas } from 'chartjs-node-canvas';
 const chartCallback: ChartCallback = (ChartJS) => {
     ChartJS.defaults.responsive = false;
     ChartJS.defaults.maintainAspectRatio = false;
-    ChartJS.defaults.font.size = 16;
     ChartJS.defaults.layout.padding = 50;
 };
-const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 1600, height: 900, backgroundColour: 'white', chartCallback, 
+const mediumChartJSNodeCanvas = new ChartJSNodeCanvas({ width: 1600, height: 900, backgroundColour: 'white', chartCallback, 
     plugins: {
         modern: [autocolors, datalabels]
     } 
 });
 
-async function createChartBuffer(config: ChartConfiguration) {
-    return await chartJSNodeCanvas.renderToBuffer(config);
+async function createMediumChartBuffer(config: ChartConfiguration) {
+    return await mediumChartJSNodeCanvas.renderToBuffer(config);
 }
 
-export { createChartBuffer };
+const largeChartJSNodeCanvas = new ChartJSNodeCanvas({ width: 1920, height: 1920, backgroundColour: 'white', chartCallback, 
+    plugins: {
+        modern: [autocolors, datalabels]
+    } 
+});
+
+async function createLargeChartBuffer(config: ChartConfiguration) {
+    return await largeChartJSNodeCanvas.renderToBuffer(config);
+}
+
+export { createMediumChartBuffer, createLargeChartBuffer };

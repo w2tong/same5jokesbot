@@ -1,7 +1,7 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getUserLast30DaysTimeInVoice } from '../sql/time-in-voice';
-import { createChartBuffer } from '../chart';
+import { createMediumChartBuffer } from '../chart';
 import { timeInMS } from '../util';
 
 function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
@@ -41,7 +41,10 @@ function createChartConfiguration(username: string, days: Array<string>, times: 
             plugins: {
                 title: {
                     display: true,
-                    text: `${username}'s Time Spent in Voice in Last 30 Days`
+                    text: `${username}'s Time Spent in Voice in Last 30 Days`,
+                    font: {
+                        size: 24
+                    }
                 },
                 legend: {
                     display: false
@@ -91,7 +94,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             days.push(`${currDay.getMonth()+1}/${currDay.getDate()}`);
         }
         const config = createChartConfiguration(user.username, days, times);
-        const file = new AttachmentBuilder(await createChartBuffer(config)).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
+        const file = new AttachmentBuilder(await createMediumChartBuffer(config)).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
         void interaction.editReply({files: [file]});
     }
     else {

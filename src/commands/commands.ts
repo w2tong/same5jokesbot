@@ -12,7 +12,8 @@ import remind from './remind';
 import deleteReminder from './delete-reminder';
 import timeInVoice from './time-in-voice';
 import timeInVoiceLineGraph from './time-in-voice-line-graph';
-import audioCountBarChart from './audio-count-bar-chart';
+import audioCount from './audio-count';
+import audioCountTotal from './audio-count-total';
 import topTimeInVoice from './top-time-in-voice';
 import timeInVoiceTogether from './time-in-voice-together';
 
@@ -31,7 +32,8 @@ const commands = [
     {execute: deleteReminder.execute, name: deleteReminder.name},
     {execute: timeInVoice.execute, name: timeInVoice.name},
     {execute: timeInVoiceLineGraph.execute, name: timeInVoiceLineGraph.name},
-    {execute: audioCountBarChart.execute, name: audioCountBarChart.name},
+    {execute: audioCount.execute, name: audioCount.name},
+    {execute: audioCountTotal.execute, name: audioCountTotal.name},
     {execute: topTimeInVoice.execute, name: topTimeInVoice.name},
     {execute: timeInVoiceTogether.execute, name: timeInVoiceTogether.name}
 ];
@@ -51,7 +53,8 @@ const commandBuilders = [
     deleteReminder.commandBuilder,
     timeInVoice.commandBuilder,
     timeInVoiceLineGraph.commandBuilder,
-    audioCountBarChart.commandBuilder,
+    audioCount.commandBuilder,
+    audioCountTotal.commandBuilder,
     topTimeInVoice.commandBuilder,
     timeInVoiceTogether.commandBuilder
 ];
