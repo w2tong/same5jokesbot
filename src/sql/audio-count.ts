@@ -13,22 +13,48 @@ const createTableAudioCount = {
         )`
 };
 
-const getQuery = `
+const getUserTotalQuery = `
 SELECT audio, SUM(count) AS count FROM audio_count
 WHERE user_id = :userId
 GROUP BY audio
 ORDER BY count DESC
-FETCH FIRST 20 ROWS ONLY
+FETCH FIRST 50 ROWS ONLY
 `;
 
 interface AudioCount {
     AUDIO: string;
     COUNT: number;
 }
-async function getAudioCountTotal(userId: string): Promise<Array<AudioCount>|null> {
+async function getAudioCountUserTotal(userId: string): Promise<Array<AudioCount>|null> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<AudioCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
+        const result: oracledb.Result<AudioCount> = await connection.execute(getUserTotalQuery, {userId}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getAudioCountUserTotal: ${err}`);
+    }
+}
+
+const getTotalQuery = `
+SELECT audio, SUM(count) AS count FROM audio_count
+GROUP BY audio
+ORDER BY count DESC
+FETCH FIRST 50 ROWS ONLY
+`;
+
+interface AudioCount {
+    AUDIO: string;
+    COUNT: number;
+}
+async function getAudioCountTotal(): Promise<Array<AudioCount>|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<AudioCount> = await connection.execute(getTotalQuery, {}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
@@ -62,4 +88,4 @@ async function updateAudioCount(userId: string, audio: string) {
     }
 }
 
-export { createTableAudioCount, getAudioCountTotal, updateAudioCount };
+export { createTableAudioCount, getAudioCountUserTotal, getAudioCountTotal, updateAudioCount };

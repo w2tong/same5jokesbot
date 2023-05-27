@@ -1,6 +1,6 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { createChartBuffer } from '../chart';
+import { createMediumChartBuffer } from '../chart';
 import { getTimeInVoiceTogether } from '../sql/time-in-voice-together';
 import { fetchUser, timeInMS } from '../util';
 
@@ -38,7 +38,10 @@ function createChartConfiguration(username: string, users: Array<string>, times:
             plugins: {
                 title: {
                     display: true,
-                    text: `${username}'s Time In Voice Together`
+                    text: `${username}'s Time In Voice Together`,
+                    font: {
+                        size: 24
+                    }
                 },
                 legend: {
                     display: false
@@ -79,7 +82,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             times.push(MILLISECONDS / timeInMS.hour);
         }
         const config = createChartConfiguration(user.username, users, times);
-        const buffer = await createChartBuffer(config);
+        const buffer = await createMediumChartBuffer(config);
         const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
         void interaction.editReply({files: [file]});
     }
