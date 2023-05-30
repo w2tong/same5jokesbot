@@ -4,6 +4,7 @@ module.exports = {
     apps : [{
         name: 'same5jokesbot',
         script: 'npm start',
+        cron_restart: '0 10 * * *',
         watch: true,
         ignore_watch: ['node_modules','src/audio','logs','.env'],
         out_file: 'logs/pm2.out.log',
