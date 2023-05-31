@@ -20,9 +20,6 @@ const timeInMS: {[key: string]: number} = {
     hour: 3_600_000,
     day: 86_400_000
 };
-function parseDate(num: number, time: string) {
-    return new Date(Date.now() + timeInMS[time] * num);
-}
 
 function msToString(ms: number) {
     const days = Math.floor(ms/timeInMS.day);
