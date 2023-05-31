@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install and deploy slash commands
-        run: npm install && npm run deploy 
+        run: npm install --omit=dev && npm run deploy 
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           GUILD_ID: ${{ secrets.GUILD_ID }}
