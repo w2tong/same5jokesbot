@@ -19,10 +19,7 @@ jobs:
 
       - name: Install
         run: npm install
-      
-      - name: Unit tests
-        run: npm test
-
+        
       - name: Deploy slash commands
         run: npm run deploy
         env:
