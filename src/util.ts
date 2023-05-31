@@ -41,4 +41,4 @@ async function fetchUser(client: Client, userId: string) {
     return client.users.cache.get(userId) ?? await client.users.fetch(userId);
 }
 
-export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, parseDate, timeInMS, msToString, fetchChannel, fetchUser };
+export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, timeInMS, msToString, fetchChannel, fetchUser };
