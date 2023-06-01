@@ -120,27 +120,23 @@ async function updateGamersStats(userId: string, gamersWord: string) {
 
 }
 
-const getTopDisperseRateQuery = `
-SELECT gc.user_id, disperse/total.sum*100 AS disperse_pc, sum
-FROM (
-    SELECT user_id, month_year, discharge + disperse + rise_up AS sum FROM gamers_stats
-    WHERE month_year = TO_DATE(:monthYear, 'yyyy/mm')
-    ) total
-JOIN gamers_stats gc
-ON total.user_id = gc.user_id AND total.month_year = gc.month_year
-ORDER BY disperse_pc DESC
-`;
-
 interface TopDisperseRate {
     USER_ID: string;
     SUM: number;
     DISPERSE_PC: number;
 }
-async function getTopDisperseRate(month: string, year: string): Promise<Array<TopDisperseRate>> {
+
+const getTopDisperseRateMonthYearQuery = `
+SELECT user_id, disperse/(discharge + disperse + rise_up)*100 AS disperse_pc, discharge + disperse + rise_up AS sum FROM gamers_stats
+WHERE month_year = TO_DATE(:monthYear, 'yyyy/mm')
+ORDER BY disperse_pc
+`;
+
+async function getTopDisperseRateMonthYear(month: string, year: string): Promise<Array<TopDisperseRate>> {
     try {
         const monthYear = `${year}/${month}`;
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateQuery, {monthYear}, selectExecuteOptions);
+        const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateMonthYearQuery, {monthYear}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows) {
             return result.rows;
@@ -148,8 +144,30 @@ async function getTopDisperseRate(month: string, year: string): Promise<Array<To
         return [];
     }
     catch (err) {
-        throw new Error(`getTopDisperseRate: ${err}`);
+        throw new Error(`getTopDisperseRateMonthYear: ${err}`);
     }
 }
 
-export { createTableGamersStats, getGamersStatsMonthYear, getGamersStatsYear, updateGamersStats, getTopDisperseRate };
+const getTopDisperseRateYearQuery = `
+SELECT user_id, SUM(disperse)/(SUM(discharge) + SUM(disperse) + SUM(rise_up))*100 AS disperse_pc, SUM(discharge) + SUM(disperse) + SUM(rise_up) AS sum FROM gamers_stats
+WHERE EXTRACT(YEAR FROM month_year) = :year
+GROUP BY user_id
+ORDER BY disperse_pc DESC
+`;
+
+async function getTopDisperseRateYear(year: string): Promise<Array<TopDisperseRate>> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateYearQuery, {year}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getTopDisperseRateYearQuery: ${err}`);
+    }
+}
+
+export { createTableGamersStats, getGamersStatsMonthYear, getGamersStatsYear, updateGamersStats, getTopDisperseRateMonthYear, getTopDisperseRateYear };
