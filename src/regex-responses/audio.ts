@@ -343,7 +343,6 @@ const regexToAudio = [
     },
     {
         regex: /slow mo(de)?|slow.*(it|that|sneeze).*down/,
-        //updateSneezeCount
         getAudio: (userId :string) => {
             void updateSneezeCount(userId);
             return 'train_sneeze_slow';
