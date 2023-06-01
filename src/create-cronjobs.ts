@@ -12,7 +12,7 @@ import { fetchChannel } from './util';
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'America/Toronto' }, async function() {
-        const channel = await fetchChannel(client, channelId);
+        const channel = await fetchChannel(client.channels, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
             channel.send('Where 10.1.5').catch(logError);
         }

@@ -15,7 +15,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         for (let i = 0; i < topDisperseRate.length; i++) {
             const userId = topDisperseRate[i].USER_ID;
             const dispersePc = topDisperseRate[i].DISPERSE_PC;
-            const username = (await fetchUser(interaction.client, userId)).username;
+            const username = (await fetchUser(interaction.client.users, userId)).username;
             namesField += `${i+1} . ${username}\n`;
             dispersePercentField += `${dispersePc.toFixed(2)}%\n`;
             totalField += `${topDisperseRate[i].SUM}\n`;
