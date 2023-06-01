@@ -1,13 +1,25 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getTopDisperseRate } from '../sql/gamers-stats';
+import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../sql/gamers-stats';
 import { fetchUser } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const date = new Date();
-    const month = interaction.options.getString('month') ?? (date.getMonth() + 1).toString();
-    const year = (interaction.options.getNumber('year') ?? date.getFullYear()).toString();
-    const topDisperseRate = await getTopDisperseRate(month, year);
+    let month = interaction.options.getString('month');
+    const year = interaction.options.getNumber('year');
+    let topDisperseRate;
+    let dateStr;
+    if (year && !month) {
+        topDisperseRate = await getTopDisperseRateYear(year.toString());
+        dateStr = year;
+    }
+    else {
+        const yearStr = (year ?? date.getFullYear()).toString();
+        month = month ?? (date.getMonth() + 1).toString();
+        topDisperseRate = await getTopDisperseRateMonthYear(month, yearStr);
+        dateStr = `${month}/${yearStr}`;
+    }
+
     if (topDisperseRate.length) {
         let namesField = '';
         let dispersePercentField = '';
@@ -15,14 +27,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
         for (let i = 0; i < topDisperseRate.length; i++) {
             const userId = topDisperseRate[i].USER_ID;
             const dispersePc = topDisperseRate[i].DISPERSE_PC;
-            const username = (await fetchUser(interaction.client, userId)).username;
+            const username = (await fetchUser(interaction.client.users, userId)).username;
             namesField += `${i+1} . ${username}\n`;
             dispersePercentField += `${dispersePc.toFixed(2)}%\n`;
             totalField += `${topDisperseRate[i].SUM}\n`;
         }
             
         const rowDisperseRateEmbed = new EmbedBuilder()
-            .setTitle(`Top Disperse Rates (${month}/${year})`)
+            .setTitle(`Top Disperse Rates (${dateStr})`)
             .addFields(
                 { name: 'Name', value: namesField, inline: true },
                 { name: 'Disperse %', value: dispersePercentField, inline: true },
@@ -54,6 +66,6 @@ const commandBuilder = new SlashCommandBuilder()
         {name: 'November', value: '11'},
         {name: 'December', value: '12'}
     ))
-    .addStringOption((option) => option.setName('year').setDescription('Select a year'));
+    .addNumberOption((option) => option.setName('year').setDescription('Select a year'));
 
 export default { execute, name, commandBuilder };

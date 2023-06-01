@@ -47,13 +47,13 @@ client.once(Events.ClientReady, async () => {
 
     console.log('Same5JokesBot online.');
     if (process.env.STATUS_CHANNEL_ID) {
-        const channel = await fetchChannel(client, process.env.STATUS_CHANNEL_ID);
+        const channel = await fetchChannel(client.channels, process.env.STATUS_CHANNEL_ID);
         if (channel?.type === ChannelType.GuildText) {
             void channel.send('Same5JokesBot online.');
         }
     }
     if (process.env.OWNER_USER_ID) {
-        const owner = await fetchUser(client, process.env.OWNER_USER_ID);
+        const owner = await fetchUser(client.users, process.env.OWNER_USER_ID);
         void owner.send('Same5JokesBot online.');
     }
     

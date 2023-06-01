@@ -11,7 +11,7 @@ dotenv.config();
 let mainChannel: TextChannel;
 async function initMainChannel(client: Client) {
     if (process.env.MAIN_CHANNEL_ID) {
-        const channel = await fetchChannel(client, process.env.MAIN_CHANNEL_ID);
+        const channel = await fetchChannel(client.channels, process.env.MAIN_CHANNEL_ID);
         if (channel?.type === ChannelType.GuildText) {
             mainChannel = channel;
         }

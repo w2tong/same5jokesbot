@@ -10,7 +10,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const userIds= disperseStreak.USER_IDS.split(',');
         const usernamesMap: { [key: string]: number } = {};
         for (const userId of userIds) {
-            const username = (await fetchUser(interaction.client, userId)).username;
+            const username = (await fetchUser(interaction.client.users, userId)).username;
             usernamesMap[username] = usernamesMap[username]+1 || 1;
         }
         let usernames = '';

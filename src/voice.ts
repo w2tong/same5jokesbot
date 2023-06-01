@@ -36,7 +36,7 @@ const userSpeakingTimeout = new Set();
 let voiceLogChannel: TextChannel;
 async function initVoiceLogChannel(client: Client) {
     if (process.env.VOICE_LOG_CHANNEL_ID) {
-        const channel = await fetchChannel(client, process.env.VOICE_LOG_CHANNEL_ID);
+        const channel = await fetchChannel(client.channels, process.env.VOICE_LOG_CHANNEL_ID);
         if (channel?.type === ChannelType.GuildText) {
             voiceLogChannel = channel;
         }
