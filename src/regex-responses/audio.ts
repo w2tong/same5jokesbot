@@ -446,7 +446,7 @@ const regexToAudio = [
         getAudio: () => 'no_duh_im_at_the_bus_stop_too'
     },
     {
-        regex: /bus/,
+        regex: /\bbus\b/,
         getAudio: () => 'waiting_for_the_bus_too'
     }
 ];

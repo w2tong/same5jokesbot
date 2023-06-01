@@ -20,9 +20,6 @@ const timeInMS: {[key: string]: number} = {
     hour: 3_600_000,
     day: 86_400_000
 };
-function parseDate(num: number, time: string) {
-    return new Date(Date.now() + timeInMS[time] * num);
-}
 
 function msToString(ms: number) {
     const days = Math.floor(ms/timeInMS.day);
@@ -44,4 +41,4 @@ async function fetchUser(client: Client, userId: string) {
     return client.users.cache.get(userId) ?? await client.users.fetch(userId);
 }
 
-export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, parseDate, timeInMS, msToString, fetchChannel, fetchUser };
+export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, timeInMS, msToString, fetchChannel, fetchUser };
