@@ -129,7 +129,7 @@ const regexToText = [
     },
     {
         regex: /when.*andy.*get(ting)?.*new.*computer/,
-        getText: () => getNextYear()
+        getText: () => getNextYear().toString()
     },
     {
         regex: /too.*late/,
@@ -234,16 +234,18 @@ const regexToText = [
     },
     {
         regex: /\b(big|strong|handsome|tall|smart|rich|funny)\b/,
-
         getText: (command: string) => {
             const arr = ['big', 'strong', 'handsome', 'tall', 'smart', 'rich', 'funny'];
-            for (let i = 0; i < arr.length; i++) {
-                if (command.includes(arr[i])) {
-                    arr.splice(i, 1);
-                }
+            let i = 0;
+            while (i < arr.length) {
+                const regex = new RegExp(`\\b${arr[i]}\\b`);
+                if (regex.test(command)) arr.splice(i, 1);
+                else i++;
             }
-            const str = arr.join(', ');
-            return `${str.charAt(0).toUpperCase()}${str.slice(1)}.`;
+            if (arr.length === 0) return '';
+            if (arr.length === 1) return arr[0];
+            const str = `${arr.slice(0, -1).join(', ')} and ${arr[arr.length-1]}.`;
+            return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
         }
     },
     {
@@ -253,16 +255,16 @@ const regexToText = [
 ];
 
 export default async (command: string, userId: string, username: string, guildId: string): Promise<string> => {
-    let botMessage = '';
+    const botMessage = [];
     for (const regexText of regexToText) {
         if (regexText.regex.test(command)) {
             try {
                 const text = await regexText.getText(command, userId, username, guildId);
-                botMessage += `${text}\n`;
+                if (text.length) botMessage.push(text);
             } catch(err) {
                 logError(err);
             }
         }
     }
-    return botMessage;
+    return botMessage.join('\n');
 };
