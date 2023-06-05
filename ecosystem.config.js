@@ -3,10 +3,10 @@ require('dotenv').config();
 module.exports = {
     apps : [{
         name: 'same5jokesbot',
-        script: 'npm start',
+        script: 'tsc build && npm start',
         cron_restart: '0 10 * * *',
         watch: true,
-        ignore_watch: ['node_modules','src/audio','logs','.env'],
+        ignore_watch: ['node_modules','audio','logs','.env'],
         out_file: 'logs/pm2.out.log',
         error_file: 'logs/pm2.error.log',
         log_date_format: 'YYYY-MM-DD HH:mm:ss'
