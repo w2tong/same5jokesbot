@@ -82,7 +82,7 @@ function playAudioFile(guildId: string, audioFile: string, userId: string) {
     const player = guildConnections[guildId].player;
     if (!player) return;
     void updateAudioCount(userId, audioFile);
-    const resource = createAudioResource(join(__dirname, `audio/${audioFile}.mp3`));
+    const resource = createAudioResource(join(__dirname, `../audio/${audioFile}.mp3`));
     player.play(resource);
 }
 
