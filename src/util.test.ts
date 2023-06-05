@@ -1,9 +1,7 @@
-import { Client } from 'discord.js';
 import { getRandomRange, convertDateToUnixTimestamp, msToString, fetchChannel, fetchUser } from './util';
 
-const fakeNewDate = new Date('2023-01-01');
-jest.useFakeTimers().setSystemTime(fakeNewDate);
-
+const mockDate = new Date('2023-01-01');
+jest.useFakeTimers().setSystemTime(mockDate);
 
 describe('getRandomRange()', () => {
     test('0', () => {
