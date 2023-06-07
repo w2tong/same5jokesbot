@@ -57,7 +57,6 @@ async function insertDisperseStreakHighScore(guildId: string, streakDate: string
     }
     catch (err) {
         throw new Error(`insertDisperseStreakHighScore: ${err}`);
-        return false;
     }
 }
 

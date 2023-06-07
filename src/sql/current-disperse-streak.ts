@@ -17,17 +17,18 @@ SELECT streak_date, user_ids, streak FROM current_disperse_streak
 WHERE guild_id = :guildId
 `;
 
-interface DisperseCurrentStreak {
+interface CurrentDisperseStreak {
     STREAK_DATE: string;
     USER_IDS: string;
     STREAK: number;
 }
-async function getCurrentDisperseStreak(guildId: string): Promise<DisperseCurrentStreak> {
+async function getCurrentDisperseStreak(guildId: string): Promise<CurrentDisperseStreak> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<DisperseCurrentStreak> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
+        const result: oracledb.Result<CurrentDisperseStreak> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows[0]) {
+            console.log(result.rows[0].STREAK_DATE);
             return result.rows[0];
         }
         return {STREAK_DATE: '', USER_IDS: '', STREAK: 0};
@@ -60,4 +61,4 @@ async function updateCurrentDisperseStreak(guildId: string, streakDate: string, 
 }
 
 
-export { createTableCurrentDisperseStreak, getCurrentDisperseStreak, updateCurrentDisperseStreak };
+export { createTableCurrentDisperseStreak, getCurrentDisperseStreak, updateCurrentDisperseStreak, CurrentDisperseStreak };
