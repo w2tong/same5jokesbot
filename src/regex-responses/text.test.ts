@@ -1,5 +1,5 @@
 import getTextResponse from './text';
-import { mockGetCurrentDisperseStreak, mockInsertDisperseStreakHighScore } from '../tests/mockQueryFunctions';
+import { mockGetCurrentDisperseStreak } from '../tests/mockQueryFunctions';
 import * as sqlCurrentDisperseStreak from '../sql/current-disperse-streak';
 import * as sqlDisperseStreakBreaks from '../sql/disperse-streak-breaks';
 import * as sqlDisperseStreakHighscore from '../sql/disperse-streak-highscore';
