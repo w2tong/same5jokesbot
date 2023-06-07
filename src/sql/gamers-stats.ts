@@ -129,7 +129,7 @@ interface TopDisperseRate {
 const getTopDisperseRateMonthYearQuery = `
 SELECT user_id, disperse/(discharge + disperse + rise_up)*100 AS disperse_pc, discharge + disperse + rise_up AS sum FROM gamers_stats
 WHERE month_year = TO_DATE(:monthYear, 'yyyy/mm')
-ORDER BY disperse_pc
+ORDER BY disperse_pc DESC
 `;
 
 async function getTopDisperseRateMonthYear(month: string, year: string): Promise<Array<TopDisperseRate>> {
