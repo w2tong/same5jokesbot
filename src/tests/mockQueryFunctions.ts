@@ -1,13 +1,24 @@
 import { CurrentDisperseStreak } from '../sql/current-disperse-streak';
 
-const mockGetCurrentDisperseStreakResponse: CurrentDisperseStreak = {
+const mockGetCurrentDisperseStreakResponseZero: CurrentDisperseStreak = {
+    STREAK_DATE: '2023-01-01T00:00:00.000Z',
+    USER_IDS: '',
+    STREAK: 0
+};
+async function mockGetCurrentDisperseStreakZero(): Promise<CurrentDisperseStreak> {
+    return new Promise((resolve) => {
+        resolve(mockGetCurrentDisperseStreakResponseZero);
+    });
+}
+
+const mockGetCurrentDisperseStreakResponseThree: CurrentDisperseStreak = {
     STREAK_DATE: '2023-01-01T00:00:00.000Z',
     USER_IDS: 'user1,user2,user3',
     STREAK: 3
 };
-async function mockGetCurrentDisperseStreak(): Promise<CurrentDisperseStreak> {
+async function mockGetCurrentDisperseStreakThree(): Promise<CurrentDisperseStreak> {
     return new Promise((resolve) => {
-        resolve(mockGetCurrentDisperseStreakResponse);
+        resolve(mockGetCurrentDisperseStreakResponseThree);
     });
 }
 
@@ -18,6 +29,7 @@ async function mockInsertDisperseStreakHighScore(): Promise<boolean> {
 }
 
 export {
-    mockGetCurrentDisperseStreak,
+    mockGetCurrentDisperseStreakZero,
+    mockGetCurrentDisperseStreakThree,
     mockInsertDisperseStreakHighScore
 };

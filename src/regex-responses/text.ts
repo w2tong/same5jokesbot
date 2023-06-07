@@ -26,7 +26,7 @@ function getGamersResponse(): string {
 }
 
 function getNextYear(): number {
-    return new Date().getFullYear() + 1;
+    return new Date().getUTCFullYear() + 1;
 }
 
 const life = ['is Strange', 'is Peculiar', 'of Luxury'];
@@ -120,11 +120,11 @@ const regexToText = [
         getText: () => 'No shot.'
     },
     {
-        regex: /fa(x|ct(s|ual))/,
+        regex: /\bfa(x|ct(s|ual))\b/,
         getText: () => 'No printer.'
     },
     {
-        regex: /pam/,
+        regex: /\bpam/,
         getText: () => 'PAM!'
     },
     {
@@ -137,8 +137,7 @@ const regexToText = [
     },
     {
         regex: /hell\s*halt/,
-        getText: () => `I'm a leak, I'm a leak. ${emotes.sadge.toString()}`
-        
+        getText: () => `I'm a leak, I'm a leak.${emotes.sadge.toString()}`
     },
     {
         regex: /shut.*up/,
@@ -149,15 +148,15 @@ const regexToText = [
         getText: () => 'Dyrus.'
     },
     {
-        regex: /dyrus/,
+        regex: /\bdyrus\b/,
         getText: () => 'So troll.'
     },
     {
-        regex: /\boh?\b/,
+        regex: /^\s*oh?\s*$/,
         getText: () => 'The misery.'
     },
     {
-        regex: /\bno\b(?!.*shot)/,
+        regex: /^\s*no\s*$/,
         getText: () => 'IDONTTHINKSO.'
     },
     {
@@ -173,35 +172,31 @@ const regexToText = [
         getText: () => 'Go agane.'
     },
     {
-        regex: /boring/,
+        regex: /\bboring\b/,
         getText: () => 'Don\'t care.'
     },
     {
-        regex: /don'?t care/,
+        regex: /\bdon'?t.*care\b/,
         getText: () => 'Boring.'
     },
     {
-        regex: /please|pl(s|z)/,
+        regex: /\bpl(ease|s|z)\b/,
         getText: () => '(with rizz)'
     },
     {
-        regex: /life/,
+        regex: /\blife\b/,
         getText: () => `${getLifeAdjective()}.`
     },
     {
-        regex: /guess (yo)?u could say/,
-        getText: () => `Life is ${getLifeAdjective()}.`
-    },
-    {
-        regex: /sons/,
+        regex: /\bsons\b/,
         getText: () => `of ${getSonsOf()}.`
     },
     {
-        regex: /dark/,
+        regex: /\bdark\b/,
         getText: () => 'and Darker.'
     },
     {
-        regex: /\bdnd\b/,
+        regex: /\bdnd/,
         getText: () => getDND()
     },
     {
@@ -217,19 +212,19 @@ const regexToText = [
         getText: () => 'That\'s crazy.'
     },
     {
-        regex: /that'?s crazy/,
+        regex: /\bthat('?s| is) crazy\b/,
         getText: () => 'Haha.'
     },
     {
-        regex: /voti|vault of the incarnates|vaati/,
+        regex: /\bvoti|vault of the incarnates|vaati\b/,
         getText: () => 'Vidya.'
     },
     {
-        regex: /since we('?re not| aren'?t) doing anything/,
+        regex: /\b(since|if) we('?re not| aren'?t) doing anything\b/,
         getText: () => 'I gotta go.'
     },
     {
-        regex: /where.*wayne/,
+        regex: /\bwhere.*wayne\b/,
         getText: () => whereIsWayne()
     },
     {
@@ -242,14 +237,15 @@ const regexToText = [
                 if (regex.test(command)) arr.splice(i, 1);
                 else i++;
             }
+            let str = '';
             if (arr.length === 0) return '';
-            if (arr.length === 1) return arr[0];
-            const str = `${arr.slice(0, -1).join(', ')} and ${arr[arr.length-1]}.`;
-            return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
+            if (arr.length === 1) str = arr[0];
+            else str = `${arr.slice(0, -1).join(', ')} and ${arr[arr.length-1]}`;
+            return `${str.charAt(0).toUpperCase()}${str.slice(1)}.`;
         }
     },
     {
-        regex: /\balam\b/,
+        regex: /\balam/,
         getText: () => getAlam()
     }
 ];
