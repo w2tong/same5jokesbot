@@ -20,7 +20,7 @@ module.exports = {
             ref: 'origin/main',
             repo: 'https://github.com/w2tong/Same5JokesBot.git',
             path: `/home/${process.env.SSH_USER}/Same5JokesBot`,
-            'post-deploy': 'npm install && tsc --build && pm2 reload ecosystem.config.js --env production && pm2 save'
+            'post-deploy': 'npm install && npx tsc --build tsconfig.build.json && pm2 reload ecosystem.config.js --env production && pm2 save'
         }
     }
 };
