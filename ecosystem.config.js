@@ -5,8 +5,8 @@ module.exports = {
         name: 'same5jokesbot',
         script: 'npm start',
         cron_restart: '0 10 * * *',
-        watch: true,
-        ignore_watch: ['node_modules','dist','audio','logs','coverage','.env'],
+        // watch: true,
+        // ignore_watch: ['node_modules','dist','audio','logs','coverage','.env'],
         out_file: 'logs/pm2.out.log',
         error_file: 'logs/pm2.error.log',
         log_date_format: 'YYYY-MM-DD HH:mm:ss'

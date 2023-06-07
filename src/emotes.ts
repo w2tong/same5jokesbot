@@ -1,7 +1,11 @@
 import { Client, GuildEmoji } from 'discord.js';
 
 // Object to store emotes
-const emotes: { [key: string]: GuildEmoji | string } = {};
+const emotes: { [key: string]: GuildEmoji | string } = {
+    'sadge': '',
+    'smoshShutUp': '',
+    'dansGame': ''
+};
 
 const getEmotes = (client: Client) => {
     emotes['sadge'] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === 'Sadge') ?? '';
