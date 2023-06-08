@@ -8,6 +8,7 @@ import {
     Message,
     VoiceChannel,
     ChannelType,
+    GuildEmoji,
 } from 'discord.js';
 
 export default class MockDiscord {
@@ -19,6 +20,7 @@ export default class MockDiscord {
     private user!: User;
     private guildMember!: GuildMember;
     public message!: Message;
+    private guildEmoji!: GuildEmoji;
 
     constructor() {
         this.mockClient();
@@ -29,10 +31,12 @@ export default class MockDiscord {
         this.mockUser();
         this.mockGuildMember();
         this.mockMessage();
+        this.mockGuildEmoji();
 
         this.client.guilds.cache.set(this.guild.id, this.guild);
+        this.client.emojis.cache.set(this.guildEmoji.id, this.guildEmoji); // doesn't work
         this.guild.channels.cache.set(this.voiceChannel.id, this.voiceChannel);
-        this.voiceChannel.members.set(this.guildMember.id, this.guildMember);
+        this.guildChannel.members.set(this.guildMember.id, this.guildMember); // doesn't work
     }
 
     public getClient(): Client {
@@ -65,6 +69,16 @@ export default class MockDiscord {
 
     public getMessage(): Message {
         return this.message;
+    }
+
+    private mockGuildEmoji(): void {
+        this.guildEmoji = Reflect.construct(GuildEmoji, [
+            this.guild,
+            {
+                id: 'emoji-id',
+                name: 'emoji-name',
+            }
+        ]) as GuildEmoji;
     }
 
     private mockClient(): void {
@@ -112,6 +126,7 @@ export default class MockDiscord {
                 position: 1,
                 parent_id: '123456789',
                 permission_overwrites: [],
+                users: []
             }
         ]) as GuildChannel;
     }
