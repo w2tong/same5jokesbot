@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
 import { joinVoice, playAudioFile } from '../voice';
+import audio from '../audioFileMap';
 
 function execute(interaction: ChatInputCommandInteraction) {
     if (interaction.member instanceof GuildMember && interaction.guild && interaction.member.voice.channel) {
@@ -27,7 +28,7 @@ const commandBuilder = new SlashCommandBuilder()
             .setDescription('Audio clip')
             .setRequired(true)
             .addChoices(
-                { name: 'Thunder vs Lightning', value: 'thunder_vs_lightning' },
+                { name: 'Thunder vs Lightning', value: audio.thunderVsLightning },
                 /*
 				{ name: 'Phasmo Breath', value: 'phasmo_breath' },
 				{ name: 'Phasmo Die', value: 'phasmo_die' },
@@ -37,30 +38,30 @@ const commandBuilder = new SlashCommandBuilder()
 				{ name: 'Phasmo Behind', value: 'phasmo_behind' },
 				{ name: 'Phasmo Here', value: 'phasmo_here' },
 				*/
-                { name: 'Among Us Emergency Meeting', value: 'amongus_meeting' },
-                { name: 'Disgustang', value: 'disgustang' },
-                { name: 'Demon Time', value: 'demontime' },
-                { name: 'What the dog doin', value: 'whatthedogdoin' },
-                { name: 'Beans', value: 'beans' },
-                { name: 'Beans Slow', value: 'beans_slow' },
-                { name: 'NOIDONTTHINKSO', value: 'NOIDONTTHINKSO' },
-                { name: 'Uh guys?', value: 'uh_guys' },
-                { name: 'ENOUGH TALK', value: 'ENOUGHTALK' },
-                { name: 'Champ Select', value: 'champ_select' },
-                { name: 'TRUE', value: 'TRUE' },
-                { name: 'Moonmoon destroys Weebs', value: 'moonmoon_destroys_weebs' },
-                { name: 'Bing Chilling', value: 'bing_chilling' },
-                { name: 'An Exclusive! It Arrived', value: 'an_exclusive_it_arrived' },
-                { name: 'Smosh: Shut Up!', value: 'smosh_shut_up' },
-                { name: 'Get ready! M.O.A.B.!', value: 'get_ready_MOAB' },
-                { name: 'Clean-cut, and still cuts a tomato.', value: 'clean_cuts' },
-                { name: 'Game over, man.', value: 'game_over_man' },
-                { name: 'Fulcrum, come in', value: 'fulcrum_come_in' },
-                { name: 'Obliterated', value: 'obliterated' },
-                { name: 'FADEDTHANAHO', value: 'FADEDTHANAHO' },
-                { name: 'Good Morning Donda', value: 'good_morning_donda' },
-                { name: 'Teleporting Fat Guy', value: 'teleporting_fat_guy' },
-                { name: 'Guga', value: 'guga' },
+                { name: 'Among Us Emergency Meeting', value: audio.amongUsEmergencyMeeting },
+                { name: 'Disgustang', value: audio.demonTime },
+                { name: 'Demon Time', value: audio.demonTime },
+                { name: 'What the dog doin', value: audio.whatTheDogDoin },
+                { name: 'Beans', value: audio.badlandsChugsBeans },
+                { name: 'Beans Slow', value: audio.badlandsChugsBeansSlow },
+                { name: 'NOIDONTTHINKSO', value: audio.noIDontThinkSo },
+                { name: 'Uh guys?', value: audio.bloonsUhGuys },
+                { name: 'ENOUGH TALK', value: audio.badlandsChugsEnoughTalk },
+                { name: 'Champ Select', value: audio.champSelect },
+                { name: 'TRUE', value: audio.trainTrue },
+                { name: 'Moonmoon destroys Weebs', value: audio.moonmoonDestroysWeebs },
+                { name: 'Bing Chilling', value: audio.bingChilling },
+                { name: 'An Exclusive! It Arrived', value: audio.anExclusiveItArrived },
+                { name: 'Smosh: Shut Up!', value: audio.smoshShutUp },
+                { name: 'Get ready! M.O.A.B.!', value: audio.bloonsGetReadyMOAB },
+                { name: 'Clean-cut, and still cuts a tomato.', value: audio.bloonsCleanCut },
+                { name: 'Game over, man.', value: audio.bloonsGameOverMan },
+                { name: 'Fulcrum, come in', value: audio.fulcrumComeIn },
+                { name: 'Obliterated', value: audio.fulcrumObliterated },
+                { name: 'FADEDTHANAHO', value: audio.fulcrumFadedThanAHo },
+                { name: 'Good Morning Donda', value: audio.goodMorningDonda },
+                { name: 'Teleporting Fat Guy', value: audio.teleportingFatGuy },
+                { name: 'Guga Sous Vide', value: audio.gugaSousVide },
             )
     );
 

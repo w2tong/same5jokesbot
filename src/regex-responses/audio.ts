@@ -1,49 +1,50 @@
 import moment from 'moment-timezone';
+import audio from '../audioFileMap';
 import { updateKnitCount } from '../sql/knit-count';
 import { updateSneezeCount } from '../sql/sneeze-count';
 import { getRandomRange } from '../util';
 
-const congratulations = ['congratulations01', 'congratulations02', 'congratulations03', 'congratulations04', 'congratulations05', 'congratulations06', 'congratulations07', 'congratulations08', 'congratulations09', 'congratulations10', 'congratulations11', 'congratulations12', 'congratulations13'];
+const congratulations = audio.congratulations;
 function getCongratulations(): string {
     return congratulations[getRandomRange(congratulations.length)];
 }
 
-const shutUp = ['smosh_shut_up', 'imaqtpie_shut_up'];
+const shutUp = [audio.smoshShutUp, audio.imaqtpieShutUp];
 function getShutUp(): string {
     return shutUp[getRandomRange(shutUp.length)];
 }
 
-const letsGo = ['ryze_lets_go_lets_go', 'dababy_lets_go'];
+const letsGo = [audio.ryzeLetsGo, audio.dababyLetsGo];
 function getLetsGo(): string {
     return letsGo[getRandomRange(letsGo.length)];
 }
 
-const valor = ['quinn_to_me', 'quinn_what_do_you_see_up_there'];
+const valor = [audio.quinnToMe, audio.quinnWhatDoYouSeeUpThere];
 function getValor(): string {
     return valor[getRandomRange(valor.length)];
 }
 
-const dog = ['whatthedogdoin', 'i_am_a_doggie'];
+const dog = [audio.whatTheDogDoin, audio.iAmADoggie];
 function getDog(): string {
     return dog[getRandomRange(dog.length)];
 }
 
-const mask = ['bane_mask', 'dream_mask'];
+const mask = [audio.baneMask, audio.dreamMask];
 function getMask(): string {
     return mask[getRandomRange(mask.length)];
 }
 
-const noNoNo = ['no_no_no_not_like_that', 'jerry_no_no_no'];
+const noNoNo = [audio.noNoNoNotLikeThat, audio.jerryNoNoNo];
 function getNoNoNo(): string {
     return noNoNo[getRandomRange(noNoNo.length)];
 }
 
-const blind = ['im_blind_not_deaf', 'smelly_enemy'];
+const blind = [audio.imBlindNotDeaf, audio.smellyEnemy];
 function getBlind(): string {
     return blind[getRandomRange(blind.length)];
 }
 
-const ohSh_t = ['oh_sh_t_a_rat', 'oh_sh_t_a_ghost'];
+const ohSh_t = [audio.ohShtARat, audio.ohShtAGhost];
 function getOhSh_t(): string {
     return ohSh_t[getRandomRange(ohSh_t.length)];
 }
@@ -51,39 +52,39 @@ function getOhSh_t(): string {
 const regexToAudio = [
     {
         regex: /w(oah|hoa)/,
-        getAudio: () => 'basementgang'
+        getAudio: () => audio.basementGang
     },
     {
         regex: /(thunder v(ersu)?s lightning)/,
-        getAudio: () => 'thunder_vs_lightning_full'
+        getAudio: () => audio.thunderVsLightningFull
     },
     {
         regex: /demon time/,
-        getAudio: () => 'demontime'
+        getAudio: () => audio.demonTime
     },
     {
         regex: /i'?m.*(4|four|poor|bored)/,
-        getAudio: () => 'VillagerCWhat3'
+        getAudio: () => audio.imFour
     },
     {
         regex: /sigh|yuno/,
-        getAudio: () => 'sykkuno'
+        getAudio: () => audio.sykkunoHere
     },
     {
         regex: /uh.*oh/,
-        getAudio: () => 'uhohstinky'
+        getAudio: () => audio.uhOhStinky
     },
     {
         regex: /(tbc.*hype|focus.*up)/,
-        getAudio: () => 'tbchype'
+        getAudio: () => audio.tbcHype
     },
     {
         regex: /suc(c|k|tion)/,
-        getAudio: () => 'suction'
+        getAudio: () => audio.suction
     },
     {
         regex: /time (to|2) stop/,
-        getAudio: () => 'itstimetostop'
+        getAudio: () => audio.itsTimeToStop
     },
     {
         regex: /dog/,
@@ -91,7 +92,7 @@ const regexToAudio = [
     },
     {
         regex: /bean|badlands|chugs|eric booker/,
-        getAudio: () => 'beans'
+        getAudio: () => audio.badlandsChugsBeans
     },
     {
         regex: /smosh|shut.*up|imaqtpie/,
@@ -99,39 +100,39 @@ const regexToAudio = [
     },
     {
         regex: /i don'?t think so/,
-        getAudio: () => 'NOIDONTTHINKSO'
+        getAudio: () => audio.noIDontThinkSo
     },
     {
         regex: /fulcrum|come in/,
-        getAudio: () => 'fulcrum_come_in'
+        getAudio: () => audio.fulcrumComeIn
     },
     {
         regex: /obliterated|need i say more/,
-        getAudio: () => 'obliterated'
+        getAudio: () => audio.fulcrumObliterated
     },
     {
         regex: /good morning,? donda/,
-        getAudio: () => 'good_morning_donda'
+        getAudio: () => audio.goodMorningDonda
     },
     {
         regex: /good morning|morning|\bgm\b|donda/,
-        getAudio: () => 'good_morning_donda_short'
+        getAudio: () => audio.goodMorningDondaShort
     },
     {
         regex: /(not|doesn'?t) look.*good|but watch this/,
-        getAudio: () => 'guga'
+        getAudio: () => audio.gugaSousVide
     },
     {
         regex: /wake.*up/,
-        getAudio: () => 'WAKEUP'
+        getAudio: () => audio.chopSueyWakeUp
     },
     {
         regex: /wanted to/,
-        getAudio: () => 'YOUWANTEDTO'
+        getAudio: () => audio.chopSueyYouWantedTo
     },
     {
         regex: /forget|forgot|forgor|(i'?m|i am) walking here|don'?t you/,
-        getAudio: () => 'fugetaboutit'
+        getAudio: () => audio.furgetAboutIt
     },
     {
         regex: /blind|can'?t see/,
@@ -139,7 +140,7 @@ const regexToAudio = [
     },
     {
         regex: /they came|from behind/,
-        getAudio: () => 'they_came_from_behind'
+        getAudio: () => audio.theyCameFromBehind
     },
     {
         regex: /no,?\s*no,?\s*no|not like that/,
@@ -147,11 +148,11 @@ const regexToAudio = [
     },
     {
         regex: /soda/,
-        getAudio: () => 'SODA'
+        getAudio: () => audio.bidenSoda
     },
     {
         regex: /legend(ary)?/,
-        getAudio: () => 'GOLDEN_LEGENDARY'
+        getAudio: () => audio.hsGoldenLegendary
     },
     {
         regex: /grats|congratulations|\bgz\b/,
@@ -159,56 +160,56 @@ const regexToAudio = [
     },
     {
         regex: /([0-9]+|one|two|three|four|five|six|seven|eight|nine|for)\s*(pc|piece|set|peace)/,
-        getAudio: () => 'the_one_piece_is_real'
+        getAudio: () => audio.theOnePieceIsReal
     },
     {
         regex: /hbd|b(irth)?day/,
-        getAudio: () => 'michael_its_your_bd_today'
+        getAudio: () => audio.micahelItsYourBirthdayToday
     },
     {
         regex: /ahem|cough|breakfast/,
-        getAudio: () => 'breakfast'
+        getAudio: () => audio.breakfast
     },
     {
         regex: /food/,
         getAudio: () => {
             const hour = moment().utc().tz('America/Toronto').hour();
             if (hour >= 4 && hour < 12) {
-                return 'breakfast';
+                return audio.breakfast;
             }
             return '';
         }
     },
     {
         regex: /infinite|possib|\baxe\b/,
-        getAudio: () => 'infinite_possibilities'
+        getAudio: () => audio.infinitePossibilities
     },
     {
         regex: /small.*cat|feral|meow/,
-        getAudio: () => 'small_cat'
+        getAudio: () => audio.imaqtpieSmallCat
     },
     {
         regex: /under.*water/,
-        getAudio: () => 'i_am_under_the_water'
+        getAudio: () => audio.iAmUnderTheWater
     },
     {
         regex: /everybody|cheers|take care|amazing|that'?s what i'?m talking about|all right/,
-        getAudio: () => 'guga_everybody'
+        getAudio: () => audio.gugaEverybody
     },
     {
         regex: /arthur|knit|fuchsia/,
         getAudio: (userId: string) => {
             void updateKnitCount(userId);
-            return 'arthur_knitter';
+            return audio.arthurKnitter;
         }
     },
     {
         regex: /zoomin|foreign|\bt(yler)?\s?(1|one)/,
-        getAudio: () => 'zoomin_in_the_foreign'
+        getAudio: () => audio.zoominInTheForeign
     },
     {
         regex: /bye|baj|badge/,
-        getAudio: () => 'baj_baj'
+        getAudio: () => audio.bajBaj
     },
     {
         regex: /mask/,
@@ -216,39 +217,39 @@ const regexToAudio = [
     },
     {
         regex: /(for|4)\s+(yo)?u/,
-        getAudio: () => 'bane_for_you'
+        getAudio: () => audio.baneForYou
     },
     {
         regex: /get ready/,
-        getAudio: () => 'get_ready_MOAB'
+        getAudio: () => audio.bloonsGetReadyMOAB
     },
     {
         regex: /disgusting/,
-        getAudio: () => 'disgustang'
+        getAudio: () => audio.disgustang
     },
     {
         regex: /\ball the\b|alda/,
-        getAudio: () => 'small_things'
+        getAudio: () => audio.smallThings
     },
     {
         regex: /small things/,
-        getAudio: () => 'all_the'
+        getAudio: () => audio.allThe
     },
     {
         regex: /uh guys/,
-        getAudio: () => 'uh_guys'
+        getAudio: () => audio.bloonsUhGuys
     },
     {
         regex: /teleporting fat guy/,
-        getAudio: () => 'teleporting_fat_guy'
+        getAudio: () => audio.teleportingFatGuy
     },
     {
         regex: /teleport|fat guy/,
-        getAudio: () => 'teleporting_fat_guy_short'
+        getAudio: () => audio.teleportingFatGuyShort
     },
     {
         regex: /developers/,
-        getAudio: () => 'steve_ballmer_developers'
+        getAudio: () => audio.steveBallmerDevelopers
     },
     {
         regex: /valor/,
@@ -260,173 +261,169 @@ const regexToAudio = [
     },
     {
         regex: /obamn?a/,
-        getAudio: () => 'obamna'
+        getAudio: () => audio.obamna
     },
     {
         regex: /((ya|yeah),?\s*){3}/,
-        getAudio: () => 'i_am_lorde'
+        getAudio: () => audio.iAmLorde
     },
     {
         regex: /oh?,?\s*((g|j)eez|cheese)/,
-        getAudio: () => 'oh_geez'
+        getAudio: () => audio.ohGeez
     },
     {
         regex: /wrap|finger/,
-        getAudio: () => 'wrapped_around_your_finger'
+        getAudio: () => audio.wrappedAroundYourFinger
     },
     {
         regex: /manwa|manua|manhua|manga|anime|v.*tuber|get a life|gura|amelia watson|iron mouse/,
-        getAudio: () => 'doc_get_a_life'
+        getAudio: () => audio.docGetALife
     },
     {
         regex: /game over/,
-        getAudio: () => 'game_over_man'
-    },
-    {
-        regex: /giga/,
-        getAudio: () => 'gigachad'
+        getAudio: () => audio.bloonsGameOverMan
     },
     {
         regex: /jinx/,
-        getAudio: () => 'jinx'
+        getAudio: () => audio.jinx
     },
     {
         regex: /library|be (quiet|silent)/,
-        getAudio: () => 'this_is_library'
+        getAudio: () => audio.thisIsLibrary
     },
     {
         regex: /hiding/,
-        getAudio: () => 'twitch_i_was_hiding'
+        getAudio: () => audio.twitchIWasHiding
     },
     {
         regex: /short/,
-        getAudio: () => 'veigar_short_joke'
+        getAudio: () => audio.veigarShortJoke
     },
     {
         regex: /silence/,
-        getAudio: () => 'dota2_silence'
+        getAudio: () => audio.dota2Silence
     },
     {
         regex: /let (him|me) cook/,
-        getAudio: () => 'let_him_cook'
+        getAudio: () => audio.letHimCook
     },
     {
         regex: /i('?m| am) a dwarf|diggy diggy hole/,
-        getAudio: () => 'diggy_diggy_hole'
+        getAudio: () => audio.diggyDiggyHole
     },
     {
         regex: /i gotta go|i'?m leaving|since we'?re not doing anything/,
-        getAudio: () => 'discord_disconnect'
+        getAudio: () => audio.discordDisconnect
     },
     {
         regex: /oink|pig/,
-        getAudio: () => 'pig'
+        getAudio: () => audio.fatLikeAPig
     },
     {
         regex: /that'?s it|i'?m dead/,
-        getAudio: () => 'thats_it_im_dead'
+        getAudio: () => audio.wc3PeasantThatsItImDead
     },
     {
         regex: /why (nu|new)\s*(nu|new)/,
-        getAudio: () => 'im_ripping_out_my_hair'
+        getAudio: () => audio.imRippingOutMyHair
     },
     {
         regex: /ripping out my hair/,
-        getAudio: () => 'why_nunu_why'
+        getAudio: () => audio.whyNunuWhy
     },
     {
         regex: /sneez|bless you|hocus pocus/,
         getAudio: (userId :string) => {
             void updateSneezeCount(userId);
-            return 'train_sneeze';
+            return audio.trainSneeze;
         }
     },
     {
         regex: /slow mo(de)?|slow.*(it|that|sneeze).*down/,
         getAudio: (userId :string) => {
             void updateSneezeCount(userId);
-            return 'train_sneeze_slow';
+            return audio.trainSneezeSlow;
         }
     },
     {
         regex: /(for|four|force?)\s*(send?|sin|and|in|son|cen|ing)/,
-        getAudio: () => 'boys'
+        getAudio: () => audio.boys
     },
     {
         regex: /whopper,? whopper,? whopper,? whopper/,
-        getAudio: () => 'whopper_whopper'
+        getAudio: () => audio.whopperWhopper
     },
     {
         regex: /whopper/,
-        getAudio: () => 'whopper_whopper_short'
+        getAudio: () => audio.whopperWhopperShort
     },
     {
         regex: /hard.*core/,
-        getAudio: () => 'keep_it_hardcore'
+        getAudio: () => audio.keepItHardcore
     },
     {
         regex: /to the arena/,
-        getAudio: () => 'xin_zhao_to_the_arena'
+        getAudio: () => audio.xinZhaoToTheArena
     },
     {
         regex: /f(ri|u)cked/,
-        getAudio: () => 'what_a_fd_up_day'
+        getAudio: () => audio.whatAFdUpDay
     },
     {
         regex: /i did not|it'?s not true|it'?s bullshit|hi,? mark/,
-        getAudio: () => 'oh_hi_mark'
+        getAudio: () => audio.ohHiMark
     },
     {
         regex: /where (are they|is she)/,
-        getAudio: () => 'batman_where_are_they'
+        getAudio: () => audio.batmanWhereAreThey
     },
     {
         regex: /(j|g)erry/,
-        getAudio: () => 'jerry'
+        getAudio: () => audio.jerry
     },
     {
         regex: /wedg(ie|y)|wechi/,
-        getAudio: () => 'wedgie'
+        getAudio: () => audio.wedgieMommy
     },
     {
         regex: /killer/,
-        getAudio: () => 'killer'
+        getAudio: () => audio.killerKS
     },
     {
         regex: /potion/,
-        getAudio: () => 'potion_seller'
+        getAudio: () => audio.potionSeller
     },
     {
         regex: /dopa|don't put down/,
-        getAudio: () => 'dopa_down'
+        getAudio: () => audio.dopaDown
     },
     {
         regex: /\ba tip\b/,
-        getAudio: () => 'and_a_spear_behind_it'
+        getAudio: () => audio.xinZhaoAndASpearBehindIt
     },
     {
         regex: /disconnect|\bdc\b/,
-        getAudio: () => 'he_disconnected'
+        getAudio: () => audio.heDisconnected
     },
     {
         regex: /\baudi\b/,
-        getAudio: () => 'audi'
+        getAudio: () => audio.audi
     },
     {
         regex: /what.*is this game about/,
-        getAudio: () => 'doc_what_is_this_game_about'
+        getAudio: () => audio.docWhatIsThisGameAbout
     },
     {
         regex: /chinese motorcycle/,
-        getAudio: () => 'doc_chinese_motorcycle'
+        getAudio: () => audio.docChineseMotorcycle
     },
     {
         regex: /oh sh.t a rat/,
-        getAudio: () => 'oh_sh_t_a_rat'
+        getAudio: () => audio.ohShtARat
     },
     {
         regex: /oh sh.t a ghost/,
-        getAudio: () => 'oh_sh_t_a_ghost'
+        getAudio: () => audio.ohShtAGhost
     },
     {
         regex: /oh sh.t/,
@@ -434,20 +431,60 @@ const regexToAudio = [
     },
     {
         regex: /(yo)?u should/,
-        getAudio: () => 'NOW'
+        getAudio: () => audio.ltgNow
     },
     {
         regex: /facebook|nice job/,
-        getAudio: () => 'nice_job_team'
+        getAudio: () => audio.niceJobTeam
     },
     {
         regex: /waiting for.*bus/,
-        getAudio: () => 'no_duh_im_at_the_bus_stop_too'
+        getAudio: () => audio.noDuhImAtTheBusStopToo
     },
     {
         regex: /\bbus\b/,
-        getAudio: () => 'waiting_for_the_bus_too'
-    }
+        getAudio: () => audio.waitingForTheBusToo
+    },
+    {
+        regex: /enough talk/,
+        getAudio: () => audio.badlandsChugsEnoughTalk
+    },
+    {
+        regex: /that'?s pretty true/,
+        getAudio: () => audio.trainTrue
+    },
+    {
+        regex: /(bing|being|thing|been) chilling/,
+        getAudio: () => audio.bingChilling
+    },
+    {
+        regex: /clean cut/,
+        getAudio: () => audio.bloonsCleanCut
+    },
+    {
+        regex: /faded (then|than|in) a ho/,
+        getAudio: () => audio.fulcrumFadedThanAHo
+    },
+    {
+        regex: /go go go/,
+        getAudio: () => audio.strangerThingsGoGoGo
+    },
+    {
+        regex: /max and i are in danger/,
+        getAudio: () => audio.strangerThingsMaxAndIAreInDanger
+    },
+    {
+        regex: /do you hear me/,
+        getAudio: () => audio.strangerThingsTheDemigorgonsAreComing
+    },
+    {
+        regex: /(demi|emmy|tammy|me|giga|kiki) ((c|g|t)or(gg?|k|p)(a|e|i|o)n)s? are coming/,
+        getAudio: () => audio.strangerThingsDoYouHearMe
+    },
+    {
+        regex: /giga/,
+        getAudio: () => audio.gigaChad
+    },
 ];
 
 export default (command: string, userId: string) => {
