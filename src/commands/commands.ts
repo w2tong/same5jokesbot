@@ -17,26 +17,26 @@ import audioCountTotal from './audio-count-total';
 import topTimeInVoice from './top-time-in-voice';
 import timeInVoiceTogether from './time-in-voice-together';
 
-const commands = [
-    {execute: play.execute, name: play.name},
-    {execute: roll.execute, name: roll.name},
-    {execute: currentDisperseStreak.execute, name: currentDisperseStreak.name},
-    {execute: disperseBreaks.execute, name: disperseBreaks.name},
-    {execute: disperseHighscore.execute, name: disperseHighscore.name},
-    {execute: gamersStats.execute, name: gamersStats.name},
-    {execute: topDisperseRate.execute, name: topDisperseRate.name},
-    {execute: topDisperseBreaks.execute, name: topDisperseBreaks.name},
-    {execute: knitCount.execute, name: knitCount.name},
-    {execute: sneezeCount.execute, name: sneezeCount.name},
-    {execute: remind.execute, name: remind.name},
-    {execute: deleteReminder.execute, name: deleteReminder.name},
-    {execute: timeInVoice.execute, name: timeInVoice.name},
-    {execute: timeInVoiceLineGraph.execute, name: timeInVoiceLineGraph.name},
-    {execute: audioCount.execute, name: audioCount.name},
-    {execute: audioCountTotal.execute, name: audioCountTotal.name},
-    {execute: topTimeInVoice.execute, name: topTimeInVoice.name},
-    {execute: timeInVoiceTogether.execute, name: timeInVoiceTogether.name}
-];
+const commands = {
+    [play.name]: play.execute,
+    [roll.name]: roll.execute,
+    [currentDisperseStreak.name]: currentDisperseStreak.execute,
+    [disperseBreaks.name]: disperseBreaks.execute,
+    [disperseHighscore.name]: disperseHighscore.execute,
+    [gamersStats.name]: gamersStats.execute,
+    [topDisperseRate.name]: topDisperseRate.execute,
+    [topDisperseBreaks.name]: topDisperseBreaks.execute,
+    [knitCount.name]: knitCount.execute,
+    [sneezeCount.name]: sneezeCount.execute,
+    [remind.name]: remind.execute,
+    [deleteReminder.name]: deleteReminder.execute,
+    [timeInVoice.name]: timeInVoice.execute,
+    [timeInVoiceLineGraph.name]: timeInVoiceLineGraph.execute,
+    [audioCount.name]: audioCount.execute,
+    [audioCountTotal.name]: audioCountTotal.execute,
+    [topTimeInVoice.name]: topTimeInVoice.execute,
+    [timeInVoiceTogether.name]: timeInVoiceTogether.execute
+};
 
 const commandBuilders = [
     play.commandBuilder,

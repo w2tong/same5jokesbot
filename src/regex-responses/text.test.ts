@@ -11,6 +11,13 @@ const mockDate = new Date('2023-01-01');
 jest.useFakeTimers().setSystemTime(mockDate);
 jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
 
+beforeAll(() => {
+    logger.logger.silent = true;
+});
+afterAll(() => {
+    logger.logger.silent = false;
+});
+
 describe('Where\'s andy?', () => {
     test('empty string', async () => {
         const res = await getTextResponse('', '', '', '');
