@@ -114,5 +114,7 @@ export default {
     strangerThingsGoGoGo: 'stranger_things_go_go_go',
     strangerThingsMaxAndIAreInDanger: 'stranger_things_max_and_i_are_in_danger',
     strangerThingsTheDemigorgonsAreComing: 'stranger_things_the_demigorgons_are_coming',
-    strangerThingsDoYouHearMe: 'stranger_things_do_you_hear_me'
+    strangerThingsDoYouHearMe: 'stranger_things_do_you_hear_me',
+    leaveMeAloneDing: 'leave_me_alone_ding',
+    akiraDing: 'akira_ding'
 };

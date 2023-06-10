@@ -485,6 +485,14 @@ const regexToAudio = [
         regex: /giga/,
         getAudio: () => audio.gigaChad
     },
+    {
+        regex: /leave me alone/,
+        getAudio: () => audio.leaveMeAloneDing
+    },
+    {
+        regex: /akira/,
+        getAudio: () => audio.akiraDing
+    },
 ];
 
 export default (command: string, userId: string) => {

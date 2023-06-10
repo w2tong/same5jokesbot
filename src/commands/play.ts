@@ -39,7 +39,7 @@ const commandBuilder = new SlashCommandBuilder()
 				{ name: 'Phasmo Here', value: 'phasmo_here' },
 				*/
                 { name: 'Among Us Emergency Meeting', value: audio.amongUsEmergencyMeeting },
-                { name: 'Disgustang', value: audio.demonTime },
+                { name: 'Disgustang', value: audio.disgustang },
                 { name: 'Demon Time', value: audio.demonTime },
                 { name: 'What the dog doin', value: audio.whatTheDogDoin },
                 { name: 'Beans', value: audio.badlandsChugsBeans },
