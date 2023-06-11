@@ -272,7 +272,7 @@ const regexToAudio = [
         getAudio: () => audio.ohGeez
     },
     {
-        regex: /wrap|finger/,
+        regex: /wrapped around your finger/,
         getAudio: () => audio.wrappedAroundYourFinger
     },
     {
