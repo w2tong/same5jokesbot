@@ -13,7 +13,7 @@ import voiceStateUpdateHandler, { initMainChannel } from './events/voiceStateUpd
 import { initVoiceLogChannel } from './voice';
 import { fetchChannel, fetchUser } from './util';
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 
 // On messages
 client.on(Events.MessageCreate, messageCreateHandler);
@@ -27,6 +27,12 @@ client.on(Events.VoiceStateUpdate, voiceStateUpdateHandler);
 // Login with bot token
 client.login(process.env.BOT_TOKEN).catch(logError);
 client.once(Events.ClientReady, async () => {
+
+    // Fetch all guilds and members
+    await client.guilds.fetch();
+    for (const guild of client.guilds.cache.values()) {
+        await guild.members.fetch();
+    }
 
     // Init voice log channel
     await initMainChannel(client);
