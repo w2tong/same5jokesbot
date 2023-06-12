@@ -17,14 +17,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
             totalField += `${topDisperseStreakBreaks[i].SCORE}\n`;
         }
         
-        const rowDisperseRateEmbed = new EmbedBuilder()
+        const rowDisperseBreaksEmbed = new EmbedBuilder()
             .setTitle('Top Disperse Streak Breaks')
             .addFields(
                 { name: 'Name', value: namesField, inline: true },
                 { name: '# of breaks', value: dispersePercentField, inline: true },
                 { name: 'Sum of streaks broken', value: totalField, inline: true }
             );
-        void interaction.editReply({ embeds: [rowDisperseRateEmbed] });
+        void interaction.editReply({ embeds: [rowDisperseBreaksEmbed] });
     }
     else {
         void interaction.editReply('No stats available.');
