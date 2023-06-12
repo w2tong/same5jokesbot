@@ -69,7 +69,6 @@ function createUpdateTimeInVoiceTogetherCronJob() {
 const cringePointsPerUpdate = 10;
 function createUpdateCringePointsCronJob(client: Client) {
     schedule.scheduleJob('*/10 * * * *', function() {
-        console.log(timeInVoice.userJoinTime);
         const cringePointUpdates: Array<CringePointsUpdate> = [];
         for (const {bot, id} of client.users.cache.values()) {
             if (bot) continue;
