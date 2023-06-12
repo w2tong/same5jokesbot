@@ -16,6 +16,8 @@ import audioCount from './audio-count';
 import audioCountTotal from './audio-count-total';
 import topTimeInVoice from './top-time-in-voice';
 import timeInVoiceTogether from './time-in-voice-together';
+import cringePoints from './cringe-points';
+import topCringePoints from './top-cringe-points';
 
 const commands = {
     [play.name]: play.execute,
@@ -35,7 +37,9 @@ const commands = {
     [audioCount.name]: audioCount.execute,
     [audioCountTotal.name]: audioCountTotal.execute,
     [topTimeInVoice.name]: topTimeInVoice.execute,
-    [timeInVoiceTogether.name]: timeInVoiceTogether.execute
+    [timeInVoiceTogether.name]: timeInVoiceTogether.execute,
+    [cringePoints.name]: cringePoints.execute,
+    [topCringePoints.name]: topCringePoints.execute
 };
 
 const commandBuilders = [
@@ -56,7 +60,9 @@ const commandBuilders = [
     audioCount.commandBuilder,
     audioCountTotal.commandBuilder,
     topTimeInVoice.commandBuilder,
-    timeInVoiceTogether.commandBuilder
+    timeInVoiceTogether.commandBuilder,
+    cringePoints.commandBuilder,
+    topCringePoints.commandBuilder
 ];
 
 export { commands, commandBuilders };
