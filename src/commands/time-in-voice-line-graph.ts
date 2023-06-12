@@ -107,7 +107,7 @@ const name = 'time-in-voice-line-graph';
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription('Creates a line graph of your time in a voice channel in this guild for the last 30 days.')
-    .addUserOption((option) => option.setName('user').setDescription('The user'));
+    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
 export default { execute, name, commandBuilder };
 

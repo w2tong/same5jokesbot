@@ -272,7 +272,7 @@ const regexToAudio = [
         getAudio: () => audio.ohGeez
     },
     {
-        regex: /wrap|finger/,
+        regex: /wrapped around your finger/,
         getAudio: () => audio.wrappedAroundYourFinger
     },
     {
@@ -292,11 +292,11 @@ const regexToAudio = [
         getAudio: () => audio.thisIsLibrary
     },
     {
-        regex: /hiding/,
+        regex: /i was hiding/,
         getAudio: () => audio.twitchIWasHiding
     },
     {
-        regex: /short/,
+        regex: /short joke/,
         getAudio: () => audio.veigarShortJoke
     },
     {
@@ -358,7 +358,7 @@ const regexToAudio = [
         getAudio: () => audio.whopperWhopperShort
     },
     {
-        regex: /hard.*core/,
+        regex: /keep it hard.*core/,
         getAudio: () => audio.keepItHardcore
     },
     {

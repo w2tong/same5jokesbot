@@ -47,10 +47,6 @@ ORDER BY count DESC
 FETCH FIRST 50 ROWS ONLY
 `;
 
-interface AudioCount {
-    AUDIO: string;
-    COUNT: number;
-}
 async function getAudioCountTotal(): Promise<Array<AudioCount>|null> {
     try {
         const connection = await oracledb.getConnection();

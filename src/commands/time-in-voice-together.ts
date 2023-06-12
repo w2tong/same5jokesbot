@@ -95,7 +95,7 @@ const name = 'time-in-voice-together';
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription('Creates a bar chart of your time in voice with other users.')
-    .addUserOption((option) => option.setName('user').setDescription('The user'));
+    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
 export default { execute, name, commandBuilder };
 

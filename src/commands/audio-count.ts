@@ -93,7 +93,7 @@ const name = 'audio-count';
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription('Creates a bar chart of your audio use.')
-    .addUserOption((option) => option.setName('user').setDescription('The user'));
+    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
 export default { execute, name, commandBuilder };
 

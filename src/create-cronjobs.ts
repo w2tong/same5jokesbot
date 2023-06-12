@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { logError } from './logger';
 import  timeInVoice from './time-in-voice';
+import { updateCringePoints, CringePointsUpdate } from './sql/cringe-points';
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/time-in-voice-together';
 import { fetchChannel } from './util';
@@ -62,8 +63,21 @@ function createUpdateTimeInVoiceTogetherCronJob() {
         }
         void insertUserPairs(pairInserts);
         void updateTimeInVoiceTogether(timeInVoiceTogetherUpdates);
+    });
+}
 
-        
+const cringePointsPerUpdate = 10;
+function createUpdateCringePointsCronJob(client: Client) {
+    schedule.scheduleJob('*/10 * * * *', function() {
+        console.log(timeInVoice.userJoinTime);
+        const cringePointUpdates: Array<CringePointsUpdate> = [];
+        for (const {bot, id} of client.users.cache.values()) {
+            if (bot) continue;
+            const update = {userId: id, points: cringePointsPerUpdate};
+            if (timeInVoice.userJoinTime[id]) update.points *= 10;
+            cringePointUpdates.push(update);
+        }
+        void updateCringePoints(cringePointUpdates);
     });
 }
 
@@ -82,6 +96,7 @@ function createCronJobs(client: Client) {
     createUpdateTimeInVoiceCronJob();
     createUpdateTimeInVoiceTogetherCronJob();
     createOracleDBLogStatisticsCronJob();
+    createUpdateCringePointsCronJob(client);
 }
 
 export default createCronJobs;
