@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getTopCringePoints } from '../sql/cringe-points';
-import { fetchUser } from '../util';
+import { fetchUser } from '../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

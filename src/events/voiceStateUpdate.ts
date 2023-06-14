@@ -2,7 +2,8 @@ import { ChannelType, Client, TextChannel, VoiceState } from 'discord.js';
 import { logError } from '../logger';
 import timeInVoice from '../time-in-voice';
 import userIntros from './user-intros';
-import { fetchChannel, getMomentCurrentTimeEST } from '../util';
+import { fetchChannel } from '../discordUtil';
+import { getMomentCurrentTimeEST } from '../util';
 import { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile } from '../voice';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -88,7 +89,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     else if (oldState.guild.id === newState.guild.id && oldState.channelId && newState.channelId && oldState.channelId !== newState.channelId && oldState.channelId !== newState.guild.afkChannelId) {
         const userId = oldState.member?.id;
         if (userId && newState.channel && newState.channel.type === ChannelType.GuildVoice ) {
-            timeInVoice.userChangeChannel(userId, newState.channelId);
+            void timeInVoice.userChangeChannel(userId, newState.channelId);
         }
     }
 

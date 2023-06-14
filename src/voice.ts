@@ -3,7 +3,8 @@ import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource,
 import { join } from 'node:path';
 import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
-import { convertDateToUnixTimestamp, fetchChannel } from './util';
+import { convertDateToUnixTimestamp } from './util';
+import { fetchChannel } from './discordUtil';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
