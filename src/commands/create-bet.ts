@@ -1,8 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { convertDateToUnixTimestamp, timeInMS } from '../util';
-import { Bet } from '../bets';
-
+import { createBet } from '../bets';
 
 const enum ButtonId {
     BetYes = 'bet-yes',
@@ -20,7 +19,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
     
     const userId = interaction.user.id;
     const unixTimestamp = convertDateToUnixTimestamp(new Date(Date.now() + time * timeInMS.second));
-    const bet = new Bet(betTitle, userId, unixTimestamp);
+    const bet = createBet(betTitle, userId, unixTimestamp);
+    if (!bet) {
+        void interaction.reply('You already have an active bet.');
+        return;
+    }
+
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     buttonsRow.addComponents(
         new ButtonBuilder()
@@ -53,12 +57,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setTitle(`Vote ${betYes ? 'YES' : 'NO'}`)
             .setComponents(pointsActionRow);
         void buttonInteraction.showModal(modal);
-        console.log(modal.data.custom_id);
 
         try {
             const modalSubmitInteraction = await buttonInteraction.awaitModalSubmit({ time: 5_000 });
             if (modalSubmitInteraction.customId !== modal.data.custom_id) return;
-            console.log(modalSubmitInteraction.customId, 'modal submitted');
             const points = parseInt(modalSubmitInteraction.fields.getTextInputValue('points'));
             if (isNaN(points)) {
                 void modalSubmitInteraction.reply(`${buttonInteraction.user} Invalid input. Enter a number.`);
