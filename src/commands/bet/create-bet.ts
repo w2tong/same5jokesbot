@@ -1,7 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { nanoid } from 'nanoid';
-import { convertDateToUnixTimestamp, timeInMS } from '../util';
-import { createBet } from '../bets';
+import { timeInMS } from '../../util';
+import { createBet, deleteBet, endBet } from '../../bets';
 
 const enum ButtonId {
     BetYes = 'bet-yes',
@@ -18,10 +18,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
     
     const userId = interaction.user.id;
-    const unixTimestamp = convertDateToUnixTimestamp(new Date(Date.now() + time * timeInMS.second));
-    const bet = createBet(betTitle, userId, unixTimestamp);
+    const endTime = new Date(Date.now() + time * timeInMS.second).getTime();
+    const bet = createBet(betTitle, userId, endTime, interaction.channelId, (await interaction.fetchReply()).id);
     if (!bet) {
-        void interaction.reply('You already have an active bet.');
+        void interaction.editReply('You already have an active bet.');
         return;
     }
 
@@ -29,11 +29,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     buttonsRow.addComponents(
         new ButtonBuilder()
             .setCustomId(ButtonId.BetYes)
-            .setLabel('Bet Yes')
+            .setLabel('Yes')
             .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
             .setCustomId(ButtonId.BetNo)
-            .setLabel('Bet No')
+            .setLabel('No')
             .setStyle(ButtonStyle.Danger),
     );
     void interaction.editReply({embeds: [bet.createBetEmbed()], components: [buttonsRow]});
@@ -42,7 +42,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     buttonCollector.on('collect', async buttonInteraction => {
         if (buttonInteraction.customId === ButtonId.BetYes && bet.isNoBetter(buttonInteraction.user.id) ||
             buttonInteraction.customId === ButtonId.BetNo && bet.isYesBetter(buttonInteraction.user.id)) {
-            void buttonInteraction.reply({ephemeral: true, content: 'You cannot vote both Yes and No.'});
+            void buttonInteraction.reply({content: 'You cannot vote both Yes and No.', ephemeral: true});
             return;
         }
 
@@ -50,7 +50,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const pointsInput = new TextInputBuilder()
             .setCustomId('points')
             .setLabel('Points')
-            .setStyle(TextInputStyle.Short);
+            .setStyle(TextInputStyle.Short)
+            .setRequired(true);
         const pointsActionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(pointsInput);
         const modal = new ModalBuilder()
             .setCustomId(nanoid())
@@ -59,33 +60,45 @@ async function execute(interaction: ChatInputCommandInteraction) {
         void buttonInteraction.showModal(modal);
 
         try {
-            const modalSubmitInteraction = await buttonInteraction.awaitModalSubmit({ time: 5_000 });
+            const modalSubmitInteraction = await buttonInteraction.awaitModalSubmit({ time: 60_000 });
             if (modalSubmitInteraction.customId !== modal.data.custom_id) return;
-            const points = parseInt(modalSubmitInteraction.fields.getTextInputValue('points'));
-            if (isNaN(points)) {
-                void modalSubmitInteraction.reply(`${buttonInteraction.user} Invalid input. Enter a number.`);
+            if (bet.isEnded()) {
+                void modalSubmitInteraction.reply({content: 'Error: The bet has ended.', ephemeral: true});
                 return;
             }
+            const points = parseInt(modalSubmitInteraction.fields.getTextInputValue('points'));
+            if (isNaN(points)) {
+                void modalSubmitInteraction.reply({content: `${buttonInteraction.user} Error: Invalid input. Enter a number.`, ephemeral: true});
+                return;
+            }
+            await modalSubmitInteraction.deferReply();
             betYes ? bet.addYesBetter(modalSubmitInteraction.user.id, points) : bet.addNoBetter(modalSubmitInteraction.user.id, points);
             await interaction.editReply({embeds: [bet.createBetEmbed()]});
-            await modalSubmitInteraction.reply(`${buttonInteraction.user} bet **${betYes ? 'YES' : 'NO'}** with **${points}** Cringe points.`);
+            await modalSubmitInteraction.editReply(`${buttonInteraction.user} bet **${betYes ? 'YES' : 'NO'}** with **${points}** Cringe points.`);
         }
         catch (err) {
             // console.log(err);
         }
     });
-    buttonCollector.on('end', async () => {
-        void interaction.editReply({components: []});
-        void interaction.followUp({embeds: [await bet.createBettersEmbed(interaction.client.users)]});
+    buttonCollector.on('end', () => {
+        if (!bet.isDeleted()) {
+            if (bet.isValid()) {
+                void endBet(interaction.user.id, interaction.client);
+            }
+            else {
+                void deleteBet(interaction.user.id, interaction.client);
+                void interaction.followUp(`Invalid bet ${betTitle} (not enough betters).`);
+            }
+        }
     });
 }
 
-const name = 'create-bet';
+const name = 'create';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder ()
     .setName(name)
     .setDescription('Create a bet with cringe points.')
     .addStringOption((option) => option.setName('bet').setDescription('Enter a bet').setRequired(true))
     .addNumberOption((option) => option.setName('time').setDescription('Enter the time left in seconds to bet').setRequired(true));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };

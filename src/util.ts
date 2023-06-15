@@ -32,4 +32,4 @@ function msToString(ms: number) {
     return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, timeInMS, msToString };
+export { timeInMS, getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, msToString };

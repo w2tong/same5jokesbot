@@ -1,0 +1,29 @@
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import createBet from './create-bet';
+import deleteBet from './delete-bet';
+import endBetting from './end-betting';
+import resolveBet from './resolve-bet';
+
+const subcommands = {
+    [createBet.name]: createBet.execute,
+    [deleteBet.name]: deleteBet.execute,
+    [endBetting.name]: endBetting.execute,
+    [resolveBet.name]: resolveBet.execute,
+};
+
+async function execute(interaction: ChatInputCommandInteraction) {
+    const subcommand = interaction.options.getSubcommand();
+    await subcommands[subcommand](interaction);
+}
+
+const name = 'bet';
+
+const commandBuilder = new SlashCommandBuilder()
+    .setName(name)
+    .setDescription('bet stuff.')
+    .addSubcommand(createBet.subcommandBuilder)
+    .addSubcommand(deleteBet.subcommandBuilder)
+    .addSubcommand(endBetting.subcommandBuilder)
+    .addSubcommand(resolveBet.subcommandBuilder);
+
+export default { execute, name, commandBuilder };
