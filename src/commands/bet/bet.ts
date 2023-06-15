@@ -20,7 +20,7 @@ const name = 'bet';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('bet stuff.')
+    .setDescription('Create, delete, resolve, or end betting.')
     .addSubcommand(createBet.subcommandBuilder)
     .addSubcommand(deleteBet.subcommandBuilder)
     .addSubcommand(endBetting.subcommandBuilder)
