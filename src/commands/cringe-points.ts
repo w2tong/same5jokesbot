@@ -7,7 +7,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     let points = 0;
     const cringePoints = await getUserCringePoints(user.id);
     if (cringePoints) {
-        points = cringePoints.POINTS;
+        points = cringePoints;
     }
     void interaction.editReply(`**${user.username}** has **${points}** points.`);
 }

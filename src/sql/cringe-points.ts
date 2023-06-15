@@ -10,23 +10,22 @@ const createTableCringePoints = {
         )`
 };
 
-interface AudioCount {
-    USER_ID: string;
+interface CringePoints {
     POINTS: number;
 }
 
 const getUserQuery = `
-SELECT * FROM cringe_points
+SELECT points FROM cringe_points
 WHERE user_id = :userId
 `;
 
-async function getUserCringePoints(userId: string): Promise<AudioCount|null> {
+async function getUserCringePoints(userId: string): Promise<number|null> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<AudioCount> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);
+        const result: oracledb.Result<CringePoints> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
-            return result.rows[0];
+            return result.rows[0].POINTS;
         }
         return null;
     }
@@ -41,10 +40,14 @@ ORDER BY points DESC
 FETCH FIRST 10 ROWS ONLY
 `;
 
-async function getTopCringePoints(): Promise<Array<AudioCount>> {
+interface CringePointsUser extends CringePoints {
+    USER_ID: string;
+}
+
+async function getTopCringePoints(): Promise<Array<CringePointsUser>> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<AudioCount> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
+        const result: oracledb.Result<CringePointsUser> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;

@@ -200,6 +200,12 @@ class Bet {
         this.noTotal += points;
     }
 
+    getUserPointsBet(userId: string): number {
+        if (this.yesBetters[userId]) return this.yesBetters[userId];
+        if (this.noBetters[userId]) return this.noBetters[userId];
+        return 0;
+    }
+
     createBetEmbed(): EmbedBuilder {
         const timeFieldName = this.deleted ?  'Bet deleted' : `Bet end${this.isEnded() ? 'ed' : 'ing'}`;
         const timeField =  { name: timeFieldName, value: `<t:${convertDateToUnixTimestamp(new Date(this.endTime))}:R>` };

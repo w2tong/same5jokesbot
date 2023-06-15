@@ -2,6 +2,8 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteracti
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../util';
 import { createBet, deleteBet, endBet } from '../../bets';
+import { getUserCringePoints } from '../../sql/cringe-points';
+import { logError } from '../../logger';
 
 const enum ButtonId {
     BetYes = 'bet-yes',
@@ -61,23 +63,40 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
         try {
             const modalSubmitInteraction = await buttonInteraction.awaitModalSubmit({ time: 60_000 });
+            const user = modalSubmitInteraction.user;
             if (modalSubmitInteraction.customId !== modal.data.custom_id) return;
             if (bet.isEnded()) {
                 void modalSubmitInteraction.reply({content: 'Error: The bet has ended.', ephemeral: true});
                 return;
             }
-            const points = parseInt(modalSubmitInteraction.fields.getTextInputValue('points'));
-            if (isNaN(points)) {
-                void modalSubmitInteraction.reply({content: `${buttonInteraction.user} Error: Invalid input. Enter a number.`, ephemeral: true});
+            const currBetPoints = parseInt(modalSubmitInteraction.fields.getTextInputValue('points'));
+            if (isNaN(currBetPoints)) {
+                void modalSubmitInteraction.reply({content: 'Error: Invalid input. Enter a number.', ephemeral: true});
                 return;
             }
+            if (currBetPoints <= 0) {
+                void modalSubmitInteraction.reply({content: 'Error: Invalid input. Enter a number greater than 0.', ephemeral: true});
+                return;
+            }
+            const pointsAvailable = await getUserCringePoints(user.id);
+            if (!pointsAvailable) {
+                void modalSubmitInteraction.reply({content: 'Error: Could not retrieve your current Cringe points.', ephemeral: true});
+                return;
+            }
+            const pointsBet = bet.getUserPointsBet(user.id);
+            const pointsLeft = pointsAvailable - pointsBet;
+            if (pointsLeft < currBetPoints) {
+                await modalSubmitInteraction.reply({content: `Error: You do not have enough Cringe points (**${pointsLeft}** left).`, ephemeral: true});
+                return;
+            }
+            
             await modalSubmitInteraction.deferReply();
-            betYes ? bet.addYesBetter(modalSubmitInteraction.user.id, points) : bet.addNoBetter(modalSubmitInteraction.user.id, points);
+            betYes ? bet.addYesBetter(user.id, currBetPoints) : bet.addNoBetter(user.id, currBetPoints);
             await interaction.editReply({embeds: [bet.createBetEmbed()]});
-            await modalSubmitInteraction.editReply(`${buttonInteraction.user} bet **${betYes ? 'YES' : 'NO'}** with **${points}** Cringe points.`);
+            await modalSubmitInteraction.editReply(`${user} bet **${betYes ? 'YES' : 'NO'}** with **${currBetPoints}** Cringe points (**${pointsBet + currBetPoints}** total, **${pointsAvailable - pointsBet - currBetPoints}** left).`);
         }
         catch (err) {
-            // console.log(err);
+            logError(err);
         }
     });
     buttonCollector.on('end', () => {
