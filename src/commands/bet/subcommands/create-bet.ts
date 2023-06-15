@@ -1,9 +1,9 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { nanoid } from 'nanoid';
-import { timeInMS } from '../../util';
-import { createBet, deleteBet, endBet } from '../../bets';
-import { getUserCringePoints } from '../../sql/cringe-points';
-import { logError } from '../../logger';
+import { timeInMS } from '../../../util';
+import { createBet, deleteBet, endBet } from '../../../bets';
+import { getUserCringePoints } from '../../../sql/cringe-points';
+import { logError } from '../../../logger';
 
 const enum ButtonId {
     BetYes = 'bet-yes',
@@ -118,6 +118,6 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder ()
     .setName(name)
     .setDescription('Create a bet with cringe points.')
     .addStringOption((option) => option.setName('bet').setDescription('Enter a bet').setRequired(true))
-    .addNumberOption((option) => option.setName('time').setDescription('Enter the time left in seconds to bet').setRequired(true));
+    .addNumberOption((option) => option.setName('time').setDescription('Enter the time left in seconds to bet').setRequired(true).setMinValue(10));
 
 export default { execute, name, subcommandBuilder };
