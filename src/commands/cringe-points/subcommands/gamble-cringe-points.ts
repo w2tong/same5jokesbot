@@ -13,7 +13,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         
     const cringePoints = await getUserCringePoints(user.id) ?? 0;
     if (amount > cringePoints) {
-        await interaction.reply({content: `You do not have enough points (you have **${cringePoints}**).`, ephemeral: true});
+        await interaction.reply({content: `You do not have enough points (Balance **${cringePoints}**).`, ephemeral: true});
         return;
     }
 
