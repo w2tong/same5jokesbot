@@ -23,17 +23,20 @@ async function execute(interaction: ChatInputCommandInteraction) {
     let title = `${user.username} `;
     const betField = { name: 'Points Bet', value: `${amount}`, inline: true };
     const balanceField = {name: 'Balance ', value: '', inline: true};
+    const newBalanceField = {name: 'New Balance ', value: '', inline: true};
 
     if (result < chance) {
         const winnings = Math.ceil(amount/chance) - amount;
         title += 'WON';
         balanceField.value = `${cringePoints} (+${winnings})`;
+        newBalanceField.value = `${cringePoints + winnings}`;
         amount = winnings;
     }
     else {
         title += 'LOST';
         amount = -amount;
         balanceField.value = `${cringePoints} (${amount})`;
+        newBalanceField.value = `${cringePoints - amount}`;
     }
     void updateCringePoints([{userId: user.id, points: amount}]);
 
@@ -42,7 +45,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .addFields(
             betField,
             {name: 'Chance', value: `${parseFloat((chance*100).toFixed(2))}%`, inline: true},
-            balanceField
+            balanceField,
+            newBalanceField
         );
     void interaction.editReply({embeds: [embed]});
 }
