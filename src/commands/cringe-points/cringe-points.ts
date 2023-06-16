@@ -1,10 +1,12 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import getCringePoints from './subcommands/get-cringe-points';
 import getTopCringePoints from './subcommands/get-top-cringe-points';
+import gambleCringePoints from './subcommands/gamble-cringe-points';
 
 const subcommands = {
     [getCringePoints.name]: getCringePoints.execute,
-    [getTopCringePoints.name]: getTopCringePoints.execute
+    [getTopCringePoints.name]: getTopCringePoints.execute,
+    [gambleCringePoints.name]: gambleCringePoints.execute
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -18,6 +20,7 @@ const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription('Get or gamble Cringe points.')
     .addSubcommand(getCringePoints.subcommandBuilder)
-    .addSubcommand(getTopCringePoints.subcommandBuilder);
+    .addSubcommand(getTopCringePoints.subcommandBuilder)
+    .addSubcommand(gambleCringePoints.subcommandBuilder);
 
 export default { execute, name, commandBuilder };
