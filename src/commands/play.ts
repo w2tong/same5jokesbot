@@ -1,19 +1,13 @@
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
-import { joinVoice, playAudioFile } from '../voice';
+import { joinVoicePlayAudio } from '../voice';
 import audio from '../audioFileMap';
 
 function execute(interaction: ChatInputCommandInteraction) {
     if (interaction.member instanceof GuildMember && interaction.guild && interaction.member.voice.channel) {
-        const voiceConnection = {
-            channelId: interaction.member.voice.channel.id,
-            guildId: interaction.guild.id,
-            adapterCreator: interaction.guild.voiceAdapterCreator
-        };
-        const audioFile = interaction.options.getString('audio') ?? '';
-        const reply = interaction.member.voice ? `Playing ${audioFile}.` : 'You are not in a voice channel.';
+        const audio = interaction.options.getString('audio') ?? '';
+        const reply = interaction.member.voice ? `Playing ${audio}.` : 'You are not in a voice channel.';
         void interaction.reply({ content: reply, ephemeral: true });
-        joinVoice(voiceConnection, interaction.client);
-        playAudioFile(interaction.guild.id, audioFile, interaction.user.id);
+        joinVoicePlayAudio(interaction, audio);
     }
 }
 

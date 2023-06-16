@@ -4,8 +4,9 @@ import timeInVoice from '../time-in-voice';
 import userIntros from './user-intros';
 import { fetchChannel } from '../discordUtil';
 import { getMomentCurrentTimeEST } from '../util';
-import { disconnectVoice, isInGuildVoice, joinVoice, playAudioFile } from '../voice';
+import { disconnectVoice, isInGuildVoice, joinVoicePlayAudio } from '../voice';
 import * as dotenv from 'dotenv';
+import audio from '../audioFileMap';
 dotenv.config();
 
 // const mainChannel: TextChannel;
@@ -62,25 +63,13 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         // Play Good Morning Donda when joining channel in the morning
         const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
         if (hour >= 6 && hour < 12 && userId) {
-            const voiceConnection = {
-                channelId: newState.channel.id,
-                guildId: newState.guild.id,
-                adapterCreator: newState.guild.voiceAdapterCreator
-            };
-            joinVoice(voiceConnection, newState.client);
-            playAudioFile(newState.guild.id, 'good_morning_donda', userId);
+            joinVoicePlayAudio(newState, audio.goodMorningDonda);
         }
 
         // Play user intro
         else {
             if (userId && userIntros[userId] && userIntros[userId]) {
-                const voiceConnection = {
-                    channelId: newState.channel.id,
-                    guildId: newState.guild.id,
-                    adapterCreator: newState.guild.voiceAdapterCreator
-                };
-                joinVoice(voiceConnection, newState.client);
-                playAudioFile(newState.guild.id, userIntros[userId], userId);
+                joinVoicePlayAudio(newState, userIntros[userId]);
             }
         }
         userIntros;
@@ -108,13 +97,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         oldState.channelId && newState.channelId && oldState.channelId != newState.channelId &&
         oldState.member && oldState.member.roles.cache.some(role => role.name === 'FAT')
     ) {
-        const voiceConnection = {
-            channelId: newState.channelId,
-            guildId: newState.guild.id,
-            adapterCreator: newState.guild.voiceAdapterCreator
-        };
-        joinVoice(voiceConnection, newState.client);
-        playAudioFile(newState.guild.id, 'teleporting_fat_guy_short', oldState.member?.user.id);
+        joinVoicePlayAudio(newState, audio.teleportingFatGuyShort);
     }
 };
 
