@@ -2,11 +2,18 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilde
 import { getUserCringePoints, updateCringePoints } from '../../../sql/cringe-points';
 import { emptyEmbedField } from '../../../discordUtil';
 
+const payouts: {[key: string]: number} = {
+    '50': 2,
+    '30': 5,
+    '10': 20,
+    '1': 500
+};
+
 async function execute(interaction: ChatInputCommandInteraction) {
     
     const user = interaction.user;
     let amount = interaction.options.getInteger('amount');
-    const chance = (interaction.options.getInteger('chance') ?? 50) / 100;
+    const chance = (interaction.options.getString('chance') ?? '50');
     if (!amount) {
         await interaction.reply({content: 'Error getting input.', ephemeral: true});
         return;
@@ -26,8 +33,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const balanceField = {name: 'Balance ', value: '', inline: true};
     const newBalanceField = {name: 'New Balance ', value: '', inline: true};
 
-    if (result < chance) {
-        const winnings = Math.ceil(amount/chance) - amount;
+    if (result < parseInt(chance)/100) {
+        const winnings = amount * payouts[chance] - amount;
         title += 'WON';
         balanceField.value = `${cringePoints} (+${winnings})`;
         newBalanceField.value = `${cringePoints + winnings}`;
@@ -45,8 +52,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .setTitle(title)
         .addFields(
             betField,
-            {name: 'Chance', value: `${chance*100}%`, inline: true},
-            emptyEmbedField,
+            {name: 'Chance', value: `${chance}%`, inline: true},
+            {name: 'Payout', value: `${payouts[chance]}x`, inline: true},
             balanceField,
             newBalanceField,
             emptyEmbedField
@@ -58,21 +65,20 @@ const name = 'gamble';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gamble your cringe points. 50% = x2, 30% = x3.33, 10% = x10')
-    
+    .setDescription('Gamble your cringe points. 50% = x2, 30% = x5, 10% = x20, 1% = x500')
     .addIntegerOption(option => option
         .setName('amount')
         .setDescription('The amount of points you are betting.')
         .setRequired(true)
         .setMinValue(1)
     )
-    .addIntegerOption(option => option
+    .addStringOption(option => option
         .setName('chance')
-        .setDescription('Default: 50% = x2, 30% = x3.33, 10% = x10, 1% = x100')
+        .setDescription('Default: 50% = x2, 30% = x5, 10% = x20, 1% = x500')
         .addChoices(
-            {name: '30%', value: 30},
-            {name: '10%', value: 10},
-            {name: '1%', value: 1}
+            {name: '30%', value: '30'},
+            {name: '10%', value: '10'},
+            {name: '1%', value: '1'}
         )
     );
 
