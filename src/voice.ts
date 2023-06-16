@@ -1,4 +1,4 @@
-import { ChannelType, Client, Message, TextChannel } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import { logError } from './logger';
@@ -77,7 +77,19 @@ function createPlayer(guildId: string): AudioPlayer {
     return player;
 }
 
-function playAudioFile(guildId: string, audioFile: string, userId: string) {
+function joinVoicePlayAudio(input: ChatInputCommandInteraction|Message|VoiceState, audio: string, ) {
+    if (input.member instanceof GuildMember && input.guild && input.member.voice.channel) {
+        const voiceConnection = {
+            channelId: input.member.voice.channel.id,
+            guildId: input.guild.id,
+            adapterCreator: input.guild.voiceAdapterCreator
+        };
+        joinVoice(voiceConnection, input.client);
+        playAudioFile(audio, input.member.id, input.guild.id);
+    }
+}
+
+function playAudioFile( audioFile: string, userId: string, guildId: string) {
     if (!audioFile) return;
     if (!guildConnections[guildId]) return;
     const player = guildConnections[guildId].player;
@@ -191,4 +203,4 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     });
 }
 
-export { initVoiceLogChannel, disconnectVoice, isInGuildVoice, joinVoice, playAudioFile };
+export { initVoiceLogChannel, disconnectVoice, isInGuildVoice, joinVoicePlayAudio };

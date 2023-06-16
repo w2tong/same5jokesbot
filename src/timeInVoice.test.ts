@@ -1,4 +1,4 @@
-import timeInVoice from './time-in-voice';
+import timeInVoice from './timeInVoice';
 import * as sqlTimeInVoice from './sql/time-in-voice';
 import * as sqlTimeInVoiceTogether from './sql/time-in-voice-together';
 // import MockDiscord from './tests/mockDiscord';

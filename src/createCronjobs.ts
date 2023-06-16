@@ -4,7 +4,7 @@ import oracledb from 'oracledb';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { logError } from './logger';
-import  timeInVoice from './time-in-voice';
+import  timeInVoice from './timeInVoice';
 import { updateCringePoints, CringePointsUpdate } from './sql/cringe-points';
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/time-in-voice-together';
@@ -94,7 +94,9 @@ function createCronJobs(client: Client) {
 
     createUpdateTimeInVoiceCronJob();
     createUpdateTimeInVoiceTogetherCronJob();
-    createOracleDBLogStatisticsCronJob();
+    if (process.env.NODE_ENV !== 'production') {
+        createOracleDBLogStatisticsCronJob();
+    }
     createUpdateCringePointsCronJob(client);
 }
 

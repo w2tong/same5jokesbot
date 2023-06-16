@@ -116,5 +116,9 @@ export default {
     strangerThingsTheDemigorgonsAreComing: 'stranger_things_the_demigorgons_are_coming',
     strangerThingsDoYouHearMe: 'stranger_things_do_you_hear_me',
     leaveMeAloneDing: 'leave_me_alone_ding',
-    akiraDing: 'akira_ding'
+    akiraDing: 'akira_ding',
+    clownMusic: 'clown_music',
+    winnerGagnant: 'winner_gagnant',
+    wolfHowl: 'wolf_howl',
+    blackenChineseMan: 'blacken_chinese_man'
 };

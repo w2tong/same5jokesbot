@@ -1,26 +1,28 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/cringe-points';
 import { emptyEmbedField } from '../../../discordUtil';
+import { joinVoicePlayAudio } from '../../../voice';
+import audio from '../../../audioFileMap';
 
-const payouts: {[key: string]: number} = {
-    '50': 2,
-    '30': 5,
-    '10': 20,
-    '1': 500
+const payouts: {[key: number]: number} = {
+    50: 2,
+    30: 5,
+    10: 20,
+    1: 500
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
     
     const user = interaction.user;
-    let amount = interaction.options.getInteger('amount');
-    const chance = (interaction.options.getString('chance') ?? '50');
-    if (!amount) {
+    let pointsBet = interaction.options.getInteger('points');
+    const chance = (interaction.options.getInteger('chance') ?? 50);
+    if (!pointsBet) {
         await interaction.reply({content: 'Error getting input.', ephemeral: true});
         return;
     }
         
     const cringePoints = await getUserCringePoints(user.id) ?? 0;
-    if (amount > cringePoints) {
+    if (pointsBet > cringePoints) {
         await interaction.reply({content: `You do not have enough points (Balance **${cringePoints}**).`, ephemeral: true});
         return;
     }
@@ -29,24 +31,31 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const result = Math.random();
 
     let title = `${user.username} `;
-    const betField = { name: 'Points Bet', value: `${amount}`, inline: true };
+    const betField = { name: 'Points Bet', value: `${pointsBet}`, inline: true };
     const balanceField = {name: 'Balance ', value: '', inline: true};
     const newBalanceField = {name: 'New Balance ', value: '', inline: true};
 
-    if (result < parseInt(chance)/100) {
-        const winnings = amount * payouts[chance] - amount;
+    if (result < chance/100) {
+        const winnings = pointsBet * payouts[chance] - pointsBet;
         title += 'WON';
         balanceField.value = `${cringePoints} (+${winnings})`;
         newBalanceField.value = `${cringePoints + winnings}`;
-        amount = winnings;
+        pointsBet = winnings;
+        if (winnings >= 1000 && (pointsBet / cringePoints) >= 0.1) {
+            joinVoicePlayAudio(interaction, audio.winnerGagnant);
+        }
     }
     else {
         title += 'LOST';
-        amount = -amount;
-        balanceField.value = `${cringePoints} (${amount})`;
-        newBalanceField.value = `${cringePoints + amount}`;
+        const newBalance = cringePoints - pointsBet;
+        pointsBet = -pointsBet;
+        balanceField.value = `${cringePoints} (${pointsBet})`;
+        newBalanceField.value = `${newBalance}`;
+        if (newBalance <= 0) {
+            joinVoicePlayAudio(interaction, audio.clownMusic);
+        }
     }
-    void updateCringePoints([{userId: user.id, points: amount}]);
+    void updateCringePoints([{userId: user.id, points: pointsBet}]);
 
     const embed = new EmbedBuilder()
         .setTitle(title)
@@ -65,20 +74,20 @@ const name = 'gamble';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gamble your cringe points. 50% = x2, 30% = x5, 10% = x20, 1% = x500')
+    .setDescription('Gamble your cringe points. Default bet is 50% chance with 2x payout.')
     .addIntegerOption(option => option
-        .setName('amount')
-        .setDescription('The amount of points you are betting.')
+        .setName('points')
+        .setDescription('The number of points you are betting.')
         .setRequired(true)
         .setMinValue(1)
     )
-    .addStringOption(option => option
+    .addIntegerOption(option => option
         .setName('chance')
-        .setDescription('Default: 50% = x2, 30% = x5, 10% = x20, 1% = x500')
+        .setDescription('The chance of winning.')
         .addChoices(
-            {name: '30%', value: '30'},
-            {name: '10%', value: '10'},
-            {name: '1%', value: '1'}
+            {name: `30%, ${payouts[30]}x payout`, value: 30},
+            {name: `10%, ${payouts[10]}x payout`, value: 10},
+            {name: `1%, ${payouts[1]}x payout`, value: 1}
         )
     );
 

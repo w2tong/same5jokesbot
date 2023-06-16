@@ -9,7 +9,13 @@ module.exports = {
         // ignore_watch: ['node_modules','dist','audio','logs','coverage','.env'],
         out_file: 'logs/pm2.out.log',
         error_file: 'logs/pm2.error.log',
-        log_date_format: 'YYYY-MM-DD HH:mm:ss'
+        log_date_format: 'YYYY-MM-DD HH:mm:ss',
+        env: {
+            'NODE_ENV': 'development'
+        },
+        env_production: {
+            'NODE_ENV': 'production'
+        }
     }],
     deploy: {
         production: {

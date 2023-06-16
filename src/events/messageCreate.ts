@@ -4,7 +4,7 @@ import getAudioResponse from '../regex-responses/audio';
 import getImageResponse from '../regex-responses/image';
 import getReactResponse from '../regex-responses/react';
 import getTextResponse from '../regex-responses/text';
-import { joinVoice, playAudioFile } from '../voice';
+import { joinVoicePlayAudio } from '../voice';
 
 export default async (message: Message) => {
     // Don't respond to bots
@@ -35,13 +35,7 @@ export default async (message: Message) => {
     if (message.member && message.member.voice.channel && message.guild) {
         const audio = getAudioResponse(command, message.author.id);
         if (audio) {
-            const voiceConnection = {
-                channelId: message.member.voice.channel.id,
-                guildId: message.guild.id,
-                adapterCreator: message.guild.voiceAdapterCreator
-            };
-            joinVoice(voiceConnection, message.client);
-            playAudioFile(message.guild.id, audio, message.author.id);
+            joinVoicePlayAudio(message, audio);
         }
     }
 };

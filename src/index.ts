@@ -1,11 +1,11 @@
 import { Client, GatewayIntentBits, Events, ChannelType } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import createCronJobs from './create-cronjobs';
+import createCronJobs from './createCronjobs';
 import { getEmotes } from './emotes';
 import { initOracleDB } from './sql/oracledb';
 import { loadReminders } from './reminders';
-import timeInVoice from './time-in-voice';
+import timeInVoice from './timeInVoice';
 import { logError } from './logger';
 import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
