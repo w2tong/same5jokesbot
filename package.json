@@ -28,7 +28,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "deploy": "ts-node src/deploy-commands.ts",
+    "deploy": "ts-node src/deployCommands.ts",
     "test": "jest"
   },
   "repository": {
