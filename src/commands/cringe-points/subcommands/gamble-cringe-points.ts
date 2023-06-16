@@ -1,11 +1,12 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/cringe-points';
+import { emptyEmbedField } from '../../../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     
     const user = interaction.user;
     let amount = interaction.options.getInteger('amount');
-    const chance = interaction.options.getInteger('chance') ?? 0.5;
+    const chance = (interaction.options.getInteger('chance') ?? 50) / 100;
     if (!amount) {
         await interaction.reply({content: 'Error getting input.', ephemeral: true});
         return;
@@ -36,7 +37,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         title += 'LOST';
         amount = -amount;
         balanceField.value = `${cringePoints} (${amount})`;
-        newBalanceField.value = `${cringePoints - amount}`;
+        newBalanceField.value = `${cringePoints + amount}`;
     }
     void updateCringePoints([{userId: user.id, points: amount}]);
 
@@ -44,9 +45,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .setTitle(title)
         .addFields(
             betField,
-            {name: 'Chance', value: `${parseFloat((chance*100).toFixed(2))}%`, inline: true},
+            {name: 'Chance', value: `${chance*100}%`, inline: true},
+            emptyEmbedField,
             balanceField,
-            newBalanceField
+            newBalanceField,
+            emptyEmbedField
         );
     void interaction.editReply({embeds: [embed]});
 }
@@ -65,10 +68,11 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     )
     .addIntegerOption(option => option
         .setName('chance')
-        .setDescription('Default: 50% = x2, 30% = x3.33, 10% = x10')
+        .setDescription('Default: 50% = x2, 30% = x3.33, 10% = x10, 1% = x100')
         .addChoices(
-            {name: '30%', value: 0.3},
-            {name: '10%', value: 0.1}
+            {name: '30%', value: 30},
+            {name: '10%', value: 10},
+            {name: '1%', value: 1}
         )
     );
 
