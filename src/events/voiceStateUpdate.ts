@@ -1,7 +1,7 @@
 import { ChannelType, Client, TextChannel, VoiceState } from 'discord.js';
 import { logError } from '../logger';
 import timeInVoice from '../time-in-voice';
-import userIntros from './user-intros';
+import userIntros from '../userIntros';
 import { fetchChannel } from '../discordUtil';
 import { getMomentCurrentTimeEST } from '../util';
 import { disconnectVoice, isInGuildVoice, joinVoicePlayAudio } from '../voice';
