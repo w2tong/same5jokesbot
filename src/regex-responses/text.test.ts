@@ -6,6 +6,7 @@ import * as sqlDisperseStreakHighscore from '../sql/disperse-streak-highscore';
 import * as sqlGamerStats from '../sql/gamers-stats';
 import { emotes } from '../emotes';
 import * as logger from '../logger';
+import { mockVoidPromise, mockTruePromise, mockFalsePromise } from '../tests/testUtil';
 
 const mockDate = new Date('2023-01-01');
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -54,16 +55,16 @@ describe('Translate', () => {
 
 describe('Gamers', () => {
 
-    jest.spyOn(sqlGamerStats, 'updateGamersStats').mockImplementation();
+    jest.spyOn(sqlGamerStats, 'updateGamersStats').mockImplementation(mockVoidPromise);
     jest.spyOn(sqlCurrentDisperseStreak, 'getCurrentDisperseStreak').mockImplementation(mockGetCurrentDisperseStreakThree);
-    const mockUpdateCurrentDisperseStreak = jest.spyOn(sqlCurrentDisperseStreak, 'updateCurrentDisperseStreak').mockImplementation();
-    let mockInsertDisperseStreakHighScore = jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation();
-    const mockUpdateDisperseStreakBreaks = jest.spyOn(sqlDisperseStreakBreaks, 'updateDisperseStreakBreaks').mockImplementation();
+    const mockUpdateCurrentDisperseStreak = jest.spyOn(sqlCurrentDisperseStreak, 'updateCurrentDisperseStreak').mockImplementation(mockVoidPromise);
+    let mockInsertDisperseStreakHighScore = jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation(mockFalsePromise);
+    const mockUpdateDisperseStreakBreaks = jest.spyOn(sqlDisperseStreakBreaks, 'updateDisperseStreakBreaks').mockImplementation(mockVoidPromise);
 
     afterEach(() => {
         jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
         jest.spyOn(sqlCurrentDisperseStreak, 'getCurrentDisperseStreak').mockImplementation(mockGetCurrentDisperseStreakThree);
-        mockInsertDisperseStreakHighScore = jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation();
+        mockInsertDisperseStreakHighScore = jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation(mockFalsePromise);
     });
     
     test('empty string', async () => {
@@ -91,11 +92,7 @@ describe('Gamers', () => {
         expect(mockUpdateDisperseStreakBreaks).toBeCalledTimes(0);
     });
     test('Disperse! three streak', async () => {
-        jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation(() => { 
-            return new Promise((resolve) => {
-                resolve(true);
-            });
-        });
+        jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation(mockTruePromise);
         const res = await getTextResponse('gamers', 'user-id', '', 'guild-id');
         expect(res).toBe('Disperse!\nNEW HIGHSCORE: **4** (or the same)');
         expect(mockUpdateCurrentDisperseStreak.mock.lastCall).toEqual(['guild-id', '2023-01-01 00:00:00', 'user1,user2,user3,user-id', 4]);

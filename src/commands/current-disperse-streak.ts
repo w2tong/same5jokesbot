@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getCurrentDisperseStreak } from '../sql/current-disperse-streak';
-import { convertDateToUnixTimestamp, fetchUser } from '../util';
+import { fetchUser } from '../discordUtil';
+import { convertDateToUnixTimestamp } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;

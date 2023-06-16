@@ -1,4 +1,4 @@
-import { getRandomRange, convertDateToUnixTimestamp, msToString, fetchChannel, fetchUser } from './util';
+import { getRandomRange, convertDateToUnixTimestamp, msToString } from './util';
 
 const mockDate = new Date('2023-01-01');
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -58,13 +58,4 @@ describe('msToString()', () => {
     test('867810630 is 10d 1h 3m 30s', () => {
         expect(msToString(867810630)).toBe('10d 1h 3m 30s');
     });
-});
-
-// TODO: functions/api calls for fetchChannel and fetchUser
-describe('fetchChannel()', () => {
-    //
-});
-
-describe('fetchUser()', () => {
-    //
 });

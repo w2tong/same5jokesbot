@@ -8,7 +8,7 @@ import  timeInVoice from './time-in-voice';
 import { updateCringePoints, CringePointsUpdate } from './sql/cringe-points';
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/time-in-voice-together';
-import { fetchChannel } from './util';
+import { fetchChannel } from './discordUtil';
 
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {
@@ -69,7 +69,6 @@ function createUpdateTimeInVoiceTogetherCronJob() {
 const cringePointsPerUpdate = 10;
 function createUpdateCringePointsCronJob(client: Client) {
     schedule.scheduleJob('*/10 * * * *', function() {
-        console.log(timeInVoice.userJoinTime);
         const cringePointUpdates: Array<CringePointsUpdate> = [];
         for (const {bot, id} of client.users.cache.values()) {
             if (bot) continue;

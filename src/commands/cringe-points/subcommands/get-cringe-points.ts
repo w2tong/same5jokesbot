@@ -1,5 +1,5 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getUserCringePoints } from '../sql/cringe-points';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getUserCringePoints } from '../../../sql/cringe-points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -7,16 +7,16 @@ async function execute(interaction: ChatInputCommandInteraction) {
     let points = 0;
     const cringePoints = await getUserCringePoints(user.id);
     if (cringePoints) {
-        points = cringePoints.POINTS;
+        points = cringePoints;
     }
     void interaction.editReply(`**${user.username}** has **${points}** points.`);
 }
 
-const name = 'cringe-points';
+const name = 'get';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets a user\'s cringe points.')
     .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };

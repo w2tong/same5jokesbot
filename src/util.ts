@@ -1,4 +1,3 @@
-import { ChannelManager, UserManager } from 'discord.js';
 import moment from 'moment-timezone';
 
 // Random integer between 0 and max
@@ -33,12 +32,4 @@ function msToString(ms: number) {
     return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-async function fetchChannel(channels: ChannelManager, channelId: string) {
-    return channels.cache.get(channelId) ?? await channels.fetch(channelId);
-}
-
-async function fetchUser(users: UserManager, userId: string) {
-    return users.cache.get(userId) ?? await users.fetch(userId);
-}
-
-export { getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, timeInMS, msToString, fetchChannel, fetchUser };
+export { timeInMS, getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, msToString };

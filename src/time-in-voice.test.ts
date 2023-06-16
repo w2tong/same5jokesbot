@@ -3,14 +3,15 @@ import * as sqlTimeInVoice from './sql/time-in-voice';
 import * as sqlTimeInVoiceTogether from './sql/time-in-voice-together';
 // import MockDiscord from './tests/mockDiscord';
 // const mockDiscord = new MockDiscord();
+import { mockVoidPromise } from './tests/testUtil';
 
 const mockDate1 = new Date('2023-01-01');
 const mockDate2 = new Date('2023-01-02');
 jest.useFakeTimers().setSystemTime(mockDate1);
 
-jest.spyOn(sqlTimeInVoice, 'updateTimeInVoice').mockImplementation();
-const insertUserPairsMock = jest.spyOn(sqlTimeInVoiceTogether, 'insertUserPairs').mockImplementation();
-jest.spyOn(sqlTimeInVoiceTogether, 'updateTimeInVoiceTogether').mockImplementation();
+jest.spyOn(sqlTimeInVoice, 'updateTimeInVoice').mockImplementation(mockVoidPromise);
+const insertUserPairsMock = jest.spyOn(sqlTimeInVoiceTogether, 'insertUserPairs').mockImplementation(mockVoidPromise);
+jest.spyOn(sqlTimeInVoiceTogether, 'updateTimeInVoiceTogether').mockImplementation(mockVoidPromise);
 
 // describe('initUsers()', () => {
 //     test('single user', () => {

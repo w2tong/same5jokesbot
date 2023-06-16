@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getTopCringePoints } from '../sql/cringe-points';
-import { fetchUser } from '../util';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getTopCringePoints } from '../../../sql/cringe-points';
+import { fetchUser } from '../../../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -28,10 +28,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'top-cringe-points';
+const name = 'get-top';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets cringe points of top 10 users.');
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
