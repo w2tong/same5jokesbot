@@ -3,7 +3,7 @@ import { joinVoicePlayAudio } from '../voice';
 import audio from '../audioFileMap';
 
 function execute(interaction: ChatInputCommandInteraction) {
-    if (interaction.member instanceof GuildMember && interaction.guild && interaction.member.voice.channel) {
+    if (interaction.member instanceof GuildMember) {
         const audio = interaction.options.getString('audio') ?? '';
         const reply = interaction.member.voice ? `Playing ${audio}.` : 'You are not in a voice channel.';
         void interaction.reply({ content: reply, ephemeral: true });
