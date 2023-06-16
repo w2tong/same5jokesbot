@@ -6,7 +6,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     let amount = interaction.options.getInteger('amount');
     const chance = interaction.options.getInteger('chance') ?? 0.5;
-    if (!amount || !chance) {
+    if (!amount) {
         await interaction.reply({content: 'Error getting input.', ephemeral: true});
         return;
     }
