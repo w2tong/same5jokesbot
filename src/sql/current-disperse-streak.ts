@@ -28,7 +28,6 @@ async function getCurrentDisperseStreak(guildId: string): Promise<CurrentDispers
         const result: oracledb.Result<CurrentDisperseStreak> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows[0]) {
-            console.log(result.rows[0].STREAK_DATE);
             return result.rows[0];
         }
         return {STREAK_DATE: '', USER_IDS: '', STREAK: 0};
