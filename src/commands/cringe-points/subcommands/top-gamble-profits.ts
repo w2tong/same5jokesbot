@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getTopGambleProfits } from '../../../sql/gamble-profits';
-import { fetchUser } from '../../../discordUtil';
+import { createUserNumberedList, fetchUser } from '../../../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -11,13 +11,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const users = [];
-    let profitsFieldValue = '';
+    const profits = [];
     for (const {USER_ID, PROFITS} of topProfitStats) {
         users.push(fetchUser(interaction.client.users, USER_ID));
-        profitsFieldValue += `${PROFITS}\n`;
+        profits.push(PROFITS);
     }
-    const usersFieldValue = (await Promise.all(users)).join('\n');
-
+    const usersFieldValue = await createUserNumberedList(users);
+    const profitsFieldValue = profits.join('\n');
     const embed = new EmbedBuilder()
         .setTitle('Top Gambling Profits')
         .addFields(

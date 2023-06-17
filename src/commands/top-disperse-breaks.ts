@@ -1,30 +1,31 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getTopDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
-import { fetchUser } from '../discordUtil';
+import { createUserNumberedList, fetchUser } from '../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const topDisperseStreakBreaks = await getTopDisperseStreakBreaks();
     if (topDisperseStreakBreaks.length) {
-        let namesField = '';
-        let dispersePercentField = '';
-        let totalField = '';
-        for (let i = 0; i < topDisperseStreakBreaks.length; i++) {
-            const userId = topDisperseStreakBreaks[i].USER_ID;
-            const username = (await fetchUser(interaction.client.users, userId)).username;
-            namesField += `${i+1} . ${username}\n`;
-            dispersePercentField += `${topDisperseStreakBreaks[i].BREAKS}\n`;
-            totalField += `${topDisperseStreakBreaks[i].SCORE}\n`;
+        const users = [];
+        const breaks = [];
+        const scores = [];
+        for (const {USER_ID, BREAKS, SCORE} of topDisperseStreakBreaks) {
+            users.push(fetchUser(interaction.client.users, USER_ID));
+            breaks.push(BREAKS);
+            scores.push(SCORE);
         }
+        const userFieldValue = await createUserNumberedList(users);
+        const breaksFieldValue = breaks.join('\n');
+        const scoresFieldValue = scores.join('\n');
         
-        const rowDisperseBreaksEmbed = new EmbedBuilder()
+        const embed = new EmbedBuilder()
             .setTitle('Top Disperse Streak Breaks')
             .addFields(
-                { name: 'Name', value: namesField, inline: true },
-                { name: '# of breaks', value: dispersePercentField, inline: true },
-                { name: 'Sum of streaks broken', value: totalField, inline: true }
+                { name: 'User', value: userFieldValue, inline: true },
+                { name: '# of breaks', value: breaksFieldValue, inline: true },
+                { name: 'Sum of streaks broken', value: scoresFieldValue, inline: true }
             );
-        void interaction.editReply({ embeds: [rowDisperseBreaksEmbed] });
+        void interaction.editReply({ embeds: [embed] });
     }
     else {
         void interaction.editReply('No stats available.');
