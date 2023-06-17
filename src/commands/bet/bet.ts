@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import createBet from './subcommands/create-bet';
-import deleteBet from './subcommands/delete-bet';
+import createBet from './subcommands/create';
+import deleteBet from './subcommands/delete';
 import endBetting from './subcommands/end-betting';
-import resolveBet from './subcommands/resolve-bet';
+import resolveBet from './subcommands/bet';
 
 const subcommands = {
     [createBet.name]: createBet.execute,
