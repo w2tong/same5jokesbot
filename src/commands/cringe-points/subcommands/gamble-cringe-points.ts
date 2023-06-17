@@ -1,14 +1,15 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/cringe-points';
+import { updateGambleProfits } from '../../../sql/gamble-profits';
 import { emptyEmbedField } from '../../../discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
 import audio from '../../../audioFileMap';
 
 const payouts: {[key: number]: number} = {
     50: 2,
-    30: 5,
-    10: 20,
-    1: 500
+    30: 3.5,
+    10: 12,
+    1: 150
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -44,16 +45,18 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (winnings >= 1000 && (pointsBet / cringePoints) >= 0.1) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
+        void updateGambleProfits(user.id, winnings, 0);
     }
     else {
         title += 'LOST';
         const newBalance = cringePoints - pointsBet;
-        pointsBet = -pointsBet;
-        balanceField.value = `${cringePoints} (${pointsBet})`;
+        balanceField.value = `${cringePoints} (-${pointsBet})`;
         newBalanceField.value = `${newBalance}`;
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
+        void updateGambleProfits(user.id, 0, pointsBet);
+        pointsBet = -pointsBet;
     }
     void updateCringePoints([{userId: user.id, points: pointsBet}]);
 

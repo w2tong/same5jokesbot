@@ -1,0 +1,86 @@
+import oracledb from 'oracledb';
+import { selectExecuteOptions } from './query-options';
+
+const createTableGambleProfits = {
+    name: 'GAMBLE_PROFITS',
+    query: `
+        CREATE TABLE gamble_profits (
+            user_id VARCHAR2(255) PRIMARY KEY,
+            winnings NUMBER DEFAULT 0,
+            losses NUMBER DEFAULT 0
+        )`
+};
+
+interface GambleProfits {
+    WINNINGS: bigint,
+    LOSSES: bigint
+}
+
+const getUserQuery = `
+SELECT winnings, losses FROM gamble_profits
+WHERE user_id = :userId
+`;
+
+async function getUserGambleProfits(userId: string): Promise<GambleProfits|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GambleProfits> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getUserGambleProfits: ${err}`);
+    }
+}
+
+const getTopQuery = `
+SELECT * FROM gamble_profits
+ORDER BY points DESC
+FETCH FIRST 10 ROWS ONLY
+`;
+
+interface GambleProfitssUser extends GambleProfits {
+    USER_ID: string;
+}
+
+async function getTopGambleProfits(): Promise<Array<GambleProfitssUser>> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GambleProfitssUser> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getTopGambleProfits: ${err}`);
+    }
+}
+
+const updateQuery = `
+MERGE INTO gamble_profits dest
+    USING( SELECT :userId AS user_id, :winnings AS winnings, :losses AS losses FROM dual) src
+        ON( dest.user_id = src.user_id )
+    WHEN MATCHED THEN
+        UPDATE SET winnings = dest.winnings + src.winnings, losses = dest.losses + src.losses
+    WHEN NOT MATCHED THEN
+        INSERT( user_id, winnings, losses ) 
+        VALUES( src.user_id, src.winnings, src.losses )
+`;
+
+async function updateGambleProfits(userId: string, winnings: number, losses: number) {
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(updateQuery, {userId, winnings, losses});
+        await connection.close();
+    }
+    catch (err) {
+        throw new Error(`updateGambleProfits: ${err}`);
+    }
+}
+
+export { createTableGambleProfits, getUserGambleProfits, getTopGambleProfits, updateGambleProfits };
