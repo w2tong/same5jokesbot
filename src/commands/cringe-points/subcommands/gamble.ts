@@ -84,11 +84,12 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     )
     .addIntegerOption(option => option
         .setName('chance')
-        .setDescription('The chance of winning.')
+        .setDescription(`The chance of winning. ${Object.entries(payouts).reverse().map(([chance, payout]) => `${chance}% = ${payout}x`).join(', ')}`)
         .addChoices(
-            {name: `30%, ${payouts[30]}x payout`, value: 30},
-            {name: `10%, ${payouts[10]}x payout`, value: 10},
-            {name: `1%, ${payouts[1]}x payout`, value: 1}
+            {name: '50%', value: 50},
+            {name: '30%', value: 30},
+            {name: '10%', value: 10},
+            {name: '1%', value: 1}
         )
     );
 
