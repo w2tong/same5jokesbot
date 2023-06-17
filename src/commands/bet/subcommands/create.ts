@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteracti
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util';
 import { createBet, deleteBet, endBet } from '../../../bets';
-import { getUserCringePoints } from '../../../sql/cringe-points';
+import { getUserCringePoints } from '../../../sql/tables/cringe-points';
 import { logError } from '../../../logger';
 
 const enum ButtonId {

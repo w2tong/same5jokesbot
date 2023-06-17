@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getSneezeCount } from '../sql/sneeze-count';
+import { getSneezeCount } from '../sql/tables/sneeze-count';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

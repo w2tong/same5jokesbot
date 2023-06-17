@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getDisperseStreakHighscore } from '../sql/disperse-streak-highscore';
+import { getDisperseStreakHighscore } from '../sql/tables/disperse-streak-highscore';
 import { createDispersersList } from '../discordUtil';
 import { convertDateToUnixTimestamp } from '../util';
 

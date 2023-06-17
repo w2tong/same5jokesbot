@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getUserGambleProfits } from '../../../sql/gamble-profits';
+import { getUserGambleProfits } from '../../../sql/tables/gamble-profits';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

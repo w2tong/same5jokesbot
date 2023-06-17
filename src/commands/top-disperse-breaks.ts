@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getTopDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
+import { getTopDisperseStreakBreaks } from '../sql/tables/disperse-streak-breaks';
 import { createUserNumberedList, fetchUser } from '../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {

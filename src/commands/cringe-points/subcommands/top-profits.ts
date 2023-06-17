@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getTopGambleProfits, getTotalGambleProfits } from '../../../sql/gamble-profits';
+import { getTopGambleProfits, getTotalGambleProfits } from '../../../sql/tables/gamble-profits';
 import { createUserNumberedList, emptyEmbedField, fetchUser } from '../../../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {

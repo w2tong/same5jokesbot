@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getCurrentDisperseStreak } from '../sql/current-disperse-streak';
+import { getCurrentDisperseStreak } from '../sql/tables/current-disperse-streak';
 import { createDispersersList } from '../discordUtil';
 import { convertDateToUnixTimestamp } from '../util';
 

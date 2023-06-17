@@ -5,9 +5,9 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { logError } from './logger';
 import  timeInVoice from './timeInVoice';
-import { updateCringePoints, CringePointsUpdate } from './sql/cringe-points';
-import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/time-in-voice';
-import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/time-in-voice-together';
+import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe-points';
+import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/tables/time-in-voice';
+import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
 import { fetchChannel } from './discordUtil';
 
 // Weekly Tuesday reminder

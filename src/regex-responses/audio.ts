@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import audio from '../audioFileMap';
-import { updateKnitCount } from '../sql/knit-count';
-import { updateSneezeCount } from '../sql/sneeze-count';
+import { updateKnitCount } from '../sql/tables/knit-count';
+import { updateSneezeCount } from '../sql/tables/sneeze-count';
 import { getRandomRange } from '../util';
 
 const congratulations = audio.congratulations;

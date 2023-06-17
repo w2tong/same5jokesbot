@@ -1,8 +1,8 @@
 import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, User, UserManager } from 'discord.js';
 import { fetchChannel, fetchMessage, fetchUser } from './discordUtil';
 import { convertDateToUnixTimestamp } from './util';
-import { updateCringePoints, CringePointsUpdate } from './sql/cringe-points';
-import { BetProfitsUpdate, updateBetProfits } from './sql/bet-profits';
+import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe-points';
+import { BetProfitsUpdate, updateBetProfits } from './sql/tables/bet-profits';
 
 const enum BetResult {
     Yes = 'YES',

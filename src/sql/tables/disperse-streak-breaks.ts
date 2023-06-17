@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableDisperseStreakBreaks = {
     name: 'DISPERSE_STREAK_BREAKS',

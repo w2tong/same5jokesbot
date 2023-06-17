@@ -1,9 +1,9 @@
 import getTextResponse from './text';
 import { mockGetCurrentDisperseStreakZero, mockGetCurrentDisperseStreakThree } from '../tests/mockQueryFunctions';
-import * as sqlCurrentDisperseStreak from '../sql/current-disperse-streak';
-import * as sqlDisperseStreakBreaks from '../sql/disperse-streak-breaks';
-import * as sqlDisperseStreakHighscore from '../sql/disperse-streak-highscore';
-import * as sqlGamerStats from '../sql/gamers-stats';
+import * as sqlCurrentDisperseStreak from '../sql/tables/current-disperse-streak';
+import * as sqlDisperseStreakBreaks from '../sql/tables/disperse-streak-breaks';
+import * as sqlDisperseStreakHighscore from '../sql/tables/disperse-streak-highscore';
+import * as sqlGamerStats from '../sql/tables/gamers-stats';
 import { emotes } from '../emotes';
 import * as logger from '../logger';
 import { mockVoidPromise, mockTruePromise, mockFalsePromise } from '../tests/testUtil';

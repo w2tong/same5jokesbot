@@ -1,7 +1,7 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { createMediumChartBuffer } from '../chart';
-import { getTimeInVoiceTogether } from '../sql/time-in-voice-together';
+import { getTimeInVoiceTogether } from '../sql/tables/time-in-voice-together';
 import { fetchUser } from '../discordUtil';
 import { timeInMS } from '../util';
 

@@ -1,10 +1,10 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
-const createTableKnitCount = {
-    name: 'KNIT_COUNT',
+const createTableSneezeCount = {
+    name: 'SNEEZE_COUNT',
     query: `
-        CREATE TABLE knit_count (
+        CREATE TABLE sneeze_count (
             user_id VARCHAR2(255) PRIMARY KEY,
             count NUMBER DEFAULT 0
         )`
@@ -12,17 +12,17 @@ const createTableKnitCount = {
 
 const getQuery = `
 SELECT count
-FROM knit_count
+FROM sneeze_count
 WHERE user_id = :userId
 `;
 
-interface KnitCount {
+interface SneezeCount {
     COUNT: number;
 }
-async function getKnitCount(userId: string): Promise<KnitCount|null> {
+async function getSneezeCount(userId: string): Promise<SneezeCount|null> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<KnitCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
+        const result: oracledb.Result<SneezeCount> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows) {
             return result.rows[0];
@@ -30,12 +30,12 @@ async function getKnitCount(userId: string): Promise<KnitCount|null> {
         return null;
     }
     catch (err) {
-        throw new Error(`getKnitCount: ${err}`);
+        throw new Error(`getSneezeCount: ${err}`);
     }
 }
 
 const updateQuery = `
-MERGE INTO knit_count dest
+MERGE INTO sneeze_count dest
     USING( SELECT :userId AS user_id FROM dual) src
         ON( dest.user_id = src.user_id )
     WHEN MATCHED THEN
@@ -45,15 +45,15 @@ MERGE INTO knit_count dest
         VALUES( src.user_id, 1 )
 `;
 
-async function updateKnitCount(userId: string) {
+async function updateSneezeCount(userId: string) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {userId});
         await connection.close();
     }
     catch (err) {
-        throw new Error(`updateKnitCount: ${err}`);
+        throw new Error(`updateSneezeCount: ${err}`);
     }
 }
 
-export { createTableKnitCount, getKnitCount, updateKnitCount };
+export { createTableSneezeCount, getSneezeCount, updateSneezeCount };
