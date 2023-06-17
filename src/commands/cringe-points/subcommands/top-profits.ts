@@ -27,7 +27,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     void interaction.editReply({embeds: [embed]});
 }
 
-const name = 'top-gamble-profits';
+const name = 'top-profits';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)

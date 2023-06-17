@@ -3,8 +3,8 @@ import getCringePoints from './subcommands/get';
 import getTopCringePoints from './subcommands/get-top';
 import gambleCringePoints from './subcommands/gamble';
 import giveCringePoints from './subcommands/give';
-import getGambleProfits from './subcommands/gamble-profits';
-import getTopGambleProfits from './subcommands/top-gamble-profits';
+import getGambleProfits from './subcommands/profits';
+import getTopGambleProfits from './subcommands/top-profits';
 
 const subcommands = {
     [getCringePoints.name]: getCringePoints.execute,
