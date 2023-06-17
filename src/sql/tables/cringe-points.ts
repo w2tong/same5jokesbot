@@ -38,8 +38,10 @@ async function getUserCringePoints(userId: string): Promise<number|null> {
 const getTopQuery = `
 SELECT *
 FROM cringe_points
+WHERE
+    EXISTS (SELECT 1 FROM bet_profits WHERE cringe_points.user_id = bet_profits.user_id) OR
+    EXISTS (SELECT 1 FROM gamble_profits WHERE cringe_points.user_id = gamble_profits.user_id)
 ORDER BY points DESC
-FETCH FIRST 10 ROWS ONLY
 `;
 
 interface CringePointsUser extends CringePoints {

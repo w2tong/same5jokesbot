@@ -32,6 +32,6 @@ const name = 'get-top';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets cringe points of top 10 users.');
+    .setDescription('Gets cringe points of the top active users.');
 
 export default { execute, name, subcommandBuilder };
