@@ -42,7 +42,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         balanceField.value = `${cringePoints} (+${winnings})`;
         newBalanceField.value = `${cringePoints + winnings}`;
         pointsBet = winnings;
-        if (winnings >= 1000 && (pointsBet / cringePoints) >= 0.1) {
+        if (winnings >= 1000 && ((pointsBet / cringePoints) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
         void updateGambleProfits(user.id, winnings, 0);
