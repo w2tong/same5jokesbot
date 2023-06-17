@@ -9,7 +9,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     if (cringePoints) {
         points = cringePoints;
     }
-    void interaction.editReply(`**${user.username}** has **${points}** points.`);
+    void interaction.editReply(`**${user.username}** has **${points.toLocaleString()}** points.`);
 }
 
 const name = 'get';

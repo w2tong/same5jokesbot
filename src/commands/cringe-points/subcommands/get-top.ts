@@ -10,7 +10,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const points = [];
         for (const {USER_ID, POINTS} of topCringePoints) {
             users.push(fetchUser(interaction.client.users, USER_ID));
-            points.push(POINTS);
+            points.push(POINTS.toLocaleString());
         }
 
         const usersFieldValue = await createUserNumberedList(users);

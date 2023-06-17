@@ -12,9 +12,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setTitle(`${user.username} Betting Profits`)
         .addFields(
-            {name: 'Winnings', value: `${profitStats.WINNINGS}`, inline: true},
-            {name: 'Losses', value: `${profitStats.LOSSES}`, inline: true},
-            {name: 'Profits', value: `${profitStats.PROFITS}`, inline: true}
+            {name: 'Winnings', value: `${profitStats.WINNINGS.toLocaleString()}`, inline: true},
+            {name: 'Losses', value: `${profitStats.LOSSES.toLocaleString()}`, inline: true},
+            {name: 'Profits', value: `${profitStats.PROFITS.toLocaleString()}`, inline: true}
         );
     void interaction.editReply({embeds: [embed]});
 }

@@ -15,16 +15,16 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const profits = [];
     for (const {USER_ID, PROFITS} of topProfitStats) {
         users.push(fetchUser(interaction.client.users, USER_ID));
-        profits.push(PROFITS);
+        profits.push(PROFITS.toLocaleString());
     }
     const usersFieldValue = await createUserNumberedList(users);
     const profitsFieldValue = profits.join('\n');
     const embed = new EmbedBuilder()
         .setTitle('Top Gambling Profits')
         .addFields(
-            {name: 'Total Winnings', value: `${totalProfitStats.WINNINGS}`, inline: true},
-            {name: 'Total Losses', value: `${totalProfitStats.LOSSES}`, inline: true},
-            {name: 'Total Profits', value: `${totalProfitStats.PROFITS}`, inline: true},
+            {name: 'Total Winnings', value: `${totalProfitStats.WINNINGS.toLocaleString()}`, inline: true},
+            {name: 'Total Losses', value: `${totalProfitStats.LOSSES.toLocaleString()}`, inline: true},
+            {name: 'Total Profits', value: `${totalProfitStats.PROFITS.toLocaleString()}`, inline: true},
             {name: 'Users', value: usersFieldValue, inline: true},
             emptyEmbedField,
             {name: 'Profits', value: profitsFieldValue, inline: true}

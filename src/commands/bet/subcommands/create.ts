@@ -93,7 +93,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             await modalSubmitInteraction.deferReply();
             betYes ? bet.addYesBetter(user.id, currBetPoints) : bet.addNoBetter(user.id, currBetPoints);
             await interaction.editReply({embeds: [bet.createBetEmbed()]});
-            await modalSubmitInteraction.editReply(`${user} bet **${betYes ? 'YES' : 'NO'}** with **${currBetPoints}** Cringe points (**${pointsBet + currBetPoints}** total, **${pointsAvailable - pointsBet - currBetPoints}** left).`);
+            await modalSubmitInteraction.editReply(`${user} bet **${betYes ? 'YES' : 'NO'}** with **${currBetPoints.toLocaleString()}** Cringe points (**${(pointsBet + currBetPoints).toLocaleString()}** total, **${(pointsAvailable - pointsBet - currBetPoints).toLocaleString()}** left).`);
         }
         catch (err) {
             logError(err);
