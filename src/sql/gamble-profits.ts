@@ -18,7 +18,8 @@ interface GambleProfits {
 }
 
 const getUserQuery = `
-SELECT winnings, losses, winnings - losses AS profits FROM gamble_profits
+SELECT winnings, losses, winnings - losses AS profits
+FROM gamble_profits
 WHERE user_id = :userId
 `;
 
@@ -34,6 +35,26 @@ async function getUserGambleProfits(userId: string): Promise<GambleProfits|null>
     }
     catch (err) {
         throw new Error(`getUserGambleProfits: ${err}`);
+    }
+}
+
+const getTotalQuery = `
+SELECT SUM(winnings) AS winnings, SUM(losses) AS losses, SUM(winnings) - SUM(losses) AS profits
+FROM gamble_profits
+`;
+
+async function getTotalGambleProfits(): Promise<GambleProfits|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GambleProfits> = await connection.execute(getTotalQuery, {}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getTotalGambleProfits: ${err}`);
     }
 }
 
@@ -84,4 +105,4 @@ async function updateGambleProfits(userId: string, winnings: number, losses: num
     }
 }
 
-export { createTableGambleProfits, getUserGambleProfits, getTopGambleProfits, updateGambleProfits };
+export { createTableGambleProfits, getUserGambleProfits, getTotalGambleProfits, getTopGambleProfits, updateGambleProfits };

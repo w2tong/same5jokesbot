@@ -1,12 +1,13 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getTopGambleProfits } from '../../../sql/gamble-profits';
-import { createUserNumberedList, fetchUser } from '../../../discordUtil';
+import { getTopGambleProfits, getTotalGambleProfits } from '../../../sql/gamble-profits';
+import { createUserNumberedList, emptyEmbedField, fetchUser } from '../../../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const topProfitStats = await getTopGambleProfits();
-    if (!topProfitStats) {
-        void interaction.editReply('Error getting top gamble profits.');
+    const totalProfitStats = await getTotalGambleProfits();
+    if (!topProfitStats || !totalProfitStats) {
+        void interaction.editReply('No one has ever gambled.');
         return;
     }
 
@@ -21,7 +22,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setTitle('Top Gambling Profits')
         .addFields(
+            {name: 'Total Winnings', value: `${totalProfitStats.WINNINGS}`, inline: true},
+            {name: 'Total Losses', value: `${totalProfitStats.LOSSES}`, inline: true},
+            {name: 'Total Profits', value: `${totalProfitStats.PROFITS}`, inline: true},
             {name: 'Users', value: usersFieldValue, inline: true},
+            emptyEmbedField,
             {name: 'Profits', value: profitsFieldValue, inline: true}
         );
     void interaction.editReply({embeds: [embed]});
