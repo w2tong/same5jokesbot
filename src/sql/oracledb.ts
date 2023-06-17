@@ -12,6 +12,7 @@ import { createTableTimeInVoice } from './time-in-voice';
 import { createTableAudioCount } from './audio-count';
 import { createTableUserIdPairs, createTableTimeInVoiceTogether } from './time-in-voice-together';
 import { createTableCringePoints } from './cringe-points';
+import { createTableGambleProfits } from './gamble-profits';
 import { logError } from '../logger';
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
@@ -43,7 +44,7 @@ async function initOracleDB() {
         enableStatistics: true
     });
 
-    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableKnitCount, createTableSneezeCount, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints];
+    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableKnitCount, createTableSneezeCount, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableGambleProfits];
 
     const connection = await oracledb.getConnection();
     for(const {name, query} of createTableQueries) {
