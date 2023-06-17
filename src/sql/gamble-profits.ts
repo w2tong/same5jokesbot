@@ -12,12 +12,13 @@ const createTableGambleProfits = {
 };
 
 interface GambleProfits {
-    WINNINGS: bigint,
-    LOSSES: bigint
+    WINNINGS: number,
+    LOSSES: number,
+    PROFITS: number
 }
 
 const getUserQuery = `
-SELECT winnings, losses FROM gamble_profits
+SELECT winnings, losses, winnings - losses AS profits FROM gamble_profits
 WHERE user_id = :userId
 `;
 
@@ -37,9 +38,8 @@ async function getUserGambleProfits(userId: string): Promise<GambleProfits|null>
 }
 
 const getTopQuery = `
-SELECT * FROM gamble_profits
-ORDER BY points DESC
-FETCH FIRST 10 ROWS ONLY
+SELECT *, winnings - losses AS profits FROM gamble_profits
+ORDER BY profits DESC
 `;
 
 interface GambleProfitssUser extends GambleProfits {
