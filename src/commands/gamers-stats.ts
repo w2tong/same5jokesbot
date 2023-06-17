@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getGamersStatsMonthYear, getGamersStatsYear } from '../sql/gamers-stats';
+import { getGamersStatsMonthYear, getGamersStatsYear } from '../sql/tables/gamers-stats';
 
 const decimalPlaces = 2;
 

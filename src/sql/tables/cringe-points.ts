@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableCringePoints = {
     name: 'CRINGE_POINTS',
@@ -15,7 +15,8 @@ interface CringePoints {
 }
 
 const getUserQuery = `
-SELECT points FROM cringe_points
+SELECT points
+FROM cringe_points
 WHERE user_id = :userId
 `;
 
@@ -35,7 +36,8 @@ async function getUserCringePoints(userId: string): Promise<number|null> {
 }
 
 const getTopQuery = `
-SELECT * FROM cringe_points
+SELECT *
+FROM cringe_points
 ORDER BY points DESC
 FETCH FIRST 10 ROWS ONLY
 `;

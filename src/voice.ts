@@ -8,7 +8,7 @@ import { fetchChannel } from './discordUtil';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
-import { updateAudioCount } from './sql/audio-count';
+import { updateAudioCount } from './sql/tables/audio-count';
 
 interface GuildConnection {
     connection: VoiceConnection;

@@ -1,6 +1,6 @@
 import { ChannelType, Client } from 'discord.js';
-import { updateTimeInVoice } from './sql/time-in-voice';
-import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/time-in-voice-together';
+import { updateTimeInVoice } from './sql/tables/time-in-voice';
+import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
 
 const userJoinTime: {[key:string]: {channelId: string, guildId: string, time: number}} = {};
 

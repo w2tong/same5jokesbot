@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getUserCringePoints, updateCringePoints } from '../../../sql/cringe-points';
-import { updateGambleProfits } from '../../../sql/gamble-profits';
+import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
+import { updateGambleProfits } from '../../../sql/tables/gamble-profits';
 import { emptyEmbedField } from '../../../discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
 import audio from '../../../audioFileMap';
@@ -8,27 +8,26 @@ import audio from '../../../audioFileMap';
 const payouts: {[key: number]: number} = {
     50: 2,
     30: 3.5,
-    10: 12,
-    1: 150
+    10: 11,
+    1: 115
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    
+    await interaction.deferReply();
     const user = interaction.user;
     let pointsBet = interaction.options.getInteger('points');
     const chance = (interaction.options.getInteger('chance') ?? 50);
     if (!pointsBet) {
-        await interaction.reply({content: 'Error getting input.', ephemeral: true});
+        await interaction.editReply('Error getting input.');
         return;
     }
         
     const cringePoints = await getUserCringePoints(user.id) ?? 0;
     if (pointsBet > cringePoints) {
-        await interaction.reply({content: `You do not have enough points (Balance **${cringePoints}**).`, ephemeral: true});
+        await interaction.editReply(`You do not have enough points (Balance **${cringePoints}**).`);
         return;
     }
-
-    await interaction.deferReply();
+    
     const result = Math.random();
 
     let title = `${user.username} `;
@@ -42,7 +41,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         balanceField.value = `${cringePoints} (+${winnings})`;
         newBalanceField.value = `${cringePoints + winnings}`;
         pointsBet = winnings;
-        if (winnings >= 1000 && (pointsBet / cringePoints) >= 0.1) {
+        if (winnings >= 1000 && ((pointsBet / cringePoints) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
         void updateGambleProfits(user.id, winnings, 0);

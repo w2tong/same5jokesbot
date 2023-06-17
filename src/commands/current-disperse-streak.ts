@@ -1,40 +1,26 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getCurrentDisperseStreak } from '../sql/current-disperse-streak';
-import { fetchUser } from '../discordUtil';
+import { getCurrentDisperseStreak } from '../sql/tables/current-disperse-streak';
+import { createDispersersList } from '../discordUtil';
 import { convertDateToUnixTimestamp } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
     await interaction.deferReply();
-    const currentDisperseStreak = await getCurrentDisperseStreak(interaction.guild.id);
-    if (currentDisperseStreak) {
-        const userIds = currentDisperseStreak.USER_IDS.split(',');
-        let usernames = '';
-        if (currentDisperseStreak.STREAK > 0) {
-            const usernamesMap: { [key: string]: number } = {};
-            for (const userId of userIds) {
-                const username = (await fetchUser(interaction.client.users, userId)).username;
-                usernamesMap[username] = usernamesMap[username]+1 || 1;
-            }
-            for (const username in usernamesMap) {
-                usernames += username;
-                if (usernamesMap[username] > 1) usernames += ` (${usernamesMap[username]})`;
-                usernames += '\n';
-            }
+    const disperseStreak = await getCurrentDisperseStreak(interaction.guild.id);
+    if (disperseStreak) {
+        let dispersersFieldValue = 'None';
+        if (disperseStreak.STREAK > 0) {
+            dispersersFieldValue = await createDispersersList(disperseStreak.USER_IDS, interaction.client.users);
         }
-        else {
-            usernames = 'None';
-        }
-    
-        const unixTimestamp = convertDateToUnixTimestamp(new Date(`${currentDisperseStreak.STREAK_DATE} UTC`));
-        const currentDisperseStreakEmbed = new EmbedBuilder()
+        const unixTimestamp = convertDateToUnixTimestamp(new Date(`${disperseStreak.STREAK_DATE} UTC`));
+        const embed = new EmbedBuilder()
             .setTitle(`${interaction.guild.name}'s Current Disperse Streak <t:${unixTimestamp}:R>`)
             .addFields(
-                { name: 'Streak', value: `${currentDisperseStreak.STREAK}`, inline: true },
-                { name: 'Dispersers', value: `${usernames}`, inline: true }
+                { name: 'Streak', value: `${disperseStreak.STREAK}`, inline: true },
+                { name: 'Dispersers', value: `${dispersersFieldValue}`, inline: true }
             );
     
-        void interaction.editReply({ embeds: [currentDisperseStreakEmbed] });
+        void interaction.editReply({ embeds: [embed] });
     }
     else {
         void interaction.editReply('No disperse streak exists on this server.');

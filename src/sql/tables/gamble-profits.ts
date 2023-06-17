@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableGambleProfits = {
     name: 'GAMBLE_PROFITS',
@@ -12,12 +12,14 @@ const createTableGambleProfits = {
 };
 
 interface GambleProfits {
-    WINNINGS: bigint,
-    LOSSES: bigint
+    WINNINGS: number;
+    LOSSES: number;
+    PROFITS: number;
 }
 
 const getUserQuery = `
-SELECT winnings, losses FROM gamble_profits
+SELECT winnings, losses, winnings - losses AS profits
+FROM gamble_profits
 WHERE user_id = :userId
 `;
 
@@ -36,20 +38,41 @@ async function getUserGambleProfits(userId: string): Promise<GambleProfits|null>
     }
 }
 
-const getTopQuery = `
-SELECT * FROM gamble_profits
-ORDER BY points DESC
-FETCH FIRST 10 ROWS ONLY
+const getTotalQuery = `
+SELECT SUM(winnings) AS winnings, SUM(losses) AS losses, SUM(winnings) - SUM(losses) AS profits
+FROM gamble_profits
 `;
 
-interface GambleProfitssUser extends GambleProfits {
-    USER_ID: string;
-}
-
-async function getTopGambleProfits(): Promise<Array<GambleProfitssUser>> {
+async function getTotalGambleProfits(): Promise<GambleProfits|null> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<GambleProfitssUser> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
+        const result: oracledb.Result<GambleProfits> = await connection.execute(getTotalQuery, {}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getTotalGambleProfits: ${err}`);
+    }
+}
+
+const getTopQuery = `
+SELECT user_id, winnings - losses AS profits
+FROM gamble_profits
+ORDER BY profits DESC
+`;
+
+interface GambleProfitsUser {
+    USER_ID: string;
+    PROFITS: number;
+}
+
+async function getTopGambleProfits(): Promise<Array<GambleProfitsUser>> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GambleProfitsUser> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
@@ -83,4 +106,4 @@ async function updateGambleProfits(userId: string, winnings: number, losses: num
     }
 }
 
-export { createTableGambleProfits, getUserGambleProfits, getTopGambleProfits, updateGambleProfits };
+export { createTableGambleProfits, getUserGambleProfits, getTotalGambleProfits, getTopGambleProfits, updateGambleProfits };

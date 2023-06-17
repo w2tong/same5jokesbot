@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getKnitCount } from '../sql/knit-count';
+import { getKnitCount } from '../sql/tables/knit-count';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

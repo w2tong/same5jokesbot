@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableCurrentDisperseStreak = {
     name: 'CURRENT_DISPERSE_STREAK',
@@ -13,7 +13,8 @@ const createTableCurrentDisperseStreak = {
 };
 
 const getQuery = `
-SELECT streak_date, user_ids, streak FROM current_disperse_streak
+SELECT streak_date, user_ids, streak
+FROM current_disperse_streak
 WHERE guild_id = :guildId
 `;
 
@@ -28,7 +29,6 @@ async function getCurrentDisperseStreak(guildId: string): Promise<CurrentDispers
         const result: oracledb.Result<CurrentDisperseStreak> = await connection.execute(getQuery, {guildId}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows[0]) {
-            console.log(result.rows[0].STREAK_DATE);
             return result.rows[0];
         }
         return {STREAK_DATE: '', USER_IDS: '', STREAK: 0};

@@ -1,7 +1,7 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { createMediumChartBuffer } from '../chart';
-import { getTimeInVoiceTogether } from '../sql/time-in-voice-together';
+import { getTimeInVoiceTogether } from '../sql/tables/time-in-voice-together';
 import { fetchUser } from '../discordUtil';
 import { timeInMS } from '../util';
 
@@ -75,13 +75,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.options.getUser('user') ?? interaction.user;
     const timeInVoiceTogether = await getTimeInVoiceTogether(user.id);
     if (timeInVoiceTogether) {
-        const users = [];
+        let users = [];
         const times = [];
         for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {
-            const username = (await fetchUser(interaction.client.users, USER_ID)).username;
-            users.push(username);
+            users.push(fetchUser(interaction.client.users, USER_ID));
             times.push(MILLISECONDS / timeInMS.hour);
         }
+        users = (await Promise.all(users)).map(user => user.username);
         const config = createChartConfiguration(user.username, users, times);
         const buffer = await createMediumChartBuffer(config);
         const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);

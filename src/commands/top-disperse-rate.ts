@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../sql/gamers-stats';
-import { fetchUser } from '../discordUtil';
+import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../sql/tables/gamers-stats';
+import { createUserNumberedList, fetchUser } from '../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -21,26 +21,26 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     if (topDisperseRate.length) {
-        let namesField = '';
-        let dispersePercentField = '';
-        let totalField = '';
-        for (let i = 0; i < topDisperseRate.length; i++) {
-            const userId = topDisperseRate[i].USER_ID;
-            const dispersePc = topDisperseRate[i].DISPERSE_PC;
-            const username = (await fetchUser(interaction.client.users, userId)).username;
-            namesField += `${i+1} . ${username}\n`;
-            dispersePercentField += `${dispersePc.toFixed(2)}%\n`;
-            totalField += `${topDisperseRate[i].SUM}\n`;
+        const users = [];
+        const dispersePcs = [];
+        const totals = [];
+        for (const {USER_ID, DISPERSE_PC, SUM} of topDisperseRate) {
+            users.push(fetchUser(interaction.client.users, USER_ID));
+            dispersePcs.push(parseFloat(DISPERSE_PC.toFixed(2)));
+            totals.push(SUM);
         }
+        const userFieldValue = await createUserNumberedList(users);
+        const dispersePcFieldValue = dispersePcs.join('\n');
+        const totalFieldValue = totals.join('\n');
             
-        const rowDisperseRateEmbed = new EmbedBuilder()
+        const embed = new EmbedBuilder()
             .setTitle(`Top Disperse Rates (${dateStr})`)
             .addFields(
-                { name: 'Name', value: namesField, inline: true },
-                { name: 'Disperse %', value: dispersePercentField, inline: true },
-                { name: 'Gamers Total', value: totalField, inline: true }
+                { name: 'User', value: userFieldValue, inline: true },
+                { name: 'Disperse %', value: dispersePcFieldValue, inline: true },
+                { name: 'Gamers Total', value: totalFieldValue, inline: true }
             );
-        void interaction.editReply({ embeds: [rowDisperseRateEmbed] });
+        void interaction.editReply({ embeds: [embed] });
     }
     else {
         void interaction.editReply('No stats available.');

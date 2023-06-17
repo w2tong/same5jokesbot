@@ -1,18 +1,19 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import oracledb from 'oracledb';
-import { createTableCurrentDisperseStreak } from './current-disperse-streak';
-import { createTableDisperseStreakBreaks } from './disperse-streak-breaks';
-import { createTableDisperseStreakHighscore } from './disperse-streak-highscore';
-import { createTableGamersStats } from './gamers-stats';
-import { createTableKnitCount } from './knit-count';
-import { createTableSneezeCount } from './sneeze-count';
-import { createTableReminders } from './reminders';
-import { createTableTimeInVoice } from './time-in-voice';
-import { createTableAudioCount } from './audio-count';
-import { createTableUserIdPairs, createTableTimeInVoiceTogether } from './time-in-voice-together';
-import { createTableCringePoints } from './cringe-points';
-import { createTableGambleProfits } from './gamble-profits';
+import { createTableCurrentDisperseStreak } from './tables/current-disperse-streak';
+import { createTableDisperseStreakBreaks } from './tables/disperse-streak-breaks';
+import { createTableDisperseStreakHighscore } from './tables/disperse-streak-highscore';
+import { createTableGamersStats } from './tables/gamers-stats';
+import { createTableKnitCount } from './tables/knit-count';
+import { createTableSneezeCount } from './tables/sneeze-count';
+import { createTableReminders } from './tables/reminders';
+import { createTableTimeInVoice } from './tables/time-in-voice';
+import { createTableAudioCount } from './tables/audio-count';
+import { createTableUserIdPairs, createTableTimeInVoiceTogether } from './tables/time-in-voice-together';
+import { createTableCringePoints } from './tables/cringe-points';
+import { createTableGambleProfits } from './tables/gamble-profits';
+import { createTableBetProfits } from './tables/bet-profits';
 import { logError } from '../logger';
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
@@ -44,7 +45,7 @@ async function initOracleDB() {
         enableStatistics: true
     });
 
-    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableKnitCount, createTableSneezeCount, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableGambleProfits];
+    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableKnitCount, createTableSneezeCount, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableGambleProfits, createTableBetProfits];
 
     const connection = await oracledb.getConnection();
     for(const {name, query} of createTableQueries) {

@@ -1,6 +1,6 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getUserLast30DaysTimeInVoice } from '../sql/time-in-voice';
+import { getUserLast30DaysTimeInVoice } from '../sql/tables/time-in-voice';
 import { createMediumChartBuffer } from '../chart';
 import { timeInMS } from '../util';
 

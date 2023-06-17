@@ -1,6 +1,6 @@
 import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getAudioCountTotal } from '../sql/audio-count';
+import { getAudioCountTotal } from '../sql/tables/audio-count';
 import { createLargeChartBuffer } from '../chart';
 
 function createChartConfiguration(audio: Array<string>, count: Array<number>): ChartConfiguration {

@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableDisperseStreakBreaks = {
     name: 'DISPERSE_STREAK_BREAKS',
@@ -12,7 +12,8 @@ const createTableDisperseStreakBreaks = {
 };
 
 const getQuery = `
-SELECT breaks, score FROM disperse_streak_breaks
+SELECT breaks, score
+FROM disperse_streak_breaks
 WHERE user_id = :userId
 `;
 
@@ -59,7 +60,8 @@ async function updateDisperseStreakBreaks(userId: string, score: number) {
 }
 
 const getTopDisperseStreakBreaksQuery =`
-SELECT * FROM disperse_streak_breaks
+SELECT *
+FROM disperse_streak_breaks
 ORDER BY score DESC
 `;
 

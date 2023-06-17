@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableReminders = {
     name: 'REMINDERS',
@@ -14,7 +14,8 @@ const createTableReminders = {
 };
 
 const getQuery = `
-SELECT id, channel_id, time, message FROM reminders
+SELECT id, channel_id, time, message
+FROM reminders
 `;
 
 interface Reminder {
@@ -75,7 +76,8 @@ async function deleteReminder(id: string) {
 }
 
 const getUserQuery = `
-SELECT id, channel_id, time, message FROM reminders
+SELECT id, channel_id, time, message
+FROM reminders
 WHERE user_id = :userId
 ORDER BY time ASC
 FETCH NEXT 5 ROWS ONLY
@@ -100,7 +102,8 @@ interface ReminderCount {
     COUNT: number;
 }
 const getUserCountQuery = `
-SELECT count(*) AS count FROM reminders
+SELECT count(*) AS count
+FROM reminders
 WHERE user_id = :userId
 `;
 async function getUserRemindersCount(userId: string): Promise<number> {

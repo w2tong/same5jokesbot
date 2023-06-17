@@ -1,25 +1,25 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getTopCringePoints } from '../../../sql/cringe-points';
-import { fetchUser } from '../../../discordUtil';
+import { getTopCringePoints } from '../../../sql/tables/cringe-points';
+import { createUserNumberedList, fetchUser } from '../../../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const topCringePoints = await getTopCringePoints();
     if (topCringePoints.length) {
-        let namesField = '';
-        let pointsField = '';
-        for (let i = 0; i < topCringePoints.length; i++) {
-            const userId = topCringePoints[i].USER_ID;
-            const username = (await fetchUser(interaction.client.users, userId)).username;
-            namesField += `${i+1} . ${username}\n`;
-            pointsField += `${topCringePoints[i].POINTS}\n`;
+        const users = [];
+        const points = [];
+        for (const {USER_ID, POINTS} of topCringePoints) {
+            users.push(fetchUser(interaction.client.users, USER_ID));
+            points.push(POINTS);
         }
-        
+
+        const usersFieldValue = await createUserNumberedList(users);
+        const pointsFieldValue = points.join('\n');
         const rowCringePointsEmbed = new EmbedBuilder()
             .setTitle('Top Cringe Points')
             .addFields(
-                { name: 'Name', value: namesField, inline: true },
-                { name: 'Points', value: pointsField, inline: true }
+                { name: 'User', value: usersFieldValue, inline: true },
+                { name: 'Points', value: pointsFieldValue, inline: true }
             );
         void interaction.editReply({ embeds: [rowCringePointsEmbed] });
     }

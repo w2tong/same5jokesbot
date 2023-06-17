@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableSneezeCount = {
     name: 'SNEEZE_COUNT',
@@ -11,7 +11,8 @@ const createTableSneezeCount = {
 };
 
 const getQuery = `
-SELECT count FROM sneeze_count
+SELECT count
+FROM sneeze_count
 WHERE user_id = :userId
 `;
 

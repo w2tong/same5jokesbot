@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { commandBuilders } from './commands/commands';
 
-const commands = commandBuilders.map((command) => command.toJSON());
+const commands = commandBuilders.map(command => command.toJSON());
 
 async function registerCommands() {
     if (process.env.BOT_TOKEN && process.env.CLIENT_ID && process.env.GUILD_ID) {

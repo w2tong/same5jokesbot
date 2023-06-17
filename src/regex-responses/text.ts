@@ -1,8 +1,8 @@
 import { emotes } from '../emotes';
-import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/current-disperse-streak';
-import { updateDisperseStreakBreaks } from '../sql/disperse-streak-breaks';
-import { insertDisperseStreakHighScore } from '../sql/disperse-streak-highscore';
-import { updateGamersStats } from '../sql/gamers-stats';
+import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/tables/current-disperse-streak';
+import { updateDisperseStreakBreaks } from '../sql/tables/disperse-streak-breaks';
+import { insertDisperseStreakHighScore } from '../sql/tables/disperse-streak-highscore';
+import { updateGamersStats } from '../sql/tables/gamers-stats';
 import { getRandomRange } from '../util';
 import { logError } from '../logger';
 

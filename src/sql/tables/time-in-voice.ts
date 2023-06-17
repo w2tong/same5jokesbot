@@ -1,5 +1,5 @@
 import oracledb from 'oracledb';
-import { selectExecuteOptions } from './query-options';
+import { selectExecuteOptions } from '../query-options';
 
 const createTableTimeInVoice = {
     name: 'TIME_IN_VOICE',
@@ -14,22 +14,26 @@ const createTableTimeInVoice = {
 };
 
 const getTodayQuery = `
-SELECT milliseconds FROM time_in_voice
+SELECT milliseconds
+FROM time_in_voice
 WHERE user_id = :userId AND guild_id = :guildId
 AND start_date = TRUNC(SYSDATE)
 `;
 const getMonthQuery = `
-SELECT SUM(milliseconds) AS milliseconds FROM time_in_voice
+SELECT SUM(milliseconds) AS milliseconds
+FROM time_in_voice
 WHERE user_id = :userId AND guild_id = :guildId
 AND TRUNC(start_date, 'MONTH') = TRUNC(SYSDATE, 'MONTH')
 `;
 const getYearQuery = `
-SELECT SUM(milliseconds) AS milliseconds FROM time_in_voice
+SELECT SUM(milliseconds) AS milliseconds
+FROM time_in_voice
 WHERE user_id = :userId AND guild_id = :guildId
 AND TRUNC(start_date, 'YEAR') = TRUNC(SYSDATE, 'YEAR')
 `;
 const getTotalQuery = `
-SELECT SUM(milliseconds) AS milliseconds FROM time_in_voice
+SELECT SUM(milliseconds) AS milliseconds
+FROM time_in_voice
 WHERE user_id = :userId AND guild_id = :guildId
 `;
 
@@ -69,7 +73,8 @@ interface TimeInVoiceByDate {
     MILLISECONDS: number;
 }
 const getUserLast30DaysQuery = `
-SELECT start_date, milliseconds FROM time_in_voice
+SELECT start_date, milliseconds
+FROM time_in_voice
 WHERE user_id = :userId AND guild_id = :guildId
 AND start_date > SYSDATE-30
 ORDER BY start_date ASC
@@ -95,7 +100,8 @@ interface TimeInVoiceByUser {
     MILLISECONDS: number;
 }
 const getGuildLast30DaysQuery = `
-SELECT user_id, SUM(milliseconds) AS milliseconds FROM time_in_voice
+SELECT user_id, SUM(milliseconds) AS milliseconds
+FROM time_in_voice
 WHERE guild_id = :guildId
 AND start_date > SYSDATE-30
 GROUP BY user_id

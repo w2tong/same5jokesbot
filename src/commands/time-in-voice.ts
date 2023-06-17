@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getTimeInVoice } from '../sql/time-in-voice';
+import { getTimeInVoice } from '../sql/tables/time-in-voice';
 import { msToString } from '../util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
