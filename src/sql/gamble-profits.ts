@@ -12,9 +12,9 @@ const createTableGambleProfits = {
 };
 
 interface GambleProfits {
-    WINNINGS: number,
-    LOSSES: number,
-    PROFITS: number
+    WINNINGS: number;
+    LOSSES: number;
+    PROFITS: number;
 }
 
 const getUserQuery = `
@@ -38,18 +38,19 @@ async function getUserGambleProfits(userId: string): Promise<GambleProfits|null>
 }
 
 const getTopQuery = `
-SELECT *, winnings - losses AS profits FROM gamble_profits
+SELECT user_id, winnings - losses AS profits FROM gamble_profits
 ORDER BY profits DESC
 `;
 
-interface GambleProfitssUser extends GambleProfits {
+interface GambleProfitsUser {
     USER_ID: string;
+    PROFITS: number;
 }
 
-async function getTopGambleProfits(): Promise<Array<GambleProfitssUser>> {
+async function getTopGambleProfits(): Promise<Array<GambleProfitsUser>> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<GambleProfitssUser> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
+        const result: oracledb.Result<GambleProfitsUser> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
