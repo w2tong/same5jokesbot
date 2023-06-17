@@ -18,7 +18,8 @@ interface BetProfits {
 }
 
 const getUserQuery = `
-SELECT winnings, losses, winnings - losses AS profits FROM bet_profits
+SELECT winnings, losses, winnings - losses AS profits
+FROM bet_profits
 WHERE user_id = :userId
 `;
 
@@ -38,7 +39,8 @@ async function getUserBetProfits(userId: string): Promise<BetProfits|null> {
 }
 
 const getTopQuery = `
-SELECT user_id, winnings - losses AS profits FROM bet_profits
+SELECT user_id, winnings - losses AS profits
+FROM bet_profits
 ORDER BY profits DESC
 `;
 

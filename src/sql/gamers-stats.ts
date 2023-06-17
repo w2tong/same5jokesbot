@@ -21,7 +21,8 @@ interface GamersCounter {
 }
 
 const monthYearQuery = `
-SELECT discharge, disperse, rise_up FROM gamers_stats
+SELECT discharge, disperse, rise_up
+FROM gamers_stats
 WHERE user_id = :userId
 AND month_year = TO_DATE(:monthYear, 'yyyy/mm')
 `;
@@ -43,7 +44,8 @@ async function getGamersStatsMonthYear(userId: string, month: string, year: stri
 }
 
 const yearQuery = `
-SELECT SUM(discharge) AS discharge, SUM(disperse) AS disperse, SUM(rise_up) AS rise_up FROM gamers_stats
+SELECT SUM(discharge) AS discharge, SUM(disperse) AS disperse, SUM(rise_up) AS rise_up
+FROM gamers_stats
 WHERE user_id = :userId
 AND EXTRACT(YEAR FROM month_year) = :year
 `;
@@ -127,7 +129,8 @@ interface TopDisperseRate {
 }
 
 const getTopDisperseRateMonthYearQuery = `
-SELECT user_id, disperse/(discharge + disperse + rise_up)*100 AS disperse_pc, discharge + disperse + rise_up AS sum FROM gamers_stats
+SELECT user_id, disperse/(discharge + disperse + rise_up)*100 AS disperse_pc, discharge + disperse + rise_up AS sum
+FROM gamers_stats
 WHERE month_year = TO_DATE(:monthYear, 'yyyy/mm')
 ORDER BY disperse_pc DESC
 `;
@@ -149,7 +152,8 @@ async function getTopDisperseRateMonthYear(month: string, year: string): Promise
 }
 
 const getTopDisperseRateYearQuery = `
-SELECT user_id, SUM(disperse)/(SUM(discharge) + SUM(disperse) + SUM(rise_up))*100 AS disperse_pc, SUM(discharge) + SUM(disperse) + SUM(rise_up) AS sum FROM gamers_stats
+SELECT user_id, SUM(disperse)/(SUM(discharge) + SUM(disperse) + SUM(rise_up))*100 AS disperse_pc, SUM(discharge) + SUM(disperse) + SUM(rise_up) AS sum
+FROM gamers_stats
 WHERE EXTRACT(YEAR FROM month_year) = :year
 GROUP BY user_id
 ORDER BY disperse_pc DESC

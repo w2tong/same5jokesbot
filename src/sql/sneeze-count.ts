@@ -11,7 +11,8 @@ const createTableSneezeCount = {
 };
 
 const getQuery = `
-SELECT count FROM sneeze_count
+SELECT count
+FROM sneeze_count
 WHERE user_id = :userId
 `;
 

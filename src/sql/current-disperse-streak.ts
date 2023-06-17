@@ -13,7 +13,8 @@ const createTableCurrentDisperseStreak = {
 };
 
 const getQuery = `
-SELECT streak_date, user_ids, streak FROM current_disperse_streak
+SELECT streak_date, user_ids, streak
+FROM current_disperse_streak
 WHERE guild_id = :guildId
 `;
 

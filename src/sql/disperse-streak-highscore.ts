@@ -14,7 +14,8 @@ const createTableDisperseStreakHighscore = {
 };
 
 const getQuery = `
-SELECT streak_date, user_ids, streak FROM disperse_streak_highscore
+SELECT streak_date, user_ids, streak
+FROM disperse_streak_highscore
 WHERE guild_id = :guildId
 ORDER BY streak DESC
 FETCH NEXT 1 ROWS ONLY

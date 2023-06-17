@@ -14,7 +14,8 @@ const createTableAudioCount = {
 };
 
 const getUserTotalQuery = `
-SELECT audio, SUM(count) AS count FROM audio_count
+SELECT audio, SUM(count) AS count
+FROM audio_count
 WHERE user_id = :userId
 GROUP BY audio
 ORDER BY count DESC
@@ -41,7 +42,8 @@ async function getAudioCountUserTotal(userId: string): Promise<Array<AudioCount>
 }
 
 const getTotalQuery = `
-SELECT audio, SUM(count) AS count FROM audio_count
+SELECT audio, SUM(count) AS count
+FROM audio_count
 GROUP BY audio
 ORDER BY count DESC
 FETCH FIRST 50 ROWS ONLY

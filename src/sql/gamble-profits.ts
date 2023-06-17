@@ -59,7 +59,8 @@ async function getTotalGambleProfits(): Promise<GambleProfits|null> {
 }
 
 const getTopQuery = `
-SELECT user_id, winnings - losses AS profits FROM gamble_profits
+SELECT user_id, winnings - losses AS profits
+FROM gamble_profits
 ORDER BY profits DESC
 `;
 

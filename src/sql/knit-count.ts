@@ -11,7 +11,8 @@ const createTableKnitCount = {
 };
 
 const getQuery = `
-SELECT count FROM knit_count
+SELECT count
+FROM knit_count
 WHERE user_id = :userId
 `;
 
