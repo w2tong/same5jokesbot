@@ -24,22 +24,21 @@ async function execute(interaction: ChatInputCommandInteraction) {
         
     const cringePoints = await getUserCringePoints(user.id) ?? 0;
     if (pointsBet > cringePoints) {
-        await interaction.editReply(`You do not have enough points (Balance **${cringePoints}**).`);
+        await interaction.editReply(`You do not have enough points (Balance **${cringePoints.toLocaleString()}**).`);
         return;
     }
     
     const result = Math.random();
 
     let title = `${user.username} `;
-    const betField = { name: 'Points Bet', value: `${pointsBet}`, inline: true };
-    const balanceField = {name: 'Balance ', value: '', inline: true};
-    const newBalanceField = {name: 'New Balance ', value: '', inline: true};
+    let balanceFieldValue = '';
+    let newBalanceFieldValue = '';
 
     if (result < chance/100) {
         const winnings = pointsBet * payouts[chance] - pointsBet;
         title += 'WON';
-        balanceField.value = `${cringePoints} (+${winnings})`;
-        newBalanceField.value = `${cringePoints + winnings}`;
+        balanceFieldValue = `${cringePoints.toLocaleString()} (+${winnings.toLocaleString()})`;
+        newBalanceFieldValue = `${(cringePoints + winnings).toLocaleString()}`;
         pointsBet = winnings;
         if (winnings >= 1000 && ((pointsBet / cringePoints) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
@@ -49,8 +48,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     else {
         title += 'LOST';
         const newBalance = cringePoints - pointsBet;
-        balanceField.value = `${cringePoints} (-${pointsBet})`;
-        newBalanceField.value = `${newBalance}`;
+        balanceFieldValue = `${cringePoints.toLocaleString()} (-${pointsBet.toLocaleString()})`;
+        newBalanceFieldValue = `${newBalance.toLocaleString()}`;
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
@@ -62,11 +61,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setTitle(title)
         .addFields(
-            betField,
+            { name: 'Points Bet', value: `${pointsBet.toLocaleString()}`, inline: true },
             {name: 'Chance', value: `${chance}%`, inline: true},
             {name: 'Payout', value: `${payouts[chance]}x`, inline: true},
-            balanceField,
-            newBalanceField,
+            {name: 'Balance ', value: balanceFieldValue, inline: true},
+            {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
             emptyEmbedField
         );
     void interaction.editReply({embeds: [embed]});

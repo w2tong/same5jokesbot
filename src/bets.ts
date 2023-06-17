@@ -84,12 +84,12 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
         if (result === BetResult.Yes) {
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {
                 const winnings = Math.ceil(points / bet.getYesTotal() * bet.getNoTotal());
-                yesBettersList.push(`${userMap[userId]}: +${winnings}`);
+                yesBettersList.push(`${userMap[userId]}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
                 betProfitsUpdates.push({userId, winnings, losses: 0});
             }
             for (const [userId, points] of Object.entries(noBetters).sort(sortBettersDesc)) {
-                noBettersList.push(`${userMap[userId]}: ${-points}`);
+                noBettersList.push(`${userMap[userId]}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
                 betProfitsUpdates.push({userId, winnings: 0, losses: points});
             }
@@ -97,12 +97,12 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
         else {
             for (const [userId, points] of Object.entries(noBetters).sort(sortBettersDesc)) {
                 const winnings = Math.ceil(points / bet.getNoTotal() * bet.getYesTotal());
-                noBettersList.push(`${userMap[userId]}: +${winnings}`);
+                noBettersList.push(`${userMap[userId]}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
                 betProfitsUpdates.push({userId, winnings, losses: 0});
             }
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {
-                yesBettersList.push(`${userMap[userId]}: ${-points}`);
+                yesBettersList.push(`${userMap[userId]}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
                 betProfitsUpdates.push({userId, winnings: 0, losses: points});
             }
@@ -116,9 +116,9 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
         const embed = new EmbedBuilder()
             .setTitle(`${bet.getName()}: ${result} Payout`)
             .addFields(
-                { name: 'Total Points Bet', value: `${yesTotal+noTotal}` },
-                { name: 'Yes', value: `Total: ${yesTotal}\n${yesBettersList.join('\n')}`, inline: true },
-                { name: 'No', value: `Total: ${noTotal}\n${noBettersList.join('\n')}`, inline: true }
+                { name: 'Total Points Bet', value: `${(yesTotal+noTotal).toLocaleString()}` },
+                { name: 'Yes', value: `Total: ${yesTotal.toLocaleString()}\n${yesBettersList.join('\n')}`, inline: true },
+                { name: 'No', value: `Total: ${noTotal.toLocaleString()}\n${noBettersList.join('\n')}`, inline: true }
             );
         return {content: `Bet ${bet.getName()} ended with ${result}`, embeds: [embed]};
     }

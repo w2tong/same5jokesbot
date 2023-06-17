@@ -14,7 +14,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const profits = [];
     for (const {USER_ID, PROFITS} of topProfitStats) {
         users.push(fetchUser(interaction.client.users, USER_ID));
-        profits.push(PROFITS);
+        profits.push(PROFITS.toLocaleString());
     }
     const usersFieldValue = await createUserNumberedList(users);
     const profitsFieldValue = profits.join('\n');
