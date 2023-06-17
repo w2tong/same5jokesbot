@@ -13,22 +13,21 @@ const payouts: {[key: number]: number} = {
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    
+    await interaction.deferReply();
     const user = interaction.user;
     let pointsBet = interaction.options.getInteger('points');
     const chance = (interaction.options.getInteger('chance') ?? 50);
     if (!pointsBet) {
-        await interaction.reply({content: 'Error getting input.', ephemeral: true});
+        await interaction.editReply('Error getting input.');
         return;
     }
         
     const cringePoints = await getUserCringePoints(user.id) ?? 0;
     if (pointsBet > cringePoints) {
-        await interaction.reply({content: `You do not have enough points (Balance **${cringePoints}**).`, ephemeral: true});
+        await interaction.editReply(`You do not have enough points (Balance **${cringePoints}**).`);
         return;
     }
-
-    await interaction.deferReply();
+    
     const result = Math.random();
 
     let title = `${user.username} `;
