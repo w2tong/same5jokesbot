@@ -18,6 +18,7 @@ import topTimeInVoice from './top-time-in-voice';
 import timeInVoiceTogether from './time-in-voice-together';
 import cringePoints from './cringe-points/cringe-points';
 import bet from './bet/bet';
+import slots from './slots/slots';
 
 const commands = {
     [play.name]: play.execute,
@@ -39,7 +40,8 @@ const commands = {
     [topTimeInVoice.name]: topTimeInVoice.execute,
     [timeInVoiceTogether.name]: timeInVoiceTogether.execute,
     [cringePoints.name]: cringePoints.execute,
-    [bet.name]: bet.execute
+    [bet.name]: bet.execute,
+    [slots.name]: slots.execute
 };
 
 const commandBuilders = [
@@ -62,7 +64,8 @@ const commandBuilders = [
     topTimeInVoice.commandBuilder,
     timeInVoiceTogether.commandBuilder,
     cringePoints.commandBuilder,
-    bet.commandBuilder
+    bet.commandBuilder,
+    slots.commandBuilder
 ];
 
 export { commands, commandBuilders };
