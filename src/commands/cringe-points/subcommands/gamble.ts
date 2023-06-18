@@ -35,7 +35,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     let newBalanceFieldValue = '';
 
     if (result < chance/100) {
-        const winnings = pointsBet * payouts[chance] - pointsBet;
+        const winnings = Math.ceil(pointsBet * payouts[chance]) - pointsBet;
         title += 'WON';
         balanceFieldValue = `${cringePoints.toLocaleString()} (+${winnings.toLocaleString()})`;
         newBalanceFieldValue = `${(cringePoints + winnings).toLocaleString()}`;
