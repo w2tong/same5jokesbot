@@ -95,9 +95,9 @@ function createCronJobs(client: Client) {
 
     createUpdateTimeInVoiceCronJob();
     createUpdateTimeInVoiceTogetherCronJob();
-    if (process.env.NODE_ENV === 'production') {
-        createOracleDBLogStatisticsCronJob();
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //     createOracleDBLogStatisticsCronJob();
+    // }
     createUpdateCringePointsCronJob(client);
 }
 
