@@ -28,20 +28,19 @@ function spin(amount: number) {
     return {winnings: Math.ceil(winnings + currWinnings), spinString};
 }
 
-function spinSim(numofSpins: number, bet: number) {
-    let profits = 0;
-    for (let i = 0; i < numofSpins; i++) {
-        profits += spin(bet).winnings - bet;
-    }
-    return profits;
-}
-
-console.log('100 spins', spinSim(100, 100));
-console.log('1,000 spins', spinSim(1000, 100));
-console.log('10,000 spins', spinSim(10000, 100));
-console.log('100,000 spins', spinSim(100000, 100));
-console.log('1,000,000 spins', spinSim(1000000, 100));
-console.log('10,000,000 spins', spinSim(10000000, 100));
+// function spinSim(numofSpins: number, bet: number) {
+//     let profits = 0;
+//     for (let i = 0; i < numofSpins; i++) {
+//         profits += spin(bet).winnings - bet;
+//     }
+//     return profits;
+// }
+// console.log('100 spins', spinSim(100, 100));
+// console.log('1,000 spins', spinSim(1000, 100));
+// console.log('10,000 spins', spinSim(10000, 100));
+// console.log('100,000 spins', spinSim(100000, 100));
+// console.log('1,000,000 spins', spinSim(1000000, 100));
+// console.log('10,000,000 spins', spinSim(10000000, 100));
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
