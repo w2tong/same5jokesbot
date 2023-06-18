@@ -15,7 +15,7 @@ const payouts: {[key: number]: number} = {
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.user;
-    let pointsBet = interaction.options.getInteger('points');
+    const pointsBet = interaction.options.getInteger('points');
     const chance = (interaction.options.getInteger('chance') ?? 50);
     if (!pointsBet) {
         await interaction.editReply('Error getting input.');
@@ -39,7 +39,6 @@ async function execute(interaction: ChatInputCommandInteraction) {
         title += 'WON';
         balanceFieldValue = `${cringePoints.toLocaleString()} (+${winnings.toLocaleString()})`;
         newBalanceFieldValue = `${(cringePoints + winnings).toLocaleString()}`;
-        pointsBet = winnings;
         if (winnings >= 1000 && ((pointsBet / cringePoints) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
