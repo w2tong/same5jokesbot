@@ -182,7 +182,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     
             // Play any audio where text matches regex
             const audio = getAudioResponse(text, userId);
-            playAudioFile(guildId, audio, userId);
+            playAudioFile(audio, userId, guildId);
         });
     });
 
