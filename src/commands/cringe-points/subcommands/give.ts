@@ -38,11 +38,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
             {name: 'Giver', value: `${giver}`, inline: true},
             {name: 'Recipient', value: `${recipient}`, inline: true},
             emptyEmbedField,
-            {name: 'Balance', value: `${giverCringePoints} (-${amount})`, inline: true},
-            {name: 'Balance', value: `${recipientCringePoints} (+${amount})`, inline: true},
+            {name: 'Balance', value: `${giverCringePoints.toLocaleString()} (-${amount.toLocaleString()})`, inline: true},
+            {name: 'Balance', value: `${recipientCringePoints.toLocaleString()} (+${amount.toLocaleString()})`, inline: true},
             emptyEmbedField,
-            {name: 'New Balance', value: `${giverCringePoints - amount}`, inline: true},
-            {name: 'New Balance', value: `${recipientCringePoints + amount}`, inline: true},
+            {name: 'New Balance', value: `${(giverCringePoints - amount).toLocaleString()}`, inline: true},
+            {name: 'New Balance', value: `${(recipientCringePoints + amount).toLocaleString()}`, inline: true},
             emptyEmbedField
         );
     void interaction.editReply({embeds: [embed]});
