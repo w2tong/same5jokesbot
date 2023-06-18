@@ -43,6 +43,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (winnings >= 1000 && ((pointsBet / cringePoints) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
+        void updateCringePoints([{userId: user.id, points: winnings}]);
         void updateGambleProfits(user.id, winnings, 0);
     }
     else {
@@ -53,10 +54,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
+        void updateCringePoints([{userId: user.id, points: -pointsBet}]);
         void updateGambleProfits(user.id, 0, pointsBet);
-        pointsBet = -pointsBet;
     }
-    void updateCringePoints([{userId: user.id, points: pointsBet}]);
 
     const embed = new EmbedBuilder()
         .setTitle(title)
