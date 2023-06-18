@@ -22,9 +22,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
         
-    const cringePoints = await getUserCringePoints(user.id) ?? 0;
-    if (pointsBet > cringePoints) {
-        await interaction.editReply(`You do not have enough points (Balance **${cringePoints.toLocaleString()}**).`);
+    const balance = await getUserCringePoints(user.id) ?? 0;
+    if (pointsBet > balance) {
+        await interaction.editReply(`You do not have enough points (Balance **${balance.toLocaleString()}**).`);
         return;
     }
     
@@ -37,9 +37,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
     if (result < chance/100) {
         const winnings = Math.ceil(pointsBet * payouts[chance]) - pointsBet;
         title += 'WON';
-        balanceFieldValue = `${cringePoints.toLocaleString()} (+${winnings.toLocaleString()})`;
-        newBalanceFieldValue = `${(cringePoints + winnings).toLocaleString()}`;
-        if (winnings >= 1000 && ((pointsBet / cringePoints) >= 0.1 || chance === 10 || chance === 1)) {
+        balanceFieldValue = `${balance.toLocaleString()} (+${winnings.toLocaleString()})`;
+        newBalanceFieldValue = `${(balance + winnings).toLocaleString()}`;
+        if (winnings >= 1000 && ((pointsBet / balance) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
         void updateCringePoints([{userId: user.id, points: winnings}]);
@@ -47,8 +47,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
     else {
         title += 'LOST';
-        const newBalance = cringePoints - pointsBet;
-        balanceFieldValue = `${cringePoints.toLocaleString()} (-${pointsBet.toLocaleString()})`;
+        const newBalance = balance - pointsBet;
+        balanceFieldValue = `${balance.toLocaleString()} (-${pointsBet.toLocaleString()})`;
         newBalanceFieldValue = `${newBalance.toLocaleString()}`;
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
@@ -60,7 +60,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setTitle(title)
         .addFields(
-            { name: 'Points Bet', value: `${pointsBet.toLocaleString()}`, inline: true },
+            {name: 'Points Bet', value: `${pointsBet.toLocaleString()}`, inline: true},
             {name: 'Chance', value: `${chance}%`, inline: true},
             {name: 'Payout', value: `${payouts[chance]}x`, inline: true},
             {name: 'Balance ', value: balanceFieldValue, inline: true},
