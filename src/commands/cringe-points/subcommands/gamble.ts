@@ -7,9 +7,9 @@ import audio from '../../../audioFileMap';
 
 const payouts: {[key: number]: number} = {
     50: 2,
-    30: 3.5,
-    10: 11,
-    1: 115
+    30: 3.4,
+    10: 10.5,
+    1: 110
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
