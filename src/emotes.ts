@@ -1,7 +1,7 @@
 import { Client, GuildEmoji } from 'discord.js';
 
 const enum Emotes {
-    sadge = 'Sadge',
+    Sadge = 'Sadge',
     smoshShutUp = 'smoshShutUp',
     DansGame = 'DansGame',
     peepoYell = 'peepoYell',
@@ -23,10 +23,11 @@ const enum Emotes {
 }
 
 const emotes: {[key: string]: GuildEmoji|string} = {
+    [Emotes.Sadge]: ''
 };
 
 const getEmotes = (client: Client) => {
-    emotes[Emotes.sadge] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.sadge) ?? '';
+    emotes[Emotes.Sadge] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.Sadge) ?? '';
     emotes[Emotes.smoshShutUp] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.smoshShutUp) ?? '';
     emotes[Emotes.DansGame] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.DansGame) ?? '';
     emotes[Emotes.peepoYell] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.peepoYell) ?? '';

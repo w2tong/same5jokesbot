@@ -4,7 +4,7 @@ import * as sqlCurrentDisperseStreak from '../sql/tables/current-disperse-streak
 import * as sqlDisperseStreakBreaks from '../sql/tables/disperse-streak-breaks';
 import * as sqlDisperseStreakHighscore from '../sql/tables/disperse-streak-highscore';
 import * as sqlGamerStats from '../sql/tables/gamers-stats';
-import { emotes } from '../emotes';
+import { Emotes, emotes } from '../emotes';
 import * as logger from '../logger';
 import { mockVoidPromise, mockTruePromise, mockFalsePromise } from '../tests/testUtil';
 
@@ -284,18 +284,18 @@ describe('Too late. But you promised.', () => {
 });
 
 describe('Hellhalt. I\'m a leak, I\'m a leak.', () => {
-    jest.replaceProperty(emotes, 'sadge', '😔');
+    jest.replaceProperty(emotes, Emotes.Sadge, '😔');
     test('hellhalt', async () => {
         const res = await getTextResponse('hellhalt', '', '', '');
-        expect(res).toBe('I\'m a leak, I\'m a leak.😔');
+        expect(res).toBe('I\'m a leak, I\'m a leak. 😔');
     });
     test('hell   halt', async () => {
         const res = await getTextResponse('hell   halt', '', '', '');
-        expect(res).toBe('I\'m a leak, I\'m a leak.😔');
+        expect(res).toBe('I\'m a leak, I\'m a leak. 😔');
     });
     test('any hellhalters?!', async () => {
         const res = await getTextResponse('any hellhalters?!', '', '', '');
-        expect(res).toBe('I\'m a leak, I\'m a leak.😔');
+        expect(res).toBe('I\'m a leak, I\'m a leak. 😔');
     });
     test('hell ???  halt', async () => {
         const res = await getTextResponse('hell ???  halt', '', '', '');

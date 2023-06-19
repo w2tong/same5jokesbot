@@ -137,7 +137,7 @@ const regexToText = [
     },
     {
         regex: /hell\s*halt/,
-        getText: () => `I'm a leak, I'm a leak. ${emotes[Emotes.sadge]}`
+        getText: () => `I'm a leak, I'm a leak. ${emotes[Emotes.Sadge]}`
     },
     {
         regex: /shut.*up/,
