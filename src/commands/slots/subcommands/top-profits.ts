@@ -6,7 +6,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const topProfitStats = await getTopSlotsProfits();
     const totalProfitStats = await getTotalSlotsProfits();
-    if (!topProfitStats || !totalProfitStats) {
+    if (!topProfitStats.length || !totalProfitStats) {
         void interaction.editReply('No one has ever spun the slot machine.');
         return;
     }
