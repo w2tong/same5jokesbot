@@ -112,10 +112,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
             {name: '1', value: 1},
             {name: '10', value: 10},
             {name: '100', value: 100},
-            {name: '1,000', value: 1000},
-            {name: '10,000', value: 10000},
-            {name: '100,000', value: 100000},
-            {name: '1,000,000', value: 1000000},
+            {name: '1000', value: 1000}
         )
     );
 
