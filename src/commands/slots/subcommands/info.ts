@@ -13,10 +13,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const symbolFieldValue = (symbols.map(symbol => emotes[symbol.emote])).join('\n');
     const symbolExamples = [
-        emotes['OkaygeBusiness'].toString().repeat(2),
-        emotes['OkaygeBusiness'].toString().repeat(3),
-        emotes['OkaygeBusiness'].toString().repeat(4),
-        emotes['OkaygeBusiness'].toString().repeat(5),
+        emotes['vacation'].toString().repeat(2),
+        emotes['vacation'].toString().repeat(3),
+        emotes['vacation'].toString().repeat(4),
+        emotes['vacation'].toString().repeat(5),
     ];
     const payoutExamples = [
         '50% x 10¹ = 5x',
