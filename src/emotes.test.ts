@@ -1,4 +1,4 @@
-import { emotes, getEmotes } from './emotes';
+import { Emotes, emotes, getEmotes } from './emotes';
 import MockDiscord from './tests/mockDiscord';
 
 // const mockDiscord = new MockDiscord();
@@ -6,7 +6,7 @@ import MockDiscord from './tests/mockDiscord';
 
 test('getEmotes', () => {
     // getEmotes(client);
-    expect(emotes['sadge']).toEqual('');
-    expect(emotes['smoshShutUp']).toEqual('');
-    expect(emotes['dansGame']).toEqual('');
+    expect(emotes[Emotes.sadge]).toEqual('');
+    expect(emotes[Emotes.smoshShutUp]).toEqual('');
+    expect(emotes[Emotes.DansGame]).toEqual('');
 });

@@ -1,4 +1,4 @@
-import { emotes } from '../emotes';
+import { Emotes, emotes } from '../emotes';
 import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/tables/current-disperse-streak';
 import { updateDisperseStreakBreaks } from '../sql/tables/disperse-streak-breaks';
 import { insertDisperseStreakHighScore } from '../sql/tables/disperse-streak-highscore';
@@ -137,7 +137,7 @@ const regexToText = [
     },
     {
         regex: /hell\s*halt/,
-        getText: () => `I'm a leak, I'm a leak.${emotes.sadge.toString()}`
+        getText: () => `I'm a leak, I'm a leak. ${emotes[Emotes.sadge]}`
     },
     {
         regex: /shut.*up/,

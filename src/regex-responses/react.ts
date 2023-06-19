@@ -1,5 +1,5 @@
 import { GuildEmoji } from 'discord.js';
-import { emotes } from '../emotes';
+import { Emotes, emotes } from '../emotes';
 
 const regexToReact = [
     {
@@ -8,7 +8,7 @@ const regexToReact = [
     },
     {
         regex: /shut.*up/,
-        getReact: () => emotes.smoshShutUp ?? ''
+        getReact: () => emotes[Emotes.smoshShutUp] ?? ''
     },
     {
         regex: /^\ba\b$/,
@@ -16,7 +16,7 @@ const regexToReact = [
     },
     {
         regex: /anime|vtuber/,
-        getReact: () => emotes.dansGame ?? ''
+        getReact: () => emotes[Emotes.DansGame] ?? ''
     }
 ];
 
