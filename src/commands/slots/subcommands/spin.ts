@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { emotes } from '../../../emotes';
+import { Emotes, emotes } from '../../../emotes';
 import { getRandomRange } from '../../../util';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { updateSlotsProfits } from '../../../sql/tables/slots-profits';
@@ -79,11 +79,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     else if (profit < 0) void updateSlotsProfits(user.id, 0, -profit);
     
     const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s spin${numOfSpins > 1 ? 's' : ''}`)
+        .setTitle(`${user.username}'s ${emotes[Emotes.borpaSpin] ?? 'spin'}${numOfSpins > 1 ? 's' : ''}`)
         .addFields(
             {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `(x${numOfSpins})` : ''}`, inline: true},
             {name: 'Winnings', value: `${winnings}`, inline: true},
-            {name: `${numOfSpins > 1 ? 'Best ' : ''}Spin`, value: `${bestSpin}`, inline: true},
+            {name: `${numOfSpins > 1 ? 'Best ' : ''}${emotes[Emotes.borpaSpin] ?? 'Spin'}`, value: `${bestSpin}`, inline: true},
             {name: 'Balance ', value: balanceFieldValue, inline: true},
             {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
         );
@@ -106,9 +106,11 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .addChoices(
             {name: '1', value: 1},
             {name: '10', value: 10},
-            {name: '25', value: 25},
-            {name: '50', value: 50},
-            {name: '100', value: 100}
+            {name: '100', value: 100},
+            {name: '1,000', value: 1000},
+            {name: '10,000', value: 10000},
+            {name: '100,000', value: 100000},
+            {name: '1,000,000', value: 1000000},
         )
     );
 
