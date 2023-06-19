@@ -72,7 +72,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     
         const totalPointsBet = pointsBet * numOfSpins;
         const profit = winnings - totalPointsBet;
-        const balanceFieldValue = `${balance} (${profit>0 ? '+' : ''}${profit})`;
+        const balanceFieldValue = `${balance.toLocaleString()} (${profit>0 ? '+' : ''}${profit.toLocaleString()})`;
         const newBalanceFieldValue = (balance + profit).toLocaleString();
     
         void updateCringePoints([{userId: user.id, points: profit}]);
@@ -82,8 +82,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const embed = new EmbedBuilder()
             .setTitle(`${user.username}'s ${emotes[Emotes.borpaSpin] ?? 'spin'}${numOfSpins > 1 ? 's' : ''}`)
             .addFields(
-                {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `(x${numOfSpins})` : ''}`, inline: true},
-                {name: 'Winnings', value: `${winnings}`, inline: true},
+                {name: 'Points Bet', value: `${pointsBet.toLocaleString()} ${numOfSpins > 1 ? `(x${numOfSpins})` : ''}`, inline: true},
+                {name: 'Winnings', value: `${winnings.toLocaleString()}`, inline: true},
                 {name: `${numOfSpins > 1 ? 'Best ' : ''}${emotes[Emotes.borpaSpin] ?? 'Spin'}`, value: `${bestSpin}`, inline: true},
                 {name: 'Balance ', value: balanceFieldValue, inline: true},
                 {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
