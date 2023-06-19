@@ -22,7 +22,7 @@ function spin(amount: number) {
             winnings += currWinnings;
             currWinnings = 0;
         }
-        spinString += `${emotes[symbol.emote]}`;
+        spinString += `${emotes[symbol.emote] ?? symbol.emote}`;
         prevSymbolIndex = symbolIndex;
     }
     return {winnings: Math.ceil(winnings + currWinnings), spinString};
@@ -81,7 +81,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setTitle(`${user.username}'s spin${numOfSpins > 1 ? 's' : ''}`)
         .addFields(
-            {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `x ${numOfSpins}` : ''}`, inline: true},
+            {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `(x${numOfSpins})` : ''}`, inline: true},
             {name: 'Winnings', value: `${winnings}`, inline: true},
             {name: `${numOfSpins > 1 ? 'Best ' : ''}Spin`, value: `${bestSpin}`, inline: true},
             {name: 'Balance ', value: balanceFieldValue, inline: true},
@@ -106,8 +106,9 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .addChoices(
             {name: '1', value: 1},
             {name: '10', value: 10},
-            {name: '100', value: 100},
-            {name: '1000', value: 1000}
+            {name: '25', value: 25},
+            {name: '50', value: 50},
+            {name: '100', value: 100}
         )
     );
 

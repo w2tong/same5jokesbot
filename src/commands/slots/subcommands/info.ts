@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { emotes } from '../../../emotes';
+import { Emotes, emotes } from '../../../emotes';
 import symbols from '../symbols';
 
 const values: Array<string> = [];
@@ -9,21 +9,26 @@ for (const symbol of symbols) {
     multipliers.push(symbol.mult);
 }
 
+const {pc, mult} = symbols[symbols.length-1];
+const pcString = `${pc*100}%`;
+const payoutExamples = [
+    `${pcString} x ${mult}¹ = ${pc*mult**1}x`,
+    `${pcString} x ${mult}² = ${pc*mult**2}x`,
+    `${pcString} x ${mult}³ = ${pc*mult**3}x`,
+    `${pcString} x ${mult}⁴ = ${pc*mult**4}x`,
+];
+
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const symbolFieldValue = (symbols.map(symbol => emotes[symbol.emote])).join('\n');
+    const symbolEmoteStr = emotes[Emotes.ChugU].toString();
     const symbolExamples = [
-        emotes['vacation'].toString().repeat(2),
-        emotes['vacation'].toString().repeat(3),
-        emotes['vacation'].toString().repeat(4),
-        emotes['vacation'].toString().repeat(5),
+        symbolEmoteStr.repeat(2),
+        symbolEmoteStr.repeat(3),
+        symbolEmoteStr.repeat(4),
+        symbolEmoteStr.repeat(5),
     ];
-    const payoutExamples = [
-        '50% x 10¹ = 5x',
-        '50% x 10² = 50x',
-        '50% x 10³ = 500x',
-        '50% x 10⁴ = 5000x',
-    ];
+
     const embed = new EmbedBuilder()
         .setTitle('Slots Info')
         .setDescription('Symbols must be adjacent to win.')
