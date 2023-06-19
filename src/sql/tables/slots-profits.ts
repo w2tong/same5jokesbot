@@ -48,7 +48,7 @@ async function getTotalSlotsProfits(): Promise<SlotsProfits|null> {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<SlotsProfits> = await connection.execute(getTotalQuery, {}, selectExecuteOptions);
         await connection.close();
-        if (result && result.rows && result.rows.length !== 0 && !result.rows[0].PROFITS) {
+        if (result && result.rows && result.rows.length !== 0) {
             return result.rows[0];
         }
         return null;
