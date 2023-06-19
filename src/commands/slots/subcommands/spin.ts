@@ -57,7 +57,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
     let bestSpin = '';
-    let maxWinnings = 0;
+    let maxWinnings = -Infinity;
     let winnings = 0;
         
     for (let i = 0; i < numOfSpins; i++) {
@@ -79,11 +79,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     else if (profit < 0) void updateSlotsProfits(user.id, 0, -profit);
     
     const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s spin(s)`)
+        .setTitle(`${user.username}'s spin${numOfSpins > 1 ? 's' : ''}`)
         .addFields(
             {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `x ${numOfSpins}` : ''}`, inline: true},
             {name: 'Winnings', value: `${winnings}`, inline: true},
-            {name: 'Best Spin', value: `${bestSpin}`, inline: true},
+            {name: `${numOfSpins > 1 ? 'Best ' : ''}Spin`, value: `${bestSpin}`, inline: true},
             {name: 'Balance ', value: balanceFieldValue, inline: true},
             {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
         );
