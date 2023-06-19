@@ -46,30 +46,44 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.user;
     const pointsBet = interaction.options.getInteger('amount');
+    const numOfSpins = interaction.options.getInteger('spins') ?? 1;
     if (!pointsBet) {
         void interaction.editReply('Error spinning slot machine.');
         return;
     }
     const balance = await getUserCringePoints(user.id) ?? 0;
-    if (pointsBet > balance) {
-        await interaction.editReply(`You do not have enough points (Balance **${balance.toLocaleString()}**).`);
+    if (pointsBet * numOfSpins > balance) {
+        await interaction.editReply({content: `You do not have enough points (Balance **${balance.toLocaleString()}**).`, files: ['https://i.kym-cdn.com/photos/images/original/002/508/125/847.jpg'] });
         return;
     }
-    const result = spin(pointsBet);
-    const profit = result.winnings - pointsBet;
+    let bestSpin = '';
+    let maxWinnings = 0;
+    let winnings = 0;
+        
+    for (let i = 0; i < numOfSpins; i++) {
+        const result = spin(pointsBet);
+        winnings += result.winnings;
+        if (result.winnings > maxWinnings) {
+            maxWinnings = result.winnings;
+            bestSpin = result.spinString;
+        }
+    }
+    
+    const totalPointsBet = pointsBet * numOfSpins;
+    const profit = winnings - totalPointsBet;
     const balanceFieldValue = `${balance} (${profit>0 ? '+' : ''}${profit})`;
     const newBalanceFieldValue = (balance + profit).toLocaleString();
     
     void updateCringePoints([{userId: user.id, points: profit}]);
-    if (profit > 0) void updateSlotsProfits(user.id, result.winnings - pointsBet, 0);
-    else if (profit < 0) void updateSlotsProfits(user.id, 0, pointsBet - result.winnings);
+    if (profit > 0) void updateSlotsProfits(user.id, profit, 0);
+    else if (profit < 0) void updateSlotsProfits(user.id, 0, -profit);
     
     const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s spin`)
+        .setTitle(`${user.username}'s spin(s)`)
         .addFields(
-            {name: 'Points Bet', value: `${pointsBet}`, inline: true},
-            {name: 'Winnings', value: `${result.winnings}`, inline: true},
-            {name: 'Spin Result', value: `${result.spinString}`, inline: true},
+            {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `x ${numOfSpins}` : ''}`, inline: true},
+            {name: 'Winnings', value: `${winnings}`, inline: true},
+            {name: 'Best Spin', value: `${bestSpin}`, inline: true},
             {name: 'Balance ', value: balanceFieldValue, inline: true},
             {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
         );
@@ -85,6 +99,15 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setName('amount')
         .setDescription('Amount to spin.')
         .setRequired(true)
+    )
+    .addIntegerOption((option) => option
+        .setName('spins')
+        .setDescription('Number of spins.')
+        .addChoices(
+            {name: '10', value: 10},
+            {name: '100', value: 100},
+            {name: '1000', value: 1000}
+        )
     );
 
 export default { execute, name, subcommandBuilder };

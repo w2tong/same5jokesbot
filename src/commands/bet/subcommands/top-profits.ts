@@ -5,7 +5,7 @@ import { createUserNumberedList, fetchUser } from '../../../discordUtil';
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const topProfitStats = await getTopBetProfits();
-    if (!topProfitStats) {
+    if (!topProfitStats.length) {
         void interaction.editReply('Error getting top betting profits.');
         return;
     }
