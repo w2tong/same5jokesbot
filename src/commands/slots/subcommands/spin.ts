@@ -43,51 +43,56 @@ function spin(amount: number) {
 // console.log('10,000,000 spins', spinSim(10000000, 100));
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
-    const user = interaction.user;
-    const pointsBet = interaction.options.getInteger('amount');
-    const numOfSpins = interaction.options.getInteger('spins') ?? 1;
-    if (!pointsBet) {
-        void interaction.editReply('Error spinning slot machine.');
-        return;
-    }
-    const balance = await getUserCringePoints(user.id) ?? 0;
-    if (pointsBet * numOfSpins > balance) {
-        await interaction.editReply({content: `You do not have enough points (Balance **${balance.toLocaleString()}**).`, files: ['https://i.kym-cdn.com/photos/images/original/002/508/125/847.jpg'] });
-        return;
-    }
-    let bestSpin = '';
-    let maxWinnings = -Infinity;
-    let winnings = 0;
-        
-    for (let i = 0; i < numOfSpins; i++) {
-        const result = spin(pointsBet);
-        winnings += result.winnings;
-        if (result.winnings > maxWinnings) {
-            maxWinnings = result.winnings;
-            bestSpin = result.spinString;
+    try {
+        await interaction.deferReply();
+        const user = interaction.user;
+        const pointsBet = interaction.options.getInteger('amount');
+        const numOfSpins = interaction.options.getInteger('spins') ?? 1;
+        if (!pointsBet) {
+            void interaction.editReply('Error spinning slot machine.');
+            return;
         }
+        const balance = await getUserCringePoints(user.id) ?? 0;
+        if (pointsBet * numOfSpins > balance) {
+            await interaction.editReply({content: `You do not have enough points (Balance **${balance.toLocaleString()}**).`, files: ['https://i.kym-cdn.com/photos/images/original/002/508/125/847.jpg'] });
+            return;
+        }
+        let bestSpin = '';
+        let maxWinnings = -Infinity;
+        let winnings = 0;
+        
+        for (let i = 0; i < numOfSpins; i++) {
+            const result = spin(pointsBet);
+            winnings += result.winnings;
+            if (result.winnings > maxWinnings) {
+                maxWinnings = result.winnings;
+                bestSpin = result.spinString;
+            }
+        }
+    
+        const totalPointsBet = pointsBet * numOfSpins;
+        const profit = winnings - totalPointsBet;
+        const balanceFieldValue = `${balance} (${profit>0 ? '+' : ''}${profit})`;
+        const newBalanceFieldValue = (balance + profit).toLocaleString();
+    
+        void updateCringePoints([{userId: user.id, points: profit}]);
+        if (profit > 0) void updateSlotsProfits(user.id, profit, 0);
+        else if (profit < 0) void updateSlotsProfits(user.id, 0, -profit);
+    
+        const embed = new EmbedBuilder()
+            .setTitle(`${user.username}'s ${emotes[Emotes.borpaSpin] ?? 'spin'}${numOfSpins > 1 ? 's' : ''}`)
+            .addFields(
+                {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `(x${numOfSpins})` : ''}`, inline: true},
+                {name: 'Winnings', value: `${winnings}`, inline: true},
+                {name: `${numOfSpins > 1 ? 'Best ' : ''}${emotes[Emotes.borpaSpin] ?? 'Spin'}`, value: `${bestSpin}`, inline: true},
+                {name: 'Balance ', value: balanceFieldValue, inline: true},
+                {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
+            );
+        void interaction.editReply({embeds: [embed]});
     }
-    
-    const totalPointsBet = pointsBet * numOfSpins;
-    const profit = winnings - totalPointsBet;
-    const balanceFieldValue = `${balance} (${profit>0 ? '+' : ''}${profit})`;
-    const newBalanceFieldValue = (balance + profit).toLocaleString();
-    
-    void updateCringePoints([{userId: user.id, points: profit}]);
-    if (profit > 0) void updateSlotsProfits(user.id, profit, 0);
-    else if (profit < 0) void updateSlotsProfits(user.id, 0, -profit);
-    
-    const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s ${emotes[Emotes.borpaSpin] ?? 'spin'}${numOfSpins > 1 ? 's' : ''}`)
-        .addFields(
-            {name: 'Points Bet', value: `${pointsBet} ${numOfSpins > 1 ? `(x${numOfSpins})` : ''}`, inline: true},
-            {name: 'Winnings', value: `${winnings}`, inline: true},
-            {name: `${numOfSpins > 1 ? 'Best ' : ''}${emotes[Emotes.borpaSpin] ?? 'Spin'}`, value: `${bestSpin}`, inline: true},
-            {name: 'Balance ', value: balanceFieldValue, inline: true},
-            {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
-        );
-    void interaction.editReply({embeds: [embed]});
+    catch(err) {
+        console.log(err);
+    }
 }
 
 const name = 'spin';
