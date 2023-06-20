@@ -2,8 +2,8 @@ import { GuildEmoji } from 'discord.js';
 import { Emotes } from '../../emotes';
 
 const slotsSymbols: {[key: string]: SlotsSymbol} = {
-    OMEGALAUGHING:  {pc: 0.05, mult: 2, emote: Emotes.OMEGALAUGHING, backupEmote: ''},
-    NOOO:           {pc: 0.1, mult: 2, emote: Emotes.NOOO, backupEmote: ''},
+    OMEGALAUGHING:  {pc: 0.1, mult: 1.25, emote: Emotes.OMEGALAUGHING, backupEmote: ''},
+    NOOO:           {pc: 0.15, mult: 1.5, emote: Emotes.NOOO, backupEmote: ''},
     DESKCHAN:       {pc: 0.2, mult: 2, emote: Emotes.DESKCHAN, backupEmote: ''},
     Clueless:       {pc: 0.25, mult: 2.5, emote: Emotes.Clueless, backupEmote: ''},
     pawgchamp:      {pc: 0.3, mult: 3, emote: Emotes.pawgchamp, backupEmote: ''},
@@ -11,9 +11,9 @@ const slotsSymbols: {[key: string]: SlotsSymbol} = {
     THIS:           {pc: 0.4, mult: 4, emote: Emotes.THIS, backupEmote: ''},
     peepoYell:      {pc: 0.45, mult: 4.5, emote: Emotes.peepoYell, backupEmote: ''},
     OkaygeBusiness: {pc: 0.5, mult: 5, emote: Emotes.OkaygeBusiness, backupEmote: ''},
-    vacation:       {pc: 0.6, mult: 6, emote: Emotes.vacation, backupEmote: ''},
-    borpaSpin:      {pc: 0.8, mult: 8, emote: Emotes.borpaSpin, backupEmote: ''},
-    ChugU:          {pc: 1, mult: 10, emote: Emotes.ChugU, backupEmote: ''}
+    vacation:       {pc: 0.6, mult: 7, emote: Emotes.vacation, backupEmote: ''},
+    borpaSpin:      {pc: 0.8, mult: 10, emote: Emotes.borpaSpin, backupEmote: ''},
+    ChugU:          {pc: 1, mult: 15, emote: Emotes.ChugU, backupEmote: ''}
 };
 
 function repeatSymbolArray (symbol: SlotsSymbol, repeat: number) {
@@ -22,8 +22,8 @@ function repeatSymbolArray (symbol: SlotsSymbol, repeat: number) {
 
 type SlotsSymbol = {pc: number, mult: number, emote: string, backupEmote: string};
 const symbols = [
-    ...repeatSymbolArray(slotsSymbols.OMEGALAUGHING, 10),
-    ...repeatSymbolArray(slotsSymbols.NOOO, 10),
+    ...repeatSymbolArray(slotsSymbols.OMEGALAUGHING, 12),
+    ...repeatSymbolArray(slotsSymbols.NOOO, 11),
     ...repeatSymbolArray(slotsSymbols.DESKCHAN, 10),
     ...repeatSymbolArray(slotsSymbols.Clueless, 9),
     ...repeatSymbolArray(slotsSymbols.pawgchamp, 8),
