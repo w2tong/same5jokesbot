@@ -29,7 +29,8 @@
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "deploy": "ts-node src/deployCommands.ts",
-    "test": "jest"
+    "test": "jest",
+    "sim": "ts-node src/simulateCasino.ts"
   },
   "repository": {
     "type": "git",

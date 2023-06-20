@@ -79,24 +79,6 @@ function spin(amount: number) {
     return {winnings: Math.ceil((winnings + currWinnings) * specialMultiplier * comboMultiplier), freeSpins, spinString};
 }
 
-// function spinSim(numofSpins: number, bet: number) {
-//     let profits = 0;
-//     for (let i = 0; i < numofSpins; i++) {
-//         profits += spin(bet).winnings - bet;
-//     }
-//     return profits;
-// }
-
-// let baseSpins = 100;
-// for (let i = 0 ; i < 5; i++) {
-//     let sum = 0;
-//     for (let j = 0; j < 10; j++) {
-//         sum += spinSim(baseSpins, 100);
-//     }
-//     console.log(`${baseSpins.toLocaleString()} spins`, 'avg:', (sum/10).toLocaleString());
-//     baseSpins *= 10;
-// }
-
 async function execute(interaction: ChatInputCommandInteraction) {
     try {
         await interaction.deferReply();
@@ -173,3 +155,4 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     );
 
 export default { execute, name, subcommandBuilder };
+export { spin };
