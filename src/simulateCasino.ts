@@ -2,7 +2,7 @@ import { gamble, payouts } from './commands/cringe-points/subcommands/gamble';
 import { spin } from './commands/slots/subcommands/spin';
 
 function simulateGamble(iterations: number, bet: number) {
-    console.log(`Gabmle Simulation: ${bet} point bets x ${iterations} iterations`);
+    console.log(`Gamble Simulation: ${bet} point bets x ${iterations} iterations`);
     for (const chance of Object.keys(payouts)) {
         let profit = 0;
         for (let i = 0; i < iterations; i++) {
