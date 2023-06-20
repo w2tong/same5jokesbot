@@ -7,10 +7,21 @@ import audio from '../../../audioFileMap';
 
 const payouts: {[key: number]: number} = {
     50: 2,
-    30: 3.4,
-    10: 10.5,
-    1: 110
+    30: 3.33,
+    10: 10,
+    1: 100
 };
+
+const chanceReduction = 0.01;
+function gamble(bet: number, chance: number) {
+    const result = Math.random();
+    if (result < (chance-(chance*chanceReduction))/100) {
+        return {profit: Math.ceil(bet * payouts[chance]) - bet, won: true};
+    }
+    else {
+        return {profit: -bet, won: false};
+    }
+}
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -27,33 +38,31 @@ async function execute(interaction: ChatInputCommandInteraction) {
         await interaction.editReply(`You do not have enough points (Balance **${balance.toLocaleString()}**).`);
         return;
     }
-    
-    const result = Math.random();
 
     let title = `${user.username} `;
     let balanceFieldValue = '';
     let newBalanceFieldValue = '';
 
-    if (result < chance/100) {
-        const winnings = Math.ceil(pointsBet * payouts[chance]) - pointsBet;
+    const {profit, won} = gamble(pointsBet, chance);
+    if (won) {
         title += 'WON';
-        balanceFieldValue = `${balance.toLocaleString()} (+${winnings.toLocaleString()})`;
-        newBalanceFieldValue = `${(balance + winnings).toLocaleString()}`;
-        if (winnings >= 1000 && ((pointsBet / balance) >= 0.1 || chance === 10 || chance === 1)) {
+        balanceFieldValue = `${balance.toLocaleString()} (+${profit.toLocaleString()})`;
+        newBalanceFieldValue = `${(balance + profit).toLocaleString()}`;
+        if (profit >= 1000 && ((pointsBet / balance) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
-        void updateCringePoints([{userId: user.id, points: winnings}]);
-        void updateGambleProfits(user.id, winnings, 0);
+        void updateCringePoints([{userId: user.id, points: profit}]);
+        void updateGambleProfits(user.id, profit, 0);
     }
     else {
         title += 'LOST';
-        const newBalance = balance - pointsBet;
-        balanceFieldValue = `${balance.toLocaleString()} (-${pointsBet.toLocaleString()})`;
+        const newBalance = balance + profit;
+        balanceFieldValue = `${balance.toLocaleString()} (${profit.toLocaleString()})`;
         newBalanceFieldValue = `${newBalance.toLocaleString()}`;
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
-        void updateCringePoints([{userId: user.id, points: -pointsBet}]);
+        void updateCringePoints([{userId: user.id, points: profit}]);
         void updateGambleProfits(user.id, 0, pointsBet);
     }
 
@@ -93,3 +102,4 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     );
 
 export default { execute, name, subcommandBuilder };
+export { gamble, payouts };
