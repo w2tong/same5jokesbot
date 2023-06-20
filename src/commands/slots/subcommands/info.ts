@@ -1,10 +1,10 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { Emotes, emotes } from '../../../emotes';
-import symbols from '../symbols';
+import { slotsSymbols, symbols } from '../symbols';
 
 const values: Array<string> = [];
 const multipliers: Array<number> = [];
-for (const symbol of symbols) {
+for (const symbol of Object.values(slotsSymbols)) {
     values.push(`${symbol.pc * 100}%`);
     multipliers.push(symbol.mult);
 }
@@ -20,7 +20,7 @@ const payoutExamples = [
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const symbolFieldValue = (symbols.map(symbol => emotes[symbol.emote])).join('\n');
+    const symbolFieldValue = (Object.values(slotsSymbols).map(symbol => emotes[symbol.emote])).join('\n');
     const symbolEmoteStr = emotes[Emotes.ChugU].toString();
     const symbolExamples = [
         symbolEmoteStr.repeat(2),
