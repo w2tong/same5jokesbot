@@ -28,7 +28,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'get-top';
+const name = 'top';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
