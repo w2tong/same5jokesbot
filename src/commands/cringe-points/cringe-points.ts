@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import getCringePoints from './subcommands/get';
-import getTopCringePoints from './subcommands/get-top';
+import getTopCringePoints from './subcommands/top';
 import gambleCringePoints from './subcommands/gamble';
 import giveCringePoints from './subcommands/give';
 import getGambleProfits from './subcommands/profits';
