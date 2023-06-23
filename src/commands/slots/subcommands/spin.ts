@@ -148,8 +148,8 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setDescription('Number of spins.')
         .addChoices(
             {name: '1', value: 1},
-            {name: '5', value: 5},
-            {name: '10', value: 10}
+            {name: '10', value: 10},
+            {name: '100', value: 100}
         )
     );
 

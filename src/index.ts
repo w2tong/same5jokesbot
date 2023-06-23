@@ -58,12 +58,12 @@ client.once(Events.ClientReady, async () => {
             void statusChannel.send('Same5JokesBot online.');
         }
     }
-    if (process.env.CASINO_CHANNEL_ID) {
-        const casinoChannel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
-        if (casinoChannel?.type === ChannelType.GuildText) {
-            void casinoChannel.send('The casino is open!');
-        }
-    }
+    // if (process.env.CASINO_CHANNEL_ID) {
+    //     const casinoChannel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
+    //     if (casinoChannel?.type === ChannelType.GuildText) {
+    //         void casinoChannel.send('The casino is open!');
+    //     }
+    // }
     if (process.env.OWNER_USER_ID) {
         const owner = await fetchUser(client.users, process.env.OWNER_USER_ID);
         void owner.send('Same5JokesBot online.');
