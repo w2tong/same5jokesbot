@@ -2,7 +2,8 @@ import { ChannelType, Client } from 'discord.js';
 import { updateTimeInVoice } from './sql/tables/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
 
-const userJoinTime: {[key:string]: {channelId: string, guildId: string, time: number}} = {};
+const pointMultiplier = 10;
+const userJoinTime: {[key:string]: {channelId: string, guildId: string, time: number, pointMultiplier: number}} = {};
 
 function initUsers(client: Client) {
     const time = Date.now();
@@ -11,7 +12,7 @@ function initUsers(client: Client) {
             if (channel.type === ChannelType.GuildVoice) {
                 for (const member of channel.members.values()) {
                     if (!member.user.bot) {
-                        userJoinTime[member.id] = {channelId: channel.id, guildId: guild.id, time};
+                        userJoinTime[member.id] = {channelId: channel.id, guildId: guild.id, time, pointMultiplier};
                     }
                 }
             }
@@ -20,7 +21,7 @@ function initUsers(client: Client) {
 }
 
 function userJoin(userId: string, channelId: string, guildId: string) {
-    userJoinTime[userId] = {guildId, channelId, time: Date.now()};
+    userJoinTime[userId] = {guildId, channelId, time: Date.now(), pointMultiplier};
 }
 
 function updatePairs(userId: string) {

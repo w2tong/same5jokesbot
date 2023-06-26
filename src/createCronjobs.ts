@@ -67,14 +67,21 @@ function createUpdateTimeInVoiceTogetherCronJob() {
 }
 
 const cringePointsPerUpdate = 10;
-const inVoiceMultiplier = 100;
+const pointMultiInc = 10;
+const pointMultiCap = 100;
 function createUpdateCringePointsCronJob(client: Client) {
     schedule.scheduleJob('*/10 * * * *', function() {
         const cringePointUpdates: Array<CringePointsUpdate> = [];
         for (const {bot, id} of client.users.cache.values()) {
             if (bot) continue;
             const update = {userId: id, points: cringePointsPerUpdate};
-            if (timeInVoice.userJoinTime[id]) update.points *= inVoiceMultiplier;
+            if (timeInVoice.userJoinTime[id]) {
+                let pointMultiplier = timeInVoice.userJoinTime[id].pointMultiplier;
+                if (pointMultiplier < pointMultiCap) {
+                    timeInVoice.userJoinTime[id].pointMultiplier = pointMultiplier = Math.min(pointMultiplier + pointMultiInc, pointMultiCap);
+                }
+                update.points *= pointMultiplier;
+            }
             cringePointUpdates.push(update);
         }
         void updateCringePoints(cringePointUpdates);
