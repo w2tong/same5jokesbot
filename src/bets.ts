@@ -1,5 +1,5 @@
 import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, User, UserManager } from 'discord.js';
-import { fetchChannel, fetchMessage, fetchUser } from './discordUtil';
+import { emptyEmbedField, fetchChannel, fetchMessage, fetchUser } from './discordUtil';
 import { convertDateToUnixTimestamp } from './util';
 import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe-points';
 import { BetProfitsUpdate, updateBetProfits } from './sql/tables/bet-profits';
@@ -29,7 +29,7 @@ async function deleteBet(userId: string, client: Client): Promise<boolean> {
         betManager[userId].bet.delete();
         const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
-        await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
+        await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
         delete betManager[userId];
         return true;
     }
@@ -40,10 +40,7 @@ async function endBet(userId: string, client: Client): Promise<boolean> {
     if (betManager[userId]) {
         const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
-        await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
-        if (!betManager[userId].bet.isResolved()) {
-            await message.reply({embeds: [await betManager[userId].bet.createBettersEmbed(client.users)]});
-        }
+        await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
         betManager[userId].bet.end();
         return true;
     }
@@ -227,29 +224,28 @@ class Bet {
         return 0;
     }
 
-    createBetEmbed(): EmbedBuilder {
+    async createBetEmbed(users: UserManager): Promise<EmbedBuilder> {
         const timeFieldName = this.deleted ?  'Bet deleted' : `Bet end${this.isEnded() ? 'ed' : 'ing'}`;
         const timeField =  { name: timeFieldName, value: `<t:${convertDateToUnixTimestamp(new Date(this.endTime))}:R>` };
         const pointTotal = this.yesTotal+this.noTotal;
+        const yesPercent = Math.round(this.yesTotal/pointTotal*100);
+        const noPercent = Math.round(this.noTotal/pointTotal*100);
+        const yesReturn = parseFloat((pointTotal/this.yesTotal).toFixed(2));
+        const noReturn = parseFloat((pointTotal/this.noTotal).toFixed(2));
+        const yesNumVoters = Object.keys(this.yesBetters).length;
+        const noNumVoters = Object.keys(this.noBetters).length;
+        const yesBetters = await createBettersList(this.yesBetters, users);
+        const noBetters = await createBettersList(this.noBetters, users);
         const embed = new EmbedBuilder()
             .setTitle(`${this.name} ${this.isEnded() && !this.isValid() ? '(INVALID)' : ''}`)
             .addFields(
                 timeField,
-                { name: 'Yes', value: `${Math.round(this.yesTotal/pointTotal*100)}%\nPoints: ${this.yesTotal}\nReturn: 1:${parseFloat((pointTotal/this.yesTotal).toFixed(2))}\nVoters: ${Object.keys(this.yesBetters).length}`, inline: true },
-                { name: 'No', value: `${Math.round(this.noTotal/pointTotal*100)}%\nPoints: ${this.noTotal}\nReturn: 1:${parseFloat((pointTotal/this.noTotal).toFixed(2))}\nVoters: ${Object.keys(this.noBetters).length}`, inline: true }
-            );
-        return embed;
-    }
-
-    async createBettersEmbed(users: UserManager): Promise<EmbedBuilder> {
-        const yesBetters = await createBettersList(this.yesBetters, users);
-        const noBetters = await createBettersList(this.noBetters, users);
-        const embed = new EmbedBuilder()
-            .setTitle(`${this.name}`)
-            .addFields(
-                { name: 'Total Points Bet', value: `${this.yesTotal+this.noTotal}` },
-                { name: 'Yes', value: `Total: **${this.yesTotal}**\n${yesBetters}`, inline: true },
-                { name: 'No', value: `Total: **${this.noTotal}**\n${noBetters}`, inline: true }
+                { name: 'Yes', value: `${!isNaN(yesPercent) ? yesPercent : 0}%\n**Points**: ${this.yesTotal}\n**Return**: 1:${!isNaN(yesReturn) ? yesReturn : 1}\n**Voters**: ${yesNumVoters}`, inline: true },
+                emptyEmbedField,
+                { name: 'No', value: `${!isNaN(noPercent) ? noPercent : 0}%\n**Points**: ${this.noTotal}\n**Return**: 1:${!isNaN(noReturn) ? noReturn : 1}\n**Voters**: ${noNumVoters}`, inline: true },
+                { name: 'Yes Betters', value: `${yesBetters.length ? yesBetters : 'None'}`, inline: true },
+                emptyEmbedField,
+                { name: 'No Betters', value: `${noBetters.length ? noBetters : 'None'}`, inline: true }
             );
         return embed;
     }
