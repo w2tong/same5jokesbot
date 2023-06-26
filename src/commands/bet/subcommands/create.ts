@@ -20,7 +20,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
     
     const userId = interaction.user.id;
-    const endTime = new Date(Date.now() + time * timeInMS.second).getTime();
+    const endTime = new Date(Date.now() + time * timeInMS.minute).getTime();
     const bet = createBet(betTitle, userId, endTime, interaction.channelId, (await interaction.fetchReply()).id);
     if (!bet) {
         void interaction.editReply('You already have an active bet.');
@@ -118,6 +118,6 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder ()
     .setName(name)
     .setDescription('Create a bet with cringe points.')
     .addStringOption((option) => option.setName('bet').setDescription('Enter a bet').setRequired(true))
-    .addNumberOption((option) => option.setName('time').setDescription('Enter the time left in seconds to bet').setRequired(true).setMinValue(10));
+    .addNumberOption((option) => option.setName('time').setDescription('Enter the time left in minutes to bet').setRequired(true).setMinValue(0.5));
 
 export default { execute, name, subcommandBuilder };
