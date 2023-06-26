@@ -38,7 +38,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('No')
             .setStyle(ButtonStyle.Danger),
     );
-    void interaction.editReply({embeds: [bet.createBetEmbed()], components: [buttonsRow]});
+    void interaction.editReply({embeds: [await bet.createBetEmbed(interaction.client.users)], components: [buttonsRow]});
 
     const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.second });
     buttonCollector.on('collect', async buttonInteraction => {
@@ -92,7 +92,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             
             await modalSubmitInteraction.deferReply();
             betYes ? bet.addYesBetter(user.id, currBetPoints) : bet.addNoBetter(user.id, currBetPoints);
-            await interaction.editReply({embeds: [bet.createBetEmbed()]});
+            await interaction.editReply({embeds: [await bet.createBetEmbed(interaction.client.users)]});
             await modalSubmitInteraction.editReply(`${user} bet **${betYes ? 'YES' : 'NO'}** with **${currBetPoints.toLocaleString()}** Cringe points (**${(pointsBet + currBetPoints).toLocaleString()}** total, **${(pointsAvailable - pointsBet - currBetPoints).toLocaleString()}** left).`);
         }
         catch (err) {
