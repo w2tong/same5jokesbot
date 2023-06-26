@@ -15,6 +15,7 @@ import { createTableCringePoints } from './tables/cringe-points';
 import { createTableGambleProfits } from './tables/gamble-profits';
 import { createTableBetProfits } from './tables/bet-profits';
 import { createTableSlotsProfits } from './tables/slots-profits';
+import { createTableDeathRollProfits } from './tables/death-roll-profits';
 import { logError } from '../logger';
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
@@ -46,7 +47,7 @@ async function initOracleDB() {
         enableStatistics: true
     });
 
-    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableKnitCount, createTableSneezeCount, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableGambleProfits, createTableBetProfits, createTableSlotsProfits];
+    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableKnitCount, createTableSneezeCount, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableGambleProfits, createTableBetProfits, createTableSlotsProfits, createTableDeathRollProfits];
 
     const connection = await oracledb.getConnection();
     for(const {name, query} of createTableQueries) {
