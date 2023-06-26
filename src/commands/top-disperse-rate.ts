@@ -6,7 +6,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const date = new Date();
     let month = interaction.options.getString('month');
-    const year = interaction.options.getNumber('year');
+    const year = interaction.options.getInteger('year');
     let topDisperseRate;
     let dateStr;
     if (year && !month) {
@@ -66,6 +66,6 @@ const commandBuilder = new SlashCommandBuilder()
         {name: 'November', value: '11'},
         {name: 'December', value: '12'}
     ))
-    .addNumberOption((option) => option.setName('year').setDescription('Select a year'));
+    .addIntegerOption((option) => option.setName('year').setDescription('Select a year'));
 
 export default { execute, name, commandBuilder };
