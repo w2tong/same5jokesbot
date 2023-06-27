@@ -1,7 +1,5 @@
 import moment from 'moment-timezone';
 import audio from '../audioFileMap';
-import { updateKnitCount } from '../sql/tables/knit-count';
-import { updateSneezeCount } from '../sql/tables/sneeze-count';
 import { getRandomRange } from '../util';
 
 const congratulations = audio.congratulations;
@@ -198,10 +196,7 @@ const regexToAudio = [
     },
     {
         regex: /arthur|knit|fuchsia/,
-        getAudio: (userId: string) => {
-            void updateKnitCount(userId);
-            return audio.arthurKnitter;
-        }
+        getAudio: () => audio.arthurKnitter
     },
     {
         regex: /zoomin|foreign|\bt(yler)?\s?(1|one)/,
@@ -333,17 +328,11 @@ const regexToAudio = [
     },
     {
         regex: /sneez|bless you|hocus pocus/,
-        getAudio: (userId :string) => {
-            void updateSneezeCount(userId);
-            return audio.trainSneeze;
-        }
+        getAudio: () => audio.trainSneeze
     },
     {
         regex: /slow mo(de)?|slow.*(it|that|sneeze).*down/,
-        getAudio: (userId :string) => {
-            void updateSneezeCount(userId);
-            return audio.trainSneezeSlow;
-        }
+        getAudio: () => audio.trainSneezeSlow
     },
     {
         regex: /(for|four|force?)\s*(send?|sin|and|in|son|cen|ing)/,
@@ -495,10 +484,10 @@ const regexToAudio = [
     },
 ];
 
-export default (command: string, userId: string) => {
+export default (command: string) => {
     for (const regexAudio of regexToAudio) {
         if (regexAudio.regex.test(command)) {
-            return regexAudio.getAudio(userId);
+            return regexAudio.getAudio();
         }
     }
     return '';

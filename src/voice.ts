@@ -181,7 +181,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             if (player.state.status === AudioPlayerStatus.Playing) return;
     
             // Play any audio where text matches regex
-            const audio = getAudioResponse(text, userId);
+            const audio = getAudioResponse(text);
             playAudioFile(audio, userId, guildId);
         });
     });

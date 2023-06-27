@@ -6,8 +6,6 @@ import disperseHighscore from './disperse-highscore';
 import gamersStats from './gamers-stats';
 import topDisperseRate from './top-disperse-rate';
 import topDisperseBreaks from './top-disperse-breaks';
-import knitCount from './knit-count';
-import sneezeCount from './sneeze-count';
 import remind from './remind';
 import deleteReminder from './delete-reminder';
 import timeInVoice from './time-in-voice';
@@ -30,8 +28,6 @@ const commands = {
     [gamersStats.name]: gamersStats.execute,
     [topDisperseRate.name]: topDisperseRate.execute,
     [topDisperseBreaks.name]: topDisperseBreaks.execute,
-    [knitCount.name]: knitCount.execute,
-    [sneezeCount.name]: sneezeCount.execute,
     [remind.name]: remind.execute,
     [deleteReminder.name]: deleteReminder.execute,
     [timeInVoice.name]: timeInVoice.execute,
@@ -55,8 +51,6 @@ const commandBuilders = [
     gamersStats.commandBuilder,
     topDisperseRate.commandBuilder,
     topDisperseBreaks.commandBuilder,
-    knitCount.commandBuilder,
-    sneezeCount.commandBuilder,
     remind.commandBuilder,
     deleteReminder.commandBuilder,
     timeInVoice.commandBuilder,

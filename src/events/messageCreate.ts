@@ -33,7 +33,7 @@ export default async (message: Message) => {
 
     // Audio replies
     if (message.member && message.member.voice.channel && message.guild) {
-        const audio = getAudioResponse(command, message.author.id);
+        const audio = getAudioResponse(command);
         if (audio) {
             joinVoicePlayAudio(message, audio);
         }
