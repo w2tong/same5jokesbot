@@ -12,10 +12,9 @@ const payouts: {[key: number]: number} = {
     1: 100
 };
 
-const chanceReduction = 0.01;
 function gamble(bet: number, chance: number) {
     const result = Math.random();
-    if (result < (chance-(chance*chanceReduction))/100) {
+    if (result < (chance/100)) {
         return {profit: Math.ceil(bet * payouts[chance]) - bet, won: true};
     }
     else {
