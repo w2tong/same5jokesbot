@@ -16,6 +16,7 @@ import topTimeInVoice from './top-time-in-voice';
 import timeInVoiceTogether from './time-in-voice-together';
 import cringePoints from './cringe-points/cringe-points';
 import bet from './bet/bet';
+import gamble from './gamble/gamble';
 import slots from './slots/slots';
 import deathRoll from './death-roll/death-roll';
 
@@ -38,6 +39,7 @@ const commands = {
     [timeInVoiceTogether.name]: timeInVoiceTogether.execute,
     [cringePoints.name]: cringePoints.execute,
     [bet.name]: bet.execute,
+    [gamble.name]: gamble.execute,
     [slots.name]: slots.execute,
     [deathRoll.name]: deathRoll.execute
 };
@@ -61,6 +63,7 @@ const commandBuilders = [
     timeInVoiceTogether.commandBuilder,
     cringePoints.commandBuilder,
     bet.commandBuilder,
+    gamble.commandBuilder,
     slots.commandBuilder,
     deathRoll.commandBuilder
 ];

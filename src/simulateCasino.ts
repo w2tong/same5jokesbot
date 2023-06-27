@@ -1,4 +1,4 @@
-import { gamble, payouts } from './commands/cringe-points/subcommands/gamble';
+import { gamble, payouts } from './commands/gamble/subcommands/gamble';
 import { spin } from './commands/slots/subcommands/spin';
 
 function simulateGamble(iterations: number, bet: number) {
