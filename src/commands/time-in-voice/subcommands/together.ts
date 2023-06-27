@@ -1,11 +1,11 @@
 import { ChartConfiguration } from 'chart.js';
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getGuildLast30DaysTimeInVoice } from '../sql/tables/time-in-voice';
-import { createMediumChartBuffer } from '../util/chart';
-import { fetchUser } from '../util/discordUtil';
-import { timeInMS } from '../util/util';
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { createMediumChartBuffer } from '../../../util/chart';
+import { getTimeInVoiceTogether } from '../../../sql/tables/time-in-voice-together';
+import { fetchUser } from '../../../util/discordUtil';
+import { timeInMS } from '../../../util/util';
 
-function createChartConfiguration(users: Array<string>, times: Array<number>): ChartConfiguration {
+function createChartConfiguration(username: string, users: Array<string>, times: Array<number>): ChartConfiguration {
     return {
         type: 'bar',
         data: {
@@ -29,7 +29,7 @@ function createChartConfiguration(users: Array<string>, times: Array<number>): C
                 y: {
                     title: {
                         display: true,
-                        text: 'User',
+                        text: 'Users',
                         font: {
                             size: 18
                         }
@@ -39,7 +39,7 @@ function createChartConfiguration(users: Array<string>, times: Array<number>): C
             plugins: {
                 title: {
                     display: true,
-                    text: 'Time In Voice In Last 30 Days',
+                    text: `${username}'s Time In Voice Together`,
                     font: {
                         size: 24
                     }
@@ -71,21 +71,20 @@ function createChartConfiguration(users: Array<string>, times: Array<number>): C
 }
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    const guildId = interaction.guildId;
-    if (!guildId) return;
     await interaction.deferReply();
-    const audioCount = await getGuildLast30DaysTimeInVoice(guildId);
-    if (audioCount) {
-        const users = [];
+    const user = interaction.options.getUser('user') ?? interaction.user;
+    const timeInVoiceTogether = await getTimeInVoiceTogether(user.id);
+    if (timeInVoiceTogether) {
+        let users = [];
         const times = [];
-        for (const {USER_ID, MILLISECONDS} of audioCount) {
+        for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {
             users.push(fetchUser(interaction.client.users, USER_ID));
-            times.push(MILLISECONDS/timeInMS.hour);
+            times.push(MILLISECONDS / timeInMS.hour);
         }
-        const usernames = (await Promise.all(users)).map(user => user.username);
-        const config = createChartConfiguration(usernames, times);
+        users = (await Promise.all(users)).map(user => user.username);
+        const config = createChartConfiguration(user.username, users, times);
         const buffer = await createMediumChartBuffer(config);
-        const file = new AttachmentBuilder(buffer).setName(`${name}-${guildId}-${new Date().toISOString()}.png`);
+        const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
         void interaction.editReply({files: [file]});
     }
     else {
@@ -93,11 +92,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'top-time-in-voice';
-
-const commandBuilder = new SlashCommandBuilder()
+const name = 'together';
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Creates a bar chart of the server\'s users\' time in voice.');
+    .setDescription('Creates a bar chart of your time in voice with other users.')
+    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
 

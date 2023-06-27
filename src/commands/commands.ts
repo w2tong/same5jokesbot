@@ -7,11 +7,8 @@ import gamersStats from './gamers-stats';
 import topDisperseRate from './top-disperse-rate';
 import topDisperseBreaks from './top-disperse-breaks';
 import reminder from './reminder/reminder';
-import timeInVoice from './time-in-voice';
-import timeInVoiceLineGraph from './time-in-voice-line-graph';
+import timeInVoice from './time-in-voice/time-in-voice';
 import audioCount from './audio-count/audio-count';
-import topTimeInVoice from './top-time-in-voice';
-import timeInVoiceTogether from './time-in-voice-together';
 import cringePoints from './cringe-points/cringe-points';
 import bet from './bet/bet';
 import gamble from './gamble/gamble';
@@ -29,10 +26,7 @@ const commands = {
     [topDisperseBreaks.name]: topDisperseBreaks.execute,
     [reminder.name]: reminder.execute,
     [timeInVoice.name]: timeInVoice.execute,
-    [timeInVoiceLineGraph.name]: timeInVoiceLineGraph.execute,
     [audioCount.name]: audioCount.execute,
-    [topTimeInVoice.name]: topTimeInVoice.execute,
-    [timeInVoiceTogether.name]: timeInVoiceTogether.execute,
     [cringePoints.name]: cringePoints.execute,
     [bet.name]: bet.execute,
     [gamble.name]: gamble.execute,
@@ -51,10 +45,7 @@ const commandBuilders = [
     topDisperseBreaks.commandBuilder,
     reminder.commandBuilder,
     timeInVoice.commandBuilder,
-    timeInVoiceLineGraph.commandBuilder,
     audioCount.commandBuilder,
-    topTimeInVoice.commandBuilder,
-    timeInVoiceTogether.commandBuilder,
     cringePoints.commandBuilder,
     bet.commandBuilder,
     gamble.commandBuilder,

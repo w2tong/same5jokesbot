@@ -1,11 +1,11 @@
 import { ChartConfiguration } from 'chart.js';
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { createMediumChartBuffer } from '../util/chart';
-import { getTimeInVoiceTogether } from '../sql/tables/time-in-voice-together';
-import { fetchUser } from '../util/discordUtil';
-import { timeInMS } from '../util/util';
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getGuildLast30DaysTimeInVoice } from '../../../sql/tables/time-in-voice';
+import { createMediumChartBuffer } from '../../../util/chart';
+import { fetchUser } from '../../../util/discordUtil';
+import { timeInMS } from '../../../util/util';
 
-function createChartConfiguration(username: string, users: Array<string>, times: Array<number>): ChartConfiguration {
+function createChartConfiguration(users: Array<string>, times: Array<number>): ChartConfiguration {
     return {
         type: 'bar',
         data: {
@@ -29,7 +29,7 @@ function createChartConfiguration(username: string, users: Array<string>, times:
                 y: {
                     title: {
                         display: true,
-                        text: 'Users',
+                        text: 'User',
                         font: {
                             size: 18
                         }
@@ -39,7 +39,7 @@ function createChartConfiguration(username: string, users: Array<string>, times:
             plugins: {
                 title: {
                     display: true,
-                    text: `${username}'s Time In Voice Together`,
+                    text: 'Time In Voice In Last 30 Days',
                     font: {
                         size: 24
                     }
@@ -71,20 +71,21 @@ function createChartConfiguration(username: string, users: Array<string>, times:
 }
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    const guildId = interaction.guildId;
+    if (!guildId) return;
     await interaction.deferReply();
-    const user = interaction.options.getUser('user') ?? interaction.user;
-    const timeInVoiceTogether = await getTimeInVoiceTogether(user.id);
-    if (timeInVoiceTogether) {
-        let users = [];
+    const audioCount = await getGuildLast30DaysTimeInVoice(guildId);
+    if (audioCount) {
+        const users = [];
         const times = [];
-        for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {
+        for (const {USER_ID, MILLISECONDS} of audioCount) {
             users.push(fetchUser(interaction.client.users, USER_ID));
-            times.push(MILLISECONDS / timeInMS.hour);
+            times.push(MILLISECONDS/timeInMS.hour);
         }
-        users = (await Promise.all(users)).map(user => user.username);
-        const config = createChartConfiguration(user.username, users, times);
+        const usernames = (await Promise.all(users)).map(user => user.username);
+        const config = createChartConfiguration(usernames, times);
         const buffer = await createMediumChartBuffer(config);
-        const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
+        const file = new AttachmentBuilder(buffer).setName(`${name}-${guildId}-${new Date().toISOString()}.png`);
         void interaction.editReply({files: [file]});
     }
     else {
@@ -92,11 +93,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'time-in-voice-together';
-const commandBuilder = new SlashCommandBuilder()
-    .setName(name)
-    .setDescription('Creates a bar chart of your time in voice with other users.')
-    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
+const name = 'top';
 
-export default { execute, name, commandBuilder };
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
+    .setName(name)
+    .setDescription('Creates a bar chart of the server\'s users\' time in voice.');
+
+export default { execute, name, subcommandBuilder };
 
