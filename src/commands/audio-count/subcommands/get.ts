@@ -1,7 +1,7 @@
 import { ChartConfiguration } from 'chart.js';
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getAudioCountUserTotal } from '../sql/tables/audio-count';
-import { createLargeChartBuffer } from '../util/chart';
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getAudioCountUserTotal } from '../../../sql/tables/audio-count';
+import { createLargeChartBuffer } from '../../../util/chart';
 
 function createChartConfiguration(username: string, audio: Array<string>, count: Array<number>): ChartConfiguration {
     return {
@@ -88,12 +88,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'audio-count';
+const name = 'get';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Creates a bar chart of your audio use.')
+    .setDescription('Creates a bar chart of a user\'s audio use.')
     .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
 

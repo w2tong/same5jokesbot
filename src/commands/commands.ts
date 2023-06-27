@@ -9,8 +9,7 @@ import topDisperseBreaks from './top-disperse-breaks';
 import reminder from './reminder/reminder';
 import timeInVoice from './time-in-voice';
 import timeInVoiceLineGraph from './time-in-voice-line-graph';
-import audioCount from './audio-count';
-import audioCountTotal from './audio-count-total';
+import audioCount from './audio-count/audio-count';
 import topTimeInVoice from './top-time-in-voice';
 import timeInVoiceTogether from './time-in-voice-together';
 import cringePoints from './cringe-points/cringe-points';
@@ -32,7 +31,6 @@ const commands = {
     [timeInVoice.name]: timeInVoice.execute,
     [timeInVoiceLineGraph.name]: timeInVoiceLineGraph.execute,
     [audioCount.name]: audioCount.execute,
-    [audioCountTotal.name]: audioCountTotal.execute,
     [topTimeInVoice.name]: topTimeInVoice.execute,
     [timeInVoiceTogether.name]: timeInVoiceTogether.execute,
     [cringePoints.name]: cringePoints.execute,
@@ -55,7 +53,6 @@ const commandBuilders = [
     timeInVoice.commandBuilder,
     timeInVoiceLineGraph.commandBuilder,
     audioCount.commandBuilder,
-    audioCountTotal.commandBuilder,
     topTimeInVoice.commandBuilder,
     timeInVoiceTogether.commandBuilder,
     cringePoints.commandBuilder,

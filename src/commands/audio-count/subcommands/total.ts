@@ -1,7 +1,7 @@
 import { ChartConfiguration } from 'chart.js';
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getAudioCountTotal } from '../sql/tables/audio-count';
-import { createLargeChartBuffer } from '../util/chart';
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getAudioCountTotal } from '../../../sql/tables/audio-count';
+import { createLargeChartBuffer } from '../../../util/chart';
 
 function createChartConfiguration(audio: Array<string>, count: Array<number>): ChartConfiguration {
     return {
@@ -87,11 +87,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'audio-count-total';
+const name = 'total';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Creates bar chart of all audio use.');
+    .setDescription('Creates bar chart of total audio use.');
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
 
