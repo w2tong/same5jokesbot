@@ -1,5 +1,5 @@
 import { ButtonInteraction, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder } from 'discord.js';
-import { timeInMS } from '../../../util';
+import { timeInMS } from '../../../util/util';
 import { DeathRoll } from '../../../deathRoll';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { updateDeathRollProfits } from '../../../sql/tables/death-roll-profits';

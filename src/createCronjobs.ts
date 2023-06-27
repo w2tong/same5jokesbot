@@ -8,7 +8,7 @@ import  timeInVoice from './timeInVoice';
 import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe-points';
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/tables/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
-import { fetchChannel } from './discordUtil';
+import { fetchChannel } from './util/discordUtil';
 
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {

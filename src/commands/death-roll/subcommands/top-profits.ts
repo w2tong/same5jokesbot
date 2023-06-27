@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getTopDeathRollProfits, getTotalDeathRollProfits } from '../../../sql/tables/death-roll-profits';
-import { createUserNumberedList, emptyEmbedField, fetchUser } from '../../../discordUtil';
+import { createUserNumberedList, emptyEmbedField, fetchUser } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

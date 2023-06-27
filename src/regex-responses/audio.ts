@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 import audio from '../audioFileMap';
-import { getRandomRange } from '../util';
+import { getRandomRange } from '../util/util';
 
 const congratulations = audio.congratulations;
 function getCongratulations(): string {

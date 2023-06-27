@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getTimeInVoice } from '../sql/tables/time-in-voice';
-import { msToString } from '../util';
+import { msToString } from '../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guildId) return;

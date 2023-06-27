@@ -2,7 +2,7 @@ import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBui
 import * as chrono from 'chrono-node';
 import { newReminder } from '../reminders';
 import { getUserRemindersCount } from '../sql/tables/reminders';
-import { convertDateToUnixTimestamp } from '../util';
+import { convertDateToUnixTimestamp } from '../util/util';
 
 const MAX_REMINDERS = 5;
 

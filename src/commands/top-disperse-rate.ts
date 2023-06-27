@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../sql/tables/gamers-stats';
-import { createUserNumberedList, fetchUser } from '../discordUtil';
+import { createUserNumberedList, fetchUser } from '../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

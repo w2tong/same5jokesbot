@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { convertDateToUnixTimestamp } from '../util';
+import { convertDateToUnixTimestamp } from '../util/util';
 import { deleteReminder, getUserReminders } from '../sql/tables/reminders';
 import { logError } from '../logger';
 

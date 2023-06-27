@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getDisperseStreakHighscore } from '../sql/tables/disperse-streak-highscore';
-import { createDispersersList } from '../discordUtil';
-import { convertDateToUnixTimestamp } from '../util';
+import { createDispersersList } from '../util/discordUtil';
+import { convertDateToUnixTimestamp } from '../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;

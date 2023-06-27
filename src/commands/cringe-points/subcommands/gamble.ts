@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { updateGambleProfits } from '../../../sql/tables/gamble-profits';
-import { emptyEmbedField } from '../../../discordUtil';
+import { emptyEmbedField } from '../../../util/discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
 import audio from '../../../audioFileMap';
 

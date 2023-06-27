@@ -2,7 +2,7 @@ import { ChartConfiguration } from 'chart.js';
 import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { getUserLast30DaysTimeInVoice } from '../sql/tables/time-in-voice';
 import { createMediumChartBuffer } from '../chart';
-import { timeInMS } from '../util';
+import { timeInMS } from '../util/util';
 
 function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
     return {

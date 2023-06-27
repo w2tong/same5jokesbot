@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
-import { emptyEmbedField } from '../../../discordUtil';
+import { emptyEmbedField } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const giver = interaction.user;
