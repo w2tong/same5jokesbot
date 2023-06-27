@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getCurrentDisperseStreak } from '../sql/tables/current-disperse-streak';
-import { createDispersersList } from '../util/discordUtil';
-import { convertDateToUnixTimestamp } from '../util/util';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getCurrentDisperseStreak } from '../../../sql/tables/current-disperse-streak';
+import { createDispersersList } from '../../../util/discordUtil';
+import { convertDateToUnixTimestamp } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -27,10 +27,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'current-disperse-streak';
+const name = 'current-streak';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets server\'s current disperse streak.');
 
-export default { execute, name,  commandBuilder};
+export default { execute, name, subcommandBuilder};
