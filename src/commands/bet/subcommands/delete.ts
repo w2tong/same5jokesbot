@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getBet, deleteBet } from '../../../bets';
+import { getBet, deleteBet } from '../betManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
