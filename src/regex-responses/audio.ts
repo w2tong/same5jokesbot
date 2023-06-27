@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import audio from '../audioFileMap';
+import audio from '../util/audioFileMap';
 import { getRandomRange } from '../util/util';
 
 const congratulations = audio.congratulations;

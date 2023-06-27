@@ -6,7 +6,7 @@ import { fetchChannel } from '../util/discordUtil';
 import { getMomentCurrentTimeEST } from '../util/util';
 import { disconnectVoice, isInGuildVoice, joinVoicePlayAudio } from '../voice';
 import * as dotenv from 'dotenv';
-import audio from '../audioFileMap';
+import audio from '../util/audioFileMap';
 dotenv.config();
 
 // const mainChannel: TextChannel;
