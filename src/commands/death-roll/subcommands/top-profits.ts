@@ -1,13 +1,13 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getTopSlotsProfits, getTotalSlotsProfits } from '../../../sql/tables/slots-profits';
+import { getTopDeathRollProfits, getTotalDeathRollProfits } from '../../../sql/tables/death-roll-profits';
 import { createUserNumberedList, emptyEmbedField, fetchUser } from '../../../discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const topProfitStats = await getTopSlotsProfits();
-    const totalProfitStats = await getTotalSlotsProfits();
+    const topProfitStats = await getTopDeathRollProfits();
+    const totalProfitStats = await getTotalDeathRollProfits();
     if (!topProfitStats.length || !totalProfitStats) {
-        void interaction.editReply('No one has ever spun the slot machine.');
+        void interaction.editReply('No one has ever death rolled.');
         return;
     }
 
@@ -20,7 +20,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const usersFieldValue = await createUserNumberedList(users);
     const profitsFieldValue = profits.join('\n');
     const embed = new EmbedBuilder()
-        .setTitle('Top Slots Profits')
+        .setTitle('Top Death Roll Profits')
         .addFields(
             {name: 'Total Winnings', value: `${totalProfitStats.WINNINGS.toLocaleString()}`, inline: true},
             {name: 'Total Losses', value: `${totalProfitStats.LOSSES.toLocaleString()}`, inline: true},
@@ -36,6 +36,6 @@ const name = 'top-profits';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets cringe point top slots profits.');
+    .setDescription('Gets top death roll profits.');
 
 export default { execute, name, subcommandBuilder };

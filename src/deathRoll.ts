@@ -31,13 +31,13 @@ class DeathRoll {
                 {name: 'Creator', value: `${this.creator}`, inline: true},
                 {name: 'Opponent', value: `${this.opponent}`, inline: true},
                 emptyEmbedField,
-                {name: 'Points', value: `${this.amount}`, inline: true},
-                {name: 'Starting Roll', value: `${this.startingRoll}`, inline: true},
+                {name: 'Points', value: `${this.amount.toLocaleString()}`, inline: true},
+                {name: 'Starting Roll', value: `${this.startingRoll.toLocaleString()}`, inline: true},
                 emptyEmbedField,
-                {name: 'Current Roll', value: `${this.currentRoll}`, inline: true},
-                this.currentRoll !== 1 ? {name: 'Turn', value: `${turnUser}`, inline: true} : {name: 'Winner', value: `${turnUser} wins ${this.amount} points`, inline: true},
+                this.currentRoll !== 1 ? {name: 'Turn', value: `${turnUser}`, inline: true} : {name: 'Winner', value: `${turnUser} wins ${this.amount.toLocaleString()} points`, inline: true},
+                {name: 'Current Roll', value: `${this.currentRoll.toLocaleString()}`, inline: true},
                 emptyEmbedField,
-                {name: 'Roll History', value: this.rollHistory.length ? this.rollHistory.map(roll => `${roll.userId === this.creator.id ? this.creator : this.opponent} rolled ${roll.roll}`).join('\n') : 'None'}
+                {name: 'Roll History', value: this.rollHistory.length ? this.rollHistory.map(roll => `${roll.userId === this.creator.id ? this.creator : this.opponent} rolled **${roll.roll.toLocaleString()}**`).join('\n') : 'None'}
             );
         const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
         buttonsRow.addComponents(
