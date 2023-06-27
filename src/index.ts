@@ -4,7 +4,7 @@ dotenv.config();
 import createCronJobs from './createCronjobs';
 import { getEmotes } from './emotes';
 import { initOracleDB } from './sql/oracledb';
-import { loadReminders } from './reminders';
+import { loadReminders } from './commands/reminder/reminderManager';
 import timeInVoice from './timeInVoice';
 import { logError } from './logger';
 import messageCreateHandler from './events/messageCreate';
