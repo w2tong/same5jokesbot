@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { Emotes, emotes } from '../../../emotes';
+import { Emotes, emotes } from '../../../util/emotes';
 import { getRandomRange } from '../../../util/util';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { updateSlotsProfits } from '../../../sql/tables/slots-profits';
