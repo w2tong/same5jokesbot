@@ -6,8 +6,7 @@ import disperseHighscore from './disperse-highscore';
 import gamersStats from './gamers-stats';
 import topDisperseRate from './top-disperse-rate';
 import topDisperseBreaks from './top-disperse-breaks';
-import remind from './remind';
-import deleteReminder from './delete-reminder';
+import reminder from './reminder/reminder';
 import timeInVoice from './time-in-voice';
 import timeInVoiceLineGraph from './time-in-voice-line-graph';
 import audioCount from './audio-count';
@@ -29,8 +28,7 @@ const commands = {
     [gamersStats.name]: gamersStats.execute,
     [topDisperseRate.name]: topDisperseRate.execute,
     [topDisperseBreaks.name]: topDisperseBreaks.execute,
-    [remind.name]: remind.execute,
-    [deleteReminder.name]: deleteReminder.execute,
+    [reminder.name]: reminder.execute,
     [timeInVoice.name]: timeInVoice.execute,
     [timeInVoiceLineGraph.name]: timeInVoiceLineGraph.execute,
     [audioCount.name]: audioCount.execute,
@@ -53,8 +51,7 @@ const commandBuilders = [
     gamersStats.commandBuilder,
     topDisperseRate.commandBuilder,
     topDisperseBreaks.commandBuilder,
-    remind.commandBuilder,
-    deleteReminder.commandBuilder,
+    reminder.commandBuilder,
     timeInVoice.commandBuilder,
     timeInVoiceLineGraph.commandBuilder,
     audioCount.commandBuilder,
