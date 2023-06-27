@@ -11,7 +11,7 @@ import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
 import voiceStateUpdateHandler, { initMainChannel } from './events/voiceStateUpdate';
 import { initVoiceLogChannel } from './voice';
-import { fetchChannel, fetchUser } from './discordUtil';
+import { fetchChannel, fetchUser } from './util/discordUtil';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 

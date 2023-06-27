@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getTopDisperseStreakBreaks } from '../sql/tables/disperse-streak-breaks';
-import { createUserNumberedList, fetchUser } from '../discordUtil';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getTopDisperseStreakBreaks } from '../../../sql/tables/disperse-streak-breaks';
+import { createUserNumberedList, fetchUser } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -32,10 +32,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'top-disperse-breaks';
+const name = 'top-breaks';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets streak breaks of all users.');
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };

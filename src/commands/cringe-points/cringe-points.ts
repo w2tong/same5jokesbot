@@ -1,18 +1,12 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import getCringePoints from './subcommands/get';
 import getTopCringePoints from './subcommands/top';
-import gambleCringePoints from './subcommands/gamble';
 import giveCringePoints from './subcommands/give';
-import getGambleProfits from './subcommands/profits';
-import getTopGambleProfits from './subcommands/top-profits';
 
 const subcommands = {
     [getCringePoints.name]: getCringePoints.execute,
     [getTopCringePoints.name]: getTopCringePoints.execute,
-    [gambleCringePoints.name]: gambleCringePoints.execute,
     [giveCringePoints.name]: giveCringePoints.execute,
-    [getGambleProfits.name]: getGambleProfits.execute,
-    [getTopGambleProfits.name]: getTopGambleProfits.execute
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -24,12 +18,9 @@ const name = 'cringe-points';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Get info about or gamble Cringe points.')
+    .setDescription('Get info about or give away Cringe points.')
     .addSubcommand(getCringePoints.subcommandBuilder)
     .addSubcommand(getTopCringePoints.subcommandBuilder)
-    .addSubcommand(gambleCringePoints.subcommandBuilder)
-    .addSubcommand(giveCringePoints.subcommandBuilder)
-    .addSubcommand(getGambleProfits.subcommandBuilder)
-    .addSubcommand(getTopGambleProfits.subcommandBuilder);
+    .addSubcommand(giveCringePoints.subcommandBuilder);
 
 export default { execute, name, commandBuilder };

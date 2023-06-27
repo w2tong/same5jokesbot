@@ -1,5 +1,5 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getDisperseStreakBreaks } from '../sql/tables/disperse-streak-breaks';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getDisperseStreakBreaks } from '../../../sql/tables/disperse-streak-breaks';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -18,10 +18,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'disperse-breaks';
+const name = 'breaks';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets your stats on disperse streak breaks.');
 
-export default {execute, name, commandBuilder};
+export default {execute, name, subcommandBuilder};

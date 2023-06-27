@@ -1,15 +1,17 @@
 import { ChartConfiguration } from 'chart.js';
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getAudioCountTotal } from '../sql/tables/audio-count';
-import { createLargeChartBuffer } from '../chart';
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getGuildLast30DaysTimeInVoice } from '../../../sql/tables/time-in-voice';
+import { createMediumChartBuffer } from '../../../util/chart';
+import { fetchUser } from '../../../util/discordUtil';
+import { timeInMS } from '../../../util/util';
 
-function createChartConfiguration(audio: Array<string>, count: Array<number>): ChartConfiguration {
+function createChartConfiguration(users: Array<string>, times: Array<number>): ChartConfiguration {
     return {
         type: 'bar',
         data: {
-            labels: audio,
+            labels: users,
             datasets: [{
-                data: count
+                data: times
             }]
         },
         options: {
@@ -18,7 +20,7 @@ function createChartConfiguration(audio: Array<string>, count: Array<number>): C
                 x: {
                     title: {
                         display: true,
-                        text: 'Uses',
+                        text: 'Hours',
                         font: {
                             size: 18
                         }
@@ -27,7 +29,7 @@ function createChartConfiguration(audio: Array<string>, count: Array<number>): C
                 y: {
                     title: {
                         display: true,
-                        text: 'Audio',
+                        text: 'User',
                         font: {
                             size: 18
                         }
@@ -37,7 +39,7 @@ function createChartConfiguration(audio: Array<string>, count: Array<number>): C
             plugins: {
                 title: {
                     display: true,
-                    text: 'Total Audio Usage (top 50)',
+                    text: 'Time In Voice In Last 30 Days',
                     font: {
                         size: 24
                     }
@@ -50,7 +52,7 @@ function createChartConfiguration(audio: Array<string>, count: Array<number>): C
                 },
                 datalabels: {
                     align: 'end',
-                    anchor: 'start',
+                    anchor: 'end',
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     backgroundColor: context => context.dataset.borderColor,
@@ -60,6 +62,7 @@ function createChartConfiguration(audio: Array<string>, count: Array<number>): C
                         size: 16,
                         weight: 'bold'
                     },
+                    formatter: (value: number) => value.toFixed(1),
                     padding: 4
                 }
             }
@@ -68,18 +71,21 @@ function createChartConfiguration(audio: Array<string>, count: Array<number>): C
 }
 
 async function execute(interaction: ChatInputCommandInteraction) {
+    const guildId = interaction.guildId;
+    if (!guildId) return;
     await interaction.deferReply();
-    const audioCount = await getAudioCountTotal();
+    const audioCount = await getGuildLast30DaysTimeInVoice(guildId);
     if (audioCount) {
-        const audio = [];
-        const count = [];
-        for (const {AUDIO, COUNT} of audioCount) {
-            audio.push(AUDIO);
-            count.push(COUNT);
+        const users = [];
+        const times = [];
+        for (const {USER_ID, MILLISECONDS} of audioCount) {
+            users.push(fetchUser(interaction.client.users, USER_ID));
+            times.push(MILLISECONDS/timeInMS.hour);
         }
-        const config = createChartConfiguration(audio, count);
-        const buffer = await createLargeChartBuffer(config);
-        const file = new AttachmentBuilder(buffer).setName(`${name}-${new Date().toISOString()}.png`);
+        const usernames = (await Promise.all(users)).map(user => user.username);
+        const config = createChartConfiguration(usernames, times);
+        const buffer = await createMediumChartBuffer(config);
+        const file = new AttachmentBuilder(buffer).setName(`${name}-${guildId}-${new Date().toISOString()}.png`);
         void interaction.editReply({files: [file]});
     }
     else {
@@ -87,11 +93,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'audio-count-total';
+const name = 'top';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Creates bar chart of all audio use.');
+    .setDescription('Creates a bar chart of the server\'s users\' time in voice.');
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
 

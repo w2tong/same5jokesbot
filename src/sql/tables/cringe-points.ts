@@ -41,7 +41,8 @@ FROM cringe_points
 WHERE
     EXISTS (SELECT 1 FROM bet_profits WHERE cringe_points.user_id = bet_profits.user_id) OR
     EXISTS (SELECT 1 FROM gamble_profits WHERE cringe_points.user_id = gamble_profits.user_id) OR
-    EXISTS (SELECT 1 FROM slots_profits WHERE cringe_points.user_id = slots_profits.user_id)
+    EXISTS (SELECT 1 FROM slots_profits WHERE cringe_points.user_id = slots_profits.user_id) OR
+    EXISTS (SELECT 1 FROM death_roll_profits WHERE cringe_points.user_id = death_roll_profits.user_id)
 ORDER BY points DESC
 `;
 

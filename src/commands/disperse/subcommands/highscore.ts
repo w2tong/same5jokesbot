@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getDisperseStreakHighscore } from '../sql/tables/disperse-streak-highscore';
-import { createDispersersList } from '../discordUtil';
-import { convertDateToUnixTimestamp } from '../util';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getDisperseStreakHighscore } from '../../../sql/tables/disperse-streak-highscore';
+import { createDispersersList } from '../../../util/discordUtil';
+import { convertDateToUnixTimestamp } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -26,10 +26,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'disperse-highscore';
+const name = 'highscore';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets server\'s disperse streak highscore.');
 
-export default { execute, name,  commandBuilder};
+export default { execute, name,  subcommandBuilder};

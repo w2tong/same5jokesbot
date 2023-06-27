@@ -1,17 +1,15 @@
 import { ChartConfiguration } from 'chart.js';
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { createMediumChartBuffer } from '../chart';
-import { getTimeInVoiceTogether } from '../sql/tables/time-in-voice-together';
-import { fetchUser } from '../discordUtil';
-import { timeInMS } from '../util';
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getAudioCountTotal } from '../../../sql/tables/audio-count';
+import { createLargeChartBuffer } from '../../../util/chart';
 
-function createChartConfiguration(username: string, users: Array<string>, times: Array<number>): ChartConfiguration {
+function createChartConfiguration(audio: Array<string>, count: Array<number>): ChartConfiguration {
     return {
         type: 'bar',
         data: {
-            labels: users,
+            labels: audio,
             datasets: [{
-                data: times
+                data: count
             }]
         },
         options: {
@@ -20,7 +18,7 @@ function createChartConfiguration(username: string, users: Array<string>, times:
                 x: {
                     title: {
                         display: true,
-                        text: 'Hours',
+                        text: 'Uses',
                         font: {
                             size: 18
                         }
@@ -29,7 +27,7 @@ function createChartConfiguration(username: string, users: Array<string>, times:
                 y: {
                     title: {
                         display: true,
-                        text: 'Users',
+                        text: 'Audio',
                         font: {
                             size: 18
                         }
@@ -39,7 +37,7 @@ function createChartConfiguration(username: string, users: Array<string>, times:
             plugins: {
                 title: {
                     display: true,
-                    text: `${username}'s Time In Voice Together`,
+                    text: 'Total Audio Usage (top 50)',
                     font: {
                         size: 24
                     }
@@ -52,7 +50,7 @@ function createChartConfiguration(username: string, users: Array<string>, times:
                 },
                 datalabels: {
                     align: 'end',
-                    anchor: 'end',
+                    anchor: 'start',
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     backgroundColor: context => context.dataset.borderColor,
@@ -62,7 +60,6 @@ function createChartConfiguration(username: string, users: Array<string>, times:
                         size: 16,
                         weight: 'bold'
                     },
-                    formatter: (value: number) => value.toFixed(1),
                     padding: 4
                 }
             }
@@ -72,19 +69,17 @@ function createChartConfiguration(username: string, users: Array<string>, times:
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const user = interaction.options.getUser('user') ?? interaction.user;
-    const timeInVoiceTogether = await getTimeInVoiceTogether(user.id);
-    if (timeInVoiceTogether) {
-        let users = [];
-        const times = [];
-        for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {
-            users.push(fetchUser(interaction.client.users, USER_ID));
-            times.push(MILLISECONDS / timeInMS.hour);
+    const audioCount = await getAudioCountTotal();
+    if (audioCount) {
+        const audio = [];
+        const count = [];
+        for (const {AUDIO, COUNT} of audioCount) {
+            audio.push(AUDIO);
+            count.push(COUNT);
         }
-        users = (await Promise.all(users)).map(user => user.username);
-        const config = createChartConfiguration(user.username, users, times);
-        const buffer = await createMediumChartBuffer(config);
-        const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
+        const config = createChartConfiguration(audio, count);
+        const buffer = await createLargeChartBuffer(config);
+        const file = new AttachmentBuilder(buffer).setName(`${name}-${new Date().toISOString()}.png`);
         void interaction.editReply({files: [file]});
     }
     else {
@@ -92,11 +87,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'time-in-voice-together';
-const commandBuilder = new SlashCommandBuilder()
-    .setName(name)
-    .setDescription('Creates a bar chart of your time in voice with other users.')
-    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
+const name = 'total';
 
-export default { execute, name, commandBuilder };
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
+    .setName(name)
+    .setDescription('Creates bar chart of total audio use.');
+
+export default { execute, name, subcommandBuilder };
 

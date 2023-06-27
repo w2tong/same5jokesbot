@@ -5,8 +5,6 @@ import { createTableCurrentDisperseStreak } from './tables/current-disperse-stre
 import { createTableDisperseStreakBreaks } from './tables/disperse-streak-breaks';
 import { createTableDisperseStreakHighscore } from './tables/disperse-streak-highscore';
 import { createTableGamersStats } from './tables/gamers-stats';
-import { createTableKnitCount } from './tables/knit-count';
-import { createTableSneezeCount } from './tables/sneeze-count';
 import { createTableReminders } from './tables/reminders';
 import { createTableTimeInVoice } from './tables/time-in-voice';
 import { createTableAudioCount } from './tables/audio-count';
@@ -47,7 +45,7 @@ async function initOracleDB() {
         enableStatistics: true
     });
 
-    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableKnitCount, createTableSneezeCount, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableGambleProfits, createTableBetProfits, createTableSlotsProfits, createTableDeathRollProfits];
+    const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableGambleProfits, createTableBetProfits, createTableSlotsProfits, createTableDeathRollProfits];
 
     const connection = await oracledb.getConnection();
     for(const {name, query} of createTableQueries) {

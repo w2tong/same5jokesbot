@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../sql/tables/gamers-stats';
-import { createUserNumberedList, fetchUser } from '../discordUtil';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../../../sql/tables/gamers-stats';
+import { createUserNumberedList, fetchUser } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -47,9 +47,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'top-disperse-rate';
+const name = 'top-rate';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets disperse rate of all users.')
     .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
@@ -68,4 +68,4 @@ const commandBuilder = new SlashCommandBuilder()
     ))
     .addIntegerOption((option) => option.setName('year').setDescription('Select a year'));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };

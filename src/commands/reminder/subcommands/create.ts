@@ -1,8 +1,8 @@
-import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder,  } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder,  } from 'discord.js';
 import * as chrono from 'chrono-node';
-import { newReminder } from '../reminders';
-import { getUserRemindersCount } from '../sql/tables/reminders';
-import { convertDateToUnixTimestamp } from '../util';
+import { newReminder } from '../../../reminders';
+import { getUserRemindersCount } from '../../../sql/tables/reminders';
+import { convertDateToUnixTimestamp } from '../../../util/util';
 
 const MAX_REMINDERS = 5;
 
@@ -50,13 +50,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'remind';
+const name = 'create';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Set a reminder to mention someone with a message.')
     .addMentionableOption((option) => option.setName('mention').setDescription('Select user or role.').setRequired(true))
     .addStringOption((option) => option.setName('time').setDescription('Enter a time or date (e.g. "in 5 minutes" or "friday at 5pm")').setRequired(true))
     .addStringOption((option) => option.setName('message').setDescription('Message').setRequired(true));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };

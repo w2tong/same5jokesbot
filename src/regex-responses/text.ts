@@ -3,7 +3,7 @@ import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/ta
 import { updateDisperseStreakBreaks } from '../sql/tables/disperse-streak-breaks';
 import { insertDisperseStreakHighScore } from '../sql/tables/disperse-streak-highscore';
 import { updateGamersStats } from '../sql/tables/gamers-stats';
-import { getRandomRange } from '../util';
+import { getRandomRange } from '../util/util';
 import { logError } from '../logger';
 
 // Where is Andy random response

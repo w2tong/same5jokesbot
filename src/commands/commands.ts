@@ -1,47 +1,27 @@
 import play from './play';
 import roll from './roll';
-import currentDisperseStreak from './current-disperse-streak';
-import disperseBreaks from './disperse-breaks';
-import disperseHighscore from './disperse-highscore';
+import disperse from './disperse/disperse';
 import gamersStats from './gamers-stats';
-import topDisperseRate from './top-disperse-rate';
-import topDisperseBreaks from './top-disperse-breaks';
-import knitCount from './knit-count';
-import sneezeCount from './sneeze-count';
-import remind from './remind';
-import deleteReminder from './delete-reminder';
-import timeInVoice from './time-in-voice';
-import timeInVoiceLineGraph from './time-in-voice-line-graph';
-import audioCount from './audio-count';
-import audioCountTotal from './audio-count-total';
-import topTimeInVoice from './top-time-in-voice';
-import timeInVoiceTogether from './time-in-voice-together';
+import reminder from './reminder/reminder';
+import timeInVoice from './time-in-voice/time-in-voice';
+import audioCount from './audio-count/audio-count';
 import cringePoints from './cringe-points/cringe-points';
 import bet from './bet/bet';
+import gamble from './gamble/gamble';
 import slots from './slots/slots';
 import deathRoll from './death-roll/death-roll';
 
 const commands = {
     [play.name]: play.execute,
     [roll.name]: roll.execute,
-    [currentDisperseStreak.name]: currentDisperseStreak.execute,
-    [disperseBreaks.name]: disperseBreaks.execute,
-    [disperseHighscore.name]: disperseHighscore.execute,
+    [disperse.name]: disperse.execute,
     [gamersStats.name]: gamersStats.execute,
-    [topDisperseRate.name]: topDisperseRate.execute,
-    [topDisperseBreaks.name]: topDisperseBreaks.execute,
-    [knitCount.name]: knitCount.execute,
-    [sneezeCount.name]: sneezeCount.execute,
-    [remind.name]: remind.execute,
-    [deleteReminder.name]: deleteReminder.execute,
+    [reminder.name]: reminder.execute,
     [timeInVoice.name]: timeInVoice.execute,
-    [timeInVoiceLineGraph.name]: timeInVoiceLineGraph.execute,
     [audioCount.name]: audioCount.execute,
-    [audioCountTotal.name]: audioCountTotal.execute,
-    [topTimeInVoice.name]: topTimeInVoice.execute,
-    [timeInVoiceTogether.name]: timeInVoiceTogether.execute,
     [cringePoints.name]: cringePoints.execute,
     [bet.name]: bet.execute,
+    [gamble.name]: gamble.execute,
     [slots.name]: slots.execute,
     [deathRoll.name]: deathRoll.execute
 };
@@ -49,24 +29,14 @@ const commands = {
 const commandBuilders = [
     play.commandBuilder,
     roll.commandBuilder,
-    currentDisperseStreak.commandBuilder,
-    disperseBreaks.commandBuilder,
-    disperseHighscore.commandBuilder,
+    disperse.commandBuilder,
     gamersStats.commandBuilder,
-    topDisperseRate.commandBuilder,
-    topDisperseBreaks.commandBuilder,
-    knitCount.commandBuilder,
-    sneezeCount.commandBuilder,
-    remind.commandBuilder,
-    deleteReminder.commandBuilder,
+    reminder.commandBuilder,
     timeInVoice.commandBuilder,
-    timeInVoiceLineGraph.commandBuilder,
     audioCount.commandBuilder,
-    audioCountTotal.commandBuilder,
-    topTimeInVoice.commandBuilder,
-    timeInVoiceTogether.commandBuilder,
     cringePoints.commandBuilder,
     bet.commandBuilder,
+    gamble.commandBuilder,
     slots.commandBuilder,
     deathRoll.commandBuilder
 ];

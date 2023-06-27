@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { nanoid } from 'nanoid';
-import { timeInMS } from '../../../util';
-import { createBet, deleteBet, endBet } from '../../../bets';
+import { timeInMS } from '../../../util/util';
+import { createBet, deleteBet, endBet } from '../betManager';
 import { getUserCringePoints } from '../../../sql/tables/cringe-points';
 import { logError } from '../../../logger';
 

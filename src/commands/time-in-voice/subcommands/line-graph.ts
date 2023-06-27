@@ -1,8 +1,8 @@
 import { ChartConfiguration } from 'chart.js';
-import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getUserLast30DaysTimeInVoice } from '../sql/tables/time-in-voice';
-import { createMediumChartBuffer } from '../chart';
-import { timeInMS } from '../util';
+import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getUserLast30DaysTimeInVoice } from '../../../sql/tables/time-in-voice';
+import { createMediumChartBuffer } from '../../../util/chart';
+import { timeInMS } from '../../../util/util';
 
 function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
     return {
@@ -102,12 +102,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'time-in-voice-line-graph';
+const name = 'line-graph';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Creates a line graph of your time in a voice channel in this guild for the last 30 days.')
     .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
 

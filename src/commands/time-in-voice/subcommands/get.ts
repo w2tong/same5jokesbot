@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { getTimeInVoice } from '../sql/tables/time-in-voice';
-import { msToString } from '../util';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getTimeInVoice } from '../../../sql/tables/time-in-voice';
+import { msToString } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guildId) return;
@@ -15,9 +15,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'time-in-voice';
+const name = 'get';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets your time in voice channels in this guild.')
     .addStringOption((option) => option.setName('date-range').setDescription('Date range').addChoices(
@@ -27,4 +27,4 @@ const commandBuilder = new SlashCommandBuilder()
         {name: 'Total', value: 'total'},
     ));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
