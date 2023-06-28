@@ -39,7 +39,7 @@ async function getGamersStatsMonthYear(userId: string, month: string, year: stri
         return null;
     }
     catch (err) {
-        throw new Error(`getGamersStats: ${err}`);
+        throw new Error(`getGamersStatsMonthYear: ${err}`);
     }
 }
 
@@ -61,7 +61,50 @@ async function getGamersStatsYear(userId: string, year: string): Promise<GamersC
         return null;
     }
     catch (err) {
-        throw new Error(`getGamersStats: ${err}`);
+        throw new Error(`getGamersStatsYear: ${err}`);
+    }
+}
+
+const totalMonthYearQuery = `
+SELECT SUM(discharge) AS discharge, SUM(disperse) AS disperse, SUM(rise_up) AS rise_up
+FROM gamers_stats
+WHERE month_year = TO_DATE(:monthYear, 'yyyy/mm')
+`;
+
+async function getTotalGamersStatsMonthYear(month: string, year: string): Promise<GamersCounter|null> {
+    try {
+        const monthYear = `${year}/${month}`;
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GamersCounter> = await connection.execute(totalMonthYearQuery, {monthYear}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getTotalGamersStatsMonthYear: ${err}`);
+    }
+}
+
+const totalYearQuery = `
+SELECT SUM(discharge) AS discharge, SUM(disperse) AS disperse, SUM(rise_up) AS rise_up
+FROM gamers_stats
+WHERE EXTRACT(YEAR FROM month_year) = :year
+`;
+
+async function getTotalGamersStatsYear(year: string): Promise<GamersCounter|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<GamersCounter> = await connection.execute(totalYearQuery, {year}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getTotalGamersStatsYear: ${err}`);
     }
 }
 
@@ -174,4 +217,4 @@ async function getTopDisperseRateYear(year: string): Promise<Array<TopDisperseRa
     }
 }
 
-export { createTableGamersStats, getGamersStatsMonthYear, getGamersStatsYear, updateGamersStats, getTopDisperseRateMonthYear, getTopDisperseRateYear };
+export { createTableGamersStats, getGamersStatsMonthYear, getGamersStatsYear, getTotalGamersStatsMonthYear, getTotalGamersStatsYear, updateGamersStats, getTopDisperseRateMonthYear, getTopDisperseRateYear };

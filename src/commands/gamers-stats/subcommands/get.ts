@@ -1,5 +1,5 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getGamersStatsMonthYear, getGamersStatsYear } from '../sql/tables/gamers-stats';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { getGamersStatsMonthYear, getGamersStatsYear } from '../../../sql/tables/gamers-stats';
 
 const decimalPlaces = 2;
 
@@ -40,11 +40,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
-const name = 'gamers-stats';
+const name = 'get';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets your Gamer stats for this server.')
+    .setDescription('Gets your Gamer stats.')
     .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
         {name: 'January', value: '1'},
         {name: 'February', value: '2'},
@@ -61,4 +61,4 @@ const commandBuilder = new SlashCommandBuilder()
     ))
     .addIntegerOption((option) => option.setName('year').setDescription('Select a year'));
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
