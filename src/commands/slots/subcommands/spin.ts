@@ -114,7 +114,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const balanceFieldValue = `${balance.toLocaleString()} (${profit>0 ? '+' : ''}${profit.toLocaleString()})`;
         const newBalanceFieldValue = (balance + profit).toLocaleString();
     
+        // Update user Cringe points
         void updateCringePoints([{userId: user.id, points: profit}]);
+        // Update house Cringe points
+        if (process.env.CLIENT_ID) void updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
+        
         if (profit > 0) void updateSlotsProfits(user.id, profit, 0);
         else if (profit < 0) void updateSlotsProfits(user.id, 0, -profit);
         const embed = new EmbedBuilder()

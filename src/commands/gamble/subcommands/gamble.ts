@@ -15,10 +15,10 @@ const payouts: {[key: number]: number} = {
 function gamble(bet: number, chance: number) {
     const result = Math.random();
     if (result < (chance/100)) {
-        return {profit: Math.ceil(bet * payouts[chance]) - bet, won: true};
+        return Math.ceil(bet * payouts[chance]) - bet;
     }
     else {
-        return {profit: -bet, won: false};
+        return -bet;
     }
 }
 
@@ -42,15 +42,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
     let balanceFieldValue = '';
     let newBalanceFieldValue = '';
 
-    const {profit, won} = gamble(pointsBet, chance);
-    if (won) {
+    const profit = gamble(pointsBet, chance);
+    if (profit > 0) {
         title += 'WON';
         balanceFieldValue = `${balance.toLocaleString()} (+${profit.toLocaleString()})`;
         newBalanceFieldValue = `${(balance + profit).toLocaleString()}`;
         if (profit >= 1000 && ((pointsBet / balance) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
-        void updateCringePoints([{userId: user.id, points: profit}]);
         void updateGambleProfits(user.id, profit, 0);
     }
     else {
@@ -61,9 +60,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
-        void updateCringePoints([{userId: user.id, points: profit}]);
         void updateGambleProfits(user.id, 0, pointsBet);
     }
+    // Update user Cringe points
+    void updateCringePoints([{userId: user.id, points: profit}]);
+    // Update house Cringe points
+    if (process.env.CLIENT_ID) void updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
 
     const embed = new EmbedBuilder()
         .setTitle(title)
