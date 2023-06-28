@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import createBet from './subcommands/create';
 import deleteBet from './subcommands/delete';
 import endBetting from './subcommands/end-betting';
-import resolveBet from './subcommands/bet';
+import resolveBet from './subcommands/resolve';
 import getBetProfits from './subcommands/profits';
 import getTopBetProfits from './subcommands/top-profits';
 
