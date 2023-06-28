@@ -23,9 +23,9 @@ class DeathRoll {
         this.turnUser = (Math.random() < 0.5) ? creator : opponent;
     }
 
-    createReply(): InteractionEditReplyOptions {
+    createEmbed(): EmbedBuilder {
         const turnUser = (this.turnUser === this.creator) ? this.creator : this.opponent;
-        const embed = new EmbedBuilder()
+        return new EmbedBuilder()
             .setTitle(`Death Roll ${this.isEnded() ? `(Winner: ${turnUser.username})` : this.expired ? '(Expired)' : ''}`)
             .addFields(
                 {name: 'Creator', value: `${this.creator}`, inline: true},
@@ -39,14 +39,6 @@ class DeathRoll {
                 emptyEmbedField,
                 {name: 'Roll History', value: this.rollHistory.length ? this.rollHistory.map(roll => `${roll.userId === this.creator.id ? this.creator : this.opponent} rolled **${roll.roll.toLocaleString()}**`).join('\n') : 'None'}
             );
-        const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
-        buttonsRow.addComponents(
-            new ButtonBuilder()
-                .setCustomId('roll')
-                .setLabel(`Roll (${turnUser.username}'s turn)`)
-                .setStyle(ButtonStyle.Success)
-        );
-        return {embeds: [embed], components: !this.isEnded() && !this.expired ? [buttonsRow] : []};
     }
 
     roll(userId: string): {correctUser: boolean, ended: boolean} {
@@ -68,6 +60,10 @@ class DeathRoll {
 
     expire(): void {
         this.expired = true;
+    }
+
+    isExpired(): boolean {
+        return this.expired;
     }
 
     getResults() {
