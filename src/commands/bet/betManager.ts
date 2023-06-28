@@ -3,6 +3,7 @@ import { emptyEmbedField, fetchChannel, fetchMessage, fetchUser } from '../../ut
 import { convertDateToUnixTimestamp } from '../../util/util';
 import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe-points';
 import { BetProfitsUpdate, updateBetProfits } from '../../sql/tables/bet-profits';
+import { logError } from '../../logger';
 
 const enum BetResult {
     Yes = 'YES',
@@ -29,7 +30,12 @@ async function deleteBet(userId: string, client: Client): Promise<boolean> {
         betManager[userId].bet.delete();
         const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
-        await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
+        try {
+            await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
+        }
+        catch(err) {
+            logError(err);
+        }
         delete betManager[userId];
         return true;
     }
@@ -40,7 +46,12 @@ async function endBet(userId: string, client: Client): Promise<boolean> {
     if (betManager[userId]) {
         const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
-        await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
+        try {
+            await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
+        }
+        catch(err) {
+            logError(err);
+        }
         betManager[userId].bet.end();
         return true;
     }

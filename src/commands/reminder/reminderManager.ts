@@ -1,8 +1,8 @@
 import { ChannelType, Client, TextChannel } from 'discord.js';
 import schedule from 'node-schedule';
-import { logError } from './logger';
-import { getReminders, insertReminder, deleteReminder } from './sql/tables/reminders';
-import { fetchChannel } from './util/discordUtil';
+import { logError } from '../../logger';
+import { getReminders, insertReminder, deleteReminder } from '../../sql/tables/reminders';
+import { fetchChannel } from '../../util/discordUtil';
 
 function scheduleReminder(channel: TextChannel, date: Date, message: string, id?: string) {
     let job: schedule.Job;

@@ -1,5 +1,5 @@
 import { GuildEmoji } from 'discord.js';
-import { Emotes, emotes } from '../emotes';
+import { Emotes, emotes } from '../util/emotes';
 
 const regexToReact = [
     {

@@ -1,14 +1,9 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util/util';
 import { createBet, deleteBet, endBet } from '../betManager';
 import { getUserCringePoints } from '../../../sql/tables/cringe-points';
 import { logError } from '../../../logger';
-
-const enum ButtonId {
-    BetYes = 'bet-yes',
-    BetNo = 'bet-no',
-}
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -27,28 +22,31 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
+    const yesButtonCustomId = `yes-${nanoid()}`;
+    const noButtonCustomId = `no-${nanoid()}`;
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     buttonsRow.addComponents(
         new ButtonBuilder()
-            .setCustomId(ButtonId.BetYes)
+            .setCustomId(yesButtonCustomId)
             .setLabel('Yes')
             .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
-            .setCustomId(ButtonId.BetNo)
+            .setCustomId(noButtonCustomId)
             .setLabel('No')
             .setStyle(ButtonStyle.Danger),
     );
     void interaction.editReply({embeds: [await bet.createBetEmbed(interaction.client.users)], components: [buttonsRow]});
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.second });
+    const betButtonFilter = (i: ButtonInteraction) => i.customId === yesButtonCustomId || i.customId === noButtonCustomId;
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.minute, filter: betButtonFilter});
     buttonCollector.on('collect', async buttonInteraction => {
-        if (buttonInteraction.customId === ButtonId.BetYes && bet.isNoBetter(buttonInteraction.user.id) ||
-            buttonInteraction.customId === ButtonId.BetNo && bet.isYesBetter(buttonInteraction.user.id)) {
+        if (buttonInteraction.customId === yesButtonCustomId && bet.isNoBetter(buttonInteraction.user.id) ||
+            buttonInteraction.customId === noButtonCustomId && bet.isYesBetter(buttonInteraction.user.id)) {
             void buttonInteraction.reply({content: 'You cannot vote both Yes and No.', ephemeral: true});
             return;
         }
 
-        const betYes = buttonInteraction.customId === ButtonId.BetYes;
+        const betYes = buttonInteraction.customId === yesButtonCustomId;
         const pointsInput = new TextInputBuilder()
             .setCustomId('points')
             .setLabel('Points')

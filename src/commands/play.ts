@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
 import { joinVoicePlayAudio } from '../voice';
-import audio from '../audioFileMap';
+import audio from '../util/audioFileMap';
 
 function execute(interaction: ChatInputCommandInteraction) {
     if (interaction.member instanceof GuildMember) {

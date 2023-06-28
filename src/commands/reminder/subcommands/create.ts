@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder,  } from 'discord.js';
 import * as chrono from 'chrono-node';
-import { newReminder } from '../../../reminders';
+import { newReminder } from '../reminderManager';
 import { getUserRemindersCount } from '../../../sql/tables/reminders';
 import { convertDateToUnixTimestamp } from '../../../util/util';
 

@@ -4,7 +4,7 @@ import * as sqlCurrentDisperseStreak from '../sql/tables/current-disperse-streak
 import * as sqlDisperseStreakBreaks from '../sql/tables/disperse-streak-breaks';
 import * as sqlDisperseStreakHighscore from '../sql/tables/disperse-streak-highscore';
 import * as sqlGamerStats from '../sql/tables/gamers-stats';
-import { Emotes, emotes } from '../emotes';
+import { Emotes, emotes } from '../util/emotes';
 import * as logger from '../logger';
 import { mockVoidPromise, mockTruePromise, mockFalsePromise } from '../tests/testUtil';
 

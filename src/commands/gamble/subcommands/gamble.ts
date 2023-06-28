@@ -3,7 +3,7 @@ import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cri
 import { updateGambleProfits } from '../../../sql/tables/gamble-profits';
 import { emptyEmbedField } from '../../../util/discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
-import audio from '../../../audioFileMap';
+import audio from '../../../util/audioFileMap';
 
 const payouts: {[key: number]: number} = {
     50: 2,

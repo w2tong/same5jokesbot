@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { Emotes, emotes } from '../../../emotes';
+import { Emotes, emotes } from '../../../util/emotes';
 import { slotsSymbols, symbols } from '../symbols';
 
 const values: Array<string> = [];

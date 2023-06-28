@@ -1,5 +1,5 @@
 import { GuildEmoji } from 'discord.js';
-import { Emotes } from '../../emotes';
+import { Emotes } from '../../util/emotes';
 
 const slotsSymbols: {[key: string]: SlotsSymbol} = {
     OMEGALAUGHING:  {pc: 0.125, mult: 2, emote: Emotes.OMEGALAUGHING, backupEmote: ''},

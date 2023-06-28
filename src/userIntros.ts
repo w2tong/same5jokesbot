@@ -1,4 +1,4 @@
-import audio from './audioFileMap';
+import audio from './util/audioFileMap';
 
 const ALDA_ID = '147095136709509120';
 const ANDYD_ID = '213516916705198080';
