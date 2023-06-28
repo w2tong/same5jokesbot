@@ -40,7 +40,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     );
     void interaction.editReply({embeds: [await bet.createBetEmbed(interaction.client.users)], components: [buttonsRow]});
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.second });
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.minute });
     buttonCollector.on('collect', async buttonInteraction => {
         if (buttonInteraction.customId === ButtonId.BetYes && bet.isNoBetter(buttonInteraction.user.id) ||
             buttonInteraction.customId === ButtonId.BetNo && bet.isYesBetter(buttonInteraction.user.id)) {
