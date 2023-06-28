@@ -1,7 +1,8 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { convertDateToUnixTimestamp } from '../../../util/util';
 import { deleteReminder, getUserReminders } from '../../../sql/tables/reminders';
 import { logError } from '../../../logger';
+import { nanoid } from 'nanoid';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ephemeral: true});
@@ -9,10 +10,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const reminders = await getUserReminders(userId);
     const embeds: Array<EmbedBuilder> = [];
     const row = new ActionRowBuilder<ButtonBuilder>();
+    const deleteCustomId = `delete-${nanoid()}`;
     for (let i = 0; i < reminders.length; i++) {
         row.addComponents(
             new ButtonBuilder()
-                .setCustomId((i+1).toString())
+                .setCustomId(`${deleteCustomId}-${i+1}`)
                 .setLabel(`Delete Reminder ${i+1}`)
                 .setStyle(ButtonStyle.Danger),
         );
@@ -29,14 +31,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
         void interaction.editReply({embeds, components: [row]});
     
         if (interaction.channel) {
-            
-            const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30000 });
+            const deleteButtonFilter = (i: ButtonInteraction) => i.customId.startsWith(deleteCustomId);
+            const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30000, filter: deleteButtonFilter });
         
             collector.on('collect', async i => {
                 if (i.user.id === interaction.user.id) {
-                    const num = parseInt(i.customId)-1;
+                    const num = parseInt(i.customId[i.customId.length-1])-1;
                     if (await deleteReminder(reminders[num].ID) === true) {
-                        i.update({ content: `Reminder **${i.customId}** deleted.`, components: [], embeds: embeds.slice(num,num+1) }).catch(logError);
+                        i.update({ content: `Reminder **${num+1}** deleted.`, components: [], embeds: embeds.slice(num,num+1) }).catch(logError);
                     }
                     else {
                         i.update({ content: 'Error deleting reminder.', components: [], embeds: [] }).catch(logError);
