@@ -6,7 +6,7 @@ function simulateGamble(iterations: number, bet: number) {
     for (const chance of Object.keys(payouts)) {
         let profit = 0;
         for (let i = 0; i < iterations; i++) {
-            profit += gamble(bet, parseInt(chance)).profit;
+            profit += gamble(bet, parseInt(chance));
         }
         console.log(`Chance: ${chance}% - Avg: ${Math.round(profit/iterations).toLocaleString()}`);
     }  
