@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionEditReplyOptions, User } from 'discord.js';
+import { EmbedBuilder, User } from 'discord.js';
 import { emptyEmbedField } from '../../util/discordUtil';
 
 const deathRollers = new Set<string>();
