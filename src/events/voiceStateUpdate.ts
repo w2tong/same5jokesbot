@@ -3,7 +3,7 @@ import { logError } from '../logger';
 import timeInVoice from '../timeInVoice';
 import userIntros from '../userIntros';
 import { fetchChannel } from '../util/discordUtil';
-import { getMomentCurrentTimeEST } from '../util/util';
+import { getMomentTorontoCurrentTime } from '../util/util';
 import { disconnectVoice, isInGuildVoice, joinVoicePlayAudio } from '../voice';
 import * as dotenv from 'dotenv';
 import audio from '../util/audioFileMap';
@@ -61,7 +61,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
         }
 
         // Play Good Morning Donda when joining channel in the morning
-        const hour = getMomentCurrentTimeEST().utc().tz('America/Toronto').hour();
+        const hour = getMomentTorontoCurrentTime().hour();
         if (hour >= 6 && hour < 12 && userId) {
             joinVoicePlayAudio(newState, audio.goodMorningDonda);
         }
