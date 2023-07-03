@@ -6,8 +6,8 @@ const createTableReminders = {
     query: `
         CREATE TABLE reminders (
             id VARCHAR2(255) PRIMARY KEY,
-            user_id VARCHAR2(255),
-            channel_id VARCHAR2(255),
+            user_id VARCHAR2(64),
+            channel_id VARCHAR2(64),
             time TIMESTAMP,
             message VARCHAR2(1000)
         )`

@@ -5,7 +5,7 @@ const createTableSlotsProfits = {
     name: 'SLOTS_PROFITS',
     query: `
         CREATE TABLE slots_profits (
-            user_id VARCHAR2(255) PRIMARY KEY,
+            user_id VARCHAR2(64) PRIMARY KEY,
             winnings NUMBER DEFAULT 0,
             losses NUMBER DEFAULT 0
         )`

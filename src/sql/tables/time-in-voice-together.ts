@@ -5,8 +5,8 @@ const createTableUserIdPairs = {
     name: 'USER_ID_PAIRS',
     query: `
         CREATE TABLE user_id_pairs (
-            user_id VARCHAR2(255),
-            pair_id VARCHAR2(510),
+            user_id VARCHAR2(64),
+            pair_id VARCHAR2(128),
             CONSTRAINT pk_user_id_pairs PRIMARY KEY (user_id, pair_id)
         )`
 };
@@ -16,8 +16,8 @@ const createTableTimeInVoiceTogether =
     name: 'TIME_IN_VOICE_TOGETHER',
     query: `
         CREATE TABLE time_in_voice_together (
-            pair_id VARCHAR2(510),
-            guild_id VARCHAR2(255),
+            pair_id VARCHAR2(128),
+            guild_id VARCHAR2(64),
             start_date DATE,
             milliseconds NUMBER DEFAULT 0,
             CONSTRAINT pk_time_in_voice_together PRIMARY KEY (pair_id, guild_id, start_date)
