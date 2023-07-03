@@ -13,6 +13,10 @@ function convertDateToUnixTimestamp(date: Date) {
     return Math.floor(date.getTime()/1000);
 }
 
+function dateToDbString(date: Date): string {
+    return date.toISOString().slice(0, 19).replace('T', ' ');
+}
+
 const timeInMS: {[key: string]: number} = {
     second: 1_000,
     minute: 60_000,
@@ -32,4 +36,4 @@ function msToString(ms: number) {
     return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-export { timeInMS, getRandomRange, getMomentTorontoCurrentTime, convertDateToUnixTimestamp, msToString };
+export { timeInMS, getRandomRange, getMomentTorontoCurrentTime, convertDateToUnixTimestamp, dateToDbString, msToString };
