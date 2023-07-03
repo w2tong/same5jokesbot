@@ -10,7 +10,8 @@ const createTableDisperseStreakHighscore = {
             user_ids VARCHAR2(1000) NOT NULL,
             streak NUMBER DEFAULT 0,
             CONSTRAINT pk_disperse_streak_highscore PRIMARY KEY (guild_id, streak_date)
-        )`
+        )
+    `
 };
 
 const getQuery = `

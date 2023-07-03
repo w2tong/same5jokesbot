@@ -11,7 +11,8 @@ const createTableGamersStats = {
             disperse NUMBER DEFAULT 0,
             rise_up NUMBER DEFAULT 0,
             CONSTRAINT pk_gamers_stats PRIMARY KEY (user_id, month_year)
-        )`
+        )
+    `
 };
 
 interface GamersCounter {

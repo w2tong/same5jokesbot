@@ -10,7 +10,8 @@ const createTableReminders = {
             channel_id VARCHAR2(64),
             time TIMESTAMP,
             message VARCHAR2(1000)
-        )`
+        )
+    `
 };
 
 const getQuery = `

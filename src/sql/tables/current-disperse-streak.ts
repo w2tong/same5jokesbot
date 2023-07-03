@@ -9,7 +9,8 @@ const createTableCurrentDisperseStreak = {
             streak_date DATE,
             user_ids VARCHAR2(1000) NOT NULL,
             streak NUMBER DEFAULT 0
-        )`
+        )
+    `
 };
 
 const getQuery = `

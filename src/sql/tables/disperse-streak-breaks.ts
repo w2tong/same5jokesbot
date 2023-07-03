@@ -8,7 +8,8 @@ const createTableDisperseStreakBreaks = {
             user_id VARCHAR2(64) PRIMARY KEY,
             breaks NUMBER DEFAULT 0,
             score NUMBER DEFAULT 0
-        )`
+        )
+    `
 };
 
 const getQuery = `

@@ -8,7 +8,8 @@ const createTableGambleProfits = {
             user_id VARCHAR2(64) PRIMARY KEY,
             winnings NUMBER DEFAULT 0,
             losses NUMBER DEFAULT 0
-        )`
+        )
+    `
 };
 
 interface GambleProfits {

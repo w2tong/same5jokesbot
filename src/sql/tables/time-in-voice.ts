@@ -10,7 +10,8 @@ const createTableTimeInVoice = {
             start_date DATE,
             milliseconds NUMBER DEFAULT 0,
             CONSTRAINT pk_time_in_voice PRIMARY KEY (user_id, guild_id, start_date)
-        )`
+        )
+    `
 };
 
 const getTodayQuery = `

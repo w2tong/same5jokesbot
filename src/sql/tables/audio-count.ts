@@ -10,7 +10,8 @@ const createTableAudioCount = {
             month_year DATE,
             count NUMBER DEFAULT 0,
             CONSTRAINT pk_audio_count PRIMARY KEY (user_id, audio, month_year)
-        )`
+        )
+    `
 };
 
 const getUserTotalQuery = `
