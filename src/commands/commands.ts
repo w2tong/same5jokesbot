@@ -10,6 +10,7 @@ import bet from './bet/bet';
 import gamble from './gamble/gamble';
 import slots from './slots/slots';
 import deathRoll from './death-roll/death-roll';
+import lottery from './lottery/lottery';
 
 const commands = {
     [play.name]: play.execute,
@@ -23,7 +24,8 @@ const commands = {
     [bet.name]: bet.execute,
     [gamble.name]: gamble.execute,
     [slots.name]: slots.execute,
-    [deathRoll.name]: deathRoll.execute
+    [deathRoll.name]: deathRoll.execute,
+    [lottery.name]: lottery.execute
 };
 
 const commandBuilders = [
@@ -38,7 +40,8 @@ const commandBuilders = [
     bet.commandBuilder,
     gamble.commandBuilder,
     slots.commandBuilder,
-    deathRoll.commandBuilder
+    deathRoll.commandBuilder,
+    lottery.commandBuilder
 ];
 
 export { commands, commandBuilders };
