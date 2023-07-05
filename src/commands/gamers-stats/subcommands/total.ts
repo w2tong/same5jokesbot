@@ -46,18 +46,18 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets total gamer stats of all users.')
     .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
-        {name: '1. January', value: '1'},
-        {name: '2. February', value: '2'},
-        {name: '3. March', value: '3'},
-        {name: '4. April', value: '4'},
-        {name: '5. May', value: '5'},
-        {name: '6. June', value: '6'},
-        {name: '7. March', value: '7'},
-        {name: '8. July', value: '8'},
-        {name: '9. August', value: '9'},
-        {name: '10. Septemper', value: '10'},
-        {name: '11. November', value: '11'},
-        {name: '12. December', value: '12'}
+        {name: 'January', value: '1'},
+        {name: 'February', value: '2'},
+        {name: 'March', value: '3'},
+        {name: 'April', value: '4'},
+        {name: 'May', value: '5'},
+        {name: 'June', value: '6'},
+        {name: 'July', value: '7'},
+        {name: 'August', value: '8'},
+        {name: 'Septemper', value: '9'},
+        {name: 'October', value: '10'},
+        {name: 'November', value: '11'},
+        {name: 'December', value: '12'}
     ))
     .addIntegerOption((option) => option.setName('year').setDescription('Select a year'));
 
