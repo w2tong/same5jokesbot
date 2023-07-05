@@ -1,6 +1,20 @@
 import { ChannelManager, MessageManager, User, UserManager } from 'discord.js';
 
 const emptyEmbedField = {name: '\u200b', value: '\u200b', inline: true};
+const monthChoices = [
+    {name: '1. January', value: '1'},
+    {name: '2. February', value: '2'},
+    {name: '3. March', value: '3'},
+    {name: '4. April', value: '4'},
+    {name: '5. May', value: '5'},
+    {name: '6. June', value: '6'},
+    {name: '7. July', value: '7'},
+    {name: '8. August', value: '8'},
+    {name: '9. Septemper', value: '9'},
+    {name: '10. October', value: '10'},
+    {name: '11. November', value: '11'},
+    {name: '12. December', value: '12'}
+];
 
 async function fetchChannel(channels: ChannelManager, channelId: string) {
     return channels.cache.get(channelId) ?? await channels.fetch(channelId);
@@ -31,4 +45,4 @@ async function createDispersersList(usersIdsStr: string, userManager: UserManage
     return (await Promise.all(users)).map(user => `${user} ${userIdCount[user.id] > 1 ? '('+userIdCount[user.id].toString()+')': ''}`).join('\n');
 }
 
-export {emptyEmbedField, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};
+export {emptyEmbedField, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};
