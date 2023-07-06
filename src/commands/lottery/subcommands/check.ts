@@ -7,12 +7,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     await interaction.deferReply();
     const check = await lotteryManager.checkTickets(user.id, interaction.client.users);
-    
-    if (!(typeof check === 'string')) {
-        await interaction.editReply({embeds: [check.embed]});
-        if (check.winnings > 0) joinVoicePlayAudio(interaction, audio.winnerGagnant);
-    }
-    else await interaction.editReply(check);
+    if (check.winnings > 0) joinVoicePlayAudio(interaction, audio.winnerGagnant);
+    await interaction.editReply(check.reply);
 }
 
 const name = 'check';

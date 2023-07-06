@@ -101,26 +101,26 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
 
-async function checkTickets(userId: string, users: UserManager): Promise<string | {embed: EmbedBuilder, winnings: number}> {
+async function checkTickets(userId: string, users: UserManager): Promise<{reply: {content: string, embeds: Array<EmbedBuilder>}, winnings: number}> {
     const user = await fetchUser(users, userId);
 
     const lottery = await getCurrentLottery();
-    if (!lottery) return 'There isn\'t a current lottery';
+    if (!lottery) return {reply: {content: 'There is currently no lottery', embeds: []}, winnings: 0};
 
     const activeLottery = await getActiveLottery();
-    if (activeLottery) return 'You cannot check your ticket when the lottery is active.';
+    if (activeLottery) return {reply: {content: 'You cannot check your ticket when the lottery is active.', embeds: []}, winnings: 0};
 
     const tickets = await getUserLotteryTickets(userId, lottery.ID);
-    if (tickets.length === 0) return 'You did not buy any tickets for the current lottery.';
+    if (tickets.length === 0) return {reply: {content: 'You did not buy any tickets for the current lottery.', embeds: []}, winnings: 0};
 
     const unclaimedTickets = await getUnclaimedUserTicketsCount(lottery.ID, user.id);
-    if (unclaimedTickets === 0) return 'You have already claimed your tickets for this lottery.';
+    if (unclaimedTickets === 0) return {reply: {content: 'You have already claimed your tickets for this lottery.', embeds: []}, winnings: 0};
 
     const jackpotWinners = await getJackpotWinners(lottery.ID);
     const jackpot = calcJackpotPerTicket(jackpotWinners, lottery.JACKPOT);
     const {embed, winnings} = await claimTickets(user, lottery, tickets, jackpot);
     await claimLotteryTickets([{lotteryId: lottery.ID, userId: user.id}]);
-    return {embed, winnings};
+    return {reply: {content: '', embeds: [embed]}, winnings};
 }
 
 type TicketWinnings = {numbers: string, winnings: number, jackpotWinnings: number};
