@@ -16,7 +16,7 @@ for (let i = 1; i <= choose; i++) {
     payout[i] = price*basePayout*(payoutMultiplier**(i-1));
 }
 const startTime = 0;
-const endTime = 22;
+const lotteryLengthHours = 21;
 const ticketLimit = 3;
 
 function generateNumbers() {
@@ -29,8 +29,7 @@ function generateNumbers() {
 }
 
 function scheduleCronJob(client: Client) {
-    schedule.scheduleJob('*/1 * * * *', async function() {
-    // schedule.scheduleJob(`0 ${startTime} * * *`, async function() {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: startTime, tz: 'America/Toronto' }, async function() {
         const lottery = await getCurrentLottery();
         if (!process.env.CASINO_CHANNEL_ID) return;
         const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
@@ -70,8 +69,7 @@ function scheduleCronJob(client: Client) {
         // Create new lottery
         const startDate = new Date();
         const endDate = new Date(startDate);
-        // endDate.setHours(endDate.getHours() + endTime);
-        endDate.setSeconds(endDate.getSeconds() + 30);
+        endDate.setHours(endDate.getHours() + lotteryLengthHours);
         const houseBalance = process.env.CLIENT_ID ? await getUserCringePoints(process.env.CLIENT_ID) ?? 0 : 0;
         const newJackpot = houseBalance >= 0 ? houseBalance : 0;
         await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbers(), newJackpot);
