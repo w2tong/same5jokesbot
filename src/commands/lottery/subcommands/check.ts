@@ -4,7 +4,7 @@ import lotteryManager from '../lotteryManager';
 async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     await interaction.deferReply();
-    const check = await lotteryManager.checkTickets(user.id, user.username);
+    const check = await lotteryManager.checkTickets(user.id, interaction.client.users);
     if (check instanceof EmbedBuilder) await interaction.editReply({embeds: [check]});
     else await interaction.editReply(check);
 }

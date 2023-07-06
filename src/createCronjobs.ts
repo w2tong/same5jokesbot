@@ -107,7 +107,7 @@ function createCronJobs(client: Client) {
     //     createOracleDBLogStatisticsCronJob();
     // }
     createUpdateCringePointsCronJob(client);
-    lotteryManager.scheduleCronJob();
+    lotteryManager.scheduleCronJob(client);
 }
 
 export default createCronJobs;

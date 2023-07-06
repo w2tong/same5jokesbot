@@ -39,17 +39,17 @@ interface LotteryTicket {
     CLAIMED: number;
 }
 
-const getCurrentQuery = `
+const getUserQuery = `
 SELECT lottery_ticket.*
 FROM lottery_ticket
 WHERE user_id = :userId
 AND lottery_id = :lotteryId
 `;
 
-async function getLotteryTickets(userId: string, lotteryId: string): Promise<Array<LotteryTicket>> {
+async function getUserLotteryTickets(userId: string, lotteryId: string): Promise<Array<LotteryTicket>> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<LotteryTicket> = await connection.execute(getCurrentQuery, {userId, lotteryId}, selectExecuteOptions);
+        const result: oracledb.Result<LotteryTicket> = await connection.execute(getUserQuery, {userId, lotteryId}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
@@ -57,8 +57,78 @@ async function getLotteryTickets(userId: string, lotteryId: string): Promise<Arr
         return [];
     }
     catch (err) {
-        throw new Error(`getLotteryTickets: ${err}`);
+        throw new Error(`getUserLotteryTickets: ${err}`);
     }
 }
 
-export { createTableLotteryTicket, insertLotteryTicket, getLotteryTickets };
+const getUnclaimedQuery = `
+SELECT user_id
+FROM lottery_ticket
+WHERE lottery_id = :lotteryId
+AND claimed = 0
+GROUP BY user_id
+`;
+async function getUnclaimedUsers(lotteryId: string) {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<string> = await connection.execute(getUnclaimedQuery, {lotteryId});
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getUnclaimedUsers: ${err}`);
+    }
+}
+
+interface JackpotWinner {
+    USER_ID: string;
+    COUNT: number;
+}
+const getJackpotWinnersQuery = `
+SELECT user_id, count(user_id) AS count
+FROM lottery
+JOIN lottery_ticket ON lottery.id = lottery_ticket.lottery_id
+WHERE id = :lotteryId
+AND lottery.numbers = lottery_ticket.numbers
+GROUP BY user_id
+`;
+async function getJackpotWinners(lotteryId: string) {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<JackpotWinner> = await connection.execute(getJackpotWinnersQuery, {lotteryId}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getJackpotWinners: ${err}`);
+    }
+}
+
+const claimLotteryTicketsQuery = `
+UPDATE lottery_ticket
+SET claimed = 1
+WHERE lottery_id = :lotteryId
+AND user_id = :userId
+`;
+const claimTicketsBindDefs = {
+    lotteryId: {type: oracledb.STRING, maxSize: 36},
+    userId: {type: oracledb.STRING, maxSize: 64}
+};
+async function claimLotteryTickets(updates: Array<{lotteryId: string, userId: string}>) {
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.executeMany(claimLotteryTicketsQuery, updates, {bindDefs: claimTicketsBindDefs});
+        await connection.close();
+    }
+    catch (err) {
+        throw new Error(`claimLotteryTickets: ${err}`);
+    }
+}
+
+export { LotteryTicket, JackpotWinner, createTableLotteryTicket, insertLotteryTicket, getUserLotteryTickets, getUnclaimedUsers, getJackpotWinners, claimLotteryTickets };

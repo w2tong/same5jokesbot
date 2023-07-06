@@ -1,5 +1,6 @@
 import { ChannelManager, MessageManager, User, UserManager } from 'discord.js';
 
+const messageEmbedLimit = 10;
 const emptyEmbedField = {name: '\u200b', value: '\u200b', inline: true};
 const monthChoices = [
     {name: '1. January', value: '1'},
@@ -45,4 +46,4 @@ async function createDispersersList(usersIdsStr: string, userManager: UserManage
     return (await Promise.all(users)).map(user => `${user} ${userIdCount[user.id] > 1 ? '('+userIdCount[user.id].toString()+')': ''}`).join('\n');
 }
 
-export {emptyEmbedField, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};
+export {messageEmbedLimit, emptyEmbedField, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};

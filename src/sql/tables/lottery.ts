@@ -81,4 +81,4 @@ async function getActiveLottery(): Promise<Lottery|null> {
     }
 }
 
-export { createTableLottery, insertLottery, getCurrentLottery, getActiveLottery };
+export { Lottery, createTableLottery, insertLottery, getCurrentLottery, getActiveLottery };

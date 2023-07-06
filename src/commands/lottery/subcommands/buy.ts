@@ -26,11 +26,11 @@ const minNum = 1;
 const maxNum = lottery.numbers.length;
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy a lottery ticket. Each number must be unique. Max of ${lottery.ticketLimit} tickets.`);
+    .setDescription(`Buy a lottery ticket (${lottery.price} points). Each number must be unique. Max of ${lottery.ticketLimit} tickets.`);
 for (let i = 1; i <= lottery.choose; i++) {
     subcommandBuilder.addIntegerOption(option => option
         .setName(`num${i}`)
-        .setDescription(`Enter number ${i}`)
+        .setDescription(`Enter number ${i}.`)
         .setRequired(true)
         .setMinValue(minNum)
         .setMaxValue(maxNum)
