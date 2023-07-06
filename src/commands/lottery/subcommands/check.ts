@@ -1,11 +1,17 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
 import lotteryManager from '../lotteryManager';
+import { joinVoicePlayAudio } from '../../../voice';
+import audio from '../../../util/audioFileMap';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     await interaction.deferReply();
     const check = await lotteryManager.checkTickets(user.id, interaction.client.users);
-    if (check instanceof EmbedBuilder) await interaction.editReply({embeds: [check]});
+    
+    if (!(typeof check === 'string')) {
+        await interaction.editReply({embeds: [check.embed]});
+        if (check.winnings > 0) joinVoicePlayAudio(interaction, audio.winnerGagnant);
+    }
     else await interaction.editReply(check);
 }
 

@@ -61,7 +61,7 @@ async function getUserLotteryTickets(userId: string, lotteryId: string): Promise
     }
 }
 
-const getUnclaimedQuery = `
+const getUnclaimedUsersQuery = `
 SELECT user_id
 FROM lottery_ticket
 WHERE lottery_id = :lotteryId
@@ -71,7 +71,7 @@ GROUP BY user_id
 async function getUnclaimedUsers(lotteryId: string) {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<string> = await connection.execute(getUnclaimedQuery, {lotteryId});
+        const result: oracledb.Result<string> = await connection.execute(getUnclaimedUsersQuery, {lotteryId});
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
@@ -80,6 +80,32 @@ async function getUnclaimedUsers(lotteryId: string) {
     }
     catch (err) {
         throw new Error(`getUnclaimedUsers: ${err}`);
+    }
+}
+
+interface UnclaimedTicketsCount {
+    COUNT: number
+}
+const getUnclaimedUserTicketsCountQuery = `
+SELECT count(*) AS count
+FROM lottery_ticket
+WHERE lottery_id = :lotteryId
+AND user_id = :userId
+AND claimed = 0
+GROUP BY user_id
+`;
+async function getUnclaimedUserTicketsCount(lotteryId: string, userId: string) {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<UnclaimedTicketsCount> = await connection.execute(getUnclaimedUserTicketsCountQuery, {lotteryId, userId});
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0].COUNT;
+        }
+        return 0;
+    }
+    catch (err) {
+        throw new Error(`getUnclaimedUserTicketsCount: ${err}`);
     }
 }
 
@@ -131,4 +157,4 @@ async function claimLotteryTickets(updates: Array<{lotteryId: string, userId: st
     }
 }
 
-export { LotteryTicket, JackpotWinner, createTableLotteryTicket, insertLotteryTicket, getUserLotteryTickets, getUnclaimedUsers, getJackpotWinners, claimLotteryTickets };
+export { LotteryTicket, JackpotWinner, createTableLotteryTicket, insertLotteryTicket, getUserLotteryTickets, getUnclaimedUsers, getUnclaimedUserTicketsCount, getJackpotWinners, claimLotteryTickets };
