@@ -16,7 +16,7 @@ for (let i = 1; i <= choose; i++) {
     payout[i] = price*basePayout*(payoutMultiplier**(i-1));
 }
 const startTime = 0;
-const endTime = 22;
+const lotteryLengthHours = 21;
 const ticketLimit = 3;
 
 function generateNumbers() {
@@ -29,8 +29,7 @@ function generateNumbers() {
 }
 
 function scheduleCronJob(client: Client) {
-    schedule.scheduleJob('*/1 * * * *', async function() {
-    // schedule.scheduleJob(`0 ${startTime} * * *`, async function() {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: startTime, tz: 'America/Toronto' }, async function() {
         const lottery = await getCurrentLottery();
         if (!process.env.CASINO_CHANNEL_ID) return;
         const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
@@ -70,8 +69,7 @@ function scheduleCronJob(client: Client) {
         // Create new lottery
         const startDate = new Date();
         const endDate = new Date(startDate);
-        // endDate.setHours(endDate.getHours() + endTime);
-        endDate.setSeconds(endDate.getSeconds() + 30);
+        endDate.setHours(endDate.getHours() + lotteryLengthHours);
         const houseBalance = process.env.CLIENT_ID ? await getUserCringePoints(process.env.CLIENT_ID) ?? 0 : 0;
         const newJackpot = houseBalance >= 0 ? houseBalance : 0;
         await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbers(), newJackpot);
@@ -103,8 +101,6 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
 
-type TicketWinnings = {numbers: string, winnings: number};
-
 async function checkTickets(userId: string, users: UserManager): Promise<string | {embed: EmbedBuilder, winnings: number}> {
     const user = await fetchUser(users, userId);
 
@@ -127,6 +123,7 @@ async function checkTickets(userId: string, users: UserManager): Promise<string 
     return {embed, winnings};
 }
 
+type TicketWinnings = {numbers: string, winnings: number, jackpotWinnings: number};
 async function claimTickets(user: User, lottery: Lottery, tickets: Array<LotteryTicket>, jackpot: number): Promise<{embed: EmbedBuilder, winnings: number}> {
     let totalWinnings = 0;
     const ticketWinnings: Array<TicketWinnings> = [];
@@ -134,8 +131,9 @@ async function claimTickets(user: User, lottery: Lottery, tickets: Array<Lottery
     for (let i = 0; i < tickets.length; i++) {
         const ticketNumbers = tickets[i].NUMBERS.split(',');
         const winningNumbers = lotteryNumbers.filter(element => ticketNumbers.includes(element));
-        const winnings = payout[winningNumbers.length] + ((lottery.NUMBERS === tickets[i].NUMBERS) ? jackpot : 0);
-        ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings});
+        const winnings = payout[winningNumbers.length];
+        const jackpotWinnings = lottery.NUMBERS === tickets[i].NUMBERS ? jackpot : 0;
+        ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings, jackpotWinnings });
         totalWinnings += winnings;
     }
     await updateCringePoints([{userId: user.id, points: totalWinnings}]);
@@ -155,7 +153,7 @@ function createUserTicketsEmbed(username: string, totalWinnings: number, ticketW
     for (let i = 0; i < ticketWinnings.length; i++) {
         embed.addFields(
             {name: `Ticket ${i+1}`, value: `${ticketWinnings[i].numbers.split(',').join(', ')}`, inline: true},
-            {name: 'Winnings', value: `${ticketWinnings[i].winnings.toLocaleString()}`, inline: true},
+            {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 ? '(JACKPOT)' : ''}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 ? `(+${ticketWinnings[i].jackpotWinnings})` : ''}`, inline: true},
             emptyEmbedField
         );
     }
