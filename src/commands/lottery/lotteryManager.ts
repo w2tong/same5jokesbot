@@ -153,7 +153,7 @@ function createUserTicketsEmbed(username: string, totalWinnings: number, ticketW
     for (let i = 0; i < ticketWinnings.length; i++) {
         embed.addFields(
             {name: `Ticket ${i+1}`, value: `${ticketWinnings[i].numbers.split(',').join(', ')}`, inline: true},
-            {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 && '(JACKPOT)'}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 && `(+${ticketWinnings[i].jackpotWinnings})`}`, inline: true},
+            {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 ? '(JACKPOT)' : ''}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 ? `(+${ticketWinnings[i].jackpotWinnings})` : ''}`, inline: true},
             emptyEmbedField
         );
     }
