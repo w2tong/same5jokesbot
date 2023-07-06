@@ -101,8 +101,6 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
 
-type TicketWinnings = {numbers: string, winnings: number};
-
 async function checkTickets(userId: string, users: UserManager): Promise<string | {embed: EmbedBuilder, winnings: number}> {
     const user = await fetchUser(users, userId);
 
@@ -125,6 +123,7 @@ async function checkTickets(userId: string, users: UserManager): Promise<string 
     return {embed, winnings};
 }
 
+type TicketWinnings = {numbers: string, winnings: number, jackpotWinnings: number};
 async function claimTickets(user: User, lottery: Lottery, tickets: Array<LotteryTicket>, jackpot: number): Promise<{embed: EmbedBuilder, winnings: number}> {
     let totalWinnings = 0;
     const ticketWinnings: Array<TicketWinnings> = [];
@@ -132,8 +131,9 @@ async function claimTickets(user: User, lottery: Lottery, tickets: Array<Lottery
     for (let i = 0; i < tickets.length; i++) {
         const ticketNumbers = tickets[i].NUMBERS.split(',');
         const winningNumbers = lotteryNumbers.filter(element => ticketNumbers.includes(element));
-        const winnings = payout[winningNumbers.length] + ((lottery.NUMBERS === tickets[i].NUMBERS) ? jackpot : 0);
-        ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings});
+        const winnings = payout[winningNumbers.length];
+        const jackpotWinnings = lottery.NUMBERS === tickets[i].NUMBERS ? jackpot : 0;
+        ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings, jackpotWinnings });
         totalWinnings += winnings;
     }
     await updateCringePoints([{userId: user.id, points: totalWinnings}]);
@@ -153,7 +153,7 @@ function createUserTicketsEmbed(username: string, totalWinnings: number, ticketW
     for (let i = 0; i < ticketWinnings.length; i++) {
         embed.addFields(
             {name: `Ticket ${i+1}`, value: `${ticketWinnings[i].numbers.split(',').join(', ')}`, inline: true},
-            {name: 'Winnings', value: `${ticketWinnings[i].winnings.toLocaleString()}`, inline: true},
+            {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 && '(JACKPOT)'}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 && `(+${ticketWinnings[i].jackpotWinnings})`}`, inline: true},
             emptyEmbedField
         );
     }
