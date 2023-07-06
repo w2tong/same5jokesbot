@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getTotalGamersStatsMonthYear, getTotalGamersStatsYear } from '../../../sql/tables/gamers-stats';
+import { monthChoices } from '../../../util/discordUtil';
 
 const decimalPlaces = 2;
 
@@ -46,18 +47,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets total gamer stats of all users.')
     .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
-        {name: '1. January', value: '1'},
-        {name: '2. February', value: '2'},
-        {name: '3. March', value: '3'},
-        {name: '4. April', value: '4'},
-        {name: '5. May', value: '5'},
-        {name: '6. June', value: '6'},
-        {name: '7. March', value: '7'},
-        {name: '8. July', value: '8'},
-        {name: '9. August', value: '9'},
-        {name: '10. Septemper', value: '10'},
-        {name: '11. November', value: '11'},
-        {name: '12. December', value: '12'}
+        ...monthChoices
     ))
     .addIntegerOption((option) => option.setName('year').setDescription('Select a year'));
 

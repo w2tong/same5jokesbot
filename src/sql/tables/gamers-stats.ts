@@ -5,13 +5,14 @@ const createTableGamersStats = {
     name: 'GAMERS_STATS',
     query: `
         CREATE TABLE gamers_stats (
-            user_id VARCHAR2(255) NOT NULL,
+            user_id VARCHAR2(64) NOT NULL,
             month_year DATE NOT NULL,
             discharge NUMBER DEFAULT 0,
             disperse NUMBER DEFAULT 0,
             rise_up NUMBER DEFAULT 0,
             CONSTRAINT pk_gamers_stats PRIMARY KEY (user_id, month_year)
-        )`
+        )
+    `
 };
 
 interface GamersCounter {

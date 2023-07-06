@@ -5,12 +5,13 @@ const createTableAudioCount = {
     name: 'AUDIO_COUNT',
     query: `
         CREATE TABLE audio_count (
-            user_id VARCHAR2(255),
-            audio VARCHAR2(255),
+            user_id VARCHAR2(64),
+            audio VARCHAR2(64),
             month_year DATE,
             count NUMBER DEFAULT 0,
             CONSTRAINT pk_audio_count PRIMARY KEY (user_id, audio, month_year)
-        )`
+        )
+    `
 };
 
 const getUserTotalQuery = `

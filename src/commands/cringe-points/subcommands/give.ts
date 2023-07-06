@@ -16,8 +16,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    if (recipient.bot) {
-        await interaction.reply({content: 'You cannot give Cringe points to a bot.', ephemeral: true});
+    if (recipient.bot && recipient.id !== process.env.CLIENT_ID) {
+        await interaction.reply({content: 'You cannot give Cringe points to a bot (except this bot).', ephemeral: true});
         return;
     }
         

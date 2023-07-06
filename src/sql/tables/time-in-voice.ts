@@ -5,12 +5,13 @@ const createTableTimeInVoice = {
     name: 'TIME_IN_VOICE',
     query: `
         CREATE TABLE time_in_voice (
-            user_id VARCHAR2(255),
-            guild_id VARCHAR2(255),
+            user_id VARCHAR2(64),
+            guild_id VARCHAR2(64),
             start_date DATE,
             milliseconds NUMBER DEFAULT 0,
             CONSTRAINT pk_time_in_voice PRIMARY KEY (user_id, guild_id, start_date)
-        )`
+        )
+    `
 };
 
 const getTodayQuery = `

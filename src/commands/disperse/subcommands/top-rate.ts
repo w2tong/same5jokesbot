@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../../../sql/tables/gamers-stats';
-import { createUserNumberedList, fetchUser } from '../../../util/discordUtil';
+import { createUserNumberedList, fetchUser, monthChoices } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -53,18 +53,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets disperse rate of all users.')
     .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
-        {name: 'January', value: '1'},
-        {name: 'February', value: '2'},
-        {name: 'March', value: '3'},
-        {name: 'April', value: '4'},
-        {name: 'May', value: '5'},
-        {name: 'June', value: '6'},
-        {name: 'March', value: '7'},
-        {name: 'July', value: '8'},
-        {name: 'August', value: '9'},
-        {name: 'Septemper', value: '10'},
-        {name: 'November', value: '11'},
-        {name: 'December', value: '12'}
+        ...monthChoices
     ))
     .addIntegerOption((option) => option.setName('year').setDescription('Select a year'));
 

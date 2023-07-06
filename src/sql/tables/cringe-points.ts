@@ -5,9 +5,10 @@ const createTableCringePoints = {
     name: 'CRINGE_POINTS',
     query: `
         CREATE TABLE cringe_points (
-            user_id VARCHAR2(255) PRIMARY KEY,
+            user_id VARCHAR2(64) PRIMARY KEY,
             points NUMBER DEFAULT 0
-        )`
+        )
+    `
 };
 
 interface CringePoints {

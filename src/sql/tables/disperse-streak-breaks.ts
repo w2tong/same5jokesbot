@@ -5,10 +5,11 @@ const createTableDisperseStreakBreaks = {
     name: 'DISPERSE_STREAK_BREAKS',
     query: `
         CREATE TABLE disperse_streak_breaks (
-            user_id VARCHAR2(255) PRIMARY KEY,
+            user_id VARCHAR2(64) PRIMARY KEY,
             breaks NUMBER DEFAULT 0,
             score NUMBER DEFAULT 0
-        )`
+        )
+    `
 };
 
 const getQuery = `

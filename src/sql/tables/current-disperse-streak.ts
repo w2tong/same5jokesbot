@@ -5,11 +5,12 @@ const createTableCurrentDisperseStreak = {
     name: 'CURRENT_DISPERSE_STREAK',
     query: `
         CREATE TABLE current_disperse_streak (
-            guild_id VARCHAR2(255) PRIMARY KEY,
+            guild_id VARCHAR2(64) PRIMARY KEY,
             streak_date DATE,
             user_ids VARCHAR2(1000) NOT NULL,
             streak NUMBER DEFAULT 0
-        )`
+        )
+    `
 };
 
 const getQuery = `

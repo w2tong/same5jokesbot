@@ -1,6 +1,5 @@
-import moment from 'moment-timezone';
 import audio from '../util/audioFileMap';
-import { getRandomRange } from '../util/util';
+import { getMomentTorontoCurrentTime, getRandomRange } from '../util/util';
 
 const congratulations = audio.congratulations;
 function getCongratulations(): string {
@@ -171,7 +170,7 @@ const regexToAudio = [
     {
         regex: /food/,
         getAudio: () => {
-            const hour = moment().utc().tz('America/Toronto').hour();
+            const hour = getMomentTorontoCurrentTime().hour();
             if (hour >= 4 && hour < 12) {
                 return audio.breakfast;
             }

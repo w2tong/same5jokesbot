@@ -3,6 +3,7 @@ import schedule from 'node-schedule';
 import { logError } from '../../logger';
 import { getReminders, insertReminder, deleteReminder } from '../../sql/tables/reminders';
 import { fetchChannel } from '../../util/discordUtil';
+import { dateToDbString } from '../../util/util';
 
 function scheduleReminder(channel: TextChannel, date: Date, message: string, id?: string) {
     let job: schedule.Job;
@@ -40,7 +41,7 @@ async function loadReminders(client: Client) {
 
 async function newReminder(userId:string, channel: TextChannel, date: Date, message: string) {
     const id = scheduleReminder(channel, date, message);
-    const inserted = await insertReminder(id, userId, channel.id, date.toISOString().slice(0, 19).replace('T', ' '), message);
+    const inserted = await insertReminder(id, userId, channel.id, dateToDbString(date), message);
     return inserted;
 }
 

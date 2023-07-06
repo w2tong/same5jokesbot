@@ -5,12 +5,16 @@ function getRandomRange(max: number): number {
     return Math.floor(Math.random() * max);
 }
 
-function getMomentCurrentTimeEST() {
+function getMomentTorontoCurrentTime() {
     return moment().utc().tz('America/Toronto');
 }
 
 function convertDateToUnixTimestamp(date: Date) {
     return Math.floor(date.getTime()/1000);
+}
+
+function dateToDbString(date: Date): string {
+    return date.toISOString().slice(0, 19).replace('T', ' ');
 }
 
 const timeInMS: {[key: string]: number} = {
@@ -32,4 +36,4 @@ function msToString(ms: number) {
     return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-export { timeInMS, getRandomRange, getMomentCurrentTimeEST, convertDateToUnixTimestamp, msToString };
+export { timeInMS, getRandomRange, getMomentTorontoCurrentTime, convertDateToUnixTimestamp, dateToDbString, msToString };

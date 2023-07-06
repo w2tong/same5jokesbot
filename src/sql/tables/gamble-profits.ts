@@ -5,10 +5,11 @@ const createTableGambleProfits = {
     name: 'GAMBLE_PROFITS',
     query: `
         CREATE TABLE gamble_profits (
-            user_id VARCHAR2(255) PRIMARY KEY,
+            user_id VARCHAR2(64) PRIMARY KEY,
             winnings NUMBER DEFAULT 0,
             losses NUMBER DEFAULT 0
-        )`
+        )
+    `
 };
 
 interface GambleProfits {
