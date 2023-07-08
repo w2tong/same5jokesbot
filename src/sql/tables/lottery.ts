@@ -81,4 +81,21 @@ async function getActiveLottery(): Promise<Lottery|null> {
     }
 }
 
-export { Lottery, createTableLottery, insertLottery, getCurrentLottery, getActiveLottery };
+const updateJackpotQuery = `
+UPDATE lottery
+SET jackpot = jackpot + :amount
+WHERE id = :lotteryId
+`;
+
+async function updateJackpot(lotteryId: string, amount: number) {
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(updateJackpotQuery, {lotteryId, amount});
+        await connection.close();
+    }
+    catch (err) {
+        throw new Error(`updateJackpot: ${err}`);
+    }
+}
+
+export { Lottery, createTableLottery, insertLottery, getCurrentLottery, getActiveLottery, updateJackpot };

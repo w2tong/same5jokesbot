@@ -1,6 +1,6 @@
 import schedule from 'node-schedule';
 import { dateToDbString, getRandomRange } from '../../util/util';
-import { Lottery, getActiveLottery, getCurrentLottery, insertLottery } from '../../sql/tables/lottery';
+import { Lottery, getActiveLottery, getCurrentLottery, insertLottery, updateJackpot } from '../../sql/tables/lottery';
 import { getUserCringePoints, updateCringePoints } from '../../sql/tables/cringe-points';
 import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery-ticket';
 import { ChannelType, Client, EmbedBuilder, User, UserManager, bold, time } from 'discord.js';
@@ -23,7 +23,7 @@ function generateNumbers() {
     const choices = numbers.slice();
     const nums = [];
     for (let i = 0; i < choose; i++) {
-        nums.push(choices.splice(getRandomRange(choices.length-1), 1)[0]);
+        nums.push(choices.splice(getRandomRange(choices.length), 1)[0]);
     }
     return nums.sort((a,b) => a-b).join(',');
 }
@@ -96,7 +96,9 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
         }
     }
 
-    void updateCringePoints([{userId, points: -price}]);
+    await updateCringePoints([{userId, points: -price}]);
+    if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: price}]);
+    await updateJackpot(lottery.ID, price);
     await insertLotteryTicket(lottery.ID, userId, numbers.join(','));
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
@@ -168,7 +170,7 @@ async function createLotteryResultsEmbed(lottery: Lottery, winners: Array<Jackpo
     return new EmbedBuilder()
         .setTitle(`${time(new Date(`${lottery.START_DATE} UTC`), 'd')} Lottery Results`)
         .addFields(
-            {name: 'Jackpot', value: `${lottery.JACKPOT}`, inline: true},
+            {name: 'Jackpot', value: `${lottery.JACKPOT.toLocaleString()}`, inline: true},
             {name: 'Winning Numbers', value: lottery.NUMBERS.split(',').join(', '), inline: true},
             {name: 'Jackpot Winners', value: winners.length > 0 ? winnersFieldValue : 'None'}
         );
