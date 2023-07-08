@@ -23,7 +23,7 @@ function generateNumbers() {
     const choices = numbers.slice();
     const nums = [];
     for (let i = 0; i < choose; i++) {
-        nums.push(choices.splice(getRandomRange(choices.length-1), 1)[0]);
+        nums.push(choices.splice(getRandomRange(choices.length), 1)[0]);
     }
     return nums.sort((a,b) => a-b).join(',');
 }
