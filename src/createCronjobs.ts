@@ -67,9 +67,9 @@ function createUpdateTimeInVoiceTogetherCronJob() {
     });
 }
 
-const cringePointsPerUpdate = 10;
-const pointMultiInc = 10;
-const pointMultiCap = 100;
+const cringePointsPerUpdate = 50;
+const pointMultiInc = 2;
+const pointMultiCap = 10;
 function createUpdateCringePointsCronJob(client: Client) {
     schedule.scheduleJob('*/10 * * * *', function() {
         const cringePointUpdates: Array<CringePointsUpdate> = [];
@@ -78,10 +78,10 @@ function createUpdateCringePointsCronJob(client: Client) {
             const update = {userId: id, points: cringePointsPerUpdate};
             if (timeInVoice.userJoinTime[id]) {
                 let pointMultiplier = timeInVoice.userJoinTime[id].pointMultiplier;
+                update.points *= pointMultiplier;
                 if (pointMultiplier < pointMultiCap) {
                     timeInVoice.userJoinTime[id].pointMultiplier = pointMultiplier = Math.min(pointMultiplier + pointMultiInc, pointMultiCap);
                 }
-                update.points *= pointMultiplier;
             }
             cringePointUpdates.push(update);
         }

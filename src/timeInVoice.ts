@@ -2,7 +2,7 @@ import { ChannelType, Client } from 'discord.js';
 import { updateTimeInVoice } from './sql/tables/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
 
-const pointMultiplier = 10;
+const pointMultiplier = 2;
 const userJoinTime: {[key:string]: {channelId: string, guildId: string, time: number, pointMultiplier: number}} = {};
 
 function initUsers(client: Client) {
