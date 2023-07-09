@@ -481,6 +481,18 @@ const regexToAudio = [
         regex: /akira/,
         getAudio: () => audio.akiraDing
     },
+    {
+        regex: /ladies and gentlemen/,
+        getAudio: () => audio.myNameIsAndyRightHere
+    },
+    {
+        regex: /don'?t worry about it/,
+        getAudio: () => audio.itsOnMe
+    },
+    {
+        regex: /it'?s on me/,
+        getAudio: () => audio.dontWorryAboutIt
+    },
 ];
 
 export default (command: string) => {
