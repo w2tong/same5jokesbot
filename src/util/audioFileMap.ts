@@ -123,5 +123,17 @@ export default {
     blackenChineseMan: 'blacken_chinese_man',
     myNameIsAndyRightHere: 'my_name_is_andy_right_here',
     dontWorryAboutIt: 'dont_worry_about_it',
-    itsOnMe: 'its_on_me'
+    itsOnMe: 'its_on_me',
+    khDontHitTheCameraMan: 'kh_dont_hit_the_camera_man',
+    khDualWield: 'kh_dual_wield',
+    khICantKillYou: 'kh_i_cant_kill_you',
+    khIDontNeedAnyFriends: 'kh_i_dont_need_any_friends',
+    khNo: 'kh_no',
+    khShesApartOfTheDarknessNow: 'kh_shes_apart_of_the_darkness_now',
+    khWhatdYouDoWithKairi: 'kh_whatd_you_do_with_kairi',
+    khWhereAreYourFriendsNow: 'kh_where_are_your_friends_now',
+    khYoureAFoolSora: 'kh_youre_a_fool_sora',
+    khYoureANobody1: 'kh_youre_a_nobody_1',
+    khYoureANobody2: 'kh_youre_a_nobody_2',
+    khYoureOverSora: 'kh_youre_over_sora'
 };
