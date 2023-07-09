@@ -27,23 +27,23 @@ jest.spyOn(sqlTimeInVoiceTogether, 'updateTimeInVoiceTogether').mockImplementati
 describe('userJoin()', () => {
     test('single user', () => {
         timeInVoice.userJoin('user1', 'channel1', 'guild1');
-        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 10});
+        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 2});
     });
     test('same user', () => {
         timeInVoice.userJoin('user2', 'channel1', 'guild1');
-        expect(timeInVoice.userJoinTime['user2']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 10});
+        expect(timeInVoice.userJoinTime['user2']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 2});
         timeInVoice.userJoin('user2', 'channel2', 'guild2');
-        expect(timeInVoice.userJoinTime['user2']).toEqual({channelId: 'channel2', guildId: 'guild2', time: mockDate1.getTime(), pointMultiplier: 10});
+        expect(timeInVoice.userJoinTime['user2']).toEqual({channelId: 'channel2', guildId: 'guild2', time: mockDate1.getTime(), pointMultiplier: 2});
     });
     test('multiple users', () => {
         timeInVoice.userJoin('user3', 'channel2', 'guild3');
         timeInVoice.userJoin('user4', 'channel1', 'guild1');
         timeInVoice.userJoin('user5', 'channel2', 'guild1');
         timeInVoice.userJoin('user6', 'channel1', 'guild2');
-        expect(timeInVoice.userJoinTime['user3']).toEqual({channelId: 'channel2', guildId: 'guild3', time: mockDate1.getTime(), pointMultiplier: 10});
-        expect(timeInVoice.userJoinTime['user4']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 10});
-        expect(timeInVoice.userJoinTime['user5']).toEqual({channelId: 'channel2', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 10});
-        expect(timeInVoice.userJoinTime['user6']).toEqual({channelId: 'channel1', guildId: 'guild2', time: mockDate1.getTime(), pointMultiplier: 10});
+        expect(timeInVoice.userJoinTime['user3']).toEqual({channelId: 'channel2', guildId: 'guild3', time: mockDate1.getTime(), pointMultiplier: 2});
+        expect(timeInVoice.userJoinTime['user4']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 2});
+        expect(timeInVoice.userJoinTime['user5']).toEqual({channelId: 'channel2', guildId: 'guild1', time: mockDate1.getTime(), pointMultiplier: 2});
+        expect(timeInVoice.userJoinTime['user6']).toEqual({channelId: 'channel1', guildId: 'guild2', time: mockDate1.getTime(), pointMultiplier: 2});
     });
     test('no user', () => {
         expect(timeInVoice.userJoinTime['user7']).toBeUndefined();
@@ -83,23 +83,23 @@ describe('userChangeChannel()', () => {
     test('single user single change', async () => {        
         jest.setSystemTime(mockDate2);
         await timeInVoice.userChangeChannel('user1', 'channel2');
-        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel2', guildId: 'guild1', time: mockDate2.getTime(), pointMultiplier: 10});
+        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel2', guildId: 'guild1', time: mockDate2.getTime(), pointMultiplier: 2});
     });
     test('single user multiple changes', async () => {        
         jest.setSystemTime(mockDate2);
         await timeInVoice.userChangeChannel('user1', 'channel1');
         await timeInVoice.userChangeChannel('user1', 'channel2');
         await timeInVoice.userChangeChannel('user1', 'channel3');
-        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel3', guildId: 'guild1', time: mockDate2.getTime(), pointMultiplier: 10});
+        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel3', guildId: 'guild1', time: mockDate2.getTime(), pointMultiplier: 2});
     });
     test('multiple users', async () => {        
         jest.setSystemTime(mockDate2);
         await timeInVoice.userChangeChannel('user1', 'channel1');
         await timeInVoice.userChangeChannel('user2', 'channel2');
         await timeInVoice.userChangeChannel('user3', 'channel3');
-        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate2.getTime(), pointMultiplier: 10});
-        expect(timeInVoice.userJoinTime['user2']).toEqual({channelId: 'channel2', guildId: 'guild2', time: mockDate2.getTime(), pointMultiplier: 10});
-        expect(timeInVoice.userJoinTime['user3']).toEqual({channelId: 'channel3', guildId: 'guild3', time: mockDate2.getTime(), pointMultiplier: 10});
+        expect(timeInVoice.userJoinTime['user1']).toEqual({channelId: 'channel1', guildId: 'guild1', time: mockDate2.getTime(), pointMultiplier: 2});
+        expect(timeInVoice.userJoinTime['user2']).toEqual({channelId: 'channel2', guildId: 'guild2', time: mockDate2.getTime(), pointMultiplier: 2});
+        expect(timeInVoice.userJoinTime['user3']).toEqual({channelId: 'channel3', guildId: 'guild3', time: mockDate2.getTime(), pointMultiplier: 2});
     });
 });
 
