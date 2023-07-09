@@ -120,5 +120,8 @@ export default {
     clownMusic: 'clown_music',
     winnerGagnant: 'winner_gagnant',
     wolfHowl: 'wolf_howl',
-    blackenChineseMan: 'blacken_chinese_man'
+    blackenChineseMan: 'blacken_chinese_man',
+    myNameIsAndyRightHere: 'my_name_is_andy_right_here',
+    dontWorryAboutIt: 'dont_worry_about_it',
+    itsOnMe: 'its_on_me'
 };
