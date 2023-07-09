@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { logError } from './logger';
 import  timeInVoice from './timeInVoice';
-import lotteryManager from './commands/lottery/lotteryManager'; 
+import { scheduleEndLotteryCronJob, scheduleNewLotteryCronJob } from './commands/lottery/lotteryManager'; 
 import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe-points';
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/tables/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
@@ -107,7 +107,8 @@ function createCronJobs(client: Client) {
     //     createOracleDBLogStatisticsCronJob();
     // }
     createUpdateCringePointsCronJob(client);
-    lotteryManager.scheduleCronJob(client);
+    scheduleNewLotteryCronJob(client);
+    scheduleEndLotteryCronJob(client);
 }
 
 export default createCronJobs;
