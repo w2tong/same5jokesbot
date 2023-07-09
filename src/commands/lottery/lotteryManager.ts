@@ -39,9 +39,6 @@ function scheduleCronJob(client: Client) {
         if (lottery) {
             // Process unclaimed tickets
             const jackpotWinners = await getJackpotWinners(lottery.ID);
-            if (jackpotWinners.length > 0 && process.env.CLIENT_ID) {
-                void updateCringePoints([{userId: process.env.CLIENT_ID, points: -lottery.JACKPOT}]);
-            } 
             const jackpotPerTicket = calcJackpotPerTicket(jackpotWinners, lottery.JACKPOT);
             const unclaimedUsers = await getUnclaimedUsers(lottery.ID);
             if (unclaimedUsers.length > 0) {
@@ -139,6 +136,7 @@ async function claimTickets(user: User, lottery: Lottery, tickets: Array<Lottery
         totalWinnings += winnings;
     }
     await updateCringePoints([{userId: user.id, points: totalWinnings}]);
+    if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -totalWinnings}]);
     return {embed: createUserTicketsEmbed(user.username, totalWinnings, ticketWinnings), winnings: totalWinnings};
 }
 
