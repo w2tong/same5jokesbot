@@ -493,6 +493,42 @@ const regexToAudio = [
         regex: /it'?s on me/,
         getAudio: () => audio.dontWorryAboutIt
     },
+    {
+        regex: /rox[ai]s/,
+        getAudio: () => audio.khWhatdYouDoWithKairi
+    },
+    {
+        regex: /what('d| did| do)? you do with (kairi|kyrie)/,
+        getAudio: () => audio.khShesApartOfTheDarknessNow
+    },
+    {
+        regex: /she doesn'?t need the light/,
+        getAudio: () => audio.khYoureANobody1
+    },
+    {
+        regex: /where( are)? your friends now/,
+        getAudio: () => audio.khIDontNeedAnyFriends
+    },
+    {
+        regex: /i'?m (a ?)?part of the darkness/,
+        getAudio: () => audio.khYoureANobody2
+    },
+    {
+        regex: /you'?re over sora/,
+        getAudio: () => audio.khNo
+    },
+    {
+        regex: /don'?t hit the camera man|picks up sword|(dual|duo) (wield|wheel)/,
+        getAudio: () => audio.khDualWield
+    },
+    {
+        regex: /i can'?t kill you,? you'?re a part of me/,
+        getAudio: () => audio.khYoureAFoolSora
+    },
+    {
+        regex: /i can'?t kill you/,
+        getAudio: () => audio.khICantKillYou
+    },
 ];
 
 export default (command: string) => {
