@@ -28,7 +28,7 @@ function generateNumbers() {
     return nums.sort((a,b) => a-b).join(',');
 }
 
-function scheduleCronJob(client: Client) {
+function scheduleNewLotteryCronJob(client: Client) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: startTime, tz: 'America/Toronto' }, async function() {
         const lottery = await getCurrentLottery();
         if (!process.env.CASINO_CHANNEL_ID) return;
@@ -71,6 +71,25 @@ function scheduleCronJob(client: Client) {
         const newJackpot = houseBalance >= 0 ? houseBalance : 0;
         await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbers(), newJackpot);
         await channel.send({embeds: [createNewLotteryEmbed(startDate, endDate, newJackpot)]});
+    });
+}
+
+function scheduleEndLotteryCronJob(client: Client) {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: startTime + lotteryLengthHours, tz: 'America/Toronto' }, async function() {
+        const lottery = await getCurrentLottery();
+        if (!process.env.CASINO_CHANNEL_ID) return;
+        const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
+        if (!channel || channel.type !== ChannelType.GuildText) return;
+
+        if (lottery) {
+            const embed = new EmbedBuilder()
+                .setTitle(`${time(new Date(lottery.START_DATE), 'd')} Lottery Ended`)
+                .addFields(
+                    {name: 'Jackpot', value: `${lottery.JACKPOT.toLocaleString()}`, inline: true},
+                    {name: 'Winning Numbers', value: lottery.NUMBERS.split(',').join(', '), inline: true},
+                );
+            await channel.send({embeds: [embed]});
+        }
     });
 }
 
@@ -190,5 +209,8 @@ export default {
     ticketLimit,
     buyTicket,
     checkTickets,
-    scheduleCronJob
+};
+export {
+    scheduleNewLotteryCronJob,
+    scheduleEndLotteryCronJob
 };
