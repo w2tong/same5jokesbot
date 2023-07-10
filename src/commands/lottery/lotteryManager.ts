@@ -202,6 +202,26 @@ function createNewLotteryEmbed(startDate: Date, endDate: Date, jackpot: number):
         );
 }
 
+async function createLotteryInfoEmbed(): Promise<EmbedBuilder> {
+    const lottery = await getCurrentLottery();
+    const numOfNums = [];
+    const payouts = [];
+    for (let i = 1; i <= choose; i++) {
+        numOfNums.push(i);
+        payouts.push(payout[i].toLocaleString());
+    }
+    const embed = new EmbedBuilder()
+        .setTitle('Lottery Info')
+        .addFields(
+            {name: 'Numbers', value: `${numbers[0]} - ${numbers[numbers.length-1]}`, inline: true},
+            {name: 'Choose', value: `${choose}`, inline: true},
+            {name: 'Current Jackpot', value: `${lottery?.JACKPOT.toLocaleString() ?? 'None'}`, inline: true},
+            {name: '# of nums', value: `${numOfNums.join('\n')}`, inline: true},
+            {name: 'Payout', value: `${payouts.join('\n')}${lottery ? ` + ${lottery.JACKPOT.toLocaleString()}` : ''}`, inline: true},
+        );
+    return embed;
+}
+
 export default {
     numbers,
     choose,
@@ -213,5 +233,6 @@ export default {
 };
 export {
     scheduleNewLotteryCronJob,
-    scheduleEndLotteryCronJob
+    scheduleEndLotteryCronJob,
+    createLotteryInfoEmbed
 };
