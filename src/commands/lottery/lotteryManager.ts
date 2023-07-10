@@ -36,9 +36,10 @@ function scheduleNewLotteryCronJob(client: Client) {
         if (!channel || channel.type !== ChannelType.GuildText) return;
 
         // End current lottery
+        let jackpotWinners = [];
         if (lottery) {
             // Process unclaimed tickets
-            const jackpotWinners = await getJackpotWinners(lottery.ID);
+            jackpotWinners = await getJackpotWinners(lottery.ID);
             const jackpotPerTicket = calcJackpotPerTicket(jackpotWinners, lottery.JACKPOT);
             const unclaimedUsers = await getUnclaimedUsers(lottery.ID);
             if (unclaimedUsers.length > 0) {
@@ -68,7 +69,7 @@ function scheduleNewLotteryCronJob(client: Client) {
         const endDate = new Date(startDate);
         endDate.setHours(endDate.getHours() + lotteryLengthHours);
         const houseBalance = process.env.CLIENT_ID ? await getUserCringePoints(process.env.CLIENT_ID) ?? 0 : 0;
-        const newJackpot = houseBalance >= 0 ? houseBalance : 0;
+        const newJackpot = Math.max(numbers.length * 100_000, jackpotWinners.length > 0 ? 500_000 : lottery?.JACKPOT ?? 0, houseBalance * 0.5);
         await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbersArray().join(','), newJackpot);
         await channel.send({embeds: [createNewLotteryEmbed(startDate, endDate, newJackpot)]});
     });
