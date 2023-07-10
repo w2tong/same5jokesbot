@@ -19,13 +19,13 @@ const startTime = 0;
 const lotteryLengthHours = 21;
 const ticketLimit = 3;
 
-function generateNumbers() {
+function generateNumbersArray() {
     const choices = numbers.slice();
     const nums = [];
     for (let i = 0; i < choose; i++) {
         nums.push(choices.splice(getRandomRange(choices.length), 1)[0]);
     }
-    return nums.sort((a,b) => a-b).join(',');
+    return nums.sort((a,b) => a-b);
 }
 
 function scheduleNewLotteryCronJob(client: Client) {
@@ -69,7 +69,7 @@ function scheduleNewLotteryCronJob(client: Client) {
         endDate.setHours(endDate.getHours() + lotteryLengthHours);
         const houseBalance = process.env.CLIENT_ID ? await getUserCringePoints(process.env.CLIENT_ID) ?? 0 : 0;
         const newJackpot = houseBalance >= 0 ? houseBalance : 0;
-        await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbers(), newJackpot);
+        await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbersArray().join(','), newJackpot);
         await channel.send({embeds: [createNewLotteryEmbed(startDate, endDate, newJackpot)]});
     });
 }
@@ -209,6 +209,7 @@ export default {
     ticketLimit,
     buyTicket,
     checkTickets,
+    generateNumbersArray
 };
 export {
     scheduleNewLotteryCronJob,
