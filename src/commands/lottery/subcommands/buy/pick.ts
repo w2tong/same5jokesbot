@@ -1,12 +1,11 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
-import lottery from '../lotteryManager';
-import lotteryManager from '../lotteryManager';
+import lotteryManager from '../../lotteryManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     await interaction.deferReply({ephemeral: true});
     const nums: Array<number> = [];
-    for (let i = 1; i <= lottery.choose; i++) {
+    for (let i = 1; i <= lotteryManager.choose; i++) {
         const num = interaction.options.getInteger(`num${i}`);
         if (!num) {
             await interaction.editReply('There was an error retrieving your numbers.');
@@ -20,14 +19,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
     if (success) void interaction.channel?.send(`${user} bought a lottery ticket.`);
 }
 
-const name = 'buy';
+const name = 'pick';
 
 const minNum = 1;
-const maxNum = lottery.numbers.length;
+const maxNum = lotteryManager.numbers.length;
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy a lottery ticket (${lottery.price} points). Each number must be unique. Max of ${lottery.ticketLimit} tickets.`);
-for (let i = 1; i <= lottery.choose; i++) {
+    .setDescription(`Buy a lottery ticket (${lotteryManager.price} points). Each number must be unique. Max of ${lotteryManager.ticketLimit} tickets.`);
+for (let i = 1; i <= lotteryManager.choose; i++) {
     subcommandBuilder.addIntegerOption(option => option
         .setName(`num${i}`)
         .setDescription(`Enter number ${i}.`)

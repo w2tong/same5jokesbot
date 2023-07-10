@@ -1,9 +1,11 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import buy from './subcommands/buy';
+import auto from './subcommands/buy/auto';
+import pick from './subcommands/buy/pick';
 import check from './subcommands/check';
 
 const subcommands = {
-    [buy.name]: buy.execute,
+    [auto.name]: auto.execute,
+    [pick.name]: pick.execute,
     [check.name]: check.execute,
 };
 
@@ -17,7 +19,12 @@ const name = 'lottery';
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription('Buy lottery tickets or check your numbers.')
-    .addSubcommand(buy.subcommandBuilder)
+    .addSubcommandGroup(group => group
+        .setName('buy')
+        .setDescription('Buy lottery tickets.')
+        .addSubcommand(pick.subcommandBuilder)
+        .addSubcommand(auto.subcommandBuilder)
+    )
     .addSubcommand(check.subcommandBuilder);
 
 export default { execute, name, commandBuilder };
