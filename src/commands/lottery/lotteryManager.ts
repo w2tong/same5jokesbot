@@ -153,7 +153,7 @@ async function claimTickets(user: User, lottery: Lottery, tickets: Array<Lottery
         const winnings = payout[winningNumbers.length];
         const jackpotWinnings = lottery.NUMBERS === tickets[i].NUMBERS ? jackpot : 0;
         ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings, jackpotWinnings });
-        totalWinnings += winnings;
+        totalWinnings += winnings + jackpotWinnings;
     }
     await updateCringePoints([{userId: user.id, points: totalWinnings}]);
     if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -totalWinnings}]);
