@@ -153,7 +153,7 @@ async function claimTickets(user: User, lottery: Lottery, tickets: Array<Lottery
         const winnings = payout[winningNumbers.length];
         const jackpotWinnings = lottery.NUMBERS === tickets[i].NUMBERS ? jackpot : 0;
         ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings, jackpotWinnings });
-        totalWinnings += winnings;
+        totalWinnings += winnings + jackpotWinnings;
     }
     await updateCringePoints([{userId: user.id, points: totalWinnings}]);
     if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -totalWinnings}]);
@@ -173,7 +173,7 @@ function createUserTicketsEmbed(username: string, totalWinnings: number, ticketW
     for (let i = 0; i < ticketWinnings.length; i++) {
         embed.addFields(
             {name: `Ticket ${i+1}`, value: `${ticketWinnings[i].numbers.split(',').join(', ')}`, inline: true},
-            {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 ? '(JACKPOT)' : ''}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 ? `(+${ticketWinnings[i].jackpotWinnings})` : ''}`, inline: true},
+            {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 ? '(JACKPOT)' : ''}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 ? `(+${ticketWinnings[i].jackpotWinnings.toLocaleString()})` : ''}`, inline: true},
             emptyEmbedField
         );
     }
