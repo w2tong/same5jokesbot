@@ -25,6 +25,6 @@ const name = 'auto';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy the max number of lottery tickets (${lottery.price} points). Numbers are automatically picked. Max of ${lottery.ticketLimit} tickets.`);
+    .setDescription(`Buy up to ${lottery.choose} lottery tickets (${lottery.price} points each). Numbers are automatically picked.`);
 
 export default { execute, name, subcommandBuilder };
