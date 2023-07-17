@@ -6,9 +6,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ephemeral: true});
     const user = interaction.user;
     const msgs = [];
-    const buyMax = interaction.options.getBoolean('buy-max');
 
-    const ticketsToBuy = buyMax ? lottery.choose : 1;
+    const ticketsToBuy = lottery.choose;
     let ticketsBought = 0;
 
     while (ticketsBought < ticketsToBuy) {
@@ -26,10 +25,6 @@ const name = 'auto';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy a lottery ticket (${lottery.price} points). Numbers are automatically picked. Max of ${lottery.ticketLimit} tickets.`)
-    .addBooleanOption(option => option
-        .setName('buy-max')
-        .setDescription('Buy the max amount of tickets')
-    );
+    .setDescription(`Buy the max number of lottery tickets (${lottery.price} points). Numbers are automatically picked. Max of ${lottery.ticketLimit} tickets.`);
 
 export default { execute, name, subcommandBuilder };
