@@ -7,6 +7,7 @@ import { getMomentTorontoCurrentTime } from '../util/util';
 import { disconnectVoice, isInGuildVoice, joinVoicePlayAudio } from '../voice';
 import * as dotenv from 'dotenv';
 import audio from '../util/audioFileMap';
+import userIds from '../userIds';
 dotenv.config();
 
 // const mainChannel: TextChannel;
@@ -86,7 +87,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     if (newState.guild.afkChannelId === newState.channelId) return;
 
     // Message when Azi leaves or chance when someone else leaves
-    if (newState.member?.id == process.env.AZI_ID && newState.channelId === null && oldState.guild.id === process.env.GUILD_ID) {
+    if (newState.member?.id == userIds.AZI && newState.channelId === null && oldState.guild.id === process.env.GUILD_ID) {
         if (mainChannel) {
             mainChannel.send('You made Azi leave.').catch(logError);
         }
