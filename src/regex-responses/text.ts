@@ -21,7 +21,7 @@ function getTranslation(): string {
     return translations[getRandomRange(translations.length)];
 }
 
-const gamers = ['Rise up!', 'Disperse!', 'Discharge!', 'Disperse!', 'Disperse!'];
+const gamers = ['Rise up!', 'Disperse!', 'Discharge!'];
 function getGamersResponse(): string {
     return gamers[getRandomRange(gamers.length)];
 }
