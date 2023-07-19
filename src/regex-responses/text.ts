@@ -5,6 +5,7 @@ import { insertDisperseStreakHighScore } from '../sql/tables/disperse-streak-hig
 import { updateGamersStats } from '../sql/tables/gamers-stats';
 import { getRandomRange } from '../util/util';
 import { logError } from '../logger';
+import { updateCringePoints } from '../sql/tables/cringe-points';
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
@@ -59,6 +60,9 @@ function getAlam(): string {
     return `${alam[getRandomRange(alam.length)]}`;
 }
 
+const disperseRewardBase = 1000;
+const disperseRewardMultiplier = 4;
+
 const regexToText = [
     {
         regex: /where.*andy/,
@@ -76,6 +80,9 @@ const regexToText = [
             const disperseCurrentStreak = await getCurrentDisperseStreak(guildId);
             if (res === 'Disperse!') {
                 const streak = disperseCurrentStreak.STREAK+1;
+                if (streak > 1) {
+                    void updateCringePoints([{userId, points: disperseRewardBase * (disperseRewardMultiplier ** (streak-2))}]);
+                }
                 const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 const userIds = (disperseCurrentStreak.STREAK === 0) ? userId : `${disperseCurrentStreak.USER_IDS},${userId}`;
                 void updateCurrentDisperseStreak(guildId, date, userIds, streak);

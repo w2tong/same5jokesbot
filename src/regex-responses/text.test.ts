@@ -4,6 +4,7 @@ import * as sqlCurrentDisperseStreak from '../sql/tables/current-disperse-streak
 import * as sqlDisperseStreakBreaks from '../sql/tables/disperse-streak-breaks';
 import * as sqlDisperseStreakHighscore from '../sql/tables/disperse-streak-highscore';
 import * as sqlGamerStats from '../sql/tables/gamers-stats';
+import * as sqlCringePoints from '../sql/tables/cringe-points';
 import { Emotes, emotes } from '../util/emotes';
 import * as logger from '../logger';
 import { mockVoidPromise, mockTruePromise, mockFalsePromise } from '../tests/testUtil';
@@ -57,6 +58,7 @@ describe('Gamers', () => {
 
     jest.spyOn(sqlGamerStats, 'updateGamersStats').mockImplementation(mockVoidPromise);
     jest.spyOn(sqlCurrentDisperseStreak, 'getCurrentDisperseStreak').mockImplementation(mockGetCurrentDisperseStreakThree);
+    jest.spyOn(sqlCringePoints, 'updateCringePoints').mockImplementation(mockVoidPromise);
     const mockUpdateCurrentDisperseStreak = jest.spyOn(sqlCurrentDisperseStreak, 'updateCurrentDisperseStreak').mockImplementation(mockVoidPromise);
     let mockInsertDisperseStreakHighScore = jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation(mockFalsePromise);
     const mockUpdateDisperseStreakBreaks = jest.spyOn(sqlDisperseStreakBreaks, 'updateDisperseStreakBreaks').mockImplementation(mockVoidPromise);
