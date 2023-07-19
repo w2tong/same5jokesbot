@@ -535,7 +535,7 @@ const regexToAudio = [
         getAudio: () => audio.khICantKillYou
     },
     {
-        regex: /((you know what|it'?s like|as) )?they ((also|always) )?(say|said)/,
+        regex: /((you know what|it'?s like|as) )?they ((also|always) )?(say|said)$/,
         getAudio: () => getConstableJones()
     },
 ];
