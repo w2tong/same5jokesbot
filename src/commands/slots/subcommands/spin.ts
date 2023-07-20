@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { Emotes, emotes } from '../../../util/emotes';
 import { getRandomRange } from '../../../util/util';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
@@ -91,7 +91,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
         const balance = await getUserCringePoints(user.id) ?? 0;
         if (pointsBet * numOfSpins > balance) {
-            await interaction.editReply({content: `You do not have enough points (Balance **${balance.toLocaleString()}**).`, files: ['https://i.kym-cdn.com/photos/images/original/002/508/125/847.jpg'] });
+            await interaction.editReply({content: `You do not have enough points (Balance ${bold(balance.toLocaleString())}).`, files: ['https://i.kym-cdn.com/photos/images/original/002/508/125/847.jpg'] });
             return;
         }
         let bestSpin = '';

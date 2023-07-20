@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { emptyEmbedField } from '../../../util/discordUtil';
 
@@ -23,7 +23,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         
     const giverCringePoints = await getUserCringePoints(giver.id) ?? 0;
     if (amount > giverCringePoints) {
-        await interaction.reply({content: `You do not have enough points (Balance: **${giverCringePoints}**).`, ephemeral: true});
+        await interaction.reply({content: `You do not have enough points (Balance: ${bold(giverCringePoints.toLocaleString())}).`, ephemeral: true});
         return;
     }
 

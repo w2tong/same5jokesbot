@@ -1,6 +1,5 @@
-import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, User, UserManager } from 'discord.js';
+import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, User, UserManager, bold, time } from 'discord.js';
 import { emptyEmbedField, fetchChannel, fetchMessage, fetchUser } from '../../util/discordUtil';
-import { convertDateToUnixTimestamp } from '../../util/util';
 import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe-points';
 import { BetProfitsUpdate, updateBetProfits } from '../../sql/tables/bet-profits';
 import { logError } from '../../logger';
@@ -237,7 +236,7 @@ class Bet {
 
     async createBetEmbed(users: UserManager): Promise<EmbedBuilder> {
         const timeFieldName = this.deleted ?  'Bet deleted' : `Bet end${this.isEnded() ? 'ed' : 'ing'}`;
-        const timeField =  { name: timeFieldName, value: `<t:${convertDateToUnixTimestamp(new Date(this.endTime))}:R>` };
+        const timeField =  { name: timeFieldName, value: `${time(new Date(this.endTime), 'R')}` };
         const pointTotal = this.yesTotal+this.noTotal;
         const yesPercent = Math.round(this.yesTotal/pointTotal*100);
         const noPercent = Math.round(this.noTotal/pointTotal*100);
@@ -251,9 +250,9 @@ class Bet {
             .setTitle(`${this.name} ${this.isEnded() && !this.isValid() ? '(INVALID)' : ''}`)
             .addFields(
                 timeField,
-                { name: 'Yes', value: `${!isNaN(yesPercent) ? yesPercent : 0}%\n**Points**: ${this.yesTotal}\n**Return**: 1:${!isNaN(yesReturn) ? yesReturn : 1}\n**Voters**: ${yesNumVoters}`, inline: true },
+                { name: 'Yes', value: `${!isNaN(yesPercent) ? yesPercent : 0}%\n${bold('Points')}: ${this.yesTotal}\n${bold('Return')}: 1:${!isNaN(yesReturn) ? yesReturn : 1}\n${bold('Voters')}: ${yesNumVoters}`, inline: true },
                 emptyEmbedField,
-                { name: 'No', value: `${!isNaN(noPercent) ? noPercent : 0}%\n**Points**: ${this.noTotal}\n**Return**: 1:${!isNaN(noReturn) ? noReturn : 1}\n**Voters**: ${noNumVoters}`, inline: true },
+                { name: 'No', value: `${!isNaN(noPercent) ? noPercent : 0}%\n${bold('Points')}: ${this.noTotal}\n${bold('Return')}: 1:${!isNaN(noReturn) ? noReturn : 1}\n${bold('Voters')}: ${noNumVoters}`, inline: true },
                 { name: 'Yes Betters', value: `${yesBetters.length ? yesBetters : 'None'}`, inline: true },
                 emptyEmbedField,
                 { name: 'No Betters', value: `${noBetters.length ? noBetters : 'None'}`, inline: true }

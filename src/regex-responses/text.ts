@@ -6,6 +6,7 @@ import { updateGamersStats } from '../sql/tables/gamers-stats';
 import { getRandomRange } from '../util/util';
 import { logError } from '../logger';
 import { updateCringePoints } from '../sql/tables/cringe-points';
+import { bold } from 'discord.js';
 
 // Where is Andy random response
 const verbs = ['Walking', 'Washing', 'Eating'];
@@ -88,12 +89,12 @@ const regexToText = [
                 void updateCurrentDisperseStreak(guildId, date, userIds, streak);
                 const inserted = await insertDisperseStreakHighScore(guildId, date, userIds, streak);
                 if (inserted) {
-                    res = `${res}\nNEW HIGHSCORE: **${streak}** (or the same)`;
+                    res = `${res}\nNEW HIGHSCORE: ${bold(`${streak}`)} (or the same)`;
                 }
             }
             else {
                 if (disperseCurrentStreak.STREAK > 1) {
-                    res = `${res}\nDisperse Streak: **${disperseCurrentStreak.STREAK}** broken by **${username}**`;
+                    res = `${res}\nDisperse Streak: ${bold(`${disperseCurrentStreak.STREAK}`)} broken by ${bold(username)}`;
                     void updateDisperseStreakBreaks(userId, disperseCurrentStreak.STREAK);
                 }
                 const date = new Date().toISOString().slice(0, 19).replace('T', ' ');

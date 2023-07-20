@@ -1,9 +1,8 @@
-import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState, bold, time } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
-import { convertDateToUnixTimestamp } from './util/util';
 import { fetchChannel } from './util/discordUtil';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
@@ -137,8 +136,11 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
 
         // Get user
         const user = client.users.cache.get(userId);
+        // Return if user not found
+        if (!user) return;
         // Return if speaker is a bot
-        if (user?.bot) return;
+        if (user.bot) return;
+
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         transcriber.listen(connection.receiver, userId, user).then((data: transcriberData) => {
     
@@ -147,7 +149,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 if (isRateLimited === false) {
                     isRateLimited = true;
                     if (voiceLogChannel) {
-                        voiceLogChannel.send(`<t:${convertDateToUnixTimestamp(new Date())}:T> Rate limited. Try again in 1 minute.`)
+                        voiceLogChannel.send(`${time(new Date(), 'T')} Rate limited. Try again in 1 minute.`)
                             .then((message) => { rateLimitedMessage = message; }).catch(logError);
                     }
                 }
@@ -162,10 +164,10 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             }
             if (!data.transcript.text) return; // Return if no text
             const text = data.transcript.text.toLowerCase();
-            const username = user?.username;
+            const username = user.username;
     
             // Log voice messages to console and discord channel
-            const voiceTextLog = `<t:${convertDateToUnixTimestamp(new Date())}:T> **${username}**: ${text}`;
+            const voiceTextLog = `${time(new Date(), 'T')} ${bold(username)}: ${text}`;
             if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(logError);
     
             // Stop audio voice command
