@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState, time } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState, bold, time } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import { logError } from './logger';
@@ -136,8 +136,11 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
 
         // Get user
         const user = client.users.cache.get(userId);
+        // Return if user not found
+        if (!user) return;
         // Return if speaker is a bot
-        if (user?.bot) return;
+        if (user.bot) return;
+
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         transcriber.listen(connection.receiver, userId, user).then((data: transcriberData) => {
     
@@ -161,10 +164,10 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             }
             if (!data.transcript.text) return; // Return if no text
             const text = data.transcript.text.toLowerCase();
-            const username = user?.username;
+            const username = user.username;
     
             // Log voice messages to console and discord channel
-            const voiceTextLog = `${time(new Date(), 'T')} **${username}**: ${text}`;
+            const voiceTextLog = `${time(new Date(), 'T')} ${bold(username)}: ${text}`;
             if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(logError);
     
             // Stop audio voice command

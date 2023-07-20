@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle, bold } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util/util';
 import { createBet, deleteBet, endBet } from '../betManager';
@@ -84,14 +84,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
             const pointsBet = bet.getUserPointsBet(user.id);
             const pointsLeft = pointsAvailable - pointsBet;
             if (pointsLeft < currBetPoints) {
-                await modalSubmitInteraction.reply({content: `Error: You do not have enough Cringe points (**${pointsLeft}** left).`, ephemeral: true});
+                await modalSubmitInteraction.reply({content: `Error: You do not have enough Cringe points (${bold(pointsLeft.toLocaleString())} left).`, ephemeral: true});
                 return;
             }
             
             await modalSubmitInteraction.deferReply();
             betYes ? bet.addYesBetter(user.id, currBetPoints) : bet.addNoBetter(user.id, currBetPoints);
             await interaction.editReply({embeds: [await bet.createBetEmbed(interaction.client.users)]});
-            await modalSubmitInteraction.editReply(`${user} bet **${betYes ? 'YES' : 'NO'}** with **${currBetPoints.toLocaleString()}** Cringe points (**${(pointsBet + currBetPoints).toLocaleString()}** total, **${(pointsAvailable - pointsBet - currBetPoints).toLocaleString()}** left).`);
+            await modalSubmitInteraction.editReply(`${user} bet ${bold(betYes ? 'YES' : 'NO')} with ${bold(currBetPoints.toLocaleString())} Cringe points (${bold((pointsBet + currBetPoints).toLocaleString())} total, ${bold((pointsAvailable - pointsBet - currBetPoints).toLocaleString())} left).`);
         }
         catch (err) {
             logError(err);

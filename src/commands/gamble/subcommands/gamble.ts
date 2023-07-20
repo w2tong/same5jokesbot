@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { updateGambleProfits } from '../../../sql/tables/gamble-profits';
 import { emptyEmbedField } from '../../../util/discordUtil';
@@ -34,7 +34,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         
     const balance = await getUserCringePoints(user.id) ?? 0;
     if (pointsBet > balance) {
-        await interaction.editReply(`You do not have enough points (Balance **${balance.toLocaleString()}**).`);
+        await interaction.editReply(`You do not have enough points (Balance ${bold(balance.toLocaleString())}).`);
         return;
     }
 

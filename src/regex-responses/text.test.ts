@@ -8,6 +8,7 @@ import * as sqlCringePoints from '../sql/tables/cringe-points';
 import { Emotes, emotes } from '../util/emotes';
 import * as logger from '../logger';
 import { mockVoidPromise, mockTruePromise, mockFalsePromise } from '../tests/testUtil';
+import { bold } from 'discord.js';
 
 const mockDate = new Date('2023-01-01');
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -80,7 +81,7 @@ describe('Gamers', () => {
     test('Rise up!', async () => {
         jest.spyOn(global.Math, 'random').mockReturnValue(0.1);
         const res = await getTextResponse('gamers', 'user-id', 'username', 'guild-id');
-        expect(res).toBe('Rise up!\nDisperse Streak: **3** broken by **username**');
+        expect(res).toBe(`Rise up!\nDisperse Streak: ${bold('3')} broken by ${bold('username')}`);
         expect(mockInsertDisperseStreakHighScore).toBeCalledTimes(0);
         expect(mockUpdateDisperseStreakBreaks.mock.lastCall).toEqual(['user-id', 3]);
         expect(mockUpdateCurrentDisperseStreak.mock.lastCall).toEqual(['guild-id', '2023-01-01 00:00:00', 'user-id', 0]);
@@ -96,7 +97,7 @@ describe('Gamers', () => {
     test('Disperse! three streak', async () => {
         jest.spyOn(sqlDisperseStreakHighscore, 'insertDisperseStreakHighScore').mockImplementation(mockTruePromise);
         const res = await getTextResponse('gamers', 'user-id', '', 'guild-id');
-        expect(res).toBe('Disperse!\nNEW HIGHSCORE: **4** (or the same)');
+        expect(res).toBe(`Disperse!\nNEW HIGHSCORE: ${bold('4')} (or the same)`);
         expect(mockUpdateCurrentDisperseStreak.mock.lastCall).toEqual(['guild-id', '2023-01-01 00:00:00', 'user1,user2,user3,user-id', 4]);
         expect(mockInsertDisperseStreakHighScore.mock.lastCall).toEqual(['guild-id', '2023-01-01 00:00:00', 'user1,user2,user3,user-id', 4]);
         expect(mockUpdateDisperseStreakBreaks).toBeCalledTimes(0);
@@ -104,7 +105,7 @@ describe('Gamers', () => {
     test('Discharge!', async () => {
         jest.spyOn(global.Math, 'random').mockReturnValue(0.9);
         const res = await getTextResponse('gamers', 'user-id', 'username', 'guild-id');
-        expect(res).toBe('Discharge!\nDisperse Streak: **3** broken by **username**');
+        expect(res).toBe(`Discharge!\nDisperse Streak: ${bold('3')} broken by ${bold('username')}`);
         expect(mockInsertDisperseStreakHighScore).toBeCalledTimes(0);
         expect(mockUpdateDisperseStreakBreaks.mock.lastCall).toEqual(['user-id', 3]);
         expect(mockUpdateCurrentDisperseStreak.mock.lastCall).toEqual(['guild-id', '2023-01-01 00:00:00', 'user-id', 0]);

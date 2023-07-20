@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints } from '../../../sql/tables/cringe-points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -9,7 +9,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     if (cringePoints) {
         points = cringePoints;
     }
-    void interaction.editReply(`**${user.username}** has **${points.toLocaleString()}** points.`);
+    void interaction.editReply(`${user} has ${bold(points.toLocaleString())} points.`);
 }
 
 const name = 'get';
