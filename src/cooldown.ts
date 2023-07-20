@@ -1,5 +1,6 @@
 import { Collection } from 'discord.js';
 import { timeInMS } from './util/util';
+import { updateCringePoints } from './sql/tables/cringe-points';
 
 class Cooldown {
     private timestamps = new Collection<string, number>();
@@ -21,4 +22,19 @@ class Cooldown {
     }
 }
 
-export default Cooldown;
+class RewardCooldown extends Cooldown {
+    private points: number;
+
+    constructor(duration: number, points: number) {
+        super(duration);
+        this.points = points;
+    }
+
+    reward(userId: string) {
+        if (this.onCooldown(userId)) return;
+        this.setCooldown(userId);
+        void updateCringePoints([{userId, points: this.points}]);
+    }
+}
+
+export { Cooldown, RewardCooldown };
