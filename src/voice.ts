@@ -9,6 +9,8 @@ import { fetchChannel } from './util/discordUtil';
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
 import { updateAudioCount } from './sql/tables/audio-count';
+import { updateCringePoints } from './sql/tables/cringe-points';
+import Cooldown from './cooldown';
 
 interface GuildConnection {
     connection: VoiceConnection;
@@ -32,6 +34,8 @@ const timeout = 900_000; // Timeout in milliseconds
 const guildConnections: { [key: string]: GuildConnection } = {};
 const speakingTimeout = 100;
 const userSpeakingTimeout = new Set();
+const audioRewardCooldown = new Cooldown(60);
+const audioRewardAmount = 100;
 
 // Get voice log channel
 let voiceLogChannel: TextChannel;
@@ -182,7 +186,12 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     
             // Play any audio where text matches regex
             const audio = getAudioResponse(text);
-            playAudioFile(audio, userId, guildId);
+            if (audio) {
+                playAudioFile(audio, userId, guildId);
+                if (audioRewardCooldown.onCooldown(userId)) return;
+                audioRewardCooldown.setCooldown(userId);
+                void updateCringePoints([{userId, points: audioRewardAmount}]);
+            }
         });
     });
 
