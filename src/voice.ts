@@ -1,9 +1,8 @@
-import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState, time } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
-import { convertDateToUnixTimestamp } from './util/util';
 import { fetchChannel } from './util/discordUtil';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
@@ -147,7 +146,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 if (isRateLimited === false) {
                     isRateLimited = true;
                     if (voiceLogChannel) {
-                        voiceLogChannel.send(`<t:${convertDateToUnixTimestamp(new Date())}:T> Rate limited. Try again in 1 minute.`)
+                        voiceLogChannel.send(`${time(new Date(), 'T')} Rate limited. Try again in 1 minute.`)
                             .then((message) => { rateLimitedMessage = message; }).catch(logError);
                     }
                 }
@@ -165,7 +164,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             const username = user?.username;
     
             // Log voice messages to console and discord channel
-            const voiceTextLog = `<t:${convertDateToUnixTimestamp(new Date())}:T> **${username}**: ${text}`;
+            const voiceTextLog = `${time(new Date(), 'T')} **${username}**: ${text}`;
             if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(logError);
     
             // Stop audio voice command

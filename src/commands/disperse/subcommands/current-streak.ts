@@ -1,7 +1,6 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, time } from 'discord.js';
 import { getCurrentDisperseStreak } from '../../../sql/tables/current-disperse-streak';
 import { createDispersersList } from '../../../util/discordUtil';
-import { convertDateToUnixTimestamp } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.guild) return;
@@ -12,9 +11,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (disperseStreak.STREAK > 0) {
             dispersersFieldValue = await createDispersersList(disperseStreak.USER_IDS, interaction.client.users);
         }
-        const unixTimestamp = convertDateToUnixTimestamp(new Date(`${disperseStreak.STREAK_DATE} UTC`));
         const embed = new EmbedBuilder()
-            .setTitle(`${interaction.guild.name}'s Current Disperse Streak <t:${unixTimestamp}:R>`)
+            .setTitle(`${interaction.guild.name}'s Current Disperse Streak ${time(new Date(`${disperseStreak.STREAK_DATE} UTC`), 'R')}`)
             .addFields(
                 { name: 'Streak', value: `${disperseStreak.STREAK}`, inline: true },
                 { name: 'Dispersers', value: `${dispersersFieldValue}`, inline: true }

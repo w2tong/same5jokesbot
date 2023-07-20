@@ -1,5 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { convertDateToUnixTimestamp } from '../../../util/util';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, SlashCommandSubcommandBuilder, time } from 'discord.js';
 import { deleteReminder, getUserReminders } from '../../../sql/tables/reminders';
 import { logError } from '../../../logger';
 import { nanoid } from 'nanoid';
@@ -18,11 +17,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 .setLabel(`Delete Reminder ${i+1}`)
                 .setStyle(ButtonStyle.Danger),
         );
-        const unixTimestamp = convertDateToUnixTimestamp(new Date(`${reminders[i].TIME} UTC`));
+        const date = new Date(`${reminders[i].TIME} UTC`);
         const embed = new EmbedBuilder()
             .setTitle(`Reminder ${i+1}`)
             .addFields(
-                { name: 'Time', value: `<t:${unixTimestamp}> <t:${unixTimestamp}:R>` },
+                { name: 'Time', value: `${time(date)} ${time(date, 'R')}` },
                 { name: 'Message', value: `${reminders[i].MESSAGE}` }
             );
         embeds.push(embed);

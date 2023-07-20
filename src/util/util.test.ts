@@ -1,4 +1,4 @@
-import { getRandomRange, convertDateToUnixTimestamp, msToString } from './util';
+import { getRandomRange, msToString } from './util';
 
 const mockDate = new Date('2023-01-01');
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -28,12 +28,6 @@ describe('getRandomRange()', () => {
         expect(result).toBeGreaterThanOrEqual(-1);
         expect(result).toBeLessThan(0);
     });
-});
-
-describe('convertDateToUnixTimestamp()', () => {
-    test('date returns unix timestamp', () => {
-        expect(convertDateToUnixTimestamp(new Date())).toBe(1672531200);
-    });    
 });
 
 describe('msToString()', () => {
