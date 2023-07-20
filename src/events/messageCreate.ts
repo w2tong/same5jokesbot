@@ -5,6 +5,10 @@ import getImageResponse from '../regex-responses/image';
 import getReactResponse from '../regex-responses/react';
 import getTextResponse from '../regex-responses/text';
 import { joinVoicePlayAudio } from '../voice';
+import { RewardCooldown } from '../cooldown';
+
+const textRewardCooldown = new RewardCooldown(60, 100);
+const reactRewardCooldown = new RewardCooldown(3600, 1000);
 
 export default async (message: Message) => {
     // Don't respond to bots
@@ -22,6 +26,7 @@ export default async (message: Message) => {
         const images = getImageResponse(command);
         if (botMessage) {
             message.channel.send({content: botMessage, files: images}).catch(logError);
+            if (message.member?.id) textRewardCooldown.reward(message.member.id);
         }
     }
 
@@ -29,6 +34,7 @@ export default async (message: Message) => {
     const react = getReactResponse(command);
     if (react) {
         message.react(react).catch(logError);
+        if (message.member?.id) reactRewardCooldown.reward(message.member.id);
     }
 
     // Audio replies
