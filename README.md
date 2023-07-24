@@ -26,6 +26,8 @@ https://www.oracle.com/database/technologies/appdev/quickstartnodejs.html
 ### .env File
 Place .env file in the root directory
 ```
+NODE_ENV=your environment
+
 # Discord
 CLIENT_ID=Bot Client ID
 GUILD_ID=Guild ID
@@ -39,6 +41,7 @@ WITAI_KEY=Wit Ai Client Access Token
 ORACLEDB_USER=username
 ORACLEDB_PW=password
 ORACLEDB_CONN_STR=connection string
+ORACLE_CLIENT_DIR=instant client directory
 UV_THREADPOOL_SIZE=4
 ORACLEDB_POOL_MIN=1
 ORACLEDB_POOL_MAX=4
@@ -47,6 +50,7 @@ ORACLEDB_POOL_MAX=4
 MAIN_CHANNEL_ID=text channel id
 VOICE_LOG_CHANNEL_ID=text channel id
 STATUS_CHANNEL_ID=status channel id
+CASINO_CHANNEL_ID=casino channel id
 ```
 
 ## Deployment
