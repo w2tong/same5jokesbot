@@ -51,6 +51,7 @@ MAIN_CHANNEL_ID=text channel id
 VOICE_LOG_CHANNEL_ID=text channel id
 STATUS_CHANNEL_ID=status channel id
 CASINO_CHANNEL_ID=casino channel id
+LOTTERY_ROLE_ID=lottery role id
 ```
 
 ## Deployment
