@@ -1,5 +1,5 @@
-import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, User, UserManager, bold, time } from 'discord.js';
-import { emptyEmbedField, fetchChannel, fetchMessage, fetchUser } from '../../util/discordUtil';
+import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, bold, time, userMention } from 'discord.js';
+import { emptyEmbedField, fetchChannel, fetchMessage } from '../../util/discordUtil';
 import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe-points';
 import { BetProfitsUpdate, updateBetProfits } from '../../sql/tables/bet-profits';
 import { logError } from '../../logger';
@@ -30,7 +30,7 @@ async function deleteBet(userId: string, client: Client): Promise<boolean> {
         const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
         try {
-            await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
+            await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
         }
         catch(err) {
             logError(err);
@@ -46,7 +46,7 @@ async function endBet(userId: string, client: Client): Promise<boolean> {
         const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
         try {
-            await message.edit({embeds: [await betManager[userId].bet.createBetEmbed(client.users)], components: []});
+            await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
         }
         catch(err) {
             logError(err);
@@ -68,19 +68,6 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
         
         const yesBetters = bet.getYesBetters();
         const noBetters = bet.getNoBetters();
-        let users = [];
-        for (const userId of Object.keys(yesBetters)) {
-            users.push(fetchUser(client.users, userId));
-        }
-        for (const userId of Object.keys(noBetters)) {
-            users.push(fetchUser(client.users, userId));
-        }
-        users = await Promise.all(users);
-        const userMap: {[key: string]: User} = {};
-        for (const user of users) {
-            userMap[user.id] = user;
-        }
-
         const yesTotal = bet.getYesTotal();
         const noTotal = bet.getNoTotal();
         const yesBettersList = [];
@@ -91,12 +78,12 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
         if (result === BetResult.Yes) {
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {
                 const winnings = Math.ceil(points / bet.getYesTotal() * bet.getNoTotal());
-                yesBettersList.push(`${userMap[userId]}: +${winnings.toLocaleString()}`);
+                yesBettersList.push(`${userMention(userId)}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
                 betProfitsUpdates.push({userId, winnings, losses: 0});
             }
             for (const [userId, points] of Object.entries(noBetters).sort(sortBettersDesc)) {
-                noBettersList.push(`${userMap[userId]}: ${-points.toLocaleString()}`);
+                noBettersList.push(`${userMention(userId)}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
                 betProfitsUpdates.push({userId, winnings: 0, losses: points});
             }
@@ -104,12 +91,12 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
         else {
             for (const [userId, points] of Object.entries(noBetters).sort(sortBettersDesc)) {
                 const winnings = Math.ceil(points / bet.getNoTotal() * bet.getYesTotal());
-                noBettersList.push(`${userMap[userId]}: +${winnings.toLocaleString()}`);
+                noBettersList.push(`${userMention(userId)}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
                 betProfitsUpdates.push({userId, winnings, losses: 0});
             }
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {
-                yesBettersList.push(`${userMap[userId]}: ${-points.toLocaleString()}`);
+                yesBettersList.push(`${userMention(userId)}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
                 betProfitsUpdates.push({userId, winnings: 0, losses: points});
             }
@@ -135,9 +122,9 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
 type Betters = {[key: string]: number};
 
 const sortBettersDesc = ([,valueA]: [string, number], [,valueB]: [string, number]) => valueB - valueA;
-async function createBettersList(betManager: Betters, users: UserManager): Promise<string> {
-    const mapBetters = async ([key, value]: [string, number])  => `${(await fetchUser(users, key))}: ${value}`;
-    return (await Promise.all(Object.entries(betManager).sort(sortBettersDesc).map(mapBetters))).join('\n');
+const mapBetters = ([userId, points]: [string, number])  => `${userMention(userId)}: ${points}`;
+function createBettersList(betManager: Betters): string {
+    return Object.entries(betManager).sort(sortBettersDesc).map(mapBetters).join('\n');
 }
 
 class Bet {
@@ -234,7 +221,7 @@ class Bet {
         return 0;
     }
 
-    async createBetEmbed(users: UserManager): Promise<EmbedBuilder> {
+    createBetEmbed(): EmbedBuilder {
         const timeFieldName = this.deleted ?  'Bet deleted' : `Bet end${this.isEnded() ? 'ed' : 'ing'}`;
         const timeField =  { name: timeFieldName, value: `${time(new Date(this.endTime), 'R')}` };
         const pointTotal = this.yesTotal+this.noTotal;
@@ -244,8 +231,8 @@ class Bet {
         const noReturn = parseFloat((pointTotal/this.noTotal).toFixed(2));
         const yesNumVoters = Object.keys(this.yesBetters).length;
         const noNumVoters = Object.keys(this.noBetters).length;
-        const yesBetters = await createBettersList(this.yesBetters, users);
-        const noBetters = await createBettersList(this.noBetters, users);
+        const yesBetters = createBettersList(this.yesBetters);
+        const noBetters = createBettersList(this.noBetters);
         const embed = new EmbedBuilder()
             .setTitle(`${this.name} ${this.isEnded() && !this.isValid() ? '(INVALID)' : ''}`)
             .addFields(

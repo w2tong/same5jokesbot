@@ -1,6 +1,5 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { getTopBetProfits } from '../../../sql/tables/bet-profits';
-import { createUserNumberedList, fetchUser } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -13,10 +12,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const users = [];
     const profits = [];
     for (const {USER_ID, PROFITS} of topProfitStats) {
-        users.push(fetchUser(interaction.client.users, USER_ID));
+        users.push(userMention(USER_ID));
         profits.push(PROFITS.toLocaleString());
     }
-    const usersFieldValue = await createUserNumberedList(users);
+    const usersFieldValue = users.join('\n');
     const profitsFieldValue = profits.join('\n');
     const embed = new EmbedBuilder()
         .setTitle('Top Betting Profits')

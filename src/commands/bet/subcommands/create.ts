@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle, bold } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle, bold, userMention } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util/util';
 import { createBet, deleteBet, endBet } from '../betManager';
@@ -35,7 +35,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('No')
             .setStyle(ButtonStyle.Danger),
     );
-    void interaction.editReply({embeds: [await bet.createBetEmbed(interaction.client.users)], components: [buttonsRow]});
+    void interaction.editReply({embeds: [bet.createBetEmbed()], components: [buttonsRow]});
 
     const betButtonFilter = (i: ButtonInteraction) => i.customId === yesButtonCustomId || i.customId === noButtonCustomId;
     const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.minute, filter: betButtonFilter});
@@ -90,8 +90,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
             
             await modalSubmitInteraction.deferReply();
             betYes ? bet.addYesBetter(user.id, currBetPoints) : bet.addNoBetter(user.id, currBetPoints);
-            await interaction.editReply({embeds: [await bet.createBetEmbed(interaction.client.users)]});
-            await modalSubmitInteraction.editReply(`${user} bet ${bold(betYes ? 'YES' : 'NO')} with ${bold(currBetPoints.toLocaleString())} Cringe points (${bold((pointsBet + currBetPoints).toLocaleString())} total, ${bold((pointsAvailable - pointsBet - currBetPoints).toLocaleString())} left).`);
+            await interaction.editReply({embeds: [bet.createBetEmbed()]});
+            await modalSubmitInteraction.editReply(`${userMention(user.id)} bet ${bold(betYes ? 'YES' : 'NO')} with ${bold(currBetPoints.toLocaleString())} Cringe points (${bold((pointsBet + currBetPoints).toLocaleString())} total, ${bold((pointsAvailable - pointsBet - currBetPoints).toLocaleString())} left).`);
         }
         catch (err) {
             logError(err);

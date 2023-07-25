@@ -6,7 +6,7 @@ import audio from '../../../util/audioFileMap';
 async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     await interaction.deferReply();
-    const check = await lotteryManager.checkTickets(user.id, interaction.client.users);
+    const check = await lotteryManager.checkTickets(user.id, user.username);
     if (check.winnings > 0) joinVoicePlayAudio(interaction, audio.winnerGagnant);
     await interaction.editReply(check.reply);
 }

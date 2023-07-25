@@ -1,6 +1,5 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { getTopDisperseStreakBreaks } from '../../../sql/tables/disperse-streak-breaks';
-import { createUserNumberedList, fetchUser } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -10,11 +9,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const breaks = [];
         const scores = [];
         for (const {USER_ID, BREAKS, SCORE} of topDisperseStreakBreaks) {
-            users.push(fetchUser(interaction.client.users, USER_ID));
+            users.push(userMention(USER_ID));
             breaks.push(BREAKS);
             scores.push(SCORE);
         }
-        const userFieldValue = await createUserNumberedList(users);
+        const userFieldValue = users.join('\n');
         const breaksFieldValue = breaks.join('\n');
         const scoresFieldValue = scores.join('\n');
         
