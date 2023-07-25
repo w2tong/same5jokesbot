@@ -96,7 +96,7 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     // Play teleporting fat guy when moving between channels
     if (
         oldState.channelId && newState.channelId && oldState.channelId != newState.channelId &&
-        oldState.member && oldState.member.roles.cache.some(role => role.name === 'FAT')
+        oldState.member && oldState.member.roles.cache.some(role => role.id === process.env.FAT_ROLE_ID)
     ) {
         joinVoicePlayAudio(newState, audio.teleportingFatGuyShort);
     }
