@@ -13,8 +13,6 @@ const reactRewardCooldown = new RewardCooldown(3600, 1000);
 export default async (message: Message) => {
     // Don't respond to bots
     if (message.author.bot) return;
-    // Don't respond to Bot Abuser role
-    if (message.member && message.member.roles.cache.some(role => role.name === 'Bot Abuser')) return;
     // Return if incorrect channel type
     if (message.channel.type !== ChannelType.GuildText) return;
 
