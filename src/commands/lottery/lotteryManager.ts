@@ -116,7 +116,7 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
 
     await updateCringePoints([{userId, points: -price}]);
     if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: price}]);
-    await updateJackpot(lottery.ID, price);
+    await updateJackpot(lottery.ID, price * 0.5);
     await insertLotteryTicket(lottery.ID, userId, numbers.join(','));
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
