@@ -1,6 +1,5 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { getTopCringePoints } from '../../../sql/tables/cringe-points';
-import { createUserNumberedList, fetchUser } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -9,11 +8,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const users = [];
         const points = [];
         for (const {USER_ID, POINTS} of topCringePoints) {
-            users.push(fetchUser(interaction.client.users, USER_ID));
+            users.push(userMention(USER_ID));
             points.push(POINTS.toLocaleString());
         }
 
-        const usersFieldValue = await createUserNumberedList(users);
+        const usersFieldValue = users.join('\n');
         const pointsFieldValue = points.join('\n');
         const rowCringePointsEmbed = new EmbedBuilder()
             .setTitle('Top Cringe Points')

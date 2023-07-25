@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, userMention } from 'discord.js';
 import { fetchUser } from '../util/discordUtil';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-points';
 
@@ -23,7 +23,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setTitle(`${user.username}'s ${type} request`)
         .addFields(
-            {name: 'Type', value: `${type}`},
+            {name: 'User', value: `${userMention(interaction.user.id)}`, inline: true},
+            {name: 'Type', value: `${type}`, inline: true},
             {name: 'Request', value: `${details}`},
             {name: 'Balance', value: `${points.toLocaleString()} (-${price.toLocaleString()})`, inline: true},
             {name: 'New Balance', value: `${(points-price).toLocaleString()}`, inline: true}

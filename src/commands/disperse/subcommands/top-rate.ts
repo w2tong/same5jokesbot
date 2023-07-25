@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../../../sql/tables/gamers-stats';
-import { createUserNumberedList, fetchUser, monthChoices } from '../../../util/discordUtil';
+import { monthChoices } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -25,11 +25,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const dispersePcs = [];
         const totals = [];
         for (const {USER_ID, DISPERSE_PC, SUM} of topDisperseRate) {
-            users.push(fetchUser(interaction.client.users, USER_ID));
+            users.push(userMention(USER_ID));
             dispersePcs.push(parseFloat(DISPERSE_PC.toFixed(2)));
             totals.push(SUM);
         }
-        const userFieldValue = await createUserNumberedList(users);
+        const userFieldValue = users.join('\n');
         const dispersePcFieldValue = dispersePcs.join('\n');
         const totalFieldValue = totals.join('\n');
             

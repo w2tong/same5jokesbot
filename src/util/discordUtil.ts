@@ -1,4 +1,4 @@
-import { ChannelManager, MessageManager, User, UserManager } from 'discord.js';
+import { ChannelManager, MessageManager, User, UserManager, userMention } from 'discord.js';
 
 const messageEmbedLimit = 10;
 const emptyEmbedField = {name: '\u200b', value: '\u200b', inline: true};
@@ -33,17 +33,13 @@ async function createUserNumberedList(users: Array<Promise<User>>) {
     return (await Promise.all(users)).map((user, i) => `${i+1} . ${user}`).join('\n');
 }
 
-async function createDispersersList(usersIdsStr: string, userManager: UserManager) {
+function createDispersersList(usersIdsStr: string) {
     const userIds = usersIdsStr.split(',');
     const userIdCount: { [key: string]: number } = {};
     for (const userId of userIds) {
         userIdCount[userId] = userIdCount[userId]+1 || 1;
     }
-    const users = [];
-    for (const userId of Object.keys(userIdCount)) {
-        users.push(await fetchUser(userManager, userId));
-    }
-    return (await Promise.all(users)).map(user => `${user} ${userIdCount[user.id] > 1 ? '('+userIdCount[user.id].toString()+')': ''}`).join('\n');
+    return Object.keys(userIdCount).map(userId => `${userMention(userId)} ${userIdCount[userId] > 1 ? '('+userIdCount[userId].toString()+')': ''}`).join('\n');
 }
 
 export {messageEmbedLimit, emptyEmbedField, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};

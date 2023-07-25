@@ -9,7 +9,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     if (disperseStreak) {
         let dispersersFieldValue = 'None';
         if (disperseStreak.STREAK > 0) {
-            dispersersFieldValue = await createDispersersList(disperseStreak.USER_IDS, interaction.client.users);
+            dispersersFieldValue = createDispersersList(disperseStreak.USER_IDS);
         }
         const embed = new EmbedBuilder()
             .setTitle(`${interaction.guild.name}'s Current Disperse Streak ${time(new Date(`${disperseStreak.STREAK_DATE} UTC`), 'R')}`)

@@ -7,7 +7,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const disperseStreak = await getDisperseStreakHighscore(interaction.guild.id);
     if (disperseStreak) {
-        const dispersersFieldValue = await createDispersersList(disperseStreak.USER_IDS, interaction.client.users);
+        const dispersersFieldValue = createDispersersList(disperseStreak.USER_IDS);
     
         const embed = new EmbedBuilder()
             .setTitle(`${interaction.guild.name}'s Disperse Streak Highscore ${time(new Date(`${disperseStreak.STREAK_DATE} UTC`), 'R')}`)
