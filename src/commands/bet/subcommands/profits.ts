@@ -6,11 +6,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.options.getUser('user') ?? interaction.user;
     const profitStats = await getUserBetProfits(user.id);
     if (!profitStats) {
-        void interaction.editReply(`${user} has have never bet with Cringe points.`);
+        void interaction.editReply(`${user} has have never bet.`);
         return;
     }
     const embed = new EmbedBuilder()
-        .setTitle(`${user.username} Betting Profits`)
+        .setTitle(`${user.username}'s Betting Profits`)
         .addFields(
             {name: 'Winnings', value: `${profitStats.WINNINGS.toLocaleString()}`, inline: true},
             {name: 'Losses', value: `${profitStats.LOSSES.toLocaleString()}`, inline: true},
@@ -23,7 +23,7 @@ const name = 'profits';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets a user\'s cringe point betting profits.')
+    .setDescription('Gets a user\'s betting profits.')
     .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
 export default { execute, name, subcommandBuilder };
