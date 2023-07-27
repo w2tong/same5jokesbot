@@ -1,4 +1,4 @@
-import { getRandomRange, msToString } from './util';
+import { getRandomRange, dateToDbString, msToString, capitalize } from './util';
 
 const mockDate = new Date('2023-01-01');
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -30,6 +30,13 @@ describe('getRandomRange()', () => {
     });
 });
 
+describe('dateToDbString()', () => {
+    test('2023-01-01 is 2023-01-01 00:00:00', () => {
+        const result = dateToDbString(new Date());
+        expect(result).toBe('2023-01-01 00:00:00');
+    });
+});
+
 describe('msToString()', () => {
     test('0 is 0d 0h 0m 0s', () => {
         expect(msToString(0)).toBe('0d 0h 0m 0s');
@@ -51,5 +58,23 @@ describe('msToString()', () => {
     });
     test('867810630 is 10d 1h 3m 30s', () => {
         expect(msToString(867810630)).toBe('10d 1h 3m 30s');
+    });
+});
+
+describe('capitalize()', () => {
+    test('empty string', () => {
+        expect(capitalize('')).toBe('');
+    });
+    test('a is A', () => {
+        expect(capitalize('a')).toBe('A');
+    });
+    test('A is A', () => {
+        expect(capitalize('A')).toBe('A');
+    });
+    test('this is a phrase is This is a phrase', () => {
+        expect(capitalize('this is a phrase')).toBe('This is a phrase');
+    });
+    test('-= is -=', () => {
+        expect(capitalize('-=')).toBe('-=');
     });
 });
