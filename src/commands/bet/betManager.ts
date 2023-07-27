@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, bold, time, userMention } from 'discord.js';
 import { emptyEmbedField, fetchChannel, fetchMessage } from '../../util/discordUtil';
 import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe-points';
-import { BetProfitsUpdate, updateBetProfits } from '../../sql/tables/bet-profits';
+import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';
 import { logError } from '../../logger';
 
 const enum BetResult {
@@ -57,7 +57,7 @@ async function endBet(userId: string, client: Client): Promise<boolean> {
     return false;
 }
 
-async function resolveBet(userId: string, result: string, client: Client): Promise<InteractionEditReplyOptions> {
+async function resolveBet(userId: string, result: BetResult, client: Client): Promise<InteractionEditReplyOptions> {
     const bet = betManager[userId]?.bet;
     if (bet) {
         bet.resolve();
@@ -73,19 +73,19 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
         const yesBettersList = [];
         const noBettersList = [];
         const cringePointUpdates: Array<CringePointsUpdate> = [];
-        const betProfitsUpdates: Array<BetProfitsUpdate> = [];
+        const betProfitsUpdates: Array<ProfitsUpdate> = [];
         
         if (result === BetResult.Yes) {
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {
                 const winnings = Math.ceil(points / bet.getYesTotal() * bet.getNoTotal());
                 yesBettersList.push(`${userMention(userId)}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
-                betProfitsUpdates.push({userId, winnings, losses: 0});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings, losses: 0});
             }
             for (const [userId, points] of Object.entries(noBetters).sort(sortBettersDesc)) {
                 noBettersList.push(`${userMention(userId)}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
-                betProfitsUpdates.push({userId, winnings: 0, losses: points});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings: 0, losses: points});
             }
         }
         else {
@@ -93,16 +93,16 @@ async function resolveBet(userId: string, result: string, client: Client): Promi
                 const winnings = Math.ceil(points / bet.getNoTotal() * bet.getYesTotal());
                 noBettersList.push(`${userMention(userId)}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
-                betProfitsUpdates.push({userId, winnings, losses: 0});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings, losses: 0});
             }
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {
                 yesBettersList.push(`${userMention(userId)}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
-                betProfitsUpdates.push({userId, winnings: 0, losses: points});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings: 0, losses: points});
             }
         }
         void updateCringePoints(cringePointUpdates);
-        void updateBetProfits(betProfitsUpdates);
+        void updateProfits(betProfitsUpdates);
         delete betManager[userId];
         
         await Promise.all([...yesBettersList, ...noBettersList]);

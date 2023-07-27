@@ -3,7 +3,7 @@ import { resolveBet, BetResult } from '../betManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const result = interaction.options.getString('result');
+    const result = interaction.options.getString('result') as BetResult;
     if (result) {
         // add embed with wins and losses
         const reply = await resolveBet(interaction.user.id, result, interaction.client);

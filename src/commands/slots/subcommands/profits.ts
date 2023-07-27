@@ -1,22 +1,11 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getUserSlotsProfits } from '../../../sql/tables/slots-profits';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ProfitType } from '../../../sql/tables/profits';
+import { generateUserProfitsResponse } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
-    const profitStats = await getUserSlotsProfits(user.id);
-    if (!profitStats) {
-        void interaction.editReply(`${user} has have never spun the slot machine.`);
-        return;
-    }
-    const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s Slots Profits`)
-        .addFields(
-            {name: 'Winnings', value: `${profitStats.WINNINGS.toLocaleString()}`, inline: true},
-            {name: 'Losses', value: `${profitStats.LOSSES.toLocaleString()}`, inline: true},
-            {name: 'Profits', value: `${profitStats.PROFITS.toLocaleString()}`, inline: true}
-        );
-    void interaction.editReply({embeds: [embed]});
+    void interaction.editReply(await generateUserProfitsResponse(user.id, user.username, ProfitType.Slots));
 }
 
 const name = 'profits';

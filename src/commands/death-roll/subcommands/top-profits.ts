@@ -1,35 +1,10 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { getTopDeathRollProfits, getTotalDeathRollProfits } from '../../../sql/tables/death-roll-profits';
-import { emptyEmbedField } from '../../../util/discordUtil';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ProfitType } from '../../../sql/tables/profits';
+import { generateTopProfitsEmbed } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const topProfitStats = await getTopDeathRollProfits();
-    const totalProfitStats = await getTotalDeathRollProfits();
-    if (!topProfitStats.length || !totalProfitStats) {
-        void interaction.editReply('No one has ever death rolled.');
-        return;
-    }
-
-    const users = [];
-    const profits = [];
-    for (const {USER_ID, PROFITS} of topProfitStats) {
-        users.push(userMention(USER_ID));
-        profits.push(PROFITS.toLocaleString());
-    }
-    const usersFieldValue = users.join('\n');
-    const profitsFieldValue = profits.join('\n');
-    const embed = new EmbedBuilder()
-        .setTitle('Top Death Roll Profits')
-        .addFields(
-            {name: 'Total Winnings', value: `${totalProfitStats.WINNINGS.toLocaleString()}`, inline: true},
-            {name: 'Total Losses', value: `${totalProfitStats.LOSSES.toLocaleString()}`, inline: true},
-            {name: 'Total Profits', value: `${totalProfitStats.PROFITS.toLocaleString()}`, inline: true},
-            {name: 'Users', value: usersFieldValue, inline: true},
-            emptyEmbedField,
-            {name: 'Profits', value: profitsFieldValue, inline: true}
-        );
-    void interaction.editReply({embeds: [embed]});
+    void interaction.editReply(await generateTopProfitsEmbed(ProfitType.DeathRoll));
 }
 
 const name = 'top-profits';
