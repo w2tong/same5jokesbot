@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatIn
 import { timeInMS } from '../../../util/util';
 import { DeathRoll } from '../deathRoll';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
-import { updateDeathRollProfits } from '../../../sql/tables/death-roll-profits';
+import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { nanoid } from 'nanoid';
 
 const time = 300;
@@ -79,8 +79,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 {userId: winnerId, points: amount},
                 {userId: loserId, points: -amount}
             ]);
-            void updateDeathRollProfits(winnerId, amount, 0);
-            void updateDeathRollProfits(loserId, 0, amount);
+            void updateProfits([
+                {userId: winnerId, type: ProfitType.DeathRoll, winnings: amount, losses: 0},
+                {userId: loserId, type: ProfitType.DeathRoll, winnings: 0, losses: amount}
+            ]);
         }
         else {
             deathRoll.expire();

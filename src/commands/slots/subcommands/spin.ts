@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilde
 import { Emotes, emotes } from '../../../util/emotes';
 import { getRandomRange } from '../../../util/util';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
-import { updateSlotsProfits } from '../../../sql/tables/slots-profits';
+import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { symbols, specialSymbols } from '../symbols';
 
 const reels = 5;
@@ -119,8 +119,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         // Update house Cringe points
         if (process.env.CLIENT_ID) void updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
         
-        if (profit > 0) void updateSlotsProfits(user.id, profit, 0);
-        else if (profit < 0) void updateSlotsProfits(user.id, 0, -profit);
+        if (profit > 0) void updateProfits([{userId: user.id, type: ProfitType.Slots, winnings: profit, losses: 0}]);
+        else if (profit < 0) void updateProfits([{userId: user.id, type: ProfitType.Slots, winnings: 0, losses: -profit}]);
         const embed = new EmbedBuilder()
             .setTitle(`${user.username}'s ${emotes[Emotes.borpaSpin] ?? 'spin'}${numOfSpins > 1 ? 's' : ''}`)
             .addFields(

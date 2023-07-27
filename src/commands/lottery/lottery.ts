@@ -3,12 +3,16 @@ import auto from './subcommands/buy/auto';
 import pick from './subcommands/buy/pick';
 import check from './subcommands/check';
 import info from './subcommands/info';
+import profits from './subcommands/profits';
+import topProfits from './subcommands/top-profits';
 
 const subcommands = {
     [auto.name]: auto.execute,
     [pick.name]: pick.execute,
     [check.name]: check.execute,
     [info.name]: info.execute,
+    [profits.name]: profits.execute,
+    [topProfits.name]: topProfits.execute,
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -28,6 +32,8 @@ const commandBuilder = new SlashCommandBuilder()
         .addSubcommand(auto.subcommandBuilder)
     )
     .addSubcommand(check.subcommandBuilder)
-    .addSubcommand(info.subcommandBuilder);
+    .addSubcommand(info.subcommandBuilder)
+    .addSubcommand(profits.subcommandBuilder)
+    .addSubcommand(topProfits.subcommandBuilder);
 
 export default { execute, name, commandBuilder };

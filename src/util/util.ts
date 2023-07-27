@@ -32,4 +32,8 @@ function msToString(ms: number) {
     return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
-export { timeInMS, getRandomRange, getMomentTorontoCurrentTime, dateToDbString, msToString };
+function capitalize(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export { timeInMS, getRandomRange, getMomentTorontoCurrentTime, dateToDbString, msToString, capitalize };

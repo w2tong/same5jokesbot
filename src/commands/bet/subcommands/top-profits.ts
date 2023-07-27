@@ -1,29 +1,10 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { getTopBetProfits } from '../../../sql/tables/bet-profits';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ProfitType } from '../../../sql/tables/profits';
+import { generateTopProfitsEmbed } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const topProfitStats = await getTopBetProfits();
-    if (!topProfitStats.length) {
-        void interaction.editReply('Error getting top betting profits.');
-        return;
-    }
-
-    const users = [];
-    const profits = [];
-    for (const {USER_ID, PROFITS} of topProfitStats) {
-        users.push(userMention(USER_ID));
-        profits.push(PROFITS.toLocaleString());
-    }
-    const usersFieldValue = users.join('\n');
-    const profitsFieldValue = profits.join('\n');
-    const embed = new EmbedBuilder()
-        .setTitle('Top Betting Profits')
-        .addFields(
-            {name: 'Users', value: usersFieldValue, inline: true},
-            {name: 'Profits', value: profitsFieldValue, inline: true}
-        );
-    void interaction.editReply({embeds: [embed]});
+    void interaction.editReply(await generateTopProfitsEmbed(ProfitType.Bet));
 }
 
 const name = 'top-profits';
