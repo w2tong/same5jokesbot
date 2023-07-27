@@ -10,7 +10,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
     const embed = new EmbedBuilder()
-        .setTitle(`${user.username} Gambling Profits`)
+        .setTitle(`${user.username}'s Gambling Profits`)
         .addFields(
             {name: 'Winnings', value: `${profitStats.WINNINGS.toLocaleString()}`, inline: true},
             {name: 'Losses', value: `${profitStats.LOSSES.toLocaleString()}`, inline: true},
