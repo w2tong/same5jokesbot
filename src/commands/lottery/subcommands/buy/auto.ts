@@ -7,7 +7,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     const msgs = [];
 
-    const ticketsToBuy = lottery.choose;
+    const ticketsToBuy = interaction.options.getInteger('number') ?? lottery.choose;
+    console.log(ticketsToBuy);
     let ticketsBought = 0;
 
     while (ticketsBought < ticketsToBuy) {
@@ -25,6 +26,12 @@ const name = 'auto';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy up to ${lottery.choose} lottery tickets (${lottery.price} points each). Numbers are automatically picked.`);
+    .setDescription(`Buy up to ${lottery.choose} lottery tickets (${lottery.price} points each). Numbers are automatically picked.`)
+    .addIntegerOption(option => option
+        .setName('number')
+        .setDescription('Enter the number of tickets to buy.')
+        .setMinValue(1)
+        .setMaxValue(lottery.choose)
+    );
 
 export default { execute, name, subcommandBuilder };
