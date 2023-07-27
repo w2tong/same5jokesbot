@@ -10,6 +10,7 @@ import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe-poin
 import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/tables/time-in-voice';
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
 import { fetchChannel } from './util/discordUtil';
+import { scheduleDailyTaxCronJob } from './taxes';
 
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {
@@ -109,6 +110,7 @@ function createCronJobs(client: Client) {
     createUpdateCringePointsCronJob(client);
     scheduleNewLotteryCronJob(client);
     scheduleEndLotteryCronJob(client);
+    scheduleDailyTaxCronJob(client);
 }
 
 export default createCronJobs;
