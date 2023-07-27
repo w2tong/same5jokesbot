@@ -6,7 +6,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.options.getUser('user') ?? interaction.user;
     const profitStats = await getUserGambleProfits(user.id);
     if (!profitStats) {
-        void interaction.editReply(`${user} has have never gambled Cringe points.`);
+        void interaction.editReply(`${user} has have never gambled.`);
         return;
     }
     const embed = new EmbedBuilder()
@@ -23,7 +23,7 @@ const name = 'profits';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets a user\'s cringe point gamble profits.')
+    .setDescription('Gets a user\'s gamble profits.')
     .addUserOption((option) => option.setName('user').setDescription('Select a user'));
 
 export default { execute, name, subcommandBuilder };
