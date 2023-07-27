@@ -5,6 +5,7 @@ import { getUserCringePoints, updateCringePoints } from '../../sql/tables/cringe
 import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery-ticket';
 import { ChannelType, Client, EmbedBuilder, bold, roleMention, time, userMention } from 'discord.js';
 import { emptyEmbedField, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
+import { updateLotteryProfits } from '../../sql/tables/lottery-profits';
 
 const numbers = Array.from(new Array(10), (_x, i) => i+1);
 const choose = 3;
@@ -115,6 +116,7 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
     }
 
     await updateCringePoints([{userId, points: -price}]);
+    await updateLotteryProfits(userId, 0, price);
     if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: price}]);
     await updateJackpot(lottery.ID, price * 0.5);
     await insertLotteryTicket(lottery.ID, userId, numbers.join(','));
@@ -156,6 +158,7 @@ async function claimTickets(userId: string, username: string, lottery: Lottery, 
         totalWinnings += winnings + jackpotWinnings;
     }
     await updateCringePoints([{userId, points: totalWinnings}]);
+    await updateLotteryProfits(userId, totalWinnings, 0);
     if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -totalWinnings}]);
     return {embed: createUserTicketsEmbed(username, totalWinnings, ticketWinnings), winnings: totalWinnings};
 }
