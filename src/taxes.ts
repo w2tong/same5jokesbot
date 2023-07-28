@@ -34,33 +34,35 @@ function calculateTax(points: number) {
     return Math.floor(taxes);
 }
 
-function createTaxesResponse(userIds: string[], taxes: number[]): MessageCreateOptions {
+function createTaxesResponse(userIds: string[], taxes: string[]): MessageCreateOptions {
     if (userIds.length === 0 || taxes.length === 0) return {content: 'No taxes today.'};
     const embed = new EmbedBuilder()
         .setTitle(`${time(new Date(), 'd')} Taxes`)
         .addFields(
-            {name: 'User', value: userIds.join('\n')},
-            {name: 'Taxes', value: taxes.join('\n')}
+            {name: 'User', value: userIds.join('\n'), inline: true},
+            {name: 'Tax', value: taxes.join('\n'), inline: true}
         );
     return {embeds: [embed]};
 }
 
 // Daily tax
 function scheduleDailyTaxCronJob(client: Client) {
-    schedule.scheduleJob({ second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, async function() {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: 2, tz: 'America/Toronto' }, async function() {
         if (!process.env.CLIENT_ID) return;
         const updates: CringePointsUpdate[] = [];
         const users: string[] = [];
-        const taxes: number[] = [];
+        const taxes: string[] = [];
         for (const {bot, id} of client.users.cache.values()) {
             if (bot) continue;
             const points = await getUserCringePoints(id) ?? 0;
             if (!points) continue;
-            const tax = calculateTax(points) ;
-            updates.push({userId: id, points: -tax});
-            updates.push({userId: process.env.CLIENT_ID, points: tax});
-            users.push(userMention(id));
-            taxes.push(tax);
+            const tax = calculateTax(points);
+            if (tax > 0) {
+                updates.push({userId: id, points: -tax});
+                updates.push({userId: process.env.CLIENT_ID, points: tax});
+                users.push(userMention(id));
+                taxes.push(tax.toLocaleString());
+            }
         }
         void updateCringePoints(updates);
         if (process.env.CASINO_CHANNEL_ID) {
