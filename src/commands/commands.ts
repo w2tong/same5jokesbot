@@ -13,6 +13,7 @@ import deathRoll from './death-roll/death-roll';
 import lottery from './lottery/lottery';
 import request from './request';
 import profits from './profits/profits';
+import tax from './tax/tax';
 
 const commands = {
     [play.name]: play.execute,
@@ -29,7 +30,8 @@ const commands = {
     [deathRoll.name]: deathRoll.execute,
     [lottery.name]: lottery.execute,
     [request.name]: request.execute,
-    [profits.name]: profits.execute
+    [profits.name]: profits.execute,
+    [tax.name]: tax.execute
 };
 
 const commandBuilders = [
@@ -47,7 +49,8 @@ const commandBuilders = [
     deathRoll.commandBuilder,
     lottery.commandBuilder,
     request.commandBuilder,
-    profits.commandBuilder
+    profits.commandBuilder,
+    tax.commandBuilder
 ];
 
 export { commands, commandBuilders };
