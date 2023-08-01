@@ -21,7 +21,7 @@ const dailyTaxBracket: {[key: number]: number} = {
 };
 const taxBrackets = Object.keys(dailyTaxBracket).map(bracket => parseInt(bracket));
 
-function calculateTax(points: number) {
+function calculateDailyTax(points: number) {
     if (points <= 0) return 0;
     let taxes = 0;
     for (let i = 1; i < taxBrackets.length; i++) {
@@ -56,7 +56,7 @@ function scheduleDailyTaxCronJob(client: Client) {
             if (bot) continue;
             const points = await getUserCringePoints(id) ?? 0;
             if (!points) continue;
-            const tax = calculateTax(points);
+            const tax = calculateDailyTax(points);
             if (tax > 0) {
                 updates.push({userId: id, points: -tax});
                 updates.push({userId: process.env.CLIENT_ID, points: tax});
@@ -73,4 +73,4 @@ function scheduleDailyTaxCronJob(client: Client) {
     });
 }
 
-export { calculateTax, scheduleDailyTaxCronJob };
+export { dailyTaxBracket, calculateDailyTax, scheduleDailyTaxCronJob };
