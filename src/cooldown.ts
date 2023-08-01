@@ -1,5 +1,4 @@
 import { Collection } from 'discord.js';
-import { timeInMS } from './util/util';
 import { updateCringePoints } from './sql/tables/cringe-points';
 
 class Cooldown {
@@ -7,7 +6,7 @@ class Cooldown {
     private duration;
 
     constructor(duration: number) {
-        this.duration = duration * timeInMS.second;
+        this.duration = duration;
     }
 
     setCooldown(userId: string): void {

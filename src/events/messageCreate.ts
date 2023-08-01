@@ -6,9 +6,10 @@ import getReactResponse from '../regex-responses/react';
 import getTextResponse from '../regex-responses/text';
 import { joinVoicePlayAudio } from '../voice';
 import { RewardCooldown } from '../cooldown';
+import { timeInMS } from '../util/util';
 
-const textRewardCooldown = new RewardCooldown(60, 100);
-const reactRewardCooldown = new RewardCooldown(3600, 1000);
+const textRewardCooldown = new RewardCooldown(60 * timeInMS.second, 100);
+const reactRewardCooldown = new RewardCooldown(1 * timeInMS.hour, 1000);
 
 export default async (message: Message) => {
     // Don't respond to bots

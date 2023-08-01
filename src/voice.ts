@@ -9,6 +9,7 @@ import { fetchChannel } from './util/discordUtil';
 import Transcriber from 'discord-speech-to-text';
 import { updateAudioCount } from './sql/tables/audio-count';
 import { RewardCooldown } from './cooldown';
+import { timeInMS } from './util/util';
 
 interface GuildConnection {
     connection: VoiceConnection;
@@ -32,7 +33,7 @@ const timeout = 900_000; // Timeout in milliseconds
 const guildConnections: { [key: string]: GuildConnection } = {};
 const speakingTimeout = 100;
 const userSpeakingTimeout = new Set();
-const audioRewardCooldown = new RewardCooldown(60, 100);
+const audioRewardCooldown = new RewardCooldown(60 * timeInMS.second, 100);
 
 // Get voice log channel
 let voiceLogChannel: TextChannel;
