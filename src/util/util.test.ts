@@ -2,31 +2,37 @@ import { getRandomRange, dateToDbString, msToString, capitalize } from './util';
 
 const mockDate = new Date('2023-01-01');
 jest.useFakeTimers().setSystemTime(mockDate);
-jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
 
 describe('getRandomRange()', () => {
-    test('0', () => {
+    beforeEach(() => {
+        jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
+    });
+    test('0 is 0', () => {
         const result = getRandomRange(0);
         expect(result).toEqual(0);
     });
-    test('1', () => {
-        const result = getRandomRange(1);
-        expect(result).toBeGreaterThanOrEqual(0);
+    test('1 is 0', () => {
+        expect(getRandomRange(1)).toBe(0);
     });
-    test('1000', () => {
-        const result = getRandomRange(1000);
-        expect(result).toBeGreaterThanOrEqual(0);
-        expect(result).toBeLessThan(1000);
+    test('100 is 50', () => {
+        expect(getRandomRange(100)).toBe(50);
     });
-    test('1000000', () => {
-        const result = getRandomRange(1000000);
-        expect(result).toBeGreaterThanOrEqual(0);
-        expect(result).toBeLessThan(1000000);
+    test('1000 is 500', () => {
+        expect(getRandomRange(1000)).toBe(500);
     });
-    test('-1', () => {
-        const result = getRandomRange(-1);
-        expect(result).toBeGreaterThanOrEqual(-1);
-        expect(result).toBeLessThan(0);
+    test('1,000,000 is 500,000', () => {
+        expect(getRandomRange(1_000_000)).toBe(500_000);
+    });
+    test('-1 is -1', () => {
+        expect(getRandomRange(-1)).toBe(-1);
+    });
+    test('100, lower range is 0', () => {
+        jest.spyOn(global.Math, 'random').mockReturnValue(0);
+        expect(getRandomRange(100)).toBe(0);
+    });
+    test('100, upper range is 100', () => {
+        jest.spyOn(global.Math, 'random').mockReturnValue(1);
+        expect(getRandomRange(100)).toBe(100);
     });
 });
 
