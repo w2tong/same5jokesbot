@@ -8,8 +8,7 @@ describe('getRandomRange()', () => {
         jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
     });
     test('0 is 0', () => {
-        const result = getRandomRange(0);
-        expect(result).toEqual(0);
+        expect(getRandomRange(0)).toEqual(0);
     });
     test('1 is 0', () => {
         expect(getRandomRange(1)).toBe(0);
