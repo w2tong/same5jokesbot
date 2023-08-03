@@ -13,12 +13,12 @@ function dateToDbString(date: Date): string {
     return date.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-const timeInMS: {[key: string]: number} = {
-    second: 1_000,
-    minute: 60_000,
-    hour: 3_600_000,
-    day: 86_400_000
-};
+enum timeInMS {
+    second = 1_000,
+    minute = 60_000,
+    hour = 3_600_000,
+    day = 86_400_000
+}
 
 function msToString(ms: number) {
     const days = Math.floor(ms/timeInMS.day);
