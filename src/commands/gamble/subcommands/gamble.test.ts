@@ -21,7 +21,7 @@ describe('gamble()', () => {
         });
         test('100 point, win', () => {
             jest.spyOn(global.Math, 'random').mockReturnValue(0.15);
-            expect(gamble(100, 30)).toBe(233);
+            expect(gamble(100, 30)).toBe(234);
         });
     });
 

@@ -5,12 +5,11 @@ import { emptyEmbedField } from '../../../util/discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
 import audio from '../../../util/audioFileMap';
 
-const payouts: {[key: number]: number} = {
-    50: 2,
-    30: 3.33,
-    10: 10,
-    1: 100
-};
+const chances = [50, 30, 10, 1];
+const payouts: {[key: number]: number} = {};
+for (let i = 0; i < chances.length; i++) {
+    payouts[chances[i]] = 100 / chances[i];
+}
 
 function gamble(bet: number, chance: number) {
     const result = Math.random();
@@ -93,12 +92,9 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     )
     .addIntegerOption(option => option
         .setName('chance')
-        .setDescription(`The chance of winning. ${Object.entries(payouts).reverse().map(([chance, payout]) => `${chance}% = ${payout}x`).join(', ')}`)
+        .setDescription(`The chance of winning. ${Object.entries(payouts).reverse().map(([chance, payout]) => `${chance}% = ${Math.round(payout * 100) / 100}x`).join(', ')}`)
         .addChoices(
-            {name: '50%', value: 50},
-            {name: '30%', value: 30},
-            {name: '10%', value: 10},
-            {name: '1%', value: 1}
+            ...Object.entries(payouts).map(([chance, payout]) => { return {name: `${chance}%`, value: payout}; })
         )
     );
 
