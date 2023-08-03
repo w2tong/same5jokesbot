@@ -6,15 +6,17 @@ import { joinVoicePlayAudio } from '../../../voice';
 import audio from '../../../util/audioFileMap';
 
 const chances = [50, 30, 10, 1];
-const payouts: {[key: number]: number} = {};
+const payouts: {[key: number]: {num: number, str: string}} = {};
 for (let i = 0; i < chances.length; i++) {
-    payouts[chances[i]] = 100 / chances[i];
+    const num = 100 / chances[i];
+    const str = `${Math.round(num * 100) / 100}x`;
+    payouts[chances[i]] = {num, str};
 }
 
 function gamble(bet: number, chance: number) {
     const result = Math.random();
     if (result < (chance/100)) {
-        return Math.ceil(bet * payouts[chance]) - bet;
+        return Math.ceil(bet * payouts[chance].num) - bet;
     }
     else {
         return -bet;
@@ -71,7 +73,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .addFields(
             {name: 'Points Bet', value: `${pointsBet.toLocaleString()}`, inline: true},
             {name: 'Chance', value: `${chance}%`, inline: true},
-            {name: 'Payout', value: `${payouts[chance]}x`, inline: true},
+            {name: 'Payout', value: `${payouts[chance].str}`, inline: true},
             {name: 'Balance ', value: balanceFieldValue, inline: true},
             {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
             emptyEmbedField
@@ -92,9 +94,9 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     )
     .addIntegerOption(option => option
         .setName('chance')
-        .setDescription(`The chance of winning. ${Object.entries(payouts).reverse().map(([chance, payout]) => `${chance}% = ${Math.round(payout * 100) / 100}x`).join(', ')}`)
+        .setDescription(`The chance of winning. ${Object.entries(payouts).reverse().map(([chance, payout]) => `${chance}% = ${payout.str}`).join(', ')}`)
         .addChoices(
-            ...Object.entries(payouts).map(([chance, payout]) => { return {name: `${chance}%`, value: payout}; })
+            ...Object.keys(payouts).reverse().map(chance => { return {name: `${chance}%`, value: parseInt(chance)}; })
         )
     );
 
