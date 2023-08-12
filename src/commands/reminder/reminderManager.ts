@@ -45,4 +45,8 @@ async function newReminder(userId:string, channel: TextChannel, date: Date, mess
     return inserted;
 }
 
-export { loadReminders, newReminder };
+async function cancelReminder(id: string): Promise<boolean> {
+    return await deleteReminder(id) && schedule.cancelJob(id);
+}
+
+export { loadReminders, newReminder, cancelReminder };

@@ -1,7 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, SlashCommandSubcommandBuilder, bold, time } from 'discord.js';
-import { deleteReminder, getUserReminders } from '../../../sql/tables/reminders';
+import { getUserReminders } from '../../../sql/tables/reminders';
 import { logError } from '../../../logger';
 import { nanoid } from 'nanoid';
+import { cancelReminder } from '../reminderManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ephemeral: true});
@@ -36,7 +37,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             collector.on('collect', async i => {
                 if (i.user.id === interaction.user.id) {
                     const num = parseInt(i.customId[i.customId.length-1])-1;
-                    if (await deleteReminder(reminders[num].ID) === true) {
+                    if (await cancelReminder(reminders[num].ID) === true) {
                         i.update({ content: `Reminder ${bold(`${num+1}`)} deleted.`, components: [], embeds: embeds.slice(num,num+1) }).catch(logError);
                     }
                     else {
