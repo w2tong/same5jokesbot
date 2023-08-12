@@ -43,7 +43,6 @@ async function getReminders(): Promise<Array<Reminder>> {
 const insertQuery = `
 INSERT INTO reminders( id, user_id, channel_id, time, message ) 
 VALUES( :id, :userId, :channelId, TO_TIMESTAMP(:time, 'YYYY-MM-DD HH24:MI:SS'), :message )
-RETURN id into :id
 `;
 
 async function insertReminder(id: string, userId: string, channelId: string, time: string, message: string) {
