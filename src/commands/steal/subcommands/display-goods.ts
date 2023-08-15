@@ -6,10 +6,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     void interaction.editReply(displayStolenGoods(interaction.user.id, interaction.user.username));
 }
 
-const name = 'goods';
+const name = 'display-goods';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('description.');
+    .setDescription('Display your stolen goods.');
 
 export default { execute, name, subcommandBuilder };

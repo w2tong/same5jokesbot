@@ -1,12 +1,14 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import check from './subcommands/check';
-import goods from './subcommands/goods';
+import goods from './subcommands/display-goods';
 import steal from './subcommands/steal';
+import info from './subcommands/info';
 
 const subcommands = {
     [check.name]: check.execute,
     [goods.name]: goods.execute,
-    [steal.name]: steal.execute
+    [steal.name]: steal.execute,
+    [info.name]: info.execute
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -21,6 +23,7 @@ const commandBuilder = new SlashCommandBuilder()
     .setDescription('Steal points from other users.')
     .addSubcommand(check.subcommandBuilder)
     .addSubcommand(goods.subcommandBuilder)
-    .addSubcommand(steal.subcommandBuilder);
+    .addSubcommand(steal.subcommandBuilder)
+    .addSubcommand(info.subcommandBuilder);
 
 export default { execute, name, commandBuilder };
