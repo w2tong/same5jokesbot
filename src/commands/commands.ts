@@ -14,6 +14,7 @@ import lottery from './lottery/lottery';
 import request from './request';
 import profits from './profits/profits';
 import tax from './tax/tax';
+import steal from './steal/steal';
 
 const commands = {
     [play.name]: play.execute,
@@ -31,7 +32,8 @@ const commands = {
     [lottery.name]: lottery.execute,
     [request.name]: request.execute,
     [profits.name]: profits.execute,
-    [tax.name]: tax.execute
+    [tax.name]: tax.execute,
+    [steal.name]: steal.execute
 };
 
 const commandBuilders = [
@@ -50,7 +52,8 @@ const commandBuilders = [
     lottery.commandBuilder,
     request.commandBuilder,
     profits.commandBuilder,
-    tax.commandBuilder
+    tax.commandBuilder,
+    steal.commandBuilder
 ];
 
 export { commands, commandBuilders };
