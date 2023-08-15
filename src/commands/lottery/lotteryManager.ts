@@ -18,7 +18,7 @@ for (let i = 1; i <= choose; i++) {
 }
 const startTime = 0;
 const lotteryLengthHours = 21;
-const ticketLimit = 3;
+const ticketLimit = 5;
 
 function generateNumbersArray() {
     const choices = numbers.slice();
