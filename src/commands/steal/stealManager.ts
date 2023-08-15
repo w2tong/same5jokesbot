@@ -138,7 +138,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
                 emptyEmbedField,
                 {name: 'Victim', value: victims.join('\n'), inline: true},
                 {name: 'Points', value: points.join('\n'), inline: true},
-                {name: 'Time', value: times.join('\n'), inline: true}
+                {name: 'Safe', value: times.join('\n'), inline: true}
             );
         return {embeds: [embed]};
     }
