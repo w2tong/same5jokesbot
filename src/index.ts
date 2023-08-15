@@ -30,67 +30,49 @@ client.login(process.env.BOT_TOKEN).catch(logError);
 client.once(Events.ClientReady, async () => {
 
     // Fetch all guilds and members
-    process.stdout.write('Fetching discord guilds and members.');
+    console.log('Fetching discord guilds and members.');
     await client.guilds.fetch();
     for (const guild of client.guilds.cache.values()) {
         await guild.members.fetch();
     }
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done fetching discord guilds and members.\n');
+    console.log('Done fetching discord guilds and members.\n');
 
     // Init voice log channel
-    process.stdout.write('Initializing main channel.');
+    console.log('Initializing main channel.');
     await initMainChannel(client);
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done initializing main channel.\n');
+    console.log('Done initializing main channel.\n');
 
-    process.stdout.write('Initializing voice channel.');
+    console.log('Initializing voice channel.');
     await initVoiceLogChannel(client);
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done initializing voice channel.\n');
+    console.log('Done initializing voice channel.\n');
 
     // Add emotes from server to emotes object
-    process.stdout.write('Getting emotes.');
+    console.log('Getting emotes.');
     getEmotes(client);
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done getting emotes.\n');
+    console.log('Done getting emotes.\n');
 
     // Cronjobs
-    process.stdout.write('Creating Cronjobs.');
+    console.log('Creating Cronjobs.');
     createCronJobs(client);
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done creating Cronjobs.\n');
+    console.log('Done creating Cronjobs.\n');
 
     // Init db
-    process.stdout.write('Initializing Oracle DB.');
+    console.log('Initializing Oracle DB.');
     await initOracleDB();
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done initializing Oracle DB.\n');
+    console.log('Done initializing Oracle DB.\n');
 
-    process.stdout.write('Loading reminders.');
+    console.log('Loading reminders.');
     await loadReminders(client);
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done loading reminders.\n');
+    console.log('Done loading reminders.\n');
 
-    process.stdout.write('Loading stolen goods.');
+    console.log('Loading stolen goods.');
     await loadStolenGoods();
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done loading stolen goods.\n');
+    console.log('Done loading stolen goods.\n');
 
     // Init users in voice channels
-    process.stdout.write('Initializing users in voice.');
+    console.log('Initializing users in voice.');
     timeInVoice.initUsers(client);
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write('Done initializing users in voice.\n');
+    console.log('Done initializing users in voice.\n');
 
     console.log('Same5JokesBot online.');
     if (process.env.STATUS_CHANNEL_ID) {
