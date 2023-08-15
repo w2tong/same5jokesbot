@@ -30,6 +30,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setName('amount')
         .setDescription('Number of points to steal')
         .setRequired(true)
+        .setMinValue(1)
     );
 
 export default { execute, name, subcommandBuilder };
