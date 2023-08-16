@@ -7,12 +7,12 @@ import { nanoid } from 'nanoid';
 import { emptyEmbedField } from '../../util/discordUtil';
 
 const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Collection();
-const stolenTime = timeInMS.hour * 1;
-const stealPcMax = 0.005;
+const stolenTime = timeInMS.minute * 15;
+const stealPcMax = 0.01;
 const stealNumMax = 1000;
-const victimExtraPc = 0.25;
+const victimExtraPc = 0.1;
 const houseExtraPc = 0;
-const debtLimit = -100_000;
+const debtLimit = -1_000_000;
 type stolenGood = {victimId: string, points: number, time: number};
 
 function scheduleSteal(stealerId: string, victimId: string, points: number, time: number, id?: string) {
@@ -60,7 +60,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
                 );
                 victims.push(userMention(victimId));
                 pointsForfeitTotal += points + pointsExtraPc;
-                pointsForfeit.push(`${points} (+${pointsExtraPc})`);
+                pointsForfeit.push(`${points.toLocaleString()} (+${pointsExtraPc.toLocaleString()})`);
                 times.push(time);
             }
         }
@@ -86,7 +86,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
                 {name: 'Extra Percent', value: `${(extraPc * 100)}%`, inline: true},
                 emptyEmbedField,
                 {name: 'User', value: victims.join('\n'), inline: true},
-                {name: 'Points Forfeited', value: pointsForfeit.map(p => p.toLocaleString()).join('\n'), inline: true},
+                {name: 'Points Forfeited', value: pointsForfeit.join('\n'), inline: true},
                 {name: 'Safe', value: times.map(t => time(new Date(t), 'R')).join('\n'), inline: true}
             );
         return {embeds: [embed]};
@@ -100,11 +100,23 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     }
     // Check if stealer points are negative
     const stealerPoints = await getUserCringePoints(stealerId) ?? -Infinity;
-    if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit.toLocaleString()})`};
+    if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit.toLocaleString()}).`};
     // Check if user has enough points and under steal limit
     const victimPoints = await getUserCringePoints(victimId) ?? 0;
-    if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
-        return {content: `You cannot steal more than ${Math.floor(victimPoints * stealPcMax).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealNumMax.toLocaleString()}.`};
+    if (victimPoints <= 0) {
+        return {content: `${userMention(victimId)} does not have any points.`};
+    }
+
+    if (amount > 0) {
+        if (victimPoints < amount) {
+            return {content: `${userMention(victimId)} does not have enough points.`};
+        }
+        if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
+            return {content: `You cannot steal more than ${Math.floor(victimPoints * stealPcMax).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealNumMax.toLocaleString()} from ${userMention(victimId)}.`};
+        }
+    }
+    else {
+        amount = Math.max(Math.floor(victimPoints * stealPcMax), (victimPoints > stealNumMax ? stealNumMax : victimPoints));
     }
         
     const result = Math.random();
