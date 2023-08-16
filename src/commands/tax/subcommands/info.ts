@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { dailyTaxBracket } from '../../../taxes';
+import { dailyTaxBracket } from '../../../taxes-welfare';
 
 const brackets: string[] = [];
 const rates: string[] = [];

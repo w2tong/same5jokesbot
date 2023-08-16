@@ -62,6 +62,28 @@ async function getTopCringePoints(): Promise<Array<CringePointsUser>> {
     }
 }
 
+const getAllUserQuery = `
+SELECT *
+FROM cringe_points
+WHERE user_id != ${process.env.CLIENT_ID}
+ORDER BY points DESC
+`;
+
+async function getAllUserCringePoints(): Promise<Array<CringePointsUser>> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<CringePointsUser> = await connection.execute(getAllUserQuery, {}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getAllUserCringePoints: ${err}`);
+    }
+}
+
 const updateQuery = `
 MERGE INTO cringe_points dest
     USING( SELECT :userId AS user_id, :points AS points FROM dual) src
@@ -87,4 +109,4 @@ async function updateCringePoints(arr: Array<CringePointsUpdate>) {
     }
 }
 
-export { createTableCringePoints, getUserCringePoints, getTopCringePoints, updateCringePoints, CringePointsUpdate };
+export { createTableCringePoints, getUserCringePoints, getTopCringePoints, getAllUserCringePoints, updateCringePoints, CringePointsUpdate };
