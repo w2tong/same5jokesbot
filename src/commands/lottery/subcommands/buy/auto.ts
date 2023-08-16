@@ -7,7 +7,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     const msgs = [];
 
-    const ticketsToBuy = interaction.options.getInteger('number') ?? lottery.choose;
+    const ticketsToBuy = interaction.options.getInteger('number') ?? lottery.ticketLimit;
     console.log(ticketsToBuy);
     let ticketsBought = 0;
 
