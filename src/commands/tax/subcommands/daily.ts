@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { calculateDailyTax } from '../../../taxes';
+import { calculateDailyTax } from '../../../taxes-welfare';
 import { getUserCringePoints } from '../../../sql/tables/cringe-points';
 
 async function execute(interaction: ChatInputCommandInteraction) {

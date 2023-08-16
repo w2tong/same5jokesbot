@@ -1,4 +1,4 @@
-import { calculateDailyTax } from './taxes';
+import { calculateDailyTax } from './taxes-welfare';
 
 describe('userJoin()', () => {
     test('0 is 0', () => {
