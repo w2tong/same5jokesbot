@@ -12,7 +12,7 @@ const stealPcMax = 0.005;
 const stealNumMax = 1000;
 const victimExtraPc = 0.25;
 const houseExtraPc = 0;
-const debtLimit = 100_000;
+const debtLimit = -100_000;
 type stolenGood = {victimId: string, points: number, time: number};
 
 function scheduleSteal(stealerId: string, victimId: string, points: number, time: number, id?: string) {
