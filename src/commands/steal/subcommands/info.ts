@@ -10,7 +10,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         
         If you fail, you must forfeit all stolen goods you are currently holding, and you must give back an extra percentage of the points you stole.
 
-        Stolen goods are held for an hour before being safe.
+        Stolen goods are held for 15 minutes before being safe.
         `)
         .addFields(
             {name: 'Outcome', value: 'Success\nFail (Victim)\nFail (House)', inline: true},
