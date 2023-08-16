@@ -7,12 +7,12 @@ import { nanoid } from 'nanoid';
 import { emptyEmbedField } from '../../util/discordUtil';
 
 const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Collection();
-const stolenTime = timeInMS.hour * 1;
-const stealPcMax = 0.005;
+const stolenTime = timeInMS.minute * 15;
+const stealPcMax = 0.01;
 const stealNumMax = 1000;
-const victimExtraPc = 0.25;
+const victimExtraPc = 0.1;
 const houseExtraPc = 0;
-const debtLimit = -100_000;
+const debtLimit = -1_000_000;
 type stolenGood = {victimId: string, points: number, time: number};
 
 function scheduleSteal(stealerId: string, victimId: string, points: number, time: number, id?: string) {
