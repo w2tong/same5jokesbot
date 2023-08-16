@@ -70,7 +70,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
                 updates.push({userId: stealerId, points: -points});
                 victims.push(userMention(victimId));
                 pointsForfeitTotal += points;
-                pointsForfeit.push(`${points}`);
+                pointsForfeit.push(`${points.toLocaleString()}`);
                 times.push(time);
             }
         }
