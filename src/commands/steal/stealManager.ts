@@ -100,7 +100,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     }
     // Check if stealer points are negative
     const stealerPoints = await getUserCringePoints(stealerId) ?? -Infinity;
-    if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit.toLocaleString()})`};
+    if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit.toLocaleString()}).`};
     // Check if user has enough points and under steal limit
     const victimPoints = await getUserCringePoints(victimId) ?? 0;
     if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
