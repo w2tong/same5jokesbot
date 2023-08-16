@@ -60,7 +60,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
                 );
                 victims.push(userMention(victimId));
                 pointsForfeitTotal += points + pointsExtraPc;
-                pointsForfeit.push(`${points} (+${pointsExtraPc})`);
+                pointsForfeit.push(`${points.toLocaleString()} (+${pointsExtraPc.toLocaleString()})`);
                 times.push(time);
             }
         }
@@ -86,7 +86,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
                 {name: 'Extra Percent', value: `${(extraPc * 100)}%`, inline: true},
                 emptyEmbedField,
                 {name: 'User', value: victims.join('\n'), inline: true},
-                {name: 'Points Forfeited', value: pointsForfeit.map(p => p.toLocaleString()).join('\n'), inline: true},
+                {name: 'Points Forfeited', value: pointsForfeit.join('\n'), inline: true},
                 {name: 'Safe', value: times.map(t => time(new Date(t), 'R')).join('\n'), inline: true}
             );
         return {embeds: [embed]};
