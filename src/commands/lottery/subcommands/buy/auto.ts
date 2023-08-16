@@ -26,7 +26,7 @@ const name = 'auto';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy up to ${lottery.choose} lottery tickets (${lottery.price} points each). Numbers are automatically picked.`)
+    .setDescription(`Buy up to ${lottery.ticketLimit} lottery tickets (${lottery.price} points each). Numbers are automatically picked.`)
     .addIntegerOption(option => option
         .setName('number')
         .setDescription('Enter the number of tickets to buy.')
