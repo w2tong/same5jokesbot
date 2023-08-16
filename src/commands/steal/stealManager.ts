@@ -41,7 +41,7 @@ function addStolenGood(jobId: string, stealerId: string, victimId: string, point
     stolenGoods.get(stealerId)?.set(jobId, {victimId, points, time});
 }
 
-async function forfeitStolenGoods(stealerId: string, stealerUsername: string, victimUsername: string, extraPc: number, house: boolean): Promise<InteractionEditReplyOptions> {
+async function forfeitStolenGoods(stealerId: string, stealerUsername: string, victimUsername: string, extraPc: number, house: boolean, amount: number): Promise<InteractionEditReplyOptions> {
     await deleteUserStolenGoods(stealerId);
     const userStolenGoods = stolenGoods.get(stealerId);
     if (userStolenGoods && userStolenGoods.size > 0) {
@@ -79,7 +79,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
         const embed = new EmbedBuilder()
             .setTitle(`${stealerUsername} steal from ${victimUsername} ${bold('FAILED')}`)
             .addFields(
-                {name: 'Balance', value: `${stealerPoints.toLocaleString()} (-${pointsForfeitTotal.toLocaleString()})`, inline: true},
+                {name: 'Balance', value: `${(stealerPoints - amount).toLocaleString()} (${(-(pointsForfeitTotal - amount)).toLocaleString()})`, inline: true},
                 {name: 'New Balance', value: `${(stealerPoints - pointsForfeitTotal).toLocaleString()}`, inline: true},
                 emptyEmbedField,
                 {name: 'Forfeited to', value: `${house ? 'House' : 'Victims'}`, inline: true},
@@ -129,7 +129,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     ]);
     // Fail
     if (result >= 0 && result < 0.55) {
-        return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, victimExtraPc, false);
+        return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, victimExtraPc, false, amount);
     }
     // Success
     else if (result >= 0.55 && result < 0.95) {
@@ -157,7 +157,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     }
     // House
     else {
-        return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, houseExtraPc, true);
+        return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, houseExtraPc, true, amount);
     }
 }
 
