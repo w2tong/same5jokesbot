@@ -4,8 +4,8 @@ import { newSteal, stealPcMax, stealNumMax } from '../stealManager';
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.options.getUser('user');
-    const amount = interaction.options.getInteger('amount');
-    if (!user || !amount) {
+    const amount = interaction.options.getInteger('amount') ?? 0;
+    if (!user) {
         void interaction.editReply('There was an error stealing.');
         return;
     }
@@ -29,7 +29,6 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .addIntegerOption((option) => option
         .setName('amount')
         .setDescription('Number of points to steal')
-        .setRequired(true)
         .setMinValue(1)
     );
 

@@ -103,8 +103,20 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit.toLocaleString()}).`};
     // Check if user has enough points and under steal limit
     const victimPoints = await getUserCringePoints(victimId) ?? 0;
-    if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
-        return {content: `You cannot steal more than ${Math.floor(victimPoints * stealPcMax).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealNumMax.toLocaleString()}.`};
+    if (victimPoints <= 0) {
+        return {content: `${userMention(victimId)} does not have any points.`};
+    }
+
+    if (amount > 0) {
+        if (victimPoints < amount) {
+            return {content: `${userMention(victimId)} does not have enough points.`};
+        }
+        if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
+            return {content: `You cannot steal more than ${Math.floor(victimPoints * stealPcMax).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealNumMax.toLocaleString()}.`};
+        }
+    }
+    else {
+        amount = Math.max(Math.floor(victimPoints * stealPcMax), (victimPoints > stealNumMax ? stealNumMax : victimPoints));
     }
         
     const result = Math.random();
