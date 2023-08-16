@@ -10,7 +10,7 @@ const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Coll
 const stolenTime = timeInMS.minute * 15;
 const stealPcMax = 0.01;
 const stealNumMax = 1000;
-const victimExtraPc = 0.1;
+const victimExtraPc = 0.5;
 const houseExtraPc = 0;
 const debtLimit = -10_000;
 type stolenGood = {victimId: string, points: number, time: number};
@@ -121,20 +121,21 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
         
     const result = Math.random();
     const time = Date.now() + stolenTime;
+    const stolenGoodId = nanoid();
+    addStolenGood(stolenGoodId, stealerId, victimId, amount, time);
+    await updateCringePoints([
+        {userId: victimId, points: -amount},
+        {userId: stealerId, points: amount}
+    ]);
     // Fail
     if (result >= 0 && result < 0.55) {
-        addStolenGood(nanoid(), stealerId, victimId, amount, time);
         return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, victimExtraPc, false);
     }
     // Success
     else if (result >= 0.55 && result < 0.95) {
-        const jobId = scheduleSteal(stealerId, victimId, amount, time);
-        await updateCringePoints([
-            {userId: victimId, points: -amount},
-            {userId: stealerId, points: amount}
-        ]);
-        addStolenGood(jobId, stealerId, victimId, amount, time);
-        await insertStolenGood(jobId, stealerId, victimId, amount, dateToDbString(new Date(time)));
+        scheduleSteal(stealerId, victimId, amount, time, stolenGoodId);
+        addStolenGood(stolenGoodId, stealerId, victimId, amount, time);
+        await insertStolenGood(stolenGoodId, stealerId, victimId, amount, dateToDbString(new Date(time)));
         const {victims, points, times} = formatStolenGoodsFields(stealerId);
         const embed = new EmbedBuilder()
             .setTitle(`${stealerUsername} steal from ${victimUsername} ${bold('SUCCEEDED')}`)
@@ -156,7 +157,6 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     }
     // House
     else {
-        addStolenGood(nanoid(), stealerId, victimId, amount, time);
         return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, houseExtraPc, true);
     }
 }
