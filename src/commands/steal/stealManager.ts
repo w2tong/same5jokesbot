@@ -112,7 +112,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
             return {content: `${userMention(victimId)} does not have enough points.`};
         }
         if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
-            return {content: `You cannot steal more than ${Math.floor(victimPoints * stealPcMax).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealNumMax.toLocaleString()}.`};
+            return {content: `You cannot steal more than ${Math.floor(victimPoints * stealPcMax).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealNumMax.toLocaleString()} from ${userMention(victimId)}.`};
         }
     }
     else {
