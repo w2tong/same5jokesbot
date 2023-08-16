@@ -12,7 +12,7 @@ const stealPcMax = 0.005;
 const stealNumMax = 1000;
 const victimExtraPc = 0.25;
 const houseExtraPc = 0;
-const debtLimit = 100_000;
+const debtLimit = -100_000;
 type stolenGood = {victimId: string, points: number, time: number};
 
 function scheduleSteal(stealerId: string, victimId: string, points: number, time: number, id?: string) {
@@ -100,7 +100,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     }
     // Check if stealer points are negative
     const stealerPoints = await getUserCringePoints(stealerId) ?? -Infinity;
-    if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit})`};
+    if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit.toLocaleString()})`};
     // Check if user has enough points and under steal limit
     const victimPoints = await getUserCringePoints(victimId) ?? 0;
     if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
