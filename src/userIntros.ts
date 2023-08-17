@@ -6,7 +6,7 @@ const intros: {[key:string]: string} = {
     [userIds.ANDYD]: audio.wolfHowl,
     [userIds.CALVIN]: audio.blackenChineseMan,
     [userIds.JED]: audio.whatAFdUpDay,
-    [userIds.MICHAEL]: audio.thisIsLibrary,
+    [userIds.MICHAEL]: audio.theOfficeMichael,
     [userIds.WAYNE]: audio.docChineseMotorcycle
 };
 
