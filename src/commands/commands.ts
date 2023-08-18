@@ -15,6 +15,7 @@ import request from './request';
 import profits from './profits/profits';
 import tax from './tax/tax';
 import steal from './steal/steal';
+import blackjack from './blackjack/blackjack';
 
 const commands = {
     [play.name]: play.execute,
@@ -33,7 +34,8 @@ const commands = {
     [request.name]: request.execute,
     [profits.name]: profits.execute,
     [tax.name]: tax.execute,
-    [steal.name]: steal.execute
+    [steal.name]: steal.execute,
+    [blackjack.name]: blackjack.execute,
 };
 
 const commandBuilders = [
@@ -53,7 +55,8 @@ const commandBuilders = [
     request.commandBuilder,
     profits.commandBuilder,
     tax.commandBuilder,
-    steal.commandBuilder
+    steal.commandBuilder,
+    blackjack.commandBuilder,
 ];
 
 export { commands, commandBuilders };
