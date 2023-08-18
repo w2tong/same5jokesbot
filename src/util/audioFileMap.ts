@@ -125,6 +125,7 @@ export default {
     dontWorryAboutIt: 'dont_worry_about_it',
     itsOnMe: 'its_on_me',
     theOfficeMichael: 'the_office_michael',
+    ciSin: 'ci_sin',
 
     // Kingdom Hearts
     khDontHitTheCameraMan: 'kh_dont_hit_the_camera_man',

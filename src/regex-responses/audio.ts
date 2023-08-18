@@ -538,6 +538,10 @@ const regexToAudio = [
         regex: /((you know what|it'?s like|as) )?they ((also|always) )?(say|said)$/,
         getAudio: () => getConstableJones()
     },
+    {
+        regex: /crazy/,
+        getAudio: () => audio.ciSin
+    },
 ];
 
 export default (command: string) => {
