@@ -11,6 +11,7 @@ class Blackjack {
     constructor(userId: string) {
         this.userId = userId;
         this.deck.shuffle();
+        console.log(this.deck);
     }
 
     turn(option: 'hit'|'stand') {
