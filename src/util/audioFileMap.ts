@@ -126,6 +126,8 @@ export default {
     itsOnMe: 'its_on_me',
     theOfficeMichael: 'the_office_michael',
     ciSin: 'ci_sin',
+    pomNowThatHesBald: 'pom_now_that_hes_bald',
+    pomTheMoreHairYouLose: 'pom_the_more_hair_you_lose',
 
     // Kingdom Hearts
     khDontHitTheCameraMan: 'kh_dont_hit_the_camera_man',
