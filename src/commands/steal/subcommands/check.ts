@@ -10,7 +10,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
     const points = await getUserCringePoints(user.id) ?? 0;
-    void interaction.editReply(`You can steal a max of ${Math.floor(points * stealPcMax)} points from ${user}`);
+    void interaction.editReply(`You can steal a max of ${Math.floor(points * stealPcMax).toLocaleString()} points from ${user}`);
 }
 
 const name = 'check';
