@@ -542,6 +542,10 @@ const regexToAudio = [
         regex: /crazy/,
         getAudio: () => audio.ciSin
     },
+    {
+        regex: /chris/,
+        getAudio: () => audio.pomNowThatHesBald
+    },
 ];
 
 export default (command: string) => {
