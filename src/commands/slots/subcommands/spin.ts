@@ -11,6 +11,8 @@ const enum ComboMultiplier {
     Five = 10,
     FullHouse = 5
 }
+const maxWager = 10_000;
+const maxSpins = 100;
 
 function spin(amount: number) {
     // Normal symbols
@@ -146,15 +148,14 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setName('amount')
         .setDescription('Amount to spin.')
         .setRequired(true)
+        .setMinValue(1)
+        .setMaxValue(maxWager)
     )
     .addIntegerOption((option) => option
         .setName('spins')
         .setDescription('Number of spins.')
-        .addChoices(
-            {name: '1', value: 1},
-            {name: '10', value: 10},
-            {name: '100', value: 100}
-        )
+        .setMaxValue(1)
+        .setMaxValue(maxSpins)
     );
 
 export default { execute, name, subcommandBuilder };
