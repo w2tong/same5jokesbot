@@ -2,7 +2,7 @@ import { GuildEmoji } from 'discord.js';
 import { Emotes } from '../../util/emotes';
 
 const slotsSymbols: {[key: string]: SlotsSymbol} = {
-    OMEGALAUGHING:  {pc: 0.125, mult: 2, emote: Emotes.OMEGALAUGHING, backupEmote: ''},
+    OMEGALAUGHING:  {pc: 0.1, mult: 2, emote: Emotes.OMEGALAUGHING, backupEmote: ''},
     NOOO:           {pc: 0.15, mult: 2, emote: Emotes.NOOO, backupEmote: ''},
     DESKCHAN:       {pc: 0.2, mult: 2, emote: Emotes.DESKCHAN, backupEmote: ''},
     Clueless:       {pc: 0.25, mult: 2.5, emote: Emotes.Clueless, backupEmote: ''},
