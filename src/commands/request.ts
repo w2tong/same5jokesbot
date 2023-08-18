@@ -42,17 +42,13 @@ const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription(`Request a feature. Price: ${price.toLocaleString()} points.`)
     .addStringOption((option) => option
-        .setName('type')
-        .setDescription('Select the type of request.')
-        .addChoices(
-            {name: 'audio', value: 'audio'},
-            {name: 'text', value: 'text'}
-        )
+        .setName('link')
+        .setDescription('Enter the link and timestamp of the audio you want.')
         .setRequired(true)
     )
     .addStringOption((option) => option
-        .setName('details')
-        .setDescription('Enter details about your request here.')
+        .setName('prompt')
+        .setDescription('Enter the prompt that plays audio.')
         .setRequired(true)
     );
 
