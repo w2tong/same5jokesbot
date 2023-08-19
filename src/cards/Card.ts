@@ -22,16 +22,20 @@ class Card {
         this._symbol = suitSymbol[suit];
     }
 
-    get suit() {
+    get suit(): Suit {
         return this._suit;
     }
-    get value() {
+    get value(): Value {
         return this._value;
     }
-    get symbol() {
+    get symbol(): string {
         return this._symbol;
+    }
+
+    toString(): string {
+        return `${this._symbol}${this._value}`;
     }
 }
 
 export default Card;
-export {suits, values};
+export {suits, values, Suit, Value};

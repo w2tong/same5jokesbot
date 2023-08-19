@@ -14,19 +14,23 @@ class Deck {
         this.cards = deck.slice();
     }
 
-    draw() {
+    draw(): Card|undefined {
         return this.cards.pop();
     }
 
-    shuffle() {
+    shuffle(): void {
         for (let i = this.cards.length - 1; i > 0; i--) { 
             const j = Math.floor(Math.random() * (i + 1)); 
             [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]]; 
         }
     }
 
-    reset() {
+    reset(): void {
         this.cards = deck.slice();
+    }
+
+    get length(): number {
+        return this.cards.length;
     }
 }
 
