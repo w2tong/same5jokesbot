@@ -55,7 +55,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             return false;
         }
         if (interaction.user.id !== i.user.id) {
-            await i.reply({content: 'You are bot in this blackjack game.', ephemeral: true});
+            await i.reply({content: 'You are not in this blackjack game.', ephemeral: true});
             return false;
         }
         return true;
