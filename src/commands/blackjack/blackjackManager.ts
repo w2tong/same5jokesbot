@@ -1,12 +1,28 @@
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, userMention } from 'discord.js';
 import { Value } from '../../cards/Card';
 import Deck from '../../cards/Deck';
 import Hand from '../../cards/Hand';
-import { emptyEmbedField } from '../../util/discordUtil';
+import { emptyEmbedField, emptyEmbedFieldInline } from '../../util/discordUtil';
+import { updateCringePoints } from '../../sql/tables/cringe-points';
 
-type playerOption = 'hit'|'stand'|'double';
+const maxWager = 1_000_000;
+
+const PlayerOptions = {
+    Hit: 'Hit',
+    Stand: 'Stand',
+    Double: 'Double'
+} as const;
+type PlayerOption = typeof PlayerOptions[keyof typeof PlayerOptions];
+
+const EndGameResults = {
+    Win: 'Won',
+    Lose: 'Lost',
+    Tie: 'Tie'
+} as const;
+type EndGameResult = typeof EndGameResults[keyof typeof EndGameResults];
+
 const cardValueMap: {[key in Value]: number} = {
-    '1': 1 | 11,
+    'A': 11,
     '2': 2,
     '3': 3,
     '4': 4,
@@ -24,59 +40,186 @@ class BlackjackGame {
 
     private userId: string;
     private username: string;
+    private balance: number;
     private wager: number;
     private deck: Deck = new Deck();
     private playerHand: Hand;
+    private playerHandValue: number = 0;
     private dealerHand: Hand = new Hand(process.env.CLIENT_ID ?? '0');
+    private dealerHandValue: number = 0;
+    private lastAction: PlayerOption|undefined;
+    private ended: boolean = false;
+    private result: EndGameResult|undefined;
 
-    constructor(userId: string, username: string, wager: number) {
+    constructor(userId: string, username: string, wager: number, balance: number) {
         this.userId = userId;
         this.username = username;
         this.wager = wager;
+        this.balance = balance;
         this.playerHand = new Hand(userId);
+    }
+
+    async startGame() {
+        await updateCringePoints([{userId: this.userId, points: -this.wager}]);
+        if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
         this.deck.shuffle();
         // Draw starting cards
         this.drawPlayerCard();
         this.drawDealerCard();
         this.drawPlayerCard();
         this.drawDealerCard();
+
+        if (this.playerHandValue === 21 && this.dealerHandValue === 21) {
+            await this.endGame(EndGameResults.Tie);
+        }
+        else if (this.playerHandValue === 21) {
+            await this.endGame(EndGameResults.Win);
+        }
+        else if (this.dealerHandValue === 21) {
+            await this.endGame(EndGameResults.Lose);
+        }
     }
 
-    playerTurn(option: playerOption) {
-        console.log(option);
+    async endGame(result: EndGameResult) {
+        if (result === EndGameResults.Win) {
+            await updateCringePoints([{userId: this.userId, points: this.wager * 2}]);
+            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.wager * 2}]);
+        }
+        else if (result === EndGameResults.Tie) {
+            await updateCringePoints([{userId: this.userId, points: this.wager}]);
+            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.wager}]);
+        }
+        else if (result === EndGameResults.Lose) {
+            // do nothing?
+        }
+        this.result = result;
+        this.ended = true;
+    }
+
+    async input(option: PlayerOption) {
+        this.lastAction = option;
+        if (option === PlayerOptions.Stand) {
+
+            while (this.dealerHandValue < this.playerHandValue) {
+                this.drawDealerCard();
+            }
+
+            if (this.dealerHandValue > 21) {
+                await this.endGame(EndGameResults.Win);
+            }
+            else if (this.dealerHandValue < this.playerHandValue) {
+                await this.endGame(EndGameResults.Win);
+            }
+            else if (this.dealerHandValue > this.playerHandValue) {
+                await this.endGame(EndGameResults.Lose);
+            }
+            else {
+                await this.endGame(EndGameResults.Tie);
+            }
+        }
+        else {
+            if (option === PlayerOptions.Double) {
+                await updateCringePoints([{userId: this.userId, points: -this.wager}]);
+                if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
+                this.wager *= 2;
+            }
+            this.drawPlayerCard();
+            if (this.playerHandValue > 21) {
+                await this.endGame(EndGameResults.Lose);
+            }
+        }
     }
 
     createEmbed(): EmbedBuilder {
-        return new EmbedBuilder()
-            .setTitle(`${this.username}'s Blackjack Game`)
-            .addFields(
-                {name: 'Dealer', value: `${this.dealerHand}`, inline: true},
-                emptyEmbedField,
-                {name: 'Dealer Value', value: `${this.calculateHandValue(this.dealerHand)}`, inline: true},
+        const dealerCardsFieldValue = !this.ended ? 
+            this.dealerHand.cards.map((card, i) => {
+                if (i === 0) return card;
+                else return '?';
+            }).join('\t') :
+            this.dealerHand;
 
-                {name: 'Player', value: `${this.playerHand}`, inline: true},
-                emptyEmbedField,
-                {name: 'Player Value', value: `${this.calculateHandValue(this.playerHand)}`, inline: true},
+        const dealerValueFieldValue = !this.ended ?
+            cardValueMap[this.dealerHand.cards[0].value] :
+            this.dealerHandValue;
+
+        const embed =  new EmbedBuilder()
+            .setTitle(`${this.username}'s Blackjack Game${this.ended ? ` (${this.result})` : ''}`)
+            .addFields(
+                {name: 'Player', value: `${userMention(this.userId)}`, inline: true},
+                {name: 'Wager', value: this.wager.toLocaleString(), inline: true},
+                {name: 'Last Action', value: `${this.lastAction ? this.lastAction : 'N/A'}`, inline: true},
+
+                {name: 'Dealer Cards', value: `${dealerCardsFieldValue}`, inline: true},
+                emptyEmbedFieldInline,
+                {name: 'Dealer Value', value: `${dealerValueFieldValue}`, inline: true},
+
+                {name: 'Player Cards', value: `${this.playerHand}`, inline: true},
+                emptyEmbedFieldInline,
+                {name: 'Player Value', value: `${this.playerHandValue}`, inline: true},
             );
+
+        if (this.ended) {
+            let balanceFieldValue = this.balance.toLocaleString();
+            let newBalance = this.balance;
+            if (this.result === EndGameResults.Tie) {
+                balanceFieldValue += ' (0)';
+            }
+            else {
+                if (this.result === EndGameResults.Win) {
+                    balanceFieldValue += ' (+';
+                    newBalance += this.wager;
+                }
+                else if (this.result === EndGameResults.Lose) {
+                    balanceFieldValue += ' (-';
+                    newBalance -= this.wager;
+                }
+                balanceFieldValue += `${this.wager.toLocaleString()})`;
+                
+            }
+            embed.addFields(
+                emptyEmbedField,
+
+                {name: 'Balance', value: balanceFieldValue, inline: true},
+                emptyEmbedFieldInline,
+                {name: 'New Balance', value: newBalance.toLocaleString(), inline: true}
+            );
+        }
+
+        return embed;
     }
 
     private drawPlayerCard(): void {
         const card = this.deck.draw();
         if (card) this.playerHand.add(card);
+        this.playerHandValue = this.calculateHandValue(this.playerHand);
     }
 
     private drawDealerCard(): void {
         const card = this.deck.draw();
         if (card) this.dealerHand.add(card);
+        this.dealerHandValue = this.calculateHandValue(this.dealerHand);
     }
 
     private calculateHandValue(hand: Hand): number {
         let sum = 0;
+        let numOfAces = 0;
         for (let i = 0; i < hand.cards.length; i++) {
             sum += cardValueMap[hand.cards[i].value];
+            if (hand.cards[i].value === 'A') {
+                numOfAces++;
+            }
+        }
+        while (sum > 21 && numOfAces > 0) {
+            sum -= 10;
+            numOfAces--;
         }
         return sum;
+    }
+
+    isEnded() {
+        return this.ended;
     }
 }
 
 export default BlackjackGame;
+export { maxWager, PlayerOption, PlayerOptions };
