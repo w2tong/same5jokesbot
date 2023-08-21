@@ -96,7 +96,7 @@ class BlackjackGame {
         this.ended = true;
     }
 
-    async input(option: PlayerOption) {
+    async input(option: PlayerOption): Promise<{valid: boolean, msg?: string}> {
         this.lastAction = option;
         if (option === PlayerOptions.Stand) {
 
@@ -119,6 +119,9 @@ class BlackjackGame {
         }
         else {
             if (option === PlayerOptions.Double) {
+                if (this.balance <= this.wager * 2) {
+                    return {valid: false, msg: `You do not have enough points to Double Down (Balance: ${this.balance.toLocaleString()}).`};
+                }
                 await updateCringePoints([{userId: this.userId, points: -this.wager}]);
                 if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
                 this.wager *= 2;
@@ -128,6 +131,7 @@ class BlackjackGame {
                 await this.endGame(EndGameResults.Lose);
             }
         }
+        return {valid: true};
     }
 
     createEmbed(): EmbedBuilder {

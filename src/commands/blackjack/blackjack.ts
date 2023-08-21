@@ -21,6 +21,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         await interaction.editReply(`You do not have enough points (Balance: ${balance.toLocaleString()}).`);
         return;
     }
+
     const blackjack = new BlackjackGame(interaction.user.id, interaction.user.username, wager, balance);
     await blackjack.startGame();
     if (blackjack.isEnded()) {
@@ -64,9 +65,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     buttonCollector.on('collect', async buttonInteraction => {
         buttonCollector.resetTimer();
-        await blackjack.input(buttonInteraction.customId.split('-')[0] as PlayerOption);
-        await buttonInteraction.update({embeds: [blackjack.createEmbed()]});
-        if (blackjack.isEnded()) buttonCollector.stop();
+        const input = await blackjack.input(buttonInteraction.customId.split('-')[0] as PlayerOption);
+        if (input.valid) {
+            await buttonInteraction.update({embeds: [blackjack.createEmbed()]});
+            if (blackjack.isEnded()) buttonCollector.stop();
+        }
+        else {
+            await buttonInteraction.reply({content: input.msg ?? 'That action is invalid.', ephemeral: true});
+        }
     });
 
     buttonCollector.on('end', async () => {
