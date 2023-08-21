@@ -6,6 +6,7 @@ import { emptyEmbedField, emptyEmbedFieldInline } from '../../util/discordUtil';
 import { updateCringePoints } from '../../sql/tables/cringe-points';
 
 const maxWager = 1_000_000;
+const maxDecks = 100;
 
 const PlayerOptions = {
     Hit: 'Hit',
@@ -43,6 +44,7 @@ class BlackjackGame {
     private balance: number;
     private wager: number;
     private deck: Deck = new Deck();
+    private numOfDecks: number;
     private playerHand: Hand;
     private playerHandValue: number = 0;
     private dealerHand: Hand = new Hand(process.env.CLIENT_ID ?? '0');
@@ -51,10 +53,12 @@ class BlackjackGame {
     private ended: boolean = false;
     private result: EndGameResult|undefined;
 
-    constructor(userId: string, username: string, wager: number, balance: number) {
+    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number) {
         this.userId = userId;
         this.username = username;
         this.wager = wager;
+        this.deck = new Deck(numOfDecks);
+        this.numOfDecks = numOfDecks;
         this.balance = balance;
         this.playerHand = new Hand(userId);
     }
@@ -98,8 +102,28 @@ class BlackjackGame {
 
     async input(option: PlayerOption): Promise<{valid: boolean, msg?: string}> {
         this.lastAction = option;
-        if (option === PlayerOptions.Stand) {
+        if (option === PlayerOptions.Hit) {
+            this.drawPlayerCard();
+            if (this.playerHandValue > 21) {
+                await this.endGame(EndGameResults.Lose);
+            }
+        }
+        else {
+            if (option === PlayerOptions.Double) {
+                if (this.balance <= this.wager * 2) {
+                    return {valid: false, msg: `You do not have enough points to Double Down (Balance: ${this.balance.toLocaleString()}).`};
+                }
+                await updateCringePoints([{userId: this.userId, points: -this.wager}]);
+                if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
+                this.wager *= 2;
 
+                this.drawPlayerCard();
+                if (this.playerHandValue > 21) {
+                    await this.endGame(EndGameResults.Lose);
+                }
+            }
+
+            // Dealer's Turn
             while (this.dealerHandValue < this.playerHandValue) {
                 this.drawDealerCard();
             }
@@ -115,20 +139,6 @@ class BlackjackGame {
             }
             else {
                 await this.endGame(EndGameResults.Tie);
-            }
-        }
-        else {
-            if (option === PlayerOptions.Double) {
-                if (this.balance <= this.wager * 2) {
-                    return {valid: false, msg: `You do not have enough points to Double Down (Balance: ${this.balance.toLocaleString()}).`};
-                }
-                await updateCringePoints([{userId: this.userId, points: -this.wager}]);
-                if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
-                this.wager *= 2;
-            }
-            this.drawPlayerCard();
-            if (this.playerHandValue > 21) {
-                await this.endGame(EndGameResults.Lose);
             }
         }
         return {valid: true};
@@ -150,8 +160,12 @@ class BlackjackGame {
             .setTitle(`${this.username}'s Blackjack Game${this.ended ? ` (${this.result})` : ''}`)
             .addFields(
                 {name: 'Player', value: `${userMention(this.userId)}`, inline: true},
-                {name: 'Wager', value: this.wager.toLocaleString(), inline: true},
+                emptyEmbedFieldInline,
+                {name: 'Decks', value: `${this.numOfDecks}`, inline: true},
+                
                 {name: 'Last Action', value: `${this.lastAction ? this.lastAction : 'N/A'}`, inline: true},
+                emptyEmbedFieldInline,
+                {name: 'Wager', value: this.wager.toLocaleString(), inline: true},
 
                 {name: 'Dealer Cards', value: `${dealerCardsFieldValue}`, inline: true},
                 emptyEmbedFieldInline,
@@ -226,4 +240,4 @@ class BlackjackGame {
 }
 
 export default BlackjackGame;
-export { maxWager, PlayerOption, PlayerOptions };
+export { maxWager, maxDecks, PlayerOption, PlayerOptions };

@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
-import BlackjackGame, { PlayerOption, PlayerOptions, maxWager } from './blackjackManager';
+import BlackjackGame, { PlayerOption, PlayerOptions, maxDecks, maxWager } from './blackjackManager';
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../util/util';
 import { getUserCringePoints } from '../../sql/tables/cringe-points';
@@ -16,13 +16,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
+    const numOfDecks = interaction.options.getInteger('decks') ?? 1;
+
     const balance = await getUserCringePoints(interaction.user.id) ?? 0;
     if (balance < wager) {
         await interaction.editReply(`You do not have enough points (Balance: ${balance.toLocaleString()}).`);
         return;
     }
 
-    const blackjack = new BlackjackGame(interaction.user.id, interaction.user.username, wager, balance);
+    const blackjack = new BlackjackGame(interaction.user.id, interaction.user.username, numOfDecks, wager, balance);
     await blackjack.startGame();
     if (blackjack.isEnded()) {
         await interaction.editReply({embeds: [blackjack.createEmbed()]});
@@ -55,7 +57,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             return false;
         }
         if (interaction.user.id !== i.user.id) {
-            await i.reply({content: 'You are bot in this blackjack game.', ephemeral: true});
+            await i.reply({content: 'You are not in this blackjack game.', ephemeral: true});
             return false;
         }
         return true;
@@ -91,6 +93,13 @@ const commandBuilder = new SlashCommandBuilder()
         .setRequired(true)
         .setMinValue(1)
         .setMaxValue(maxWager)
+    )
+    .addIntegerOption((option) => option
+        .setName('decks')
+        .setDescription('Enter the number of decks to play with.')
+        .setRequired(false)
+        .setMinValue(1)
+        .setMaxValue(maxDecks)
     );
 
 export default { execute, name, commandBuilder };
