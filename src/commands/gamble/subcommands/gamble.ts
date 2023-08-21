@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
-import { emptyEmbedField } from '../../../util/discordUtil';
+import { emptyEmbedFieldInline } from '../../../util/discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
 import audio from '../../../util/audioFileMap';
 
@@ -76,7 +76,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             {name: 'Payout', value: `${payouts[chance].str}`, inline: true},
             {name: 'Balance ', value: balanceFieldValue, inline: true},
             {name: 'New Balance ', value: newBalanceFieldValue, inline: true},
-            emptyEmbedField
+            emptyEmbedFieldInline
         );
     void interaction.editReply({embeds: [embed]});
 }

@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
-import { emptyEmbedField } from '../../../util/discordUtil';
+import { emptyEmbedFieldInline } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const giver = interaction.user;
@@ -37,13 +37,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .addFields(
             {name: 'Giver', value: `${giver}`, inline: true},
             {name: 'Recipient', value: `${recipient}`, inline: true},
-            emptyEmbedField,
+            emptyEmbedFieldInline,
             {name: 'Balance', value: `${giverCringePoints.toLocaleString()} (-${amount.toLocaleString()})`, inline: true},
             {name: 'Balance', value: `${recipientCringePoints.toLocaleString()} (+${amount.toLocaleString()})`, inline: true},
-            emptyEmbedField,
+            emptyEmbedFieldInline,
             {name: 'New Balance', value: `${(giverCringePoints - amount).toLocaleString()}`, inline: true},
             {name: 'New Balance', value: `${(recipientCringePoints + amount).toLocaleString()}`, inline: true},
-            emptyEmbedField
+            emptyEmbedFieldInline
         );
     void interaction.editReply({embeds: [embed]});
 }

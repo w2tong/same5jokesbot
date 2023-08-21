@@ -1,5 +1,5 @@
 import { EmbedBuilder, User, bold } from 'discord.js';
-import { emptyEmbedField } from '../../util/discordUtil';
+import { emptyEmbedFieldInline } from '../../util/discordUtil';
 
 const deathRollers = new Set<string>();
 const rollButtonId = 'roll';
@@ -30,13 +30,13 @@ class DeathRoll {
             .addFields(
                 {name: 'Creator', value: `${this.creator}`, inline: true},
                 {name: 'Opponent', value: `${this.opponent}`, inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 {name: 'Points', value: `${this.amount.toLocaleString()}`, inline: true},
                 {name: 'Starting Roll', value: `${this.startingRoll.toLocaleString()}`, inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 this.currentRoll !== 1 ? {name: 'Turn', value: `${turnUser}`, inline: true} : {name: 'Winner', value: `${turnUser} wins ${this.amount.toLocaleString()} points`, inline: true},
                 {name: 'Current Roll', value: `${this.currentRoll.toLocaleString()}`, inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 {name: 'Roll History', value: this.rollHistory.length ? this.rollHistory.map(roll => `${roll.userId === this.creator.id ? this.creator : this.opponent} rolled ${bold(roll.roll.toLocaleString())}`).join('\n') : 'None'}
             );
     }
