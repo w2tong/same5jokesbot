@@ -4,7 +4,7 @@ import { Lottery, getActiveLottery, getCurrentLottery, insertLottery, updateJack
 import { getUserCringePoints, updateCringePoints } from '../../sql/tables/cringe-points';
 import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery-ticket';
 import { ChannelType, Client, EmbedBuilder, bold, roleMention, time, userMention } from 'discord.js';
-import { emptyEmbedField, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
+import { emptyEmbedFieldInline, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 
 const numbers = Array.from(new Array(10), (_x, i) => i+1);
@@ -177,7 +177,7 @@ function createUserTicketsEmbed(username: string, totalWinnings: number, ticketW
         embed.addFields(
             {name: `Ticket ${i+1}`, value: `${ticketWinnings[i].numbers.split(',').join(', ')}`, inline: true},
             {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 ? '(JACKPOT)' : ''}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 ? `(+${ticketWinnings[i].jackpotWinnings.toLocaleString()})` : ''}`, inline: true},
-            emptyEmbedField
+            emptyEmbedFieldInline
         );
     }
     return embed;

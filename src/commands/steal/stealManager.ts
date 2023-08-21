@@ -4,7 +4,7 @@ import { dateToDbString, timeInMS } from '../../util/util';
 import { CringePointsUpdate, getUserCringePoints, updateCringePoints } from '../../sql/tables/cringe-points';
 import { deleteStolenGood, deleteUserStolenGoods, getStolenGoods, insertStolenGood } from '../../sql/tables/stolen-goods';
 import { nanoid } from 'nanoid';
-import { emptyEmbedField } from '../../util/discordUtil';
+import { emptyEmbedFieldInline } from '../../util/discordUtil';
 
 const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Collection();
 const stolenTime = timeInMS.minute * 15;
@@ -81,10 +81,10 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
             .addFields(
                 {name: 'Balance', value: `${(stealerPoints - amount).toLocaleString()} (${(-(pointsForfeitTotal - amount)).toLocaleString()})`, inline: true},
                 {name: 'New Balance', value: `${(stealerPoints - pointsForfeitTotal).toLocaleString()}`, inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 {name: 'Forfeited to', value: `${house ? 'House' : 'Victims'}`, inline: true},
                 {name: 'Extra Percent', value: `${(extraPc * 100)}%`, inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 {name: 'User', value: victims.join('\n'), inline: true},
                 {name: 'Points Forfeited', value: pointsForfeit.join('\n'), inline: true},
                 {name: 'Safe', value: times.map(t => time(new Date(t), 'R')).join('\n'), inline: true}
@@ -142,13 +142,13 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
             .addFields(
                 {name: 'Stealer', value: userMention(stealerId), inline: true},
                 {name: 'Victim', value: userMention(victimId), inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 {name: 'Balance', value: `${stealerPoints?.toLocaleString()} (+${amount.toLocaleString()})`, inline: true},
                 {name: 'Balance', value: `${victimPoints.toLocaleString()} (-${amount.toLocaleString()})`, inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 {name: 'New Balance', value: `${(stealerPoints + amount).toLocaleString()}`, inline: true},
                 {name: 'New Balance', value: `${(victimPoints - amount).toLocaleString()}`, inline: true},
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 {name: 'Victim', value: victims.join('\n'), inline: true},
                 {name: 'Points', value: points.join('\n'), inline: true},
                 {name: 'Safe', value: times.join('\n'), inline: true}

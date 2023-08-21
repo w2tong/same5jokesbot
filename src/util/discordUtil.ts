@@ -3,7 +3,8 @@ import { ProfitType, getTopProfits, getTotalProfits, getUserProfits } from '../s
 import { capitalize } from './util';
 
 const messageEmbedLimit = 10;
-const emptyEmbedField = {name: '\u200b', value: '\u200b', inline: true};
+const emptyEmbedField = {name: '\u200b', value: '\u200b'};
+const emptyEmbedFieldInline = {name: '\u200b', value: '\u200b', inline: true};
 const monthChoices = [
     {name: '1. January', value: '1'},
     {name: '2. February', value: '2'},
@@ -69,7 +70,7 @@ function createTopProfitsEmbed(totalWinnings: number, totalLosses: number, total
             {name: 'Total Losses', value: `${totalLosses.toLocaleString()}`, inline: true},
             {name: 'Total Profits', value: `${totalProfits.toLocaleString()}`, inline: true},
             {name: 'Users', value: users.join('\n'), inline: true},
-            emptyEmbedField,
+            emptyEmbedFieldInline,
             {name: 'Profits', value: userProfits.join('\n'), inline: true}
         );
 }
@@ -88,4 +89,4 @@ async function generateTopProfitsEmbed(type?: ProfitType): Promise<InteractionEd
     return {embeds: [createTopProfitsEmbed(totalProfits.WINNINGS, totalProfits.LOSSES, totalProfits.PROFITS, users, userProfits, type)]};
 }
 
-export {messageEmbedLimit, emptyEmbedField, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, generateUserProfitsResponse, generateTopProfitsEmbed};
+export {messageEmbedLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, generateUserProfitsResponse, generateTopProfitsEmbed};

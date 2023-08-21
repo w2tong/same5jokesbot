@@ -1,5 +1,5 @@
 import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, bold, time, userMention } from 'discord.js';
-import { emptyEmbedField, fetchChannel, fetchMessage } from '../../util/discordUtil';
+import { emptyEmbedFieldInline, fetchChannel, fetchMessage } from '../../util/discordUtil';
 import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe-points';
 import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';
 import { logError } from '../../logger';
@@ -238,10 +238,10 @@ class Bet {
             .addFields(
                 timeField,
                 { name: 'Yes', value: `${!isNaN(yesPercent) ? yesPercent : 0}%\n${bold('Points')}: ${this.yesTotal}\n${bold('Return')}: 1:${!isNaN(yesReturn) ? yesReturn : 1}\n${bold('Voters')}: ${yesNumVoters}`, inline: true },
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 { name: 'No', value: `${!isNaN(noPercent) ? noPercent : 0}%\n${bold('Points')}: ${this.noTotal}\n${bold('Return')}: 1:${!isNaN(noReturn) ? noReturn : 1}\n${bold('Voters')}: ${noNumVoters}`, inline: true },
                 { name: 'Yes Betters', value: `${yesBetters.length ? yesBetters : 'None'}`, inline: true },
-                emptyEmbedField,
+                emptyEmbedFieldInline,
                 { name: 'No Betters', value: `${noBetters.length ? noBetters : 'None'}`, inline: true }
             );
         return embed;

@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, MessageCreateOptions, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { CringePointsUpdate, getAllUserCringePoints, updateCringePoints } from './sql/tables/cringe-points';
-import { emptyEmbedField, fetchChannel } from './util/discordUtil';
+import { emptyEmbedFieldInline, fetchChannel } from './util/discordUtil';
 
 const dailyTaxBracket: {[key: number]: number} = {
     0: 0,
@@ -41,8 +41,8 @@ function createTaxesResponse(taxesTotal: number, userIds: string[], balances: st
     const embed = new EmbedBuilder()
         .setTitle(`${time(new Date(), 'd')} Taxes`)
         .addFields(
-            emptyEmbedField,
-            emptyEmbedField,
+            emptyEmbedFieldInline,
+            emptyEmbedFieldInline,
             {name: 'Taxes Total', value: taxesTotal.toLocaleString(), inline: true},
             {name: 'User', value: userIds.map(id => userMention(id)).join('\n'), inline: true},
             {name: 'Balance', value: balances.join('\n'), inline: true},
@@ -56,8 +56,8 @@ function createWelfareResponse(welfareTotal: number, userIds: string[], balances
     const embed = new EmbedBuilder()
         .setTitle(`${time(new Date(), 'd')} Welfare`)
         .addFields(
-            emptyEmbedField,
-            emptyEmbedField,
+            emptyEmbedFieldInline,
+            emptyEmbedFieldInline,
             {name: 'Welfare Total', value: welfareTotal.toLocaleString(), inline: true},
             {name: 'User', value: userIds.map(id => userMention(id)).join('\n'), inline: true},
             {name: 'Balance', value: balances.join('\n'), inline: true},
