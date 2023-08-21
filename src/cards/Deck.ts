@@ -8,10 +8,12 @@ for (let i = 0; i < suits.length; i++) {
 }
 
 class Deck {
-    cards: Card[];
+    cards: Card[] = [];
 
-    constructor() {
-        this.cards = deck.slice();
+    constructor(num: number = 1) {
+        for (let i = 0; i < num; i++) {
+            this.cards.push(...deck.slice());
+        }
     }
 
     draw(): Card|undefined {
