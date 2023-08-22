@@ -7,6 +7,7 @@ import { updateCringePoints } from '../../sql/tables/cringe-points';
 
 const maxWager = 1_000_000;
 const maxDecks = 100;
+const payoutRate = 1.5;
 
 const PlayerOptions = {
     Hit: 'Hit',
@@ -86,15 +87,15 @@ class BlackjackGame {
 
     async endGame(result: EndGameResult) {
         if (result === EndGameResults.Win) {
-            await updateCringePoints([{userId: this.userId, points: this.wager * 2}]);
-            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.wager * 2}]);
+            await updateCringePoints([{userId: this.userId, points: this.wager + this.wager * payoutRate}]);
+            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -(this.wager + this.wager * payoutRate)}]);
         }
         else if (result === EndGameResults.Tie) {
             await updateCringePoints([{userId: this.userId, points: this.wager}]);
             if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.wager}]);
         }
         else if (result === EndGameResults.Lose) {
-            // do nothing?
+            // do nothing
         }
         this.result = result;
         this.ended = true;
@@ -184,22 +185,20 @@ class BlackjackGame {
             }
             else {
                 if (this.result === EndGameResults.Win) {
-                    balanceFieldValue += ' (+';
-                    newBalance += this.wager;
+                    balanceFieldValue += ` (+${(this.wager * payoutRate).toLocaleString()})`;
+                    newBalance += this.wager * payoutRate;
                 }
                 else if (this.result === EndGameResults.Lose) {
-                    balanceFieldValue += ' (-';
+                    balanceFieldValue += ` (-${this.wager.toLocaleString()})`;
                     newBalance -= this.wager;
                 }
-                balanceFieldValue += `${this.wager.toLocaleString()})`;
-                
             }
             embed.addFields(
                 emptyEmbedField,
 
                 {name: 'Balance', value: balanceFieldValue, inline: true},
-                emptyEmbedFieldInline,
-                {name: 'New Balance', value: newBalance.toLocaleString(), inline: true}
+                {name: 'New Balance', value: newBalance.toLocaleString(), inline: true},
+                {name: 'Payout Rate', value: `${payoutRate * 100}%`, inline: true}
             );
         }
 
