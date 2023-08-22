@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { timeInMS } from '../../../util/util';
 import { DeathRoll } from '../deathRoll';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
@@ -46,6 +46,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('Roll')
             .setStyle(ButtonStyle.Success)
     );
+    await interaction.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to a death roll duel.`);
     await interaction.editReply({embeds: [deathRoll.createEmbed()], components: !deathRoll.isEnded() && !deathRoll.isExpired() ? [buttonsRow] : []});
     
     const rollButtonFilter = async (i: ButtonInteraction) => {
