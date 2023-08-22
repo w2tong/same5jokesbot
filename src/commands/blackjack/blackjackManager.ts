@@ -132,7 +132,7 @@ class BlackjackGame {
             }
 
             // Dealer's Turn
-            while (this.dealerHandValue < this.playerHandValue) {
+            while (this.dealerHandValue < 17) {
                 this.drawDealerCard();
             }
 
