@@ -67,8 +67,6 @@ class BlackjackGame {
     }
 
     async startGame() {
-        await updateCringePoints([{userId: this.userId, points: -this.wager}]);
-        if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
         this.deck.shuffle();
         // Draw starting cards
         this.drawPlayerCard();
@@ -77,30 +75,25 @@ class BlackjackGame {
         this.drawDealerCard();
 
         if (this.playerHandValue === 21 && this.dealerHandValue === 21) {
-            await this.endGame(EndGameResults.Tie, false);
+            await this.endGame(EndGameResults.Tie);
         }
         else if (this.playerHandValue === 21) {
-            await this.endGame(EndGameResults.Win, true);
+            this.payout *= blackjackPayoutRate;
+            await this.endGame(EndGameResults.Win);
         }
         else if (this.dealerHandValue === 21) {
-            await this.endGame(EndGameResults.Lose, false);
+            await this.endGame(EndGameResults.Lose);
         }
     }
 
-    async endGame(result: EndGameResult, blackjack: boolean) {
+    async endGame(result: EndGameResult) {
         if (result === EndGameResults.Win) {
-            if (blackjack) {
-                this.payout *= blackjackPayoutRate;
-            }
-            await updateCringePoints([{userId: this.userId, points: this.wager + this.payout}]);
-            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -(this.wager + this.payout)}]);
-        }
-        else if (result === EndGameResults.Tie) {
-            await updateCringePoints([{userId: this.userId, points: this.wager}]);
-            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.wager}]);
+            await updateCringePoints([{userId: this.userId, points: this.payout}]);
+            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.payout}]);
         }
         else if (result === EndGameResults.Lose) {
-            // do nothing
+            await updateCringePoints([{userId: this.userId, points: -this.wager}]);
+            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
         }
         this.result = result;
         this.ended = true;
@@ -111,7 +104,7 @@ class BlackjackGame {
         if (option === PlayerOptions.Hit) {
             this.drawPlayerCard();
             if (this.playerHandValue > 21) {
-                await this.endGame(EndGameResults.Lose, false);
+                await this.endGame(EndGameResults.Lose);
             }
         }
         else {
@@ -119,14 +112,12 @@ class BlackjackGame {
                 if (this.balance <= this.wager * 2) {
                     return {valid: false, msg: `You do not have enough points to Double Down (Balance: ${this.balance.toLocaleString()}).`};
                 }
-                await updateCringePoints([{userId: this.userId, points: -this.wager}]);
-                if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
                 this.wager *= 2;
                 this.payout = this.wager;
 
                 this.drawPlayerCard();
                 if (this.playerHandValue > 21) {
-                    await this.endGame(EndGameResults.Lose, false);
+                    await this.endGame(EndGameResults.Lose);
                     return {valid: true};
                 }
             }
@@ -137,16 +128,16 @@ class BlackjackGame {
             }
 
             if (this.dealerHandValue > 21) {
-                await this.endGame(EndGameResults.Win, false);
+                await this.endGame(EndGameResults.Win);
             }
             else if (this.dealerHandValue < this.playerHandValue) {
-                await this.endGame(EndGameResults.Win, false);
+                await this.endGame(EndGameResults.Win);
             }
             else if (this.dealerHandValue > this.playerHandValue) {
-                await this.endGame(EndGameResults.Lose, false);
+                await this.endGame(EndGameResults.Lose);
             }
             else {
-                await this.endGame(EndGameResults.Tie, false);
+                await this.endGame(EndGameResults.Tie);
             }
         }
         return {valid: true};
