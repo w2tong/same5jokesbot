@@ -7,7 +7,7 @@ import { updateCringePoints } from '../../sql/tables/cringe-points';
 
 const maxWager = 1_000_000;
 const maxDecks = 100;
-const payoutRate = 1.5;
+const blackjackPayoutRate = 1.5;
 
 const PlayerOptions = {
     Hit: 'Hit',
@@ -53,6 +53,7 @@ class BlackjackGame {
     private lastAction: PlayerOption|undefined;
     private ended: boolean = false;
     private result: EndGameResult|undefined;
+    private payout: number = 0;
 
     constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number) {
         this.userId = userId;
@@ -62,6 +63,7 @@ class BlackjackGame {
         this.numOfDecks = numOfDecks;
         this.balance = balance;
         this.playerHand = new Hand(userId);
+        this.payout = wager;
     }
 
     async startGame() {
@@ -75,20 +77,23 @@ class BlackjackGame {
         this.drawDealerCard();
 
         if (this.playerHandValue === 21 && this.dealerHandValue === 21) {
-            await this.endGame(EndGameResults.Tie);
+            await this.endGame(EndGameResults.Tie, false);
         }
         else if (this.playerHandValue === 21) {
-            await this.endGame(EndGameResults.Win);
+            await this.endGame(EndGameResults.Win, true);
         }
         else if (this.dealerHandValue === 21) {
-            await this.endGame(EndGameResults.Lose);
+            await this.endGame(EndGameResults.Lose, false);
         }
     }
 
-    async endGame(result: EndGameResult) {
+    async endGame(result: EndGameResult, blackjack: boolean) {
         if (result === EndGameResults.Win) {
-            await updateCringePoints([{userId: this.userId, points: this.wager + this.wager * payoutRate}]);
-            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -(this.wager + this.wager * payoutRate)}]);
+            if (blackjack) {
+                this.payout *= blackjackPayoutRate;
+            }
+            await updateCringePoints([{userId: this.userId, points: this.wager + this.payout}]);
+            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -(this.wager + this.payout)}]);
         }
         else if (result === EndGameResults.Tie) {
             await updateCringePoints([{userId: this.userId, points: this.wager}]);
@@ -106,7 +111,7 @@ class BlackjackGame {
         if (option === PlayerOptions.Hit) {
             this.drawPlayerCard();
             if (this.playerHandValue > 21) {
-                await this.endGame(EndGameResults.Lose);
+                await this.endGame(EndGameResults.Lose, false);
             }
         }
         else {
@@ -117,10 +122,12 @@ class BlackjackGame {
                 await updateCringePoints([{userId: this.userId, points: -this.wager}]);
                 if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
                 this.wager *= 2;
+                this.payout = this.wager;
 
                 this.drawPlayerCard();
                 if (this.playerHandValue > 21) {
-                    await this.endGame(EndGameResults.Lose);
+                    await this.endGame(EndGameResults.Lose, false);
+                    return {valid: true};
                 }
             }
 
@@ -130,16 +137,16 @@ class BlackjackGame {
             }
 
             if (this.dealerHandValue > 21) {
-                await this.endGame(EndGameResults.Win);
+                await this.endGame(EndGameResults.Win, false);
             }
             else if (this.dealerHandValue < this.playerHandValue) {
-                await this.endGame(EndGameResults.Win);
+                await this.endGame(EndGameResults.Win, false);
             }
             else if (this.dealerHandValue > this.playerHandValue) {
-                await this.endGame(EndGameResults.Lose);
+                await this.endGame(EndGameResults.Lose, false);
             }
             else {
-                await this.endGame(EndGameResults.Tie);
+                await this.endGame(EndGameResults.Tie, false);
             }
         }
         return {valid: true};
@@ -185,20 +192,20 @@ class BlackjackGame {
             }
             else {
                 if (this.result === EndGameResults.Win) {
-                    balanceFieldValue += ` (+${(this.wager * payoutRate).toLocaleString()})`;
-                    newBalance += this.wager * payoutRate;
+                    balanceFieldValue += ` (+${(this.payout).toLocaleString()})`;
+                    newBalance += this.payout;
                 }
                 else if (this.result === EndGameResults.Lose) {
-                    balanceFieldValue += ` (-${this.wager.toLocaleString()})`;
-                    newBalance -= this.wager;
+                    balanceFieldValue += ` (-${this.payout.toLocaleString()})`;
+                    newBalance -= this.payout;
                 }
             }
             embed.addFields(
                 emptyEmbedField,
 
                 {name: 'Balance', value: balanceFieldValue, inline: true},
+                emptyEmbedFieldInline,
                 {name: 'New Balance', value: newBalance.toLocaleString(), inline: true},
-                {name: 'Payout Rate', value: `${payoutRate * 100}%`, inline: true}
             );
         }
 
