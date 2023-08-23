@@ -9,7 +9,8 @@ import { emptyEmbedFieldInline } from '../../util/discordUtil';
 const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Collection();
 const stolenTime = timeInMS.minute * 15;
 const stealPcMax = 0.01;
-const stealNumMax = 1000;
+const stealMin = 1_000;
+const stealMax = 1_000_000;
 const victimExtraPc = 0.5;
 const houseExtraPc = 0;
 const debtLimit = -10_000;
@@ -107,16 +108,17 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
         return {content: `${userMention(victimId)} does not have any points.`};
     }
 
+    const victimStealPc = Math.floor(victimPoints * stealPcMax);
     if (amount > 0) {
         if (victimPoints < amount) {
             return {content: `${userMention(victimId)} does not have enough points.`};
         }
-        if (amount > Math.max(victimPoints * stealPcMax, stealNumMax)) {
-            return {content: `You cannot steal more than ${Math.floor(victimPoints * stealPcMax).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealNumMax.toLocaleString()} from ${userMention(victimId)}.`};
+        if (amount > Math.max(victimStealPc, stealMin)) {
+            return {content: `You cannot steal more than ${Math.floor(victimStealPc).toLocaleString()} (${(stealPcMax * 100).toFixed(1)}%) or ${stealMax.toLocaleString()} from ${userMention(victimId)}.`};
         }
     }
     else {
-        amount = Math.max(Math.floor(victimPoints * stealPcMax), (victimPoints > stealNumMax ? stealNumMax : victimPoints));
+        amount = Math.max(Math.min(victimStealPc, stealMax), (victimPoints > stealMin ? stealMin : victimPoints));
     }
         
     const result = Math.random();
@@ -211,4 +213,4 @@ function displayStolenGoods(userId: string, username: string): InteractionEditRe
     }
 }
 
-export { newSteal, loadStolenGoods, displayStolenGoods, stealPcMax, stealNumMax, victimExtraPc, houseExtraPc };
+export { newSteal, loadStolenGoods, displayStolenGoods, stealPcMax, stealMax, victimExtraPc, houseExtraPc };
