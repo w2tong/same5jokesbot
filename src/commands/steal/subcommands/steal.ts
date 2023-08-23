@@ -20,7 +20,7 @@ const name = 'steal';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Steal points from another user. Number of points cannot exceed ${stealPcMax * 100}% of the user's points or ${stealMax}.`)
+    .setDescription(`Steal points from another user. Number of points cannot exceed ${stealPcMax * 100}% of the user's points or ${stealMax.toLocaleString()}.`)
     .addUserOption((option) => option
         .setName('user')
         .setDescription('Select a user')

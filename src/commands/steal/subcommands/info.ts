@@ -6,7 +6,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const embed = new EmbedBuilder()
         .setTitle('Steal Info')
         .setDescription(`
-        You can steal up to ${stealPcMax*100}% of a user's balance up to ${stealMax} points.
+        You can steal up to ${stealPcMax*100}% of a user's balance up to ${stealMax.toLocaleString()} points.
         
         If you fail, you must forfeit all stolen goods you are currently holding, and you must give back an extra percentage of the points you stole.
 
