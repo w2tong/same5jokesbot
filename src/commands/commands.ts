@@ -11,7 +11,7 @@ import gamble from './gamble/gamble';
 import slots from './slots/slots';
 import deathRoll from './death-roll/death-roll';
 import lottery from './lottery/lottery';
-import request from './request';
+import request from './request/request';
 import profits from './profits/profits';
 import tax from './tax/tax';
 import steal from './steal/steal';

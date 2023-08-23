@@ -1,31 +1,37 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, userMention } from 'discord.js';
-import { fetchUser } from '../util/discordUtil';
-import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-points';
-
-const price = 1_000_000;
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
+import { emptyEmbedField, fetchUser } from '../../../util/discordUtil';
+import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
+import { audio, fetchAudioRequestPrice } from '../requestManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ephemeral: true});
     const user = interaction.user;
-    const type = interaction.options.getString('type');
-    const details = interaction.options.getString('details');
-    if (!type || !details || !process.env.OWNER_USER_ID || !process.env.CLIENT_ID) {
+    const link = interaction.options.getString('link');
+    const prompt = interaction.options.getString('prompt');
+    if (!link || !prompt || !process.env.OWNER_USER_ID || !process.env.CLIENT_ID) {
         await interaction.editReply('There was an error processing your request.');
         return;
     }
 
     const points = await getUserCringePoints(user.id) ?? 0;
+    const price = await fetchAudioRequestPrice();
     if (points < price) {
         await interaction.editReply(`You do not have enough points (you have ${points}, you need ${(price-points).toLocaleString()} more).`);
         return;
     }
 
     const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s ${type} request`)
+        .setTitle(`${user.username}'s Audio request`)
         .addFields(
             {name: 'User', value: `${userMention(interaction.user.id)}`, inline: true},
-            {name: 'Type', value: `${type}`, inline: true},
-            {name: 'Request', value: `${details}`},
+            {name: 'Type', value: 'Audio', inline: true},
+
+            {name: 'Link', value: `${link}`},
+
+            {name: 'Prompt', value: `${prompt}`},
+
+            emptyEmbedField,
+            
             {name: 'Balance', value: `${points.toLocaleString()} (-${price.toLocaleString()})`, inline: true},
             {name: 'New Balance', value: `${(points-price).toLocaleString()}`, inline: true}
         );
@@ -36,11 +42,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await updateCringePoints([{userId: user.id, points: -price}, {userId: process.env.CLIENT_ID, points: price}]);
 }
 
-const name = 'request';
+const name = 'audio';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Request a feature. Price: ${price.toLocaleString()} points.`)
+    .setDescription(`Request a feature. Min price: ${audio.min.toLocaleString()} points. Prices scale with house debt.`)
     .addStringOption((option) => option
         .setName('link')
         .setDescription('Enter the link and timestamp of the audio you want.')
@@ -52,4 +58,4 @@ const commandBuilder = new SlashCommandBuilder()
         .setRequired(true)
     );
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };
