@@ -5,8 +5,6 @@ import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cri
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { nanoid } from 'nanoid';
 
-const time = 300;
-
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.user;
@@ -60,7 +58,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.second, filter: rollButtonFilter });
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30 * timeInMS.minute, filter: rollButtonFilter });
     buttonCollector.on('collect', async buttonInteraction => {
         const {correctUser, ended} = deathRoll.roll(buttonInteraction.user.id);
         if (ended) buttonCollector.stop();

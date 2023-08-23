@@ -48,10 +48,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .setCustomId(doubleButtonId)
         .setLabel('Double Down')
         .setStyle(ButtonStyle.Primary);
-    const splitButton = new ButtonBuilder()
-        .setCustomId(splitButtonId)
-        .setLabel('Split')
-        .setStyle(ButtonStyle.Secondary);
+    // const splitButton = new ButtonBuilder()
+    //     .setCustomId(splitButtonId)
+    //     .setLabel('Split')
+    //     .setStyle(ButtonStyle.Secondary);
 
     const firstTurnButtonsRow = new ActionRowBuilder<ButtonBuilder>();
     firstTurnButtonsRow.addComponents(hitButton, standButton, doubleButton);
@@ -73,7 +73,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300 * timeInMS.second, filter: buttonFilter });
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 5 * timeInMS.minute, filter: buttonFilter });
 
     buttonCollector.on('collect', async buttonInteraction => {
         buttonCollector.resetTimer();
