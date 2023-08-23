@@ -12,7 +12,8 @@ const blackjackPayoutRate = 1.5;
 const PlayerOptions = {
     Hit: 'Hit',
     Stand: 'Stand',
-    Double: 'Double'
+    Double: 'Double',
+    Split: 'Split'
 } as const;
 type PlayerOption = typeof PlayerOptions[keyof typeof PlayerOptions];
 
@@ -106,6 +107,9 @@ class BlackjackGame {
             if (this.playerHandValue > 21) {
                 await this.endGame(EndGameResults.Lose);
             }
+        }
+        else if (option === PlayerOptions.Split) {
+            return {valid: false, msg: 'This doesn\'t do anything right now.'};
         }
         else {
             if (option === PlayerOptions.Double) {
@@ -233,6 +237,14 @@ class BlackjackGame {
 
     isEnded() {
         return this.ended;
+    }
+
+    onFirstTurn() {
+        return this.lastAction === undefined;
+    }
+
+    splitable() {
+        return this.playerHand.cards[0].value === this.playerHand.cards[1].value;
     }
 }
 
