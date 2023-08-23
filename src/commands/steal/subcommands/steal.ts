@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
-import { newSteal, stealPcMax, stealNumMax } from '../stealManager';
+import { newSteal, stealPcMax, stealMax } from '../stealManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -20,7 +20,7 @@ const name = 'steal';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Steal points from another user. Number of points cannot exceed ${stealPcMax * 100}% of the user's points or ${stealNumMax}.`)
+    .setDescription(`Steal points from another user. Number of points cannot exceed ${stealPcMax * 100}% of the user's points or ${stealMax}.`)
     .addUserOption((option) => option
         .setName('user')
         .setDescription('Select a user')

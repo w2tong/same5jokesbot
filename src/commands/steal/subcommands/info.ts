@@ -1,12 +1,12 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import { stealPcMax, stealNumMax, victimExtraPc, houseExtraPc } from '../stealManager';
+import { stealPcMax, stealMax, victimExtraPc, houseExtraPc } from '../stealManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const embed = new EmbedBuilder()
         .setTitle('Steal Info')
         .setDescription(`
-        You can steal up to ${stealPcMax*100}% of a user's balance or ${stealNumMax} points (whichever is higher).
+        You can steal up to ${stealPcMax*100}% of a user's balance up to ${stealMax} points.
         
         If you fail, you must forfeit all stolen goods you are currently holding, and you must give back an extra percentage of the points you stole.
 
