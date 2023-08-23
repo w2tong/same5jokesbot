@@ -3,6 +3,7 @@ import { getUserReminders } from '../../../sql/tables/reminders';
 import { logError } from '../../../logger';
 import { nanoid } from 'nanoid';
 import { cancelReminder } from '../reminderManager';
+import { timeInMS } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ephemeral: true});
@@ -32,7 +33,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     
         if (interaction.channel) {
             const deleteButtonFilter = (i: ButtonInteraction) => i.customId.startsWith(deleteCustomId);
-            const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30000, filter: deleteButtonFilter });
+            const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 5 * timeInMS.minute, filter: deleteButtonFilter });
         
             collector.on('collect', async i => {
                 if (i.user.id === interaction.user.id) {

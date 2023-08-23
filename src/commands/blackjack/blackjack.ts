@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
-import BlackjackGame, { PlayerOption, PlayerOptions, maxDecks, maxWager } from './blackjackManager';
+import BlackjackGame, { PlayerOption, PlayerOptions, maxDecks, maxWager } from './BlackjackGame';
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../util/util';
 import { getUserCringePoints } from '../../sql/tables/cringe-points';
@@ -34,26 +34,36 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const hitButtonId = `${PlayerOptions.Hit}-${nanoid()}`;
     const standButtonId = `${PlayerOptions.Stand}-${nanoid()}`;
     const doubleButtonId = `${PlayerOptions.Double}-${nanoid()}`;
-    const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
-    buttonsRow.addComponents(
-        new ButtonBuilder()
-            .setCustomId(hitButtonId)
-            .setLabel('Hit')
-            .setStyle(ButtonStyle.Success),
-        new ButtonBuilder()
-            .setCustomId(standButtonId)
-            .setLabel('Stand')
-            .setStyle(ButtonStyle.Danger),
-        new ButtonBuilder()
-            .setCustomId(doubleButtonId)
-            .setLabel('Double Down')
-            .setStyle(ButtonStyle.Primary)
-    );
+    const splitButtonId = `${PlayerOptions.Split}-${nanoid()}`;
 
-    await interaction.editReply({embeds: [blackjack.createEmbed()], components: [buttonsRow]});
+    const hitButton = new ButtonBuilder()
+        .setCustomId(hitButtonId)
+        .setLabel('Hit')
+        .setStyle(ButtonStyle.Success);
+    const standButton = new ButtonBuilder()
+        .setCustomId(standButtonId)
+        .setLabel('Stand')
+        .setStyle(ButtonStyle.Danger);
+    const doubleButton = new ButtonBuilder()
+        .setCustomId(doubleButtonId)
+        .setLabel('Double Down')
+        .setStyle(ButtonStyle.Primary);
+    // const splitButton = new ButtonBuilder()
+    //     .setCustomId(splitButtonId)
+    //     .setLabel('Split')
+    //     .setStyle(ButtonStyle.Secondary);
+
+    const firstTurnButtonsRow = new ActionRowBuilder<ButtonBuilder>();
+    firstTurnButtonsRow.addComponents(hitButton, standButton, doubleButton);
+    // if (blackjack.splitable()) firstTurnButtonsRow.addComponents(splitButton);
+
+    const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
+    buttonsRow.addComponents(hitButton, standButton);
+
+    await interaction.editReply({embeds: [blackjack.createEmbed()], components: [firstTurnButtonsRow]});
 
     const buttonFilter = async (i: ButtonInteraction) => {
-        if (i.customId !== hitButtonId && i.customId !== standButtonId && i.customId !== doubleButtonId) {
+        if (i.customId !== hitButtonId && i.customId !== standButtonId && i.customId !== doubleButtonId && i.customId !== splitButtonId) {
             return false;
         }
         if (interaction.user.id !== i.user.id) {
@@ -63,13 +73,16 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300 * timeInMS.second, filter: buttonFilter });
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 5 * timeInMS.minute, filter: buttonFilter });
 
     buttonCollector.on('collect', async buttonInteraction => {
         buttonCollector.resetTimer();
         const input = await blackjack.input(buttonInteraction.customId.split('-')[0] as PlayerOption);
+        if (buttonInteraction.customId.split('-')[0] === 'Split') {
+            void execute(interaction);
+        }
         if (input.valid) {
-            await buttonInteraction.update({embeds: [blackjack.createEmbed()]});
+            await buttonInteraction.update({embeds: [blackjack.createEmbed()], components: [buttonsRow]});
             if (blackjack.isEnded()) buttonCollector.stop();
         }
         else {
