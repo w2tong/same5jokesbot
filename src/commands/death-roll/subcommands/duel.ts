@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
+    const reply = await interaction.fetchReply();
     const user = interaction.user;
     const opponent = interaction.options.getUser('user');
     const amount = interaction.options.getInteger('amount');
@@ -86,7 +87,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         else {
             deathRoll.expire();
         }
-        await interaction.editReply({embeds: [deathRoll.createEmbed()], components: []});
+        await reply.edit({embeds: [deathRoll.createEmbed()], components: []});
     });
 }
 

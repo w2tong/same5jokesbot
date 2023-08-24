@@ -6,6 +6,7 @@ import { getUserCringePoints } from '../../sql/tables/cringe-points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
+    const reply = await interaction.fetchReply();
     if (!interaction.channel) {
         await interaction.editReply('There was an error creating the blackjack game.');
         return;
@@ -73,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 5 * timeInMS.minute, filter: buttonFilter });
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15 * timeInMS.minute, filter: buttonFilter });
 
     buttonCollector.on('collect', async buttonInteraction => {
         buttonCollector.resetTimer();
@@ -91,7 +92,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     buttonCollector.on('end', async () => {
-        await interaction.editReply({components: []});
+        await reply.edit({components: []});
     });
 }
 
