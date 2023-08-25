@@ -109,6 +109,9 @@ class BlackjackGame {
             if (this.playerHandValue > 21) {
                 await this.endGame(EndGameResults.Lose);
             }
+            else if (this.playerHandValue === 21) {
+                await this.input('Stand');
+            }
         }
         else if (option === PlayerOptions.Split) {
             return {valid: false, msg: 'This doesn\'t do anything right now.'};
