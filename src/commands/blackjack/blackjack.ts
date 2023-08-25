@@ -1,7 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
 import BlackjackGame, { PlayerOption, PlayerOptions, maxDecks, maxWager } from './BlackjackGame';
 import { nanoid } from 'nanoid';
-import { timeInMS } from '../../util/util';
 import { getUserCringePoints } from '../../sql/tables/cringe-points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -74,7 +73,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15 * timeInMS.minute, filter: buttonFilter });
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: BlackjackGame.idleTimeout, filter: buttonFilter });
 
     buttonCollector.on('collect', async buttonInteraction => {
         buttonCollector.resetTimer();
@@ -92,7 +91,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     buttonCollector.on('end', async () => {
-        await reply.edit({components: []});
+        if (!blackjack.isEnded()) {
+            await blackjack.input('Stand');
+        }
+        await reply.edit({embeds: [blackjack.createEmbed()], components: []});
     });
 }
 
