@@ -1,5 +1,4 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { timeInMS } from '../../../util/util';
 import { DeathRoll } from '../deathRoll';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
@@ -59,7 +58,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30 * timeInMS.minute, filter: rollButtonFilter });
+    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: DeathRoll.idleTimeout, filter: rollButtonFilter });
     buttonCollector.on('collect', async buttonInteraction => {
         const {correctUser, ended} = deathRoll.roll(buttonInteraction.user.id);
         if (ended) buttonCollector.stop();

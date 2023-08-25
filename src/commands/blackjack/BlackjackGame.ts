@@ -1,9 +1,10 @@
-import { EmbedBuilder, userMention } from 'discord.js';
+import { EmbedBuilder, time, userMention } from 'discord.js';
 import { Value } from '../../cards/Card';
 import Deck from '../../cards/Deck';
 import Hand from '../../cards/Hand';
 import { emptyEmbedField, emptyEmbedFieldInline } from '../../util/discordUtil';
 import { updateCringePoints } from '../../sql/tables/cringe-points';
+import { timeInMS } from '../../util/util';
 
 const maxWager = 1_000_000;
 const maxDecks = 100;
@@ -55,6 +56,7 @@ class BlackjackGame {
     private ended: boolean = false;
     private result: EndGameResult|undefined;
     private payout: number = 0;
+    private static _idleTimeout: number = 15 * timeInMS.second;
 
     constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number) {
         this.userId = userId;
@@ -179,6 +181,13 @@ class BlackjackGame {
                 {name: 'Player Value', value: `${this.playerHandValue}`, inline: true},
             );
 
+        if (!this.ended) {
+            embed.addFields(
+                emptyEmbedField,
+                {name: 'Expires', value: `${time(new Date(Date.now() + BlackjackGame._idleTimeout), 'R')}`}
+            );
+        }
+
         if (this.ended) {
             let balanceFieldValue = this.balance.toLocaleString();
             let newBalance = this.balance;
@@ -245,6 +254,10 @@ class BlackjackGame {
 
     splitable() {
         return this.playerHand.cards[0].value === this.playerHand.cards[1].value;
+    }
+
+    static get idleTimeout() {
+        return BlackjackGame._idleTimeout;
     }
 }
 

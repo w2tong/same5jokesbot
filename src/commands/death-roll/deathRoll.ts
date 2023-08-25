@@ -1,5 +1,6 @@
-import { EmbedBuilder, User, bold } from 'discord.js';
+import { EmbedBuilder, User, bold, time } from 'discord.js';
 import { emptyEmbedFieldInline } from '../../util/discordUtil';
+import { timeInMS } from '../../util/util';
 
 const deathRollers = new Set<string>();
 const rollButtonId = 'roll';
@@ -14,6 +15,7 @@ class DeathRoll {
     private turnUser: User;
     private rollHistory: Array<Roll> = [];
     private expired = false;
+    private static _idleTimeout: number = 0.25 * timeInMS.minute;
 
     constructor(creator: User, opponent: User, amount: number, startingRoll: number) {
         this.creator = creator;
@@ -25,7 +27,8 @@ class DeathRoll {
 
     createEmbed(): EmbedBuilder {
         const turnUser = (this.turnUser === this.creator) ? this.creator : this.opponent;
-        return new EmbedBuilder()
+        
+        const embed = new EmbedBuilder()
             .setTitle(`Death Roll ${this.isEnded() ? `(Winner: ${turnUser.username})` : this.expired ? '(Expired)' : ''}`)
             .addFields(
                 {name: 'Creator', value: `${this.creator}`, inline: true},
@@ -39,6 +42,12 @@ class DeathRoll {
                 emptyEmbedFieldInline,
                 {name: 'Roll History', value: this.rollHistory.length ? this.rollHistory.map(roll => `${roll.userId === this.creator.id ? this.creator : this.opponent} rolled ${bold(roll.roll.toLocaleString())}`).join('\n') : 'None'}
             );
+        if (!this.isEnded()) {
+            embed.addFields(
+                {name: 'Expires', value: `${time(new Date(Date.now() + DeathRoll._idleTimeout), 'R')}`}
+            );
+        }
+        return embed;
     }
 
     roll(userId: string): {correctUser: boolean, ended: boolean} {
@@ -68,6 +77,10 @@ class DeathRoll {
 
     getResults() {
         return this.turnUser === this.creator ? {winnerId: this.creator.id, loserId: this.opponent.id} : {winnerId: this.opponent.id, loserId: this.creator.id};
+    }
+
+    static get idleTimeout() {
+        return DeathRoll._idleTimeout;
     }
 }
 
