@@ -15,7 +15,7 @@ class DeathRoll {
     private turnUser: User;
     private rollHistory: Array<Roll> = [];
     private expired = false;
-    private static _idleTimeout: number = 0.25 * timeInMS.minute;
+    private static _idleTimeout: number = 60 * timeInMS.minute;
 
     constructor(creator: User, opponent: User, amount: number, startingRoll: number) {
         this.creator = creator;

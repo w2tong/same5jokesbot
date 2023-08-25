@@ -56,7 +56,7 @@ class BlackjackGame {
     private ended: boolean = false;
     private result: EndGameResult|undefined;
     private payout: number = 0;
-    private static _idleTimeout: number = 15 * timeInMS.second;
+    private static _idleTimeout: number = 15 * timeInMS.minute;
 
     constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number) {
         this.userId = userId;
