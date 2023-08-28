@@ -4,6 +4,13 @@ import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { emptyEmbedFieldInline } from '../../../util/discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
 import audio from '../../../util/audioFileMap';
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
+
+type GambleEvents = {
+    end: (userId: string, profit: number) => void
+  }
+const gambleEmitter = new EventEmitter() as TypedEmitter<GambleEvents>;
 
 const chances = [50, 30, 10, 1];
 const payouts: {[key: number]: {num: number, str: string}} = {};
@@ -67,6 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     void updateCringePoints([{userId: user.id, points: profit}]);
     // Update house Cringe points
     if (process.env.CLIENT_ID) void updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
+    gambleEmitter.emit('end', user.id, profit);
 
     const embed = new EmbedBuilder()
         .setTitle(title)
@@ -101,4 +109,4 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     );
 
 export default { execute, name, subcommandBuilder };
-export { gamble, payouts };
+export { gamble, payouts, gambleEmitter };
