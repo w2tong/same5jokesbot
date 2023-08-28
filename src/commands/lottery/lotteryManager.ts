@@ -172,7 +172,11 @@ function calcJackpotPerTicket(winners: Array<JackpotWinner>, jackpot: number) {
 function createUserTicketsEmbed(username: string, totalWinnings: number, ticketWinnings: Array<TicketWinnings>): EmbedBuilder {
     const embed = new EmbedBuilder()
         .setTitle(`${username}'s Lottery Winnings`)
-        .addFields({name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`});
+        .addFields(
+            emptyEmbedFieldInline,
+            {name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`, inline: true},
+            emptyEmbedFieldInline,
+        );
     for (let i = 0; i < ticketWinnings.length; i++) {
         embed.addFields(
             {name: `Ticket ${i+1}`, value: `${ticketWinnings[i].numbers.split(',').join(', ')}`, inline: true},
