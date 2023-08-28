@@ -4,6 +4,7 @@ import { gambleEmitter } from '../commands/gamble/subcommands/gamble';
 import { getRandomRange } from '../util/util';
 import schedule from 'node-schedule';
 import dailies, { DailyId } from './dailies';
+import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDailyProgress } from '../sql/tables/daily-progress';
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
@@ -23,82 +24,93 @@ function generateDailies(num: number) {
 type DailyProg = {progress: number, completed: boolean}
 let userDailies: {[userId: string]: {[key in DailyId]: DailyProg} | Record<string, never>} = {};
 
-function generateuserDailies(client: Client) {
+async function generateUserDailies(client: Client) {
     const dailies = Array.from(currDailies);
+    const inserts = [];
     for (const {bot, id} of client.users.cache.values()) {
         if (bot) continue;
         userDailies[id] = {};
         for (const dailyId of dailies) {
             userDailies[id][dailyId] = {progress: 0, completed: false};
+            inserts.push({userId: id, dailyId});
         }
     }
+    await insertDailyProgress(inserts);
 }
 
 function scheduleDailiesCronJob(client: Client) {
-    schedule.scheduleJob({ second: 0, tz: 'America/Toronto' }, function() {
+    schedule.scheduleJob({ second: 0, minute: 0, tz: 'America/Toronto' }, async function() {
         generateDailies(6);
         userDailies = {};
-        generateuserDailies(client);
+        await truncateDailyProgress();
+        await generateUserDailies(client);
     });
 }
 
-function updateGameDaily(dailyId: DailyId, userId: string) {
+async function updateGameDaily(dailyId: DailyId, userId: string) {
     if (currDailies.has(dailyId)) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
         daily.progress++;
-        // update dailyprogress db
+        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
         if (daily.progress >= dailies[dailyId].maxProgress) {
             daily.completed = true;
             // update points
-            // update dailyprogress db
+            await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
         }
     }
 }
-function updateWinDaily(dailyId: DailyId, userId: string, profit: number) {
+async function updateWinDaily(dailyId: DailyId, userId: string, profit: number) {
     if (currDailies.has(dailyId) && profit > 0) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
         daily.progress++;
-        // update dailyprogress db
+        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
         if (daily.progress >= dailies[dailyId].maxProgress) {
             daily.completed = true;
             // update points
-            // update dailyprogress db
+            await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
         }
     }
 }
-function updateProfitDaily(dailyId: DailyId, userId: string, profit: number) {
+async function updateProfitDaily(dailyId: DailyId, userId: string, profit: number) {
     if (currDailies.has(dailyId) && profit > 0) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
         daily.progress += profit;
-        // update dailyprogress db
+        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
         if (daily.progress >= dailies[dailyId].maxProgress) {
             daily.progress = dailies[dailyId].maxProgress;
             daily.completed = true;
             // update points
-            // update dailyprogress db
+            await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
         }
     }
 }
 
 blackjackEmitter.on('end', (userId, profit) => {
-    updateGameDaily('bjGame', userId);
-    updateWinDaily('bjWin', userId, profit);
-    updateProfitDaily('bjProfit', userId, profit);
+    console.log(userId, profit);
+    void updateGameDaily('bjGame', userId);
+    void updateWinDaily('bjWin', userId, profit);
+    void updateProfitDaily('bjProfit', userId, profit);
     console.log(userDailies[userId]);
 });
 
 gambleEmitter.on('end', (userId, profit) => {
-    updateGameDaily('gGame', userId);
-    updateWinDaily('gWin', userId, profit);
-    updateProfitDaily('gProfit', userId, profit);
+    void updateGameDaily('gGame', userId);
+    void updateWinDaily('gWin', userId, profit);
+    void updateProfitDaily('gProfit', userId, profit);
     console.log(userDailies[userId]);
 });
 
-function loadUserDailies() {
-    // load daily progress from DB
+async function loadDailyProgress() {
+    const dailyProg = await getDailyProgress();
+    for (const {USER_ID, DAILY_ID, PROGRESS, COMPLETED} of dailyProg) {
+        if (!userDailies[USER_ID]) userDailies[USER_ID] = {};
+        const dailyId = DAILY_ID as DailyId;
+        currDailies.add(dailyId);
+        userDailies[USER_ID][dailyId] = {progress: PROGRESS, completed: COMPLETED === 1};
+    }
 }
 
-export { scheduleDailiesCronJob, loadUserDailies };
+export { scheduleDailiesCronJob, loadDailyProgress };

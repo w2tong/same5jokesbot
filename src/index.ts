@@ -13,6 +13,7 @@ import voiceStateUpdateHandler, { initMainChannel } from './events/voiceStateUpd
 import { initVoiceLogChannel } from './voice';
 import { fetchChannel, fetchUser } from './util/discordUtil';
 import { loadStolenGoods } from './commands/steal/stealManager';
+import { loadDailyProgress } from './dailies/dailyManager';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 
@@ -68,6 +69,10 @@ client.once(Events.ClientReady, async () => {
     console.log('Loading stolen goods.');
     await loadStolenGoods();
     console.log('Done loading stolen goods.\n');
+
+    console.log('Loading daily progress.');
+    await loadDailyProgress();
+    console.log('Done loading daily progress.');
 
     // Init users in voice channels
     console.log('Initializing users in voice.');
