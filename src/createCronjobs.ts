@@ -11,7 +11,7 @@ import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/tables/time-in-voice
 import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
 import { fetchChannel } from './util/discordUtil';
 import { scheduleDailyTaxWelfareCronJob } from './taxes-welfare';
-import { scheduleDailiesCronJob } from './dailies/dailyManager';
+import { scheduleDailiesCronJob } from './daily/dailyManager';
 
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {

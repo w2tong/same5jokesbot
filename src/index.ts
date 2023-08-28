@@ -13,7 +13,7 @@ import voiceStateUpdateHandler, { initMainChannel } from './events/voiceStateUpd
 import { initVoiceLogChannel } from './voice';
 import { fetchChannel, fetchUser } from './util/discordUtil';
 import { loadStolenGoods } from './commands/steal/stealManager';
-import { loadDailyProgress } from './dailies/dailyManager';
+import { loadDailyProgress } from './daily/dailyManager';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 
