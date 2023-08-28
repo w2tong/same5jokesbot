@@ -5,6 +5,13 @@ import { getRandomRange } from '../util/util';
 import schedule from 'node-schedule';
 import dailies, { DailyId } from './dailies';
 import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDailyProgress } from '../sql/tables/daily-progress';
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
+
+type DailyEvents = {
+    complete: (userId: string, dailyId: string) => Promise<void>
+  }
+const dailyEmitter = new EventEmitter() as TypedEmitter<DailyEvents>;
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
@@ -53,11 +60,7 @@ async function updateGameDaily(dailyId: DailyId, userId: string) {
         if (daily.completed) return;
         daily.progress++;
         await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-        if (daily.progress >= dailies[dailyId].maxProgress) {
-            daily.completed = true;
-            // update points
-            await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-        }
+        await completeDaily(dailyId, userId);
     }
 }
 async function updateWinDaily(dailyId: DailyId, userId: string, profit: number) {
@@ -66,11 +69,7 @@ async function updateWinDaily(dailyId: DailyId, userId: string, profit: number) 
         if (daily.completed) return;
         daily.progress++;
         await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-        if (daily.progress >= dailies[dailyId].maxProgress) {
-            daily.completed = true;
-            // update points
-            await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-        }
+        await completeDaily(dailyId, userId);
     }
 }
 async function updateProfitDaily(dailyId: DailyId, userId: string, profit: number) {
@@ -79,27 +78,42 @@ async function updateProfitDaily(dailyId: DailyId, userId: string, profit: numbe
         if (daily.completed) return;
         daily.progress += profit;
         await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
+        await completeDaily(dailyId, userId);
+    }
+}
+
+async function completeDaily(dailyId: DailyId, userId: string) {
+    if (currDailies.has(dailyId)) {
+        const daily = userDailies[userId][dailyId];
         if (daily.progress >= dailies[dailyId].maxProgress) {
             daily.progress = dailies[dailyId].maxProgress;
             daily.completed = true;
             // update points
             await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
+            dailyEmitter.emit('complete', userId, dailyId);
         }
     }
 }
 
-blackjackEmitter.on('end', (userId, profit) => {
-    console.log(userId, profit);
-    void updateGameDaily('bjGame', userId);
-    void updateWinDaily('bjWin', userId, profit);
-    void updateProfitDaily('bjProfit', userId, profit);
+// TODO: send daily compelte msg (embed prob)
+
+blackjackEmitter.on('end', async (userId, profit) => {
+    await Promise.all([
+        updateGameDaily('bjGame', userId),
+        updateWinDaily('bjWin', userId, profit),
+        updateProfitDaily('bjProfit', userId, profit)
+    ]);
+
     console.log(userDailies[userId]);
 });
 
-gambleEmitter.on('end', (userId, profit) => {
-    void updateGameDaily('gGame', userId);
-    void updateWinDaily('gWin', userId, profit);
-    void updateProfitDaily('gProfit', userId, profit);
+gambleEmitter.on('end', async (userId, profit) => {
+    await Promise.all([
+        updateGameDaily('gGame', userId),
+        updateWinDaily('gWin', userId, profit),
+        updateProfitDaily('gProfit', userId, profit)
+    ]);
+    
     console.log(userDailies[userId]);
 });
 

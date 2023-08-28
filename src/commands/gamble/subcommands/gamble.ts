@@ -8,7 +8,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type GambleEvents = {
-    end: (userId: string, profit: number) => void
+    end: (userId: string, profit: number) => Promise<void>
   }
 const gambleEmitter = new EventEmitter() as TypedEmitter<GambleEvents>;
 
