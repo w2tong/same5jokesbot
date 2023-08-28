@@ -7,7 +7,7 @@ import { ChannelType, Client, EmbedBuilder, bold, roleMention, time, userMention
 import { emptyEmbedFieldInline, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 
-const numbers = Array.from(new Array(10), (_x, i) => i+1);
+const numbers = Array.from(new Array(12), (_x, i) => i+1);
 const choose = 3;
 const price = 10000;
 const basePayout = 0.25;
@@ -18,7 +18,7 @@ for (let i = 1; i <= choose; i++) {
 }
 const startTime = 0;
 const lotteryLengthHours = 21;
-const ticketLimit = 5;
+const ticketLimit = 10;
 
 function generateNumbersArray() {
     const choices = numbers.slice();
@@ -70,7 +70,11 @@ function scheduleNewLotteryCronJob(client: Client) {
         const endDate = new Date(startDate);
         endDate.setHours(endDate.getHours() + lotteryLengthHours);
         const houseBalance = process.env.CLIENT_ID ? await getUserCringePoints(process.env.CLIENT_ID) ?? 0 : 0;
-        const newJackpot = Math.max(numbers.length * 100_000, jackpotWinners.length > 0 ? 500_000 : lottery?.JACKPOT ?? 0, houseBalance * 0.5);
+        const newJackpot = Math.max(
+            numbers.length * 250_000,
+            jackpotWinners.length > 0 ? 0 : lottery?.JACKPOT ?? 0, 
+            houseBalance * 0.5
+        );
         await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbersArray().join(','), newJackpot);
         
         await channel.send({content: `${process.env.LOTTERY_ROLE_ID ? `${roleMention(process.env.LOTTERY_ROLE_ID)}` : ''}`, embeds: [createNewLotteryEmbed(startDate, endDate, newJackpot)]});
