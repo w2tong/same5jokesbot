@@ -25,7 +25,7 @@ interface Reminder {
     TIME: string;
     MESSAGE: string;
 }
-async function getReminders(): Promise<Array<Reminder>> {
+async function getReminders(): Promise<Reminder[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<Reminder> = await connection.execute(getQuery, {}, selectExecuteOptions);
@@ -82,7 +82,7 @@ WHERE user_id = :userId
 ORDER BY time ASC
 FETCH NEXT 5 ROWS ONLY
 `;
-async function getUserReminders(userId: string): Promise<Array<Reminder>> {
+async function getUserReminders(userId: string): Promise<Reminder[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<Reminder> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);

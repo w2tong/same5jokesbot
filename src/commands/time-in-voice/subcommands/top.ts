@@ -5,7 +5,7 @@ import { createMediumChartBuffer } from '../../../util/chart';
 import { fetchUser } from '../../../util/discordUtil';
 import { timeInMS } from '../../../util/util';
 
-function createChartConfiguration(users: Array<string>, times: Array<number>): ChartConfiguration {
+function createChartConfiguration(users: string[], times: number[]): ChartConfiguration {
     return {
         type: 'bar',
         data: {
@@ -75,7 +75,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     if (!guildId) return;
     await interaction.deferReply();
     const audioCount = await getGuildLast30DaysTimeInVoice(guildId);
-    if (audioCount) {
+    if (audioCount.length > 0) {
         const users = [];
         const times = [];
         for (const {USER_ID, MILLISECONDS} of audioCount) {

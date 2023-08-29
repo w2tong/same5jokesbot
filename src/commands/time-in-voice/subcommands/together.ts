@@ -5,7 +5,7 @@ import { getTimeInVoiceTogether } from '../../../sql/tables/time-in-voice-togeth
 import { fetchUser } from '../../../util/discordUtil';
 import { timeInMS } from '../../../util/util';
 
-function createChartConfiguration(username: string, users: Array<string>, times: Array<number>): ChartConfiguration {
+function createChartConfiguration(username: string, users: string[], times: number[]): ChartConfiguration {
     return {
         type: 'bar',
         data: {
@@ -74,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
     const timeInVoiceTogether = await getTimeInVoiceTogether(user.id);
-    if (timeInVoiceTogether) {
+    if (timeInVoiceTogether.length > 0) {
         let users = [];
         const times = [];
         for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {

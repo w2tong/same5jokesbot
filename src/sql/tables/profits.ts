@@ -137,7 +137,7 @@ interface ProfitsUser {
     PROFITS: number;
 }
 
-async function getTopProfits(type?: ProfitType): Promise<Array<ProfitsUser>> {
+async function getTopProfits(type?: ProfitType): Promise<ProfitsUser[]> {
     try {
         const connection = await oracledb.getConnection();
         let result: oracledb.Result<ProfitsUser>;
@@ -174,7 +174,7 @@ interface ProfitsUpdate {
     type: ProfitType;
     profit: number;
 }
-async function updateProfits(arr: Array<ProfitsUpdate>) {
+async function updateProfits(arr: ProfitsUpdate[]) {
     try {
         const connection = await oracledb.getConnection();
         for (const {userId, type, profit} of arr) {

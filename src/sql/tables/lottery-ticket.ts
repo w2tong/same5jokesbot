@@ -46,7 +46,7 @@ WHERE user_id = :userId
 AND lottery_id = :lotteryId
 `;
 
-async function getUserLotteryTickets(userId: string, lotteryId: string): Promise<Array<LotteryTicket>> {
+async function getUserLotteryTickets(userId: string, lotteryId: string): Promise<LotteryTicket[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<LotteryTicket> = await connection.execute(getUserQuery, {userId, lotteryId}, selectExecuteOptions);

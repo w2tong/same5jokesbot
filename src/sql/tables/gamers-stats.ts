@@ -179,7 +179,7 @@ WHERE month_year = TO_DATE(:monthYear, 'yyyy/mm')
 ORDER BY disperse_pc DESC
 `;
 
-async function getTopDisperseRateMonthYear(month: string, year: string): Promise<Array<TopDisperseRate>> {
+async function getTopDisperseRateMonthYear(month: string, year: string): Promise<TopDisperseRate[]> {
     try {
         const monthYear = `${year}/${month}`;
         const connection = await oracledb.getConnection();
@@ -203,7 +203,7 @@ GROUP BY user_id
 ORDER BY disperse_pc DESC
 `;
 
-async function getTopDisperseRateYear(year: string): Promise<Array<TopDisperseRate>> {
+async function getTopDisperseRateYear(year: string): Promise<TopDisperseRate[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TopDisperseRate> = await connection.execute(getTopDisperseRateYearQuery, {year}, selectExecuteOptions);

@@ -2,8 +2,8 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilde
 import { Emotes, emotes } from '../../../util/emotes';
 import { slotsSymbols, symbols } from '../symbols';
 
-const values: Array<string> = [];
-const multipliers: Array<number> = [];
+const values: string[] = [];
+const multipliers: number[] = [];
 for (const symbol of Object.values(slotsSymbols)) {
     values.push(`${symbol.pc * 100}%`);
     multipliers.push(symbol.mult);

@@ -81,7 +81,7 @@ AND start_date > SYSDATE-30
 ORDER BY start_date ASC
 `;
 
-async function getUserLast30DaysTimeInVoice(userId: string, guildId: string): Promise<Array<TimeInVoiceByDate>|null> {
+async function getUserLast30DaysTimeInVoice(userId: string, guildId: string): Promise<TimeInVoiceByDate[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoiceByDate> = await connection.execute(getUserLast30DaysQuery, {userId, guildId}, selectExecuteOptions);
@@ -89,7 +89,7 @@ async function getUserLast30DaysTimeInVoice(userId: string, guildId: string): Pr
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
-        return null;
+        return [];
     }
     catch (err) {
         throw new Error(`getLast30DaysQuery: ${err}`);
@@ -109,7 +109,7 @@ GROUP BY user_id
 ORDER BY milliseconds DESC
 `;
 
-async function getGuildLast30DaysTimeInVoice(guildId: string): Promise<Array<TimeInVoiceByUser>|null> {
+async function getGuildLast30DaysTimeInVoice(guildId: string): Promise<TimeInVoiceByUser[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoiceByUser> = await connection.execute(getGuildLast30DaysQuery, {guildId}, selectExecuteOptions);
@@ -117,7 +117,7 @@ async function getGuildLast30DaysTimeInVoice(guildId: string): Promise<Array<Tim
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
-        return null;
+        return [];
     }
     catch (err) {
         throw new Error(`getLast30DaysQuery: ${err}`);
@@ -136,7 +136,7 @@ MERGE INTO time_in_voice dest
 `;
 
 type TimeInVoiceUpdate = {userId: string, guildId: string, startDate:string, time: number}
-async function updateTimeInVoice(arr: Array<TimeInVoiceUpdate>) {
+async function updateTimeInVoice(arr: TimeInVoiceUpdate[]) {
     if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();

@@ -3,7 +3,7 @@ import { AttachmentBuilder, ChatInputCommandInteraction, SlashCommandSubcommandB
 import { getAudioCountUserTotal } from '../../../sql/tables/audio-count';
 import { createLargeChartBuffer } from '../../../util/chart';
 
-function createChartConfiguration(username: string, audio: Array<string>, count: Array<number>): ChartConfiguration {
+function createChartConfiguration(username: string, audio: string[], count: number[]): ChartConfiguration {
     return {
         type: 'bar',
         data: {
@@ -71,7 +71,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
     const audioCount = await getAudioCountUserTotal(user.id);
-    if (audioCount) {
+    if (audioCount.length > 0) {
         const audio = [];
         const count = [];
         for (const {AUDIO, COUNT} of audioCount) {
