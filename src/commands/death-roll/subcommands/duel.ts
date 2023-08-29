@@ -79,8 +79,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 {userId: loserId, points: -amount}
             ]);
             void updateProfits([
-                {userId: winnerId, type: ProfitType.DeathRoll, winnings: amount, losses: 0},
-                {userId: loserId, type: ProfitType.DeathRoll, winnings: 0, losses: amount}
+                {userId: winnerId, type: ProfitType.DeathRoll, profit: amount},
+                {userId: loserId, type: ProfitType.DeathRoll, profit: -amount}
             ]);
         }
         else {

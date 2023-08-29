@@ -7,6 +7,7 @@ import { houseUserTransfer } from '../../sql/tables/cringe-points';
 import { timeInMS } from '../../util/util';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
+import { ProfitType, updateProfits } from '../../sql/tables/profits';
 
 type BlackjackEvents = {
     end: (userId: string, wager: number, profit: number, channels: ChannelManager, channelId: string) => Promise<void>
@@ -108,7 +109,13 @@ class BlackjackGame {
         else if (result === EndGameResults.Lose) {
             profit = -this.wager;
         }
-        if (profit !== 0) await houseUserTransfer([{userId: this.userId, points: profit}]);
+        if (profit !== 0) {
+            await Promise.all([
+                houseUserTransfer([{userId: this.userId, points: profit}]), 
+                updateProfits([{userId: this.userId, type: ProfitType.Blackjack, profit}])
+            ]);
+        }
+        
         this.result = result;
         this.ended = true;
         blackjackEmitter.emit('end', this.userId, this.wager, profit, this.channels, this.channelId);

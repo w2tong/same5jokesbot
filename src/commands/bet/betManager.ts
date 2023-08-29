@@ -80,12 +80,12 @@ async function resolveBet(userId: string, result: BetResult, client: Client): Pr
                 const winnings = Math.ceil(points / bet.getYesTotal() * bet.getNoTotal());
                 yesBettersList.push(`${userMention(userId)}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
-                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings, losses: 0});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, profit: winnings});
             }
             for (const [userId, points] of Object.entries(noBetters).sort(sortBettersDesc)) {
                 noBettersList.push(`${userMention(userId)}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
-                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings: 0, losses: points});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, profit: -points});
             }
         }
         else {
@@ -93,12 +93,12 @@ async function resolveBet(userId: string, result: BetResult, client: Client): Pr
                 const winnings = Math.ceil(points / bet.getNoTotal() * bet.getYesTotal());
                 noBettersList.push(`${userMention(userId)}: +${winnings.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: winnings});
-                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings, losses: 0});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, profit: winnings});
             }
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {
                 yesBettersList.push(`${userMention(userId)}: ${-points.toLocaleString()}`);
                 cringePointUpdates.push({userId, points: -points});
-                betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings: 0, losses: points});
+                betProfitsUpdates.push({userId, type: ProfitType.Bet, profit: -points});
             }
         }
         await updateCringePoints(cringePointUpdates);

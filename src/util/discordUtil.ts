@@ -1,6 +1,4 @@
-import { ChannelManager, EmbedBuilder, InteractionEditReplyOptions, MessageManager, User, UserManager, userMention } from 'discord.js';
-import { ProfitType, getTopProfits, getTotalProfits, getUserProfits } from '../sql/tables/profits';
-import { capitalize } from './util';
+import { ChannelManager, MessageManager, User, UserManager, userMention } from 'discord.js';
 
 const messageEmbedLimit = 10;
 const emptyEmbedField = {name: '\u200b', value: '\u200b'};
@@ -45,48 +43,5 @@ function createDispersersList(usersIdsStr: string) {
     return Object.keys(userIdCount).map(userId => `${userMention(userId)} ${userIdCount[userId] > 1 ? '('+userIdCount[userId].toString()+')': ''}`).join('\n');
 }
 
-function createUserProfitsEmbed(username: string, winnings: number, losses: number, profits: number, type?: ProfitType) {
-    return new EmbedBuilder()
-        .setTitle(`${username}'s ${type ? `${capitalize(type)} ` : ''}Profits`)
-        .addFields(
-            {name: 'Winnings', value: `${winnings.toLocaleString()}`, inline: true},
-            {name: 'Losses', value: `${losses.toLocaleString()}`, inline: true},
-            {name: 'Profits', value: `${profits.toLocaleString()}`, inline: true}
-        );
-}
 
-async function generateUserProfitsResponse(userId: string, username: string, type?: ProfitType): Promise<InteractionEditReplyOptions> {
-    const profits = await (type ? getUserProfits(userId, type) : getUserProfits(userId));
-    if (!profits) return {content: `You do not have profits${type ? ` for ${capitalize(type)}` : ''}.`};
-    if (!type) return {embeds: [createUserProfitsEmbed(username, profits.WINNINGS, profits.LOSSES, profits.PROFITS)]};
-    return {embeds: [createUserProfitsEmbed(username, profits.WINNINGS, profits.LOSSES, profits.PROFITS, type)]};
-}
-
-function createTopProfitsEmbed(totalWinnings: number, totalLosses: number, totalProfits: number, users: string[], userProfits: string[], type?: ProfitType) {
-    return new EmbedBuilder()
-        .setTitle(`${type ? capitalize(type) : 'Total'} Profits`)
-        .addFields(
-            {name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`, inline: true},
-            {name: 'Total Losses', value: `${totalLosses.toLocaleString()}`, inline: true},
-            {name: 'Total Profits', value: `${totalProfits.toLocaleString()}`, inline: true},
-            {name: 'Users', value: users.join('\n'), inline: true},
-            emptyEmbedFieldInline,
-            {name: 'Profits', value: userProfits.join('\n'), inline: true}
-        );
-}
-
-async function generateTopProfitsEmbed(type?: ProfitType): Promise<InteractionEditReplyOptions> {
-    const topProfits = await (type ? getTopProfits(type) : getTopProfits());
-    const totalProfits = await (type ? getTotalProfits(type) : getTotalProfits());
-    if (topProfits.length === 0 || !totalProfits) return {content: `There are no profits${type ? ` for ${capitalize(type)}` : ''}.`};
-    const users: string[] = [];
-    const userProfits: string[] = [];
-    for (const {USER_ID, PROFITS} of topProfits) {
-        users.push(userMention(USER_ID));
-        userProfits.push(PROFITS.toLocaleString());
-    }
-    if (!type) createTopProfitsEmbed(totalProfits.WINNINGS, totalProfits.LOSSES, totalProfits.PROFITS, users, userProfits);
-    return {embeds: [createTopProfitsEmbed(totalProfits.WINNINGS, totalProfits.LOSSES, totalProfits.PROFITS, users, userProfits, type)]};
-}
-
-export {messageEmbedLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, generateUserProfitsResponse, generateTopProfitsEmbed};
+export {messageEmbedLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};

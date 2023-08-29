@@ -58,7 +58,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (profit >= 1000 && ((pointsBet / balance) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
-        await updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: profit, losses: 0}]);
+        await updateProfits([{userId: user.id, type: ProfitType.Gamble, profit}]);
     }
     else {
         title += 'LOST';
@@ -68,7 +68,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
-        await updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: 0, losses: pointsBet}]);
+        await updateProfits([{userId: user.id, type: ProfitType.Gamble, profit: -pointsBet}]);
     }
     await houseUserTransfer([{userId: user.id, points: profit}]);
     gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.client.channels, interaction.channelId);

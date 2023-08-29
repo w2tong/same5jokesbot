@@ -12,12 +12,14 @@ import { createTableUserIdPairs, createTableTimeInVoiceTogether } from './tables
 import { createTableCringePoints } from './tables/cringe-points';
 import { createTableLottery } from './tables/lottery';
 import { createTableLotteryTicket } from './tables/lottery-ticket';
-import { createTableProfits } from './tables/profits';
+import { createTableProfits, updateTableProfits } from './tables/profits';
 import { createTableStolenGoods } from './tables/stolen-goods';
 import { logError } from '../logger';
 import { createTableDailyProgress } from './tables/daily-progress';
 
 const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress];
+
+const updateTableQueries = [...updateTableProfits];
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
 oracledb.autoCommit = true;
@@ -49,6 +51,7 @@ async function initOracleDB() {
     });
 
     const connection = await oracledb.getConnection();
+
     for(const {name, query} of createTableQueries) {
         try {
             await connection.execute(procedure, {name, query});
@@ -57,6 +60,16 @@ async function initOracleDB() {
             logError(`${name}: ${err}`);
         }
     }
+
+    for (const query of updateTableQueries) {
+        try {
+            await connection.execute(query);
+        }
+        catch(err) {
+            logError(`${err}`);
+        }
+    }
+
     await connection.close();
 }
 

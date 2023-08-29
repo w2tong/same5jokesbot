@@ -116,10 +116,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const balanceFieldValue = `${balance.toLocaleString()} (${profit>0 ? '+' : ''}${profit.toLocaleString()})`;
         const newBalanceFieldValue = (balance + profit).toLocaleString();
     
-        if (profit !== 0) await houseUserTransfer([{userId: user.id, points: profit}]);
+        if (profit !== 0) {
+            await houseUserTransfer([{userId: user.id, points: profit}]);
+            await updateProfits([{userId: user.id, type: ProfitType.Slots, profit}]);
+        }
         
-        if (profit > 0) void updateProfits([{userId: user.id, type: ProfitType.Slots, winnings: profit, losses: 0}]);
-        else if (profit < 0) void updateProfits([{userId: user.id, type: ProfitType.Slots, winnings: 0, losses: -profit}]);
         const embed = new EmbedBuilder()
             .setTitle(`${user.username}'s ${emotes[Emotes.borpaSpin] ?? 'spin'}${numOfSpins > 1 ? 's' : ''}`)
             .addFields(

@@ -1,12 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import duel from './subcommands/duel';
-import profits from './subcommands/profits';
-import topProfits from './subcommands/top-profits';
 
 const subcommands = {
-    [duel.name]: duel.execute,
-    [profits.name]: profits.execute,
-    [topProfits.name]: topProfits.execute,
+    [duel.name]: duel.execute
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -19,8 +15,6 @@ const name = 'deathroll';
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription('Deathroll another user or get your stats.')
-    .addSubcommand(duel.subcommandBuilder)
-    .addSubcommand(profits.subcommandBuilder)
-    .addSubcommand(topProfits.subcommandBuilder);
+    .addSubcommand(duel.subcommandBuilder);
 
 export default { execute, name, commandBuilder };
