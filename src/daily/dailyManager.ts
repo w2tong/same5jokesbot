@@ -1,4 +1,4 @@
-import { Client, EmbedBuilder, time, userMention } from 'discord.js';
+import { ChannelManager, Client, EmbedBuilder, time, userMention } from 'discord.js';
 import { blackjackEmitter } from '../commands/blackjack/BlackjackGame';
 import { gambleEmitter } from '../commands/gamble/subcommands/gamble';
 import { getRandomRange } from '../util/util';
@@ -6,7 +6,6 @@ import schedule from 'node-schedule';
 import dailies, { DailyId } from './dailies';
 import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDailyProgress } from '../sql/tables/daily-progress';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-points';
-import client from '../index';
 import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
@@ -90,7 +89,7 @@ async function updateProfitDaily(dailyId: DailyId, userId: string, profit: numbe
     }
 }
 
-async function completeDaily(dailyId: DailyId, userId: string, channelId?: string) {
+async function completeDaily(dailyId: DailyId, userId: string, channels: ChannelManager, channelId?: string) {
     if (currDailies.has(dailyId)) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
@@ -99,7 +98,7 @@ async function completeDaily(dailyId: DailyId, userId: string, channelId?: strin
             daily.completed = true;
             await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
 
-            const channel = await fetchChannel(client.channels, channelId ?? process.env.CASINO_CHANNEL_ID ?? '');
+            const channel = await fetchChannel(channels, channelId ?? process.env.CASINO_CHANNEL_ID ?? '');
             const balance = await getUserCringePoints(userId) ?? 0;
             if (channel?.isTextBased()) {
                 const embed = new EmbedBuilder()
@@ -122,30 +121,28 @@ async function completeDaily(dailyId: DailyId, userId: string, channelId?: strin
 
 // TODO: send daily compelte msg (embed prob)
 
-blackjackEmitter.on('end', async (userId, wager, profit, channelId) => {
+blackjackEmitter.on('end', async (userId, wager, profit, channels, channelId) => {
     await Promise.all([
         updateGameDaily('bjGame', userId),
         updateWinDaily('bjWin', userId, profit),
         updateProfitDaily('bjProfit', userId, profit)
     ]);
 
-    await completeDaily('bjGame', userId, channelId);
-    await completeDaily('bjWin', userId, channelId);
-    await completeDaily('bjProfit', userId, channelId);
+    await completeDaily('bjGame', userId, channels, channelId);
+    await completeDaily('bjWin', userId, channels, channelId);
+    await completeDaily('bjProfit', userId, channels, channelId);
 });
 
-gambleEmitter.on('end', async (userId, wager, profit, channelId) => {
+gambleEmitter.on('end', async (userId, wager, profit, channels, channelId) => {
     await Promise.all([
         updateGameDaily('gGame', userId),
         updateWinDaily('gWin', userId, profit),
         updateProfitDaily('gProfit', userId, profit)
     ]);
 
-    await completeDaily('gGame', userId, channelId);
-    await completeDaily('gWin', userId, channelId);
-    await completeDaily('gProfit', userId, channelId);
-
-    console.log(userDailies[userId]);
+    await completeDaily('gGame', userId, channels, channelId);
+    await completeDaily('gWin', userId, channels, channelId);
+    await completeDaily('gProfit', userId, channels, channelId);
 });
 
 async function loadDailyProgress() {

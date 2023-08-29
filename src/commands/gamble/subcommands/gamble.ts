@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
+import { ChannelManager, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { emptyEmbedFieldInline } from '../../../util/discordUtil';
@@ -8,7 +8,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type GambleEvents = {
-    end: (userId: string, wager: number, profit: number, channelId: string) => Promise<void>
+    end: (userId: string, wager: number, profit: number, channels: ChannelManager, channelId: string) => Promise<void>
   }
 const gambleEmitter = new EventEmitter() as TypedEmitter<GambleEvents>;
 
@@ -74,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await updateCringePoints([{userId: user.id, points: profit}]);
     // Update house Cringe points
     if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
-    gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.channelId);
+    gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.client.channels, interaction.channelId);
 
     const embed = new EmbedBuilder()
         .setTitle(title)
