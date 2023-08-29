@@ -120,7 +120,7 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
     }
 
     await houseUserTransfer([{userId, points: -price}]);
-    await updateProfits([{userId, type: ProfitType.Lottery, winnings: 0, losses: price}]);
+    await updateProfits([{userId, type: ProfitType.Lottery, profit: -price}]);
     await updateJackpot(lottery.ID, price * 0.5);
     await insertLotteryTicket(lottery.ID, userId, numbers.join(','));
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
@@ -161,7 +161,7 @@ async function claimTickets(userId: string, username: string, lottery: Lottery, 
         totalWinnings += winnings + jackpotWinnings;
     }
     if (totalWinnings > 0) await houseUserTransfer([{userId, points: totalWinnings}]);
-    await updateProfits([{userId, type: ProfitType.Lottery, winnings: totalWinnings, losses: 0}]);
+    await updateProfits([{userId, type: ProfitType.Lottery, profit: totalWinnings}]);
     return {embed: createUserTicketsEmbed(userId, username, totalWinnings, ticketWinnings), winnings: totalWinnings};
 }
 

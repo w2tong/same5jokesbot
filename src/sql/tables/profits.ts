@@ -3,10 +3,12 @@ import { selectExecuteOptions } from '../query-options';
 
 enum ProfitType {
     Bet = 'bet',
+    Blackjack = 'blackjack',
     DeathRoll = 'deathroll',
     Gamble = 'gamble',
     Lottery = 'lottery',
-    Slots = 'slots'
+    Slots = 'slots',
+    Steal = 'steal'
 }
 
 const createTableProfits = {
@@ -19,39 +21,35 @@ const createTableProfits = {
             losses NUMBER DEFAULT 0,
             CONSTRAINT pk_profits PRIMARY KEY (user_id, type),
             CONSTRAINT chk_type CHECK (type IN (${Object.values(ProfitType).map(type => `'${type}'`).join(',')}))
-        )
+        );
     `
 };
+
+const updateTableProfits = [`
+ALTER TABLE profits
+DROP CONSTRAINT chk_type
+`,
+`
+ALTER TABLE profits
+ADD CONSTRAINT chk_type CHECK (type IN (${Object.values(ProfitType).map(type => `'${type}'`).join(',')}))
+`
+];
 
 interface Profits {
     WINNINGS: number;
     LOSSES: number;
     PROFITS: number;
 }
-
 const getUserTypedQuery = `
 SELECT winnings, losses, winnings - losses AS profits
 FROM profits
 WHERE user_id = :userId
 AND type = :type
 `;
-const getUserAllQuery = `
-SELECT SUM(winnings) AS winnings, SUM(losses) AS losses, SUM(winnings) - SUM(losses) AS profits
-FROM profits
-WHERE user_id = :userId
-GROUP BY user_id
-`;
-
-async function getUserProfits(userId: string, type?: ProfitType): Promise<Profits|null> {
+async function getUserTypeProfits(userId: string, type: ProfitType): Promise<Profits|null> {
     try {
         const connection = await oracledb.getConnection();
-        let result: oracledb.Result<Profits>;
-        if (type) {
-            result = await connection.execute(getUserTypedQuery, {userId, type}, selectExecuteOptions);
-        }
-        else {
-            result = await connection.execute(getUserAllQuery, {userId}, selectExecuteOptions);
-        }
+        const result: oracledb.Result<Profits> = await connection.execute(getUserTypedQuery, {userId, type}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows[0];
@@ -59,10 +57,35 @@ async function getUserProfits(userId: string, type?: ProfitType): Promise<Profit
         return null;
     }
     catch (err) {
-        throw new Error(`getUserProfits: ${err}`);
+        throw new Error(`getUserTypeProfits: ${err}`);
     }
 }
 
+type AllProfits = {
+    TYPE: ProfitType;
+    WINNINGS: number;
+    LOSSES: number;
+    PROFITS: number;
+}
+const getUserAllQuery = `
+SELECT type, winnings, losses, winnings - losses AS profits
+FROM profits
+WHERE user_id = :userId
+`;
+async function getUserAllProfits(userId: string): Promise<AllProfits[]> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<AllProfits> = await connection.execute(getUserAllQuery, {userId}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getUserAllProfits: ${err}`);
+    }
+}
 
 const getTotalTypedQuery = `
 SELECT SUM(winnings) AS winnings, SUM(losses) AS losses, SUM(winnings) - SUM(losses) AS profits
@@ -148,15 +171,20 @@ MERGE INTO profits dest
 
 interface ProfitsUpdate {
     userId: string;
-    type: ProfitType
-    winnings: number;
-    losses: number;
+    type: ProfitType;
+    profit: number;
 }
 async function updateProfits(arr: Array<ProfitsUpdate>) {
     try {
         const connection = await oracledb.getConnection();
-        for (const {userId, type, winnings, losses} of arr) {
-            await connection.execute(updateQuery, {userId, type, winnings, losses});
+        for (const {userId, type, profit} of arr) {
+            if (profit > 0) {
+                await connection.execute(updateQuery, {userId, type, winnings: profit, losses: 0});
+            }
+            else if (profit < 0) {
+                await connection.execute(updateQuery, {userId, type, winnings: 0, losses: -profit});
+            }
+            
         }
         await connection.close();
     }
@@ -165,4 +193,4 @@ async function updateProfits(arr: Array<ProfitsUpdate>) {
     }
 }
 
-export { createTableProfits, getUserProfits, getTotalProfits, getTopProfits, updateProfits, ProfitType, ProfitsUpdate };
+export { createTableProfits, updateTableProfits, getUserTypeProfits, getUserAllProfits, getTotalProfits, getTopProfits, updateProfits, ProfitType, ProfitsUpdate };
