@@ -1,6 +1,4 @@
-import { ChannelManager, EmbedBuilder, InteractionEditReplyOptions, MessageManager, User, UserManager, userMention } from 'discord.js';
-import { ProfitType, getTopProfits, getTotalProfits, getUserTypeProfits } from '../sql/tables/profits';
-import { capitalize } from './util';
+import { ChannelManager, MessageManager, User, UserManager, userMention } from 'discord.js';
 
 const messageEmbedLimit = 10;
 const emptyEmbedField = {name: '\u200b', value: '\u200b'};
