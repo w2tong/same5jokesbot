@@ -4,6 +4,11 @@ import dailies from '../daily/dailies';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
+
+    if (currDailies.size === 0) {
+        await interaction.editReply('There are no daily quests today.');
+        return;
+    }
     
     const quests: string[] = [];
     const progress: string[] = [];
