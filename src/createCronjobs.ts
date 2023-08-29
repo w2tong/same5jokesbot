@@ -12,6 +12,7 @@ import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, 
 import { fetchChannel } from './util/discordUtil';
 import { scheduleDailyTaxWelfareCronJob } from './taxes-welfare';
 import { scheduleDailiesCronJob } from './daily/dailyManager';
+import { ProfitType, ProfitsUpdate, updateProfits } from './sql/tables/profits';
 
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {
@@ -75,19 +76,21 @@ const pointMultiCap = 10;
 function createUpdateCringePointsCronJob(client: Client) {
     schedule.scheduleJob('*/10 * * * *', async function() {
         const cringePointUpdates: CringePointsUpdate[] = [];
+        const profitUpdates: ProfitsUpdate[] = [];
         for (const {bot, id} of client.users.cache.values()) {
             if (bot) continue;
-            const update = {userId: id, points: cringePointsPerUpdate};
+            let points = cringePointsPerUpdate;
             if (timeInVoice.userJoinTime[id]) {
                 let pointMultiplier = timeInVoice.userJoinTime[id].pointMultiplier;
-                update.points *= pointMultiplier;
+                points *= pointMultiplier;
                 if (pointMultiplier < pointMultiCap) {
                     timeInVoice.userJoinTime[id].pointMultiplier = pointMultiplier = Math.min(pointMultiplier + pointMultiInc, pointMultiCap);
                 }
             }
-            cringePointUpdates.push(update);
+            cringePointUpdates.push({userId: id, points});
+            profitUpdates.push({userId: id, type: ProfitType.Income, profit: points});
         }
-        await updateCringePoints(cringePointUpdates);
+        await Promise.all([updateCringePoints(cringePointUpdates), updateProfits(profitUpdates)]);
     });
 }
 

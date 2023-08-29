@@ -6,6 +6,7 @@ enum ProfitType {
     Blackjack = 'blackjack',
     DeathRoll = 'deathroll',
     Gamble = 'gamble',
+    Income = 'income',
     Lottery = 'lottery',
     Slots = 'slots',
     Steal = 'steal'
