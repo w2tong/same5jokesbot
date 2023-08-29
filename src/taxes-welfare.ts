@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder, MessageCreateOptions, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
-import { CringePointsUpdate, getAllUserCringePoints, updateCringePoints } from './sql/tables/cringe-points';
+import { CringePointsUpdate, getAllUserCringePoints, houseUserTransfer } from './sql/tables/cringe-points';
 import { emptyEmbedFieldInline, fetchChannel } from './util/discordUtil';
 
 const dailyTaxBracket: {[key: number]: number} = {
@@ -84,7 +84,6 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
             const tax = calculateDailyTax(POINTS);
             if (tax > 0) {
                 taxUpdates.push({userId: USER_ID, points: -tax});
-                taxUpdates.push({userId: process.env.CLIENT_ID, points: tax});
                 taxUserIds.push(USER_ID);
                 taxesBalances.push(`${POINTS.toLocaleString()} (${(-tax).toLocaleString()})`);
                 taxesNewBalances.push(`${(POINTS-tax).toLocaleString()}`);
@@ -92,7 +91,7 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
             taxesTotal += tax;
         }
         // Update user points with taxes
-        await updateCringePoints(taxUpdates);
+        await houseUserTransfer(taxUpdates);
         if (process.env.CASINO_CHANNEL_ID) {
             const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
             if (channel?.isTextBased()) await channel.send(createTaxesResponse(taxesTotal, taxUserIds, taxesBalances, taxesNewBalances));
@@ -117,7 +116,6 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
             else {
                 welfare = welfarePerUser;
             }
-            welfareUpdates.push({userId: process.env.CLIENT_ID, points: -welfare});
             welfareUpdates.push({userId: USER_ID, points: welfare});
             welfarePool -= welfare;
             welfareTotal += welfare;
@@ -126,7 +124,7 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
             welfareNewBalances.push(`${(POINTS + welfare).toLocaleString()}`);
         }
         // Update user points with welfare
-        await updateCringePoints(welfareUpdates);
+        await houseUserTransfer(welfareUpdates);
         if (process.env.CASINO_CHANNEL_ID) {
             const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
             if (channel?.isTextBased()) await channel.send(createWelfareResponse(welfareTotal, welfareUserIds, welfareBalances, welfareNewBalances));

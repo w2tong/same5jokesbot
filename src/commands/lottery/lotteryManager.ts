@@ -1,7 +1,7 @@
 import schedule from 'node-schedule';
 import { dateToDbString, getRandomRange } from '../../util/util';
 import { Lottery, getActiveLottery, getCurrentLottery, insertLottery, updateJackpot } from '../../sql/tables/lottery';
-import { getUserCringePoints, updateCringePoints } from '../../sql/tables/cringe-points';
+import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe-points';
 import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery-ticket';
 import { ChannelType, Client, EmbedBuilder, bold, roleMention, time, userMention } from 'discord.js';
 import { emptyEmbedFieldInline, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
@@ -119,9 +119,8 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
         }
     }
 
-    await updateCringePoints([{userId, points: -price}]);
+    await houseUserTransfer([{userId, points: -price}]);
     await updateProfits([{userId, type: ProfitType.Lottery, winnings: 0, losses: price}]);
-    if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: price}]);
     await updateJackpot(lottery.ID, price * 0.5);
     await insertLotteryTicket(lottery.ID, userId, numbers.join(','));
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
@@ -161,9 +160,8 @@ async function claimTickets(userId: string, username: string, lottery: Lottery, 
         ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings, jackpotWinnings });
         totalWinnings += winnings + jackpotWinnings;
     }
-    await updateCringePoints([{userId, points: totalWinnings}]);
+    if (totalWinnings > 0) await houseUserTransfer([{userId, points: totalWinnings}]);
     await updateProfits([{userId, type: ProfitType.Lottery, winnings: totalWinnings, losses: 0}]);
-    if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -totalWinnings}]);
     return {embed: createUserTicketsEmbed(username, totalWinnings, ticketWinnings), winnings: totalWinnings};
 }
 

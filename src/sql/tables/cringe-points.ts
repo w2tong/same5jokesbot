@@ -109,4 +109,19 @@ async function updateCringePoints(arr: Array<CringePointsUpdate>) {
     }
 }
 
-export { createTableCringePoints, getUserCringePoints, getTopCringePoints, getAllUserCringePoints, updateCringePoints, CringePointsUpdate };
+async function houseUserTransfer(arr: CringePointsUpdate[]) {
+    try {
+        if (!process.env.CLIENT_ID) return;
+        const updates: CringePointsUpdate[] = [];
+        for (const {userId, points} of arr) {
+            updates.push({userId, points});
+            updates.push({userId: process.env.CLIENT_ID, points: -points});
+        }
+        await updateCringePoints(updates);
+    }
+    catch (err) {
+        throw new Error(`houseUserTransfer: ${err}`);
+    }
+}
+
+export { createTableCringePoints, getUserCringePoints, getTopCringePoints, getAllUserCringePoints, updateCringePoints, houseUserTransfer, CringePointsUpdate };
