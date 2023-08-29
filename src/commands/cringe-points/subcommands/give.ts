@@ -29,8 +29,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     await interaction.deferReply();
     const recipientCringePoints = await getUserCringePoints(recipient.id) ?? 0;
-    void updateCringePoints([{userId: giver.id, points: -amount}]);
-    void updateCringePoints([{userId: recipient.id, points: amount}]);
+    await updateCringePoints([{userId: giver.id, points: -amount}]);
+    await updateCringePoints([{userId: recipient.id, points: amount}]);
     
     const embed = new EmbedBuilder()
         .setTitle(`${giver.username} gifted points to ${recipient.username}`)

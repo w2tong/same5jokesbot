@@ -101,7 +101,7 @@ async function resolveBet(userId: string, result: BetResult, client: Client): Pr
                 betProfitsUpdates.push({userId, type: ProfitType.Bet, winnings: 0, losses: points});
             }
         }
-        void updateCringePoints(cringePointUpdates);
+        await updateCringePoints(cringePointUpdates);
         void updateProfits(betProfitsUpdates);
         delete betManager[userId];
         

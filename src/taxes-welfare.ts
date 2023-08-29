@@ -126,7 +126,7 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
             welfareNewBalances.push(`${(POINTS + welfare).toLocaleString()}`);
         }
         // Update user points with welfare
-        void updateCringePoints(welfareUpdates);
+        await updateCringePoints(welfareUpdates);
         if (process.env.CASINO_CHANNEL_ID) {
             const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
             if (channel?.isTextBased()) await channel.send(createWelfareResponse(welfareTotal, welfareUserIds, welfareBalances, welfareNewBalances));

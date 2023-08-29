@@ -74,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     buttonCollector.on('end', async () => {
         if (deathRoll.isEnded()) {
             const {winnerId, loserId} = deathRoll.getResults();
-            void updateCringePoints([
+            await updateCringePoints([
                 {userId: winnerId, points: amount},
                 {userId: loserId, points: -amount}
             ]);

@@ -58,7 +58,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (profit >= 1000 && ((pointsBet / balance) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
-        void updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: profit, losses: 0}]);
+        await updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: profit, losses: 0}]);
     }
     else {
         title += 'LOST';
@@ -68,12 +68,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
-        void updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: 0, losses: pointsBet}]);
+        await updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: 0, losses: pointsBet}]);
     }
     // Update user Cringe points
-    void updateCringePoints([{userId: user.id, points: profit}]);
+    await updateCringePoints([{userId: user.id, points: profit}]);
     // Update house Cringe points
-    if (process.env.CLIENT_ID) void updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
+    if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
     gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.channelId);
 
     const embed = new EmbedBuilder()
