@@ -174,20 +174,28 @@ function calcJackpotPerTicket(winners: Array<JackpotWinner>, jackpot: number) {
 }
 
 function createUserTicketsEmbed(username: string, totalWinnings: number, ticketWinnings: Array<TicketWinnings>): EmbedBuilder {
+    let jackpot = false;
+    const tickets = [];
+    const winnings = [];
+    
+    for (let i = 0; i < ticketWinnings.length; i++) {
+        if (ticketWinnings[i].jackpotWinnings > 0) jackpot = true;
+        tickets.push(`${ticketWinnings[i].numbers.split(',').join(', ')}`);
+        winnings.push(`${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 ? `(+${ticketWinnings[i].jackpotWinnings.toLocaleString()})` : ''}`);
+    }
+
     const embed = new EmbedBuilder()
-        .setTitle(`${username}'s Lottery Winnings`)
+        .setTitle(`${username}'s Lottery Winnings ${jackpot ? '(JACKPOT)' : ''}`)
         .addFields(
             emptyEmbedFieldInline,
-            {name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`, inline: true},
             emptyEmbedFieldInline,
+            {name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`, inline: true},
+            
+            {name: 'Tickets', value: tickets.join('\n'), inline: true},
+            emptyEmbedFieldInline,
+            {name: 'Winnings', value: winnings.join('\n'), inline: true},
         );
-    for (let i = 0; i < ticketWinnings.length; i++) {
-        embed.addFields(
-            {name: `Ticket ${i+1}`, value: `${ticketWinnings[i].numbers.split(',').join(', ')}`, inline: true},
-            {name: `Winnings ${ticketWinnings[i].jackpotWinnings > 0 ? '(JACKPOT)' : ''}`, value: `${ticketWinnings[i].winnings.toLocaleString()} ${ticketWinnings[i].jackpotWinnings > 0 ? `(+${ticketWinnings[i].jackpotWinnings.toLocaleString()})` : ''}`, inline: true},
-            emptyEmbedFieldInline
-        );
-    }
+
     return embed;
 }
 
