@@ -39,7 +39,7 @@ interface TimeInVoice {
     USER_ID: string,
     MILLISECONDS: number;
 }
-async function getTimeInVoiceTogether(userId: string): Promise<Array<TimeInVoice>|null> {
+async function getTimeInVoiceTogether(userId: string): Promise<TimeInVoice[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TimeInVoice> = await connection.execute(getQuery, {userId}, selectExecuteOptions);
@@ -47,7 +47,7 @@ async function getTimeInVoiceTogether(userId: string): Promise<Array<TimeInVoice
         if (result && result.rows) {
             return result.rows;
         }
-        return null;
+        return [];
     }
     catch (err) {
         throw new Error(`getTimeInVoiceTogether: ${err}`);
@@ -61,7 +61,7 @@ SELECT :userId, :pairId FROM dual
 WHERE NOT EXISTS (SELECT NULL FROM user_id_pairs WHERE :userId = user_id AND :pairId = pair_id)
 `;
 
-async function insertUserPairs(arr: Array<PairInsert>) {
+async function insertUserPairs(arr: PairInsert[]) {
     if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();
@@ -89,7 +89,7 @@ MERGE INTO time_in_voice_together dest
 `;
 
 type TimeInVoiceTogetherUpdate = {userId1: string, userId2: string, guildId: string, startDate: string, time: number}
-async function updateTimeInVoiceTogether(arr: Array<TimeInVoiceTogetherUpdate>) {
+async function updateTimeInVoiceTogether(arr: TimeInVoiceTogetherUpdate[]) {
     if (arr.length === 0) return;
     try {
         const connection = await oracledb.getConnection();

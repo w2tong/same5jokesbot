@@ -72,8 +72,8 @@ async function resolveBet(userId: string, result: BetResult, client: Client): Pr
         const noTotal = bet.getNoTotal();
         const yesBettersList = [];
         const noBettersList = [];
-        const cringePointUpdates: Array<CringePointsUpdate> = [];
-        const betProfitsUpdates: Array<ProfitsUpdate> = [];
+        const cringePointUpdates: CringePointsUpdate[] = [];
+        const betProfitsUpdates: ProfitsUpdate[] = [];
         
         if (result === BetResult.Yes) {
             for (const [userId, points] of Object.entries(yesBetters).sort(sortBettersDesc)) {

@@ -27,7 +27,7 @@ function createUpdateTimeInVoiceCronJob() {
     schedule.scheduleJob('*/15 * * * *', function() {
         const currTime = Date.now();
         const userJoinTime = timeInVoice.userJoinTime;
-        const timeInVoiceUpdates: Array<TimeInVoiceUpdate> = [];
+        const timeInVoiceUpdates: TimeInVoiceUpdate[] = [];
         for (const [userId, {guildId, time}] of Object.entries(userJoinTime)) {
             const startDate = new Date(time).toISOString().slice(0, 10);
             timeInVoiceUpdates.push({userId, guildId, startDate, time: currTime - time});
@@ -40,7 +40,7 @@ function createUpdateTimeInVoiceCronJob() {
 function createUpdateTimeInVoiceTogetherCronJob() {
     schedule.scheduleJob('*/15 * * * *', function() {
         const currTime = Date.now();
-        const channelUserMap: { [key: string]: Array<string> } = {};
+        const channelUserMap: { [key: string]: string[] } = {};
         const userJoinTime = timeInVoice.userJoinTime;
 
         for (const userId of Object.keys(userJoinTime)) {
@@ -52,8 +52,8 @@ function createUpdateTimeInVoiceTogetherCronJob() {
             }
         }
 
-        const pairInserts: Array<PairInsert> = [];
-        const timeInVoiceTogetherUpdates: Array<TimeInVoiceTogetherUpdate> = [];
+        const pairInserts: PairInsert[] = [];
+        const timeInVoiceTogetherUpdates: TimeInVoiceTogetherUpdate[] = [];
         for (const users of Object.values(channelUserMap)) {
             for (let i = 0; i < users.length - 1; i++) {
                 for (let j = i + 1; j < users.length; j++) {
@@ -74,7 +74,7 @@ const pointMultiInc = 2;
 const pointMultiCap = 10;
 function createUpdateCringePointsCronJob(client: Client) {
     schedule.scheduleJob('*/10 * * * *', async function() {
-        const cringePointUpdates: Array<CringePointsUpdate> = [];
+        const cringePointUpdates: CringePointsUpdate[] = [];
         for (const {bot, id} of client.users.cache.values()) {
             if (bot) continue;
             const update = {userId: id, points: cringePointsPerUpdate};

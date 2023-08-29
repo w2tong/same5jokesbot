@@ -27,7 +27,7 @@ interface AudioCount {
     AUDIO: string;
     COUNT: number;
 }
-async function getAudioCountUserTotal(userId: string): Promise<Array<AudioCount>|null> {
+async function getAudioCountUserTotal(userId: string): Promise<AudioCount[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<AudioCount> = await connection.execute(getUserTotalQuery, {userId}, selectExecuteOptions);
@@ -35,7 +35,7 @@ async function getAudioCountUserTotal(userId: string): Promise<Array<AudioCount>
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
-        return null;
+        return [];
     }
     catch (err) {
         throw new Error(`getAudioCountUserTotal: ${err}`);
@@ -50,7 +50,7 @@ ORDER BY count DESC
 FETCH FIRST 50 ROWS ONLY
 `;
 
-async function getAudioCountTotal(): Promise<Array<AudioCount>|null> {
+async function getAudioCountTotal(): Promise<AudioCount[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<AudioCount> = await connection.execute(getTotalQuery, {}, selectExecuteOptions);
@@ -58,7 +58,7 @@ async function getAudioCountTotal(): Promise<Array<AudioCount>|null> {
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows;
         }
-        return null;
+        return [];
     }
     catch (err) {
         throw new Error(`getAudioCountTotal: ${err}`);

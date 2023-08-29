@@ -71,7 +71,7 @@ interface TopDisperseStreakBreaks {
     BREAKS: number;
     SCORE: number;
 }
-async function getTopDisperseStreakBreaks(): Promise<Array<TopDisperseStreakBreaks>> {
+async function getTopDisperseStreakBreaks(): Promise<TopDisperseStreakBreaks[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<TopDisperseStreakBreaks> = await connection.execute(getTopDisperseStreakBreaksQuery, {}, selectExecuteOptions);

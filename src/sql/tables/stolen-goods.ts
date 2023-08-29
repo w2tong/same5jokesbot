@@ -26,7 +26,7 @@ interface StolenGood {
     POINTS: number;
     TIME: string;
 }
-async function getStolenGoods(): Promise<Array<StolenGood>> {
+async function getStolenGoods(): Promise<StolenGood[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<StolenGood> = await connection.execute(getQuery, {}, selectExecuteOptions);
@@ -99,7 +99,7 @@ FROM stolen_goods
 WHERE user_id = :userId
 ORDER BY time ASC
 `;
-async function getUserStolenGoods(userId: string): Promise<Array<StolenGood>> {
+async function getUserStolenGoods(userId: string): Promise<StolenGood[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<StolenGood> = await connection.execute(getUserQuery, {userId}, selectExecuteOptions);

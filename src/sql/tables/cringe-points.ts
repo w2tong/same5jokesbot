@@ -47,7 +47,7 @@ interface CringePointsUser extends CringePoints {
     USER_ID: string;
 }
 
-async function getTopCringePoints(): Promise<Array<CringePointsUser>> {
+async function getTopCringePoints(): Promise<CringePointsUser[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<CringePointsUser> = await connection.execute(getTopQuery, {}, selectExecuteOptions);
@@ -69,7 +69,7 @@ WHERE user_id != ${process.env.CLIENT_ID}
 ORDER BY points DESC
 `;
 
-async function getAllUserCringePoints(): Promise<Array<CringePointsUser>> {
+async function getAllUserCringePoints(): Promise<CringePointsUser[]> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<CringePointsUser> = await connection.execute(getAllUserQuery, {}, selectExecuteOptions);

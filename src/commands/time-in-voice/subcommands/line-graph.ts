@@ -4,7 +4,7 @@ import { getUserLast30DaysTimeInVoice } from '../../../sql/tables/time-in-voice'
 import { createMediumChartBuffer } from '../../../util/chart';
 import { timeInMS } from '../../../util/util';
 
-function createChartConfiguration(username: string, days: Array<string>, times: Array<number>): ChartConfiguration {
+function createChartConfiguration(username: string, days: string[], times: number[]): ChartConfiguration {
     return {
         type: 'line',
         data: {
@@ -74,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
     const rows = await getUserLast30DaysTimeInVoice(user.id, interaction.guildId);
-    if (rows) {
+    if (rows.length > 0) {
         // Create map of day to milliseconds
         const rowsMap: { [key: string]: number } = {};
         for (const row of rows) {
@@ -82,7 +82,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
 
         // Create arrays for last 30 days and time in voice
-        const days: Array<string> = [];
+        const days: string[] = [];
         const times = new Array<number>(30).fill(0);
         const currDay = new Date(new Date().toDateString());
         currDay.setDate(currDay.getDate() - 30);

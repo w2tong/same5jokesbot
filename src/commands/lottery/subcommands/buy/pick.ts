@@ -4,7 +4,7 @@ import lotteryManager from '../../lotteryManager';
 async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     await interaction.deferReply({ephemeral: true});
-    const nums: Array<number> = [];
+    const nums: number[] = [];
     for (let i = 1; i <= lotteryManager.choose; i++) {
         const num = interaction.options.getInteger(`num${i}`);
         if (!num) {

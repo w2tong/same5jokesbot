@@ -13,7 +13,7 @@ class DeathRoll {
     private startingRoll: number;
     private currentRoll: number;
     private turnUser: User;
-    private rollHistory: Array<Roll> = [];
+    private rollHistory: Roll[] = [];
     private expired = false;
     private static _idleTimeout: number = 60 * timeInMS.minute;
 

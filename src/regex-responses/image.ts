@@ -15,8 +15,8 @@ const regexToImage = [
     }
 ];
 
-export default (command: string): Array<string> => {
-    const images: Array<string> = [];
+export default (command: string): string[] => {
+    const images: string[] = [];
     for (const regexImage of regexToImage) {
         if (regexImage.regex.test(command)) {
             try {

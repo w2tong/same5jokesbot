@@ -100,7 +100,7 @@ function scheduleEndLotteryCronJob(client: Client) {
     });
 }
 
-async function buyTicket(userId: string, numbers: Array<number>): Promise<{success: boolean, res: string}> {
+async function buyTicket(userId: string, numbers: number[]): Promise<{success: boolean, res: string}> {
     const lottery = await getActiveLottery();
     if (!lottery) return {success: false, res: 'There isn\'t an active lottery.'};
 
@@ -126,7 +126,7 @@ async function buyTicket(userId: string, numbers: Array<number>): Promise<{succe
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
 
-async function checkTickets(userId: string, username: string): Promise<{reply: {content: string, embeds: Array<EmbedBuilder>}, winnings: number}> {
+async function checkTickets(userId: string, username: string): Promise<{reply: {content: string, embeds: EmbedBuilder[]}, winnings: number}> {
 
     const lottery = await getCurrentLottery();
     if (!lottery) return {reply: {content: 'There is currently no lottery', embeds: []}, winnings: 0};
@@ -148,9 +148,9 @@ async function checkTickets(userId: string, username: string): Promise<{reply: {
 }
 
 type TicketWinnings = {numbers: string, winnings: number, jackpotWinnings: number};
-async function claimTickets(userId: string, username: string, lottery: Lottery, tickets: Array<LotteryTicket>, jackpot: number): Promise<{embed: EmbedBuilder, winnings: number}> {
+async function claimTickets(userId: string, username: string, lottery: Lottery, tickets: LotteryTicket[], jackpot: number): Promise<{embed: EmbedBuilder, winnings: number}> {
     let totalWinnings = 0;
-    const ticketWinnings: Array<TicketWinnings> = [];
+    const ticketWinnings: TicketWinnings[] = [];
     const lotteryNumbers = lottery.NUMBERS.split(',');
     for (let i = 0; i < tickets.length; i++) {
         const ticketNumbers = tickets[i].NUMBERS.split(',');
@@ -165,13 +165,13 @@ async function claimTickets(userId: string, username: string, lottery: Lottery, 
     return {embed: createUserTicketsEmbed(userId, username, totalWinnings, ticketWinnings), winnings: totalWinnings};
 }
 
-function calcJackpotPerTicket(winners: Array<JackpotWinner>, jackpot: number) {
+function calcJackpotPerTicket(winners: JackpotWinner[], jackpot: number) {
     if (jackpot === 0) return 0;
     const totalTickets = winners.reduce((total, user) => total + user.COUNT, 0);
     return totalTickets > 0 ? Math.ceil(jackpot/totalTickets) : jackpot;
 }
 
-function createUserTicketsEmbed(userId: string, username: string, totalWinnings: number, ticketWinnings: Array<TicketWinnings>): EmbedBuilder {
+function createUserTicketsEmbed(userId: string, username: string, totalWinnings: number, ticketWinnings: TicketWinnings[]): EmbedBuilder {
     let jackpot = false;
     const tickets = [];
     const winnings = [];
@@ -196,7 +196,7 @@ function createUserTicketsEmbed(userId: string, username: string, totalWinnings:
     return embed;
 }
 
-function createLotteryResultsEmbed(lottery: Lottery, winners: Array<JackpotWinner>, jackpotPerTicket: number): EmbedBuilder {
+function createLotteryResultsEmbed(lottery: Lottery, winners: JackpotWinner[], jackpotPerTicket: number): EmbedBuilder {
     const winnersFieldValue = winners.map(winner => {
         return `${userMention(winner.USER_ID)} (+${(jackpotPerTicket*winner.COUNT).toLocaleString()})`;
     }).join('\n');

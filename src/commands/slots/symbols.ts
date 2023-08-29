@@ -37,7 +37,7 @@ const symbols = [
 ];
 
 type SpecialSymbol = {mult: number, freeSpins: number, emote: GuildEmoji|string, backupEmote: string}
-const specialSymbols: {[key: number]: Array<SpecialSymbol>} = {
+const specialSymbols: {[key: number]: SpecialSymbol[]} = {
     0.1: [
         {mult: 1000, freeSpins: 0, emote: '', backupEmote: '📖'},
     ],

@@ -27,8 +27,8 @@ function userJoin(userId: string, channelId: string, guildId: string) {
 function updatePairs(userId: string) {
     if (!userJoinTime[userId]) return;
     const usersSameInChannel = Object.keys(userJoinTime).filter(id => userJoinTime[id].channelId === userJoinTime[userId].channelId && id !== userId);
-    const pairInserts: Array<PairInsert> = [];
-    const timeInVoiceTogetherUpdates: Array<TimeInVoiceTogetherUpdate> = [];
+    const pairInserts: PairInsert[] = [];
+    const timeInVoiceTogetherUpdates: TimeInVoiceTogetherUpdate[] = [];
     const currentTime = Date.now();
     for (const otherUserId of usersSameInChannel) {
         pairInserts.push({userId1: userId, userId2: otherUserId});

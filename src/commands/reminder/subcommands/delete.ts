@@ -9,7 +9,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ephemeral: true});
     const userId = interaction.user.id;
     const reminders = await getUserReminders(userId);
-    const embeds: Array<EmbedBuilder> = [];
+    const embeds: EmbedBuilder[] = [];
     const row = new ActionRowBuilder<ButtonBuilder>();
     const deleteCustomId = `delete-${nanoid()}`;
     for (let i = 0; i < reminders.length; i++) {
