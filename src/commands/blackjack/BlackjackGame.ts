@@ -108,7 +108,7 @@ class BlackjackGame {
         else if (result === EndGameResults.Lose) {
             profit = -this.wager;
         }
-        if (profit > 0) await houseUserTransfer([{userId: this.userId, points: profit}]);
+        if (profit !== 0) await houseUserTransfer([{userId: this.userId, points: profit}]);
         this.result = result;
         this.ended = true;
         blackjackEmitter.emit('end', this.userId, this.wager, profit, this.channels, this.channelId);
