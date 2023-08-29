@@ -5,6 +5,13 @@ import Hand from '../../cards/Hand';
 import { emptyEmbedField, emptyEmbedFieldInline } from '../../util/discordUtil';
 import { updateCringePoints } from '../../sql/tables/cringe-points';
 import { timeInMS } from '../../util/util';
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
+
+type BlackjackEvents = {
+    end: (userId: string, wager: number, profit: number, channelId: string) => Promise<void>
+  }
+const blackjackEmitter = new EventEmitter() as TypedEmitter<BlackjackEvents>;
 
 const maxWager = 1_000_000;
 const maxDecks = 100;
@@ -57,8 +64,9 @@ class BlackjackGame {
     private result: EndGameResult|undefined;
     private payout: number = 0;
     private static _idleTimeout: number = 15 * timeInMS.minute;
+    private channelId: string;
 
-    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number) {
+    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number, channelId: string) {
         this.userId = userId;
         this.username = username;
         this.wager = wager;
@@ -67,6 +75,7 @@ class BlackjackGame {
         this.balance = balance;
         this.playerHand = new Hand(userId);
         this.payout = wager;
+        this.channelId = channelId;
     }
 
     async startGame() {
@@ -90,16 +99,20 @@ class BlackjackGame {
     }
 
     async endGame(result: EndGameResult) {
+        let profit = 0;
         if (result === EndGameResults.Win) {
+            profit = this.payout;
             await updateCringePoints([{userId: this.userId, points: this.payout}]);
             if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.payout}]);
         }
         else if (result === EndGameResults.Lose) {
+            profit = -this.wager;
             await updateCringePoints([{userId: this.userId, points: -this.wager}]);
             if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
         }
         this.result = result;
         this.ended = true;
+        blackjackEmitter.emit('end', this.userId, this.wager, profit, this.channelId);
     }
 
     async input(option: PlayerOption): Promise<{valid: boolean, msg?: string}> {
@@ -265,4 +278,4 @@ class BlackjackGame {
 }
 
 export default BlackjackGame;
-export { maxWager, maxDecks, PlayerOption, PlayerOptions };
+export { maxWager, maxDecks, PlayerOption, PlayerOptions, blackjackEmitter };

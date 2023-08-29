@@ -24,7 +24,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const blackjack = new BlackjackGame(interaction.user.id, interaction.user.username, numOfDecks, wager, balance);
+    const blackjack = new BlackjackGame(interaction.user.id, interaction.user.username, numOfDecks, wager, balance, interaction.channelId);
     await blackjack.startGame();
     if (blackjack.isEnded()) {
         await interaction.editReply({embeds: [blackjack.createEmbed()]});

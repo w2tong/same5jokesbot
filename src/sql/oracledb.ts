@@ -15,8 +15,9 @@ import { createTableLotteryTicket } from './tables/lottery-ticket';
 import { createTableProfits } from './tables/profits';
 import { createTableStolenGoods } from './tables/stolen-goods';
 import { logError } from '../logger';
+import { createTableDailyProgress } from './tables/daily-progress';
 
-const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods];
+const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress];
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
 oracledb.autoCommit = true;
