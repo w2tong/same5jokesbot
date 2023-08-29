@@ -93,7 +93,7 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
         // Update user points with taxes
         await houseUserTransfer(taxUpdates);
         if (process.env.CASINO_CHANNEL_ID) {
-            const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
+            const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
             if (channel?.isTextBased()) await channel.send(createTaxesResponse(taxesTotal, taxUserIds, taxesBalances, taxesNewBalances));
         }
 
@@ -126,7 +126,7 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
         // Update user points with welfare
         await houseUserTransfer(welfareUpdates);
         if (process.env.CASINO_CHANNEL_ID) {
-            const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
+            const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
             if (channel?.isTextBased()) await channel.send(createWelfareResponse(welfareTotal, welfareUserIds, welfareBalances, welfareNewBalances));
         }
     });

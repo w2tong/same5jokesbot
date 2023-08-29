@@ -36,7 +36,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             {name: 'New Balance', value: `${(points-price).toLocaleString()}`, inline: true}
         );
 
-    const owner = await fetchUser(interaction.client.users, process.env.OWNER_USER_ID);
+    const owner = await fetchUser(interaction.client, process.env.OWNER_USER_ID);
     await owner.send({embeds: [embed]});
     await interaction.editReply({embeds: [embed]});
     await updateCringePoints([{userId: user.id, points: -price}, {userId: process.env.CLIENT_ID, points: price}]);

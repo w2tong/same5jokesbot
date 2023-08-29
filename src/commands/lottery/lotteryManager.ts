@@ -33,7 +33,7 @@ function scheduleNewLotteryCronJob(client: Client) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: startTime, tz: 'America/Toronto' }, async function() {
         const lottery = await getCurrentLottery();
         if (!process.env.CASINO_CHANNEL_ID) return;
-        const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
+        const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
         if (!channel || channel.type !== ChannelType.GuildText) return;
 
         // End current lottery
@@ -47,7 +47,7 @@ function scheduleNewLotteryCronJob(client: Client) {
                 const embedPromises = [];
                 const claimLotteryTicketsUpdates = [];
                 for (let i = 0; i < unclaimedUsers.length; i++) {
-                    const user = await fetchUser(client.users, unclaimedUsers[i][0]);
+                    const user = await fetchUser(client, unclaimedUsers[i][0]);
                     if (!user) continue;
                     const tickets = await getUserLotteryTickets(user.id, lottery.ID);
                     if (!tickets) continue;
@@ -85,7 +85,7 @@ function scheduleEndLotteryCronJob(client: Client) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: startTime + lotteryLengthHours, tz: 'America/Toronto' }, async function() {
         const lottery = await getCurrentLottery();
         if (!process.env.CASINO_CHANNEL_ID) return;
-        const channel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
+        const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
         if (!channel || channel.type !== ChannelType.GuildText) return;
 
         if (lottery) {

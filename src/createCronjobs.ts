@@ -13,7 +13,7 @@ import { scheduleDailiesCronJob } from './daily/dailyManager';
 // Weekly Tuesday reminder
 function createTuesdayScheduleCronJob(client: Client, channelId: string) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: 21, dayOfWeek: 2, tz: 'America/Toronto' }, async function() {
-        const channel = await fetchChannel(client.channels, channelId);
+        const channel = await fetchChannel(client, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
             channel.send('Where 10.1.5').catch(logError);
         }

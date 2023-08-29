@@ -1,4 +1,4 @@
-import { ChannelManager, EmbedBuilder, time, userMention } from 'discord.js';
+import { Client, EmbedBuilder, time, userMention } from 'discord.js';
 import { Value } from '../../cards/Card';
 import Deck from '../../cards/Deck';
 import Hand from '../../cards/Hand';
@@ -10,7 +10,7 @@ import TypedEmitter from 'typed-emitter';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 
 type BlackjackEvents = {
-    end: (userId: string, wager: number, profit: number, channels: ChannelManager, channelId: string) => Promise<void>
+    end: (userId: string, wager: number, profit: number, client: Client, channelId: string) => Promise<void>
   }
 const blackjackEmitter = new EventEmitter() as TypedEmitter<BlackjackEvents>;
 
@@ -65,10 +65,10 @@ class BlackjackGame {
     private result: EndGameResult|undefined;
     private payout: number = 0;
     private static _idleTimeout: number = 15 * timeInMS.minute;
-    private channels: ChannelManager;
+    private client: Client;
     private channelId: string;
 
-    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number, channels: ChannelManager, channelId: string) {
+    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number, client: Client, channelId: string) {
         this.userId = userId;
         this.username = username;
         this.wager = wager;
@@ -77,7 +77,7 @@ class BlackjackGame {
         this.balance = balance;
         this.playerHand = new Hand(userId);
         this.payout = wager;
-        this.channels = channels;
+        this.client = client;
         this.channelId = channelId;
     }
 
@@ -118,7 +118,7 @@ class BlackjackGame {
         
         this.result = result;
         this.ended = true;
-        blackjackEmitter.emit('end', this.userId, this.wager, profit, this.channels, this.channelId);
+        blackjackEmitter.emit('end', this.userId, this.wager, profit, this.client, this.channelId);
     }
 
     async input(option: PlayerOption): Promise<{valid: boolean, msg?: string}> {

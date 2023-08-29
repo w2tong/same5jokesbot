@@ -28,7 +28,7 @@ function scheduleReminder(channel: TextChannel, date: Date, message: string, id?
 async function loadReminders(client: Client) {
     const reminders = await getReminders();
     for (const reminder of reminders) {
-        const channel = await fetchChannel(client.channels, reminder.CHANNEL_ID);
+        const channel = await fetchChannel(client, reminder.CHANNEL_ID);
         const date = new Date(`${reminder.TIME} UTC`);
         if (date < new Date() || !channel) {
             void deleteReminder(reminder.ID);

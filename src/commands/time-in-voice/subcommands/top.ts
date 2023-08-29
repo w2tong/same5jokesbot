@@ -79,7 +79,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const users = [];
         const times = [];
         for (const {USER_ID, MILLISECONDS} of audioCount) {
-            users.push(fetchUser(interaction.client.users, USER_ID));
+            users.push(fetchUser(interaction.client, USER_ID));
             times.push(MILLISECONDS/timeInMS.hour);
         }
         const usernames = (await Promise.all(users)).map(user => user.username);
