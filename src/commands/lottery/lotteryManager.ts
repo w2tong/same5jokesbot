@@ -162,7 +162,7 @@ async function claimTickets(userId: string, username: string, lottery: Lottery, 
     }
     if (totalWinnings > 0) await houseUserTransfer([{userId, points: totalWinnings}]);
     await updateProfits([{userId, type: ProfitType.Lottery, winnings: totalWinnings, losses: 0}]);
-    return {embed: createUserTicketsEmbed(username, totalWinnings, ticketWinnings), winnings: totalWinnings};
+    return {embed: createUserTicketsEmbed(userId, username, totalWinnings, ticketWinnings), winnings: totalWinnings};
 }
 
 function calcJackpotPerTicket(winners: Array<JackpotWinner>, jackpot: number) {
@@ -171,7 +171,7 @@ function calcJackpotPerTicket(winners: Array<JackpotWinner>, jackpot: number) {
     return totalTickets > 0 ? Math.ceil(jackpot/totalTickets) : jackpot;
 }
 
-function createUserTicketsEmbed(username: string, totalWinnings: number, ticketWinnings: Array<TicketWinnings>): EmbedBuilder {
+function createUserTicketsEmbed(userId: string, username: string, totalWinnings: number, ticketWinnings: Array<TicketWinnings>): EmbedBuilder {
     let jackpot = false;
     const tickets = [];
     const winnings = [];
@@ -185,12 +185,11 @@ function createUserTicketsEmbed(username: string, totalWinnings: number, ticketW
     const embed = new EmbedBuilder()
         .setTitle(`${username}'s Lottery Winnings ${jackpot ? '(JACKPOT)' : ''}`)
         .addFields(
-            emptyEmbedFieldInline,
-            emptyEmbedFieldInline,
+            {name: 'User', value: userMention(userId)},
             {name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`, inline: true},
+            emptyEmbedFieldInline,
             
             {name: 'Tickets', value: tickets.join('\n'), inline: true},
-            emptyEmbedFieldInline,
             {name: 'Winnings', value: winnings.join('\n'), inline: true},
         );
 
