@@ -9,7 +9,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type BlackjackEvents = {
-    end: (userId: string, profit: number) => Promise<void>
+    end: (userId: string, wager: number, profit: number, channelId: string) => Promise<void>
   }
 const blackjackEmitter = new EventEmitter() as TypedEmitter<BlackjackEvents>;
 
@@ -64,8 +64,9 @@ class BlackjackGame {
     private result: EndGameResult|undefined;
     private payout: number = 0;
     private static _idleTimeout: number = 15 * timeInMS.minute;
+    private channelId: string;
 
-    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number) {
+    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number, channelId: string) {
         this.userId = userId;
         this.username = username;
         this.wager = wager;
@@ -74,6 +75,7 @@ class BlackjackGame {
         this.balance = balance;
         this.playerHand = new Hand(userId);
         this.payout = wager;
+        this.channelId = channelId;
     }
 
     async startGame() {
@@ -110,7 +112,7 @@ class BlackjackGame {
         }
         this.result = result;
         this.ended = true;
-        blackjackEmitter.emit('end', this.userId, profit);
+        blackjackEmitter.emit('end', this.userId, this.wager, profit, this.channelId);
     }
 
     async input(option: PlayerOption): Promise<{valid: boolean, msg?: string}> {

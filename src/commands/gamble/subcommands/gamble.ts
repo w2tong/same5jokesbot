@@ -8,7 +8,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type GambleEvents = {
-    end: (userId: string, profit: number) => Promise<void>
+    end: (userId: string, wager: number, profit: number, channelId: string) => Promise<void>
   }
 const gambleEmitter = new EventEmitter() as TypedEmitter<GambleEvents>;
 
@@ -74,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     void updateCringePoints([{userId: user.id, points: profit}]);
     // Update house Cringe points
     if (process.env.CLIENT_ID) void updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
-    gambleEmitter.emit('end', user.id, profit);
+    gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.channelId);
 
     const embed = new EmbedBuilder()
         .setTitle(title)

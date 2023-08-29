@@ -101,3 +101,5 @@ client.once(Events.ClientReady, async () => {
 // client.on(Events.ShardError, err => {
 //     logError(err);
 // });
+
+export default client;

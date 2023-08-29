@@ -19,7 +19,7 @@ const dailies: {[key in DailyId]: Daily} = {
         reward: 25_000
     },
     bjProfit: {
-        description: `Win ${100_000} points in Blackjack games.`,
+        description: `Win ${(100_000).toLocaleString()} points in Blackjack games.`,
         maxProgress: 100_000,
         reward: 25_000
     },
@@ -31,11 +31,11 @@ const dailies: {[key in DailyId]: Daily} = {
     },
     gWin: {
         description: `Gamble and win ${3} times.`,
-        maxProgress: 5,
+        maxProgress: 3,
         reward: 25_000
     },
     gProfit: {
-        description: `Gamble and win ${100_000} points.`,
+        description: `Gamble and win ${(100_000).toLocaleString()} points.`,
         maxProgress: 100_000,
         reward: 25_000
     }
