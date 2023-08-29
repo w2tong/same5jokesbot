@@ -1,10 +1,11 @@
 import { Collection, EmbedBuilder, InteractionEditReplyOptions, bold, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { dateToDbString, timeInMS } from '../../util/util';
-import { CringePointsUpdate, getUserCringePoints, updateCringePoints } from '../../sql/tables/cringe-points';
+import { CringePointsUpdate, getUserCringePoints, houseUserTransfer, updateCringePoints } from '../../sql/tables/cringe-points';
 import { deleteStolenGood, deleteUserStolenGoods, getStolenGoods, insertStolenGood } from '../../sql/tables/stolen-goods';
 import { nanoid } from 'nanoid';
 import { emptyEmbedFieldInline } from '../../util/discordUtil';
+import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';
 
 const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Collection();
 const stolenTime = timeInMS.minute * 15;
@@ -47,35 +48,45 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
     const userStolenGoods = stolenGoods.get(stealerId);
     if (userStolenGoods && userStolenGoods.size > 0) {
         const stealerPoints = await getUserCringePoints(stealerId) ?? 0;
-        const updates: CringePointsUpdate[] = [];
+        const profitUpdates: ProfitsUpdate[] = [];
         let pointsForfeitTotal = 0;
         const victims = [];
         const pointsForfeit = [];
         const times = [];
+        
         if (!house) {
+            const updates: CringePointsUpdate[] = [];
             for (const {victimId, points, time} of userStolenGoods.values()) {
                 const pointsExtraPc = Math.round(points * extraPc);
                 updates.push(
                     {userId: victimId, points: points + pointsExtraPc},
                     {userId: stealerId, points: -(points + pointsExtraPc)}
                 );
+                profitUpdates.push(
+                    {userId: victimId, type: ProfitType.Steal, profit: points + pointsExtraPc},
+                    {userId: stealerId, type: ProfitType.Steal, profit: -(points + pointsExtraPc)}
+                );
                 victims.push(userMention(victimId));
                 pointsForfeitTotal += points + pointsExtraPc;
                 pointsForfeit.push(`${points.toLocaleString()} (+${pointsExtraPc.toLocaleString()})`);
                 times.push(time);
             }
+            await updateCringePoints(updates);
         }
         else {
+            const updates: CringePointsUpdate[] = [];
             for (const {victimId, points, time} of userStolenGoods.values()) {
-                if (process.env.CLIENT_ID) updates.push({userId: process.env.CLIENT_ID, points: points});
                 updates.push({userId: stealerId, points: -points});
+                profitUpdates.push({userId: stealerId, type: ProfitType.Steal, profit: -points});
                 victims.push(userMention(victimId));
                 pointsForfeitTotal += points;
                 pointsForfeit.push(`${points.toLocaleString()}`);
                 times.push(time);
             }
+            await houseUserTransfer(updates);
         }
-        await updateCringePoints(updates);
+        
+        await updateProfits(profitUpdates);
         userStolenGoods.clear();
         const embed = new EmbedBuilder()
             .setTitle(`${stealerUsername} steal from ${victimUsername} ${bold('FAILED')}`)
@@ -125,10 +136,17 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     const time = Date.now() + stolenTime;
     const stolenGoodId = nanoid();
     addStolenGood(stolenGoodId, stealerId, victimId, amount, time);
-    await updateCringePoints([
-        {userId: victimId, points: -amount},
-        {userId: stealerId, points: amount}
+    await Promise.all([
+        await updateCringePoints([
+            {userId: stealerId, points: amount},
+            {userId: victimId, points: -amount}
+        ]),
+        await updateProfits([
+            {userId: stealerId, type: ProfitType.Steal, profit: amount},
+            {userId: victimId, type: ProfitType.Steal, profit: -amount},
+        ])
     ]);
+    
     // Fail
     if (result >= 0 && result < 0.55) {
         return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, victimExtraPc, false, amount);

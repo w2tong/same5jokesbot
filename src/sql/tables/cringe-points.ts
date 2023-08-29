@@ -96,7 +96,7 @@ MERGE INTO cringe_points dest
 `;
 
 type CringePointsUpdate = { userId: string, points: number }
-async function updateCringePoints(arr: Array<CringePointsUpdate>) {
+async function updateCringePoints(arr: CringePointsUpdate[]) {
     try {
         const connection = await oracledb.getConnection();
         for (const {userId, points} of arr) {
