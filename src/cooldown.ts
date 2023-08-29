@@ -29,10 +29,10 @@ class RewardCooldown extends Cooldown {
         this.points = points;
     }
 
-    reward(userId: string) {
+    async reward(userId: string) {
         if (this.onCooldown(userId)) return;
         this.setCooldown(userId);
-        void updateCringePoints([{userId, points: this.points}]);
+        await updateCringePoints([{userId, points: this.points}]);
     }
 }
 

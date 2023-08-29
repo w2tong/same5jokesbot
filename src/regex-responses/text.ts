@@ -82,7 +82,7 @@ const regexToText = [
             if (res === 'Disperse!') {
                 const streak = disperseCurrentStreak.STREAK+1;
                 if (streak > 1) {
-                    void updateCringePoints([{userId, points: disperseRewardBase * (disperseRewardMultiplier ** (streak-2))}]);
+                    await updateCringePoints([{userId, points: disperseRewardBase * (disperseRewardMultiplier ** (streak-2))}]);
                 }
                 const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 const userIds = (disperseCurrentStreak.STREAK === 0) ? userId : `${disperseCurrentStreak.USER_IDS},${userId}`;

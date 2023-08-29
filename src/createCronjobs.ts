@@ -73,7 +73,7 @@ const cringePointsPerUpdate = 50;
 const pointMultiInc = 2;
 const pointMultiCap = 10;
 function createUpdateCringePointsCronJob(client: Client) {
-    schedule.scheduleJob('*/10 * * * *', function() {
+    schedule.scheduleJob('*/10 * * * *', async function() {
         const cringePointUpdates: Array<CringePointsUpdate> = [];
         for (const {bot, id} of client.users.cache.values()) {
             if (bot) continue;
@@ -87,7 +87,7 @@ function createUpdateCringePointsCronJob(client: Client) {
             }
             cringePointUpdates.push(update);
         }
-        void updateCringePoints(cringePointUpdates);
+        await updateCringePoints(cringePointUpdates);
     });
 }
 

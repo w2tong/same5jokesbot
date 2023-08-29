@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
+import { ChannelManager, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { emptyEmbedFieldInline } from '../../../util/discordUtil';
@@ -8,7 +8,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type GambleEvents = {
-    end: (userId: string, wager: number, profit: number, channelId: string) => Promise<void>
+    end: (userId: string, wager: number, profit: number, channels: ChannelManager, channelId: string) => Promise<void>
   }
 const gambleEmitter = new EventEmitter() as TypedEmitter<GambleEvents>;
 
@@ -58,7 +58,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (profit >= 1000 && ((pointsBet / balance) >= 0.1 || chance === 10 || chance === 1)) {
             joinVoicePlayAudio(interaction, audio.winnerGagnant);
         }
-        void updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: profit, losses: 0}]);
+        await updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: profit, losses: 0}]);
     }
     else {
         title += 'LOST';
@@ -68,13 +68,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (newBalance <= 0) {
             joinVoicePlayAudio(interaction, audio.clownMusic);
         }
-        void updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: 0, losses: pointsBet}]);
+        await updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: 0, losses: pointsBet}]);
     }
     // Update user Cringe points
-    void updateCringePoints([{userId: user.id, points: profit}]);
+    await updateCringePoints([{userId: user.id, points: profit}]);
     // Update house Cringe points
-    if (process.env.CLIENT_ID) void updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
-    gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.channelId);
+    if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
+    gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.client.channels, interaction.channelId);
 
     const embed = new EmbedBuilder()
         .setTitle(title)
