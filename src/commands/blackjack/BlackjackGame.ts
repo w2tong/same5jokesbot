@@ -3,7 +3,7 @@ import { Value } from '../../cards/Card';
 import Deck from '../../cards/Deck';
 import Hand from '../../cards/Hand';
 import { emptyEmbedField, emptyEmbedFieldInline } from '../../util/discordUtil';
-import { updateCringePoints } from '../../sql/tables/cringe-points';
+import { houseUserTransfer } from '../../sql/tables/cringe-points';
 import { timeInMS } from '../../util/util';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
@@ -104,14 +104,11 @@ class BlackjackGame {
         let profit = 0;
         if (result === EndGameResults.Win) {
             profit = this.payout;
-            await updateCringePoints([{userId: this.userId, points: this.payout}]);
-            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -this.payout}]);
         }
         else if (result === EndGameResults.Lose) {
             profit = -this.wager;
-            await updateCringePoints([{userId: this.userId, points: -this.wager}]);
-            if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: this.wager}]);
         }
+        if (profit > 0) await houseUserTransfer([{userId: this.userId, points: profit}]);
         this.result = result;
         this.ended = true;
         blackjackEmitter.emit('end', this.userId, this.wager, profit, this.channels, this.channelId);

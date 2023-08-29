@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { Emotes, emotes } from '../../../util/emotes';
 import { getRandomRange } from '../../../util/util';
-import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
+import { getUserCringePoints, houseUserTransfer } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { symbols, specialSymbols } from '../symbols';
 
@@ -116,10 +116,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const balanceFieldValue = `${balance.toLocaleString()} (${profit>0 ? '+' : ''}${profit.toLocaleString()})`;
         const newBalanceFieldValue = (balance + profit).toLocaleString();
     
-        // Update user Cringe points
-        await updateCringePoints([{userId: user.id, points: profit}]);
-        // Update house Cringe points
-        if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
+        if (profit !== 0) await houseUserTransfer([{userId: user.id, points: profit}]);
         
         if (profit > 0) void updateProfits([{userId: user.id, type: ProfitType.Slots, winnings: profit, losses: 0}]);
         else if (profit < 0) void updateProfits([{userId: user.id, type: ProfitType.Slots, winnings: 0, losses: -profit}]);

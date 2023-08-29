@@ -1,5 +1,5 @@
 import { ChannelManager, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
-import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
+import { getUserCringePoints, houseUserTransfer } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { emptyEmbedFieldInline } from '../../../util/discordUtil';
 import { joinVoicePlayAudio } from '../../../voice';
@@ -70,10 +70,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
         await updateProfits([{userId: user.id, type: ProfitType.Gamble, winnings: 0, losses: pointsBet}]);
     }
-    // Update user Cringe points
-    await updateCringePoints([{userId: user.id, points: profit}]);
-    // Update house Cringe points
-    if (process.env.CLIENT_ID) await updateCringePoints([{userId: process.env.CLIENT_ID, points: -profit}]);
+    await houseUserTransfer([{userId: user.id, points: profit}]);
     gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.client.channels, interaction.channelId);
 
     const embed = new EmbedBuilder()
