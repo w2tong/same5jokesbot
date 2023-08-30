@@ -1,8 +1,8 @@
-type DailyId =  'bjGame' | 'bjWin' | 'bjProfit' |
-                'deathRollGame' | 'deathRollWin' | 'deathRollProfit' |
-                'gGame' | 'gWin' | 'gProfit' |
+type DailyId =  'bjGame' | 'bjWager' | 'bjWin' | 'bjProfit' |
+                'deathRollGame' | 'deathRollWager' | 'deathRollWin' | 'deathRollProfit' |
+                'gGame' | 'gWager' | 'gWin' | 'gProfit' |
                 'lotteryBuy' |
-                'slotsGame' | 'slotsWin' | 'slotsProfit' |
+                'slotsGame' | 'slotsWager' | 'slotsWin' | 'slotsProfit' |
                 'stealAttempt'
                 ;
 
@@ -19,14 +19,19 @@ const dailies: {[key in DailyId]: Daily} = {
         maxProgress: 5,
         reward: 25_000
     },
+    bjWager: {
+        description: `Wager ${50_000} points in Blackjack games.`,
+        maxProgress: 50_000,
+        reward: 25_000
+    },
     bjWin: {
         description: `Win ${3} Blackjack games.`,
         maxProgress: 3,
         reward: 25_000
     },
     bjProfit: {
-        description: `Win ${(100_000).toLocaleString()} points in Blackjack games.`,
-        maxProgress: 100_000,
+        description: `Win ${(25_000).toLocaleString()} points in Blackjack games.`,
+        maxProgress: 25_000,
         reward: 25_000
     },
     // Death Roll Dailies
@@ -35,14 +40,19 @@ const dailies: {[key in DailyId]: Daily} = {
         maxProgress: 1,
         reward: 25_000
     },
+    deathRollWager: {
+        description: `Wager ${50_000} points in Death Rolls.`,
+        maxProgress: 50_000,
+        reward: 25_000
+    },
     deathRollWin: {
         description: `Win ${1} Death Roll.`,
         maxProgress: 1,
         reward: 25_000
     },
     deathRollProfit: {
-        description: `Win ${(100_000).toLocaleString()} points in Death Rolls.`,
-        maxProgress: 100_000,
+        description: `Win ${(25_000).toLocaleString()} points in Death Rolls.`,
+        maxProgress: 25_000,
         reward: 25_000
     },
     // Gamble Dailies
@@ -51,14 +61,19 @@ const dailies: {[key in DailyId]: Daily} = {
         maxProgress: 5,
         reward: 25_000
     },
+    gWager: {
+        description: `Gamble ${50_000} points.`,
+        maxProgress: 50_000,
+        reward: 25_000
+    },
     gWin: {
         description: `Gamble and win ${3} times.`,
         maxProgress: 3,
         reward: 25_000
     },
     gProfit: {
-        description: `Gamble and win ${(100_000).toLocaleString()} points.`,
-        maxProgress: 100_000,
+        description: `Gamble and win ${(25_000).toLocaleString()} points.`,
+        maxProgress: 25_000,
         reward: 25_000
     },
     // Lottery Dailies
@@ -73,20 +88,25 @@ const dailies: {[key in DailyId]: Daily} = {
         maxProgress: 5,
         reward: 25_000
     },
+    slotsWager: {
+        description: `Wager ${50_000} points in Slots.`,
+        maxProgress: 50_000,
+        reward: 25_000
+    },
     slotsWin: {
         description: `Play Slots and win ${3} times.`,
         maxProgress: 3,
         reward: 25_000
     },
     slotsProfit: {
-        description: `Play Slots and win ${(100_000).toLocaleString()} points.`,
-        maxProgress: 100_000,
+        description: `Play Slots and win ${(25_000).toLocaleString()} points.`,
+        maxProgress: 25_000,
         reward: 25_000
     },
     // Steal Dailies
     stealAttempt: {
-        description: `Attempt to Steal ${(100_000).toLocaleString()} points.`,
-        maxProgress: 100_000,
+        description: `Attempt to Steal from a user ${1} time.`,
+        maxProgress: 1,
         reward: 25_000
     },
 } as const;
