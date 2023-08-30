@@ -6,6 +6,14 @@ import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, get
 import { ChannelType, Client, EmbedBuilder, bold, roleMention, time, userMention } from 'discord.js';
 import { emptyEmbedFieldInline, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
+
+type LotteryEvents = {
+    buy: (userId: string, tickets: number, client: Client, channelId: string) => Promise<void>
+    check: (userId: string, winnings: number, channelId: string) => Promise<void> // unused
+  }
+const lotteryEmitter = new EventEmitter() as TypedEmitter<LotteryEvents>;
 
 const numbers = Array.from(new Array(12), (_x, i) => i+1);
 const choose = 3;
@@ -100,7 +108,7 @@ function scheduleEndLotteryCronJob(client: Client) {
     });
 }
 
-async function buyTicket(userId: string, numbers: number[]): Promise<{success: boolean, res: string}> {
+async function buyTicket(userId: string, numbers: number[], client: Client, channelId: string): Promise<{success: boolean, res: string}> {
     const lottery = await getActiveLottery();
     if (!lottery) return {success: false, res: 'There isn\'t an active lottery.'};
 
@@ -123,6 +131,9 @@ async function buyTicket(userId: string, numbers: number[]): Promise<{success: b
     await updateProfits([{userId, type: ProfitType.Lottery, profit: -price}]);
     await updateJackpot(lottery.ID, price * 0.5);
     await insertLotteryTicket(lottery.ID, userId, numbers.join(','));
+
+    lotteryEmitter.emit('buy', userId, 1, client, channelId);
+
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
 
@@ -250,5 +261,6 @@ export default {
 export {
     scheduleNewLotteryCronJob,
     scheduleEndLotteryCronJob,
-    createLotteryInfoEmbed
+    createLotteryInfoEmbed,
+    lotteryEmitter
 };

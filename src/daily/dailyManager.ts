@@ -8,14 +8,15 @@ import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDai
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-points';
 import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
 import { slotsEmitter } from '../commands/slots/subcommands/spin';
+import { lotteryEmitter } from '../commands/lottery/lotteryManager';
 
-const DailliesPerDay = 9;
+const DailliesPerDay = 12;
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
     currDailies = new Set();
     const keys = Object.keys(dailies) as DailyId[];
-    for (let i = 0; i < num; i++) {
+    for (let i = 0; i < num && keys.length > 0; i++) {
         const idx = getRandomRange(keys.length);
         currDailies.add(keys.splice(idx, 1)[0]);
     }
@@ -67,27 +68,11 @@ function scheduleDailiesCronJob(client: Client) {
     });
 }
 
-async function updateGameDaily(dailyId: DailyId, userId: string) {
+async function updateDaily(dailyId: DailyId, userId: string, progInc: number) {
     if (currDailies.has(dailyId)) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
-        daily.progress++;
-        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-    }
-}
-async function updateWinDaily(dailyId: DailyId, userId: string, profit: number) {
-    if (currDailies.has(dailyId) && profit > 0) {
-        const daily = userDailies[userId][dailyId];
-        if (daily.completed) return;
-        daily.progress++;
-        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-    }
-}
-async function updateProfitDaily(dailyId: DailyId, userId: string, profit: number) {
-    if (currDailies.has(dailyId) && profit > 0) {
-        const daily = userDailies[userId][dailyId];
-        if (daily.completed) return;
-        daily.progress += profit;
+        daily.progress += progInc;
         await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
     }
 }
@@ -125,11 +110,14 @@ async function completeDaily(dailyId: DailyId, userId: string, client: Client, c
 // TODO: send daily compelte msg (embed prob)
 
 blackjackEmitter.on('end', async (userId, wager, profit, client, channelId) => {
-    await Promise.all([
-        updateGameDaily('bjGame', userId),
-        updateWinDaily('bjWin', userId, profit),
-        updateProfitDaily('bjProfit', userId, profit)
-    ]);
+    const dailyUpdates = [updateDaily('bjGame', userId, 1)];
+    if (profit > 0) {
+        dailyUpdates.push(
+            updateDaily('bjWin', userId, 1),
+            updateDaily('bjProfit', userId, profit)
+        );
+    }
+    await Promise.all(dailyUpdates);
 
     await completeDaily('bjGame', userId, client, channelId);
     await completeDaily('bjWin', userId, client, channelId);
@@ -137,23 +125,35 @@ blackjackEmitter.on('end', async (userId, wager, profit, client, channelId) => {
 });
 
 gambleEmitter.on('end', async (userId, wager, profit, client, channelId) => {
-    await Promise.all([
-        updateGameDaily('gGame', userId),
-        updateWinDaily('gWin', userId, profit),
-        updateProfitDaily('gProfit', userId, profit)
-    ]);
+    const dailyUpdates = [updateDaily('gGame', userId, 1)];
+    if (profit > 0) {
+        dailyUpdates.push(
+            updateDaily('gWin', userId, 1),
+            updateDaily('gProfit', userId, profit)
+        );
+    }
+    await Promise.all(dailyUpdates);
 
     await completeDaily('gGame', userId, client, channelId);
     await completeDaily('gWin', userId, client, channelId);
     await completeDaily('gProfit', userId, client, channelId);
 });
 
+lotteryEmitter.on('buy', async (userId, tickets, client, channelId) => {
+    await updateDaily('lotteryBuy', userId, tickets);
+
+    await completeDaily('lotteryBuy', userId, client, channelId);
+});
+
 slotsEmitter.on('end', async (userId, wager, profit, client, channelId) => {
-    await Promise.all([
-        updateGameDaily('slotsGame', userId),
-        updateWinDaily('slotsWin', userId, profit),
-        updateProfitDaily('slotsProfit', userId, profit)
-    ]);
+    const dailyUpdates = [updateDaily('slotsGame', userId, 1)];
+    if (profit > 0) {
+        dailyUpdates.push(
+            updateDaily('slotsWin', userId, 1),
+            updateDaily('slotsProfit', userId, profit)
+        );
+    }
+    await Promise.all(dailyUpdates);
 
     await completeDaily('slotsGame', userId, client, channelId);
     await completeDaily('slotsWin', userId, client, channelId);

@@ -1,5 +1,6 @@
-type DailyId =  'bjGame' | 'bjWin' | 'bjProfit' | 
+type DailyId =  'bjGame' | 'bjWin' | 'bjProfit' |
                 'gGame' | 'gWin' | 'gProfit' |
+                'lotteryBuy' |
                 'slotsGame' | 'slotsWin' | 'slotsProfit'
                 ;
 
@@ -41,6 +42,12 @@ const dailies: {[key in DailyId]: Daily} = {
         description: `Gamble and win ${(100_000).toLocaleString()} points.`,
         maxProgress: 100_000,
         reward: 25_000
+    },
+    // Lottery Dailies
+    lotteryBuy: {
+        description: `Buy ${1} lottery ticket.`,
+        maxProgress: 1,
+        reward: 10_000
     },
     // Slots Dailies
     slotsGame: {
