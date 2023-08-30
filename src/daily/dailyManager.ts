@@ -9,6 +9,7 @@ import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-po
 import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
 import { slotsEmitter } from '../commands/slots/subcommands/spin';
 import { lotteryEmitter } from '../commands/lottery/lotteryManager';
+import { stealEmitter } from '../commands/steal/stealManager';
 
 const DailliesPerDay = 12;
 
@@ -39,7 +40,7 @@ async function generateUserDailies(client: Client) {
 }
 
 function scheduleDailiesCronJob(client: Client) {
-    schedule.scheduleJob({ second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, async function() {
+    schedule.scheduleJob({ second: 0, tz: 'America/Toronto' }, async function() {
         generateDailies(DailliesPerDay);
         userDailies = {};
         await truncateDailyProgress();
@@ -158,6 +159,12 @@ slotsEmitter.on('end', async (userId, wager, profit, client, channelId) => {
     await completeDaily('slotsGame', userId, client, channelId);
     await completeDaily('slotsWin', userId, client, channelId);
     await completeDaily('slotsProfit', userId, client, channelId);
+});
+
+stealEmitter.on('steal', async (userId, amount, client, channelId) => {
+    await updateDaily('stealAttempt', userId, amount);
+
+    await completeDaily('stealAttempt', userId, client, channelId); 
 });
 
 async function loadDailyProgress() {

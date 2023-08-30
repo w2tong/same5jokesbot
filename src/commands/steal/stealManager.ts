@@ -1,4 +1,4 @@
-import { Collection, EmbedBuilder, InteractionEditReplyOptions, bold, time, userMention } from 'discord.js';
+import { Client, Collection, EmbedBuilder, InteractionEditReplyOptions, bold, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { dateToDbString, timeInMS } from '../../util/util';
 import { CringePointsUpdate, getUserCringePoints, houseUserTransfer, updateCringePoints } from '../../sql/tables/cringe-points';
@@ -6,6 +6,13 @@ import { deleteStolenGood, deleteUserStolenGoods, getStolenGoods, insertStolenGo
 import { nanoid } from 'nanoid';
 import { emptyEmbedFieldInline } from '../../util/discordUtil';
 import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
+
+type StealEvents = {
+    steal: (userId: string, amount: number, client: Client, channelId: string) => Promise<void>
+  }
+const stealEmitter = new EventEmitter() as TypedEmitter<StealEvents>;
 
 const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Collection();
 const stolenTime = timeInMS.minute * 15;
@@ -106,7 +113,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
     return {content: 'There are no goods to forfeit.'};
 }
 
-async function newSteal(stealerId: string, stealerUsername: string, victimId: string, victimUsername: string, amount: number): Promise<InteractionEditReplyOptions> {
+async function newSteal(stealerId: string, stealerUsername: string, victimId: string, victimUsername: string, amount: number, client: Client, channelId: string): Promise<InteractionEditReplyOptions> {
     if (stealerId === victimId) {
         return {content: 'You cannot steal from yourself.'};
     }
@@ -146,6 +153,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
             {userId: victimId, type: ProfitType.Steal, profit: -amount},
         ])
     ]);
+    stealEmitter.emit('steal', stealerId, amount, client, channelId);
     
     // Fail
     if (result >= 0 && result < 0.55) {
@@ -231,4 +239,4 @@ function displayStolenGoods(userId: string, username: string): InteractionEditRe
     }
 }
 
-export { newSteal, loadStolenGoods, displayStolenGoods, stealPcMax, stealMax, victimExtraPc, houseExtraPc };
+export { newSteal, loadStolenGoods, displayStolenGoods, stealPcMax, stealMax, victimExtraPc, houseExtraPc, stealEmitter };

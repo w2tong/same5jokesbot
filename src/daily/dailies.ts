@@ -1,7 +1,8 @@
 type DailyId =  'bjGame' | 'bjWin' | 'bjProfit' |
                 'gGame' | 'gWin' | 'gProfit' |
                 'lotteryBuy' |
-                'slotsGame' | 'slotsWin' | 'slotsProfit'
+                'slotsGame' | 'slotsWin' | 'slotsProfit' |
+                'stealAttempt'
                 ;
 
 type Daily = {
@@ -64,7 +65,13 @@ const dailies: {[key in DailyId]: Daily} = {
         description: `Play Slots and win ${(100_000).toLocaleString()} points.`,
         maxProgress: 100_000,
         reward: 25_000
-    }
+    },
+    // Steal Dailies
+    stealAttempt: {
+        description: `Attempt to Steal ${(100_000).toLocaleString()} points.`,
+        maxProgress: 100_000,
+        reward: 25_000
+    },
 } as const;
 
 export default dailies;
