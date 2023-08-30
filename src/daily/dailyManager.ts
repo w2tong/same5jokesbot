@@ -10,8 +10,9 @@ import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
 import { slotsEmitter } from '../commands/slots/subcommands/spin';
 import { lotteryEmitter } from '../commands/lottery/lotteryManager';
 import { stealEmitter } from '../commands/steal/stealManager';
+import { deathRollEmitter } from '../commands/death-roll/deathRoll';
 
-const DailliesPerDay = 12;
+const DailliesPerDay = 3;
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
@@ -40,7 +41,7 @@ async function generateUserDailies(client: Client) {
 }
 
 function scheduleDailiesCronJob(client: Client) {
-    schedule.scheduleJob({ second: 0, tz: 'America/Toronto' }, async function() {
+    schedule.scheduleJob({ second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, async function() {
         generateDailies(DailliesPerDay);
         userDailies = {};
         await truncateDailyProgress();
@@ -123,6 +124,23 @@ blackjackEmitter.on('end', async (userId, wager, profit, client, channelId) => {
     await completeDaily('bjGame', userId, client, channelId);
     await completeDaily('bjWin', userId, client, channelId);
     await completeDaily('bjProfit', userId, client, channelId);
+});
+
+deathRollEmitter.on('end', async (winnerId, loserId, wager, client, channelId) => {
+    await Promise.all([
+        updateDaily('deathRollGame', loserId, 1),
+        updateDaily('deathRollGame', winnerId, 1),
+        updateDaily('deathRollWin', winnerId, 1),
+        updateDaily('deathRollProfit', winnerId, wager)
+    ]);
+
+    await Promise.all([
+        completeDaily('deathRollGame', loserId, client, channelId),
+        completeDaily('deathRollGame', winnerId, client, channelId)
+    ]);
+    
+    await completeDaily('deathRollWin', winnerId, client, channelId);
+    await completeDaily('deathRollProfit', winnerId, client, channelId);
 });
 
 gambleEmitter.on('end', async (userId, wager, profit, client, channelId) => {

@@ -1,4 +1,5 @@
 type DailyId =  'bjGame' | 'bjWin' | 'bjProfit' |
+                'deathRollGame' | 'deathRollWin' | 'deathRollProfit' |
                 'gGame' | 'gWin' | 'gProfit' |
                 'lotteryBuy' |
                 'slotsGame' | 'slotsWin' | 'slotsProfit' |
@@ -25,6 +26,22 @@ const dailies: {[key in DailyId]: Daily} = {
     },
     bjProfit: {
         description: `Win ${(100_000).toLocaleString()} points in Blackjack games.`,
+        maxProgress: 100_000,
+        reward: 25_000
+    },
+    // Death Roll Dailies
+    deathRollGame: {
+        description: `Play ${1} Death Roll.`,
+        maxProgress: 1,
+        reward: 25_000
+    },
+    deathRollWin: {
+        description: `Win ${1} Death Roll.`,
+        maxProgress: 1,
+        reward: 25_000
+    },
+    deathRollProfit: {
+        description: `Win ${(100_000).toLocaleString()} points in Death Rolls.`,
         maxProgress: 100_000,
         reward: 25_000
     },
