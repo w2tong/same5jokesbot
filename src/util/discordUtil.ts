@@ -1,4 +1,4 @@
-import { ChannelManager, MessageManager, User, UserManager, userMention } from 'discord.js';
+import { Client, MessageManager, User, userMention } from 'discord.js';
 
 const messageEmbedLimit = 10;
 const emptyEmbedField = {name: '\u200b', value: '\u200b'};
@@ -18,19 +18,19 @@ const monthChoices = [
     {name: '12. December', value: '12'}
 ];
 
-async function fetchChannel(channels: ChannelManager, channelId: string) {
-    return channels.cache.get(channelId) ?? await channels.fetch(channelId);
+async function fetchChannel(client: Client, channelId: string) {
+    return client.channels.cache.get(channelId) ?? await client.channels.fetch(channelId);
 }
 
 async function fetchMessage(messages: MessageManager, messageId: string) {
     return messages.cache.get(messageId) ?? await messages.fetch(messageId);
 }
 
-async function fetchUser(users: UserManager, userId: string) {
-    return users.cache.get(userId) ?? await users.fetch(userId);
+async function fetchUser(client: Client, userId: string) {
+    return client.users.cache.get(userId) ?? await client.users.fetch(userId);
 }
 
-async function createUserNumberedList(users: Array<Promise<User>>) {
+async function createUserNumberedList(users: Promise<User>[]) {
     return (await Promise.all(users)).map((user, i) => `${i+1} . ${user}`).join('\n');
 }
 

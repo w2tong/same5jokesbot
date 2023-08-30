@@ -1,4 +1,10 @@
-type DailyId = 'bjGame' | 'bjWin' | 'bjProfit' | 'gGame' | 'gWin' | 'gProfit';
+type DailyId =  'bjGame' | 'bjWin' | 'bjProfit' |
+                'deathRollGame' | 'deathRollWin' | 'deathRollProfit' |
+                'gGame' | 'gWin' | 'gProfit' |
+                'lotteryBuy' |
+                'slotsGame' | 'slotsWin' | 'slotsProfit' |
+                'stealAttempt'
+                ;
 
 type Daily = {
     description: string;
@@ -23,6 +29,22 @@ const dailies: {[key in DailyId]: Daily} = {
         maxProgress: 100_000,
         reward: 25_000
     },
+    // Death Roll Dailies
+    deathRollGame: {
+        description: `Play ${1} Death Roll.`,
+        maxProgress: 1,
+        reward: 25_000
+    },
+    deathRollWin: {
+        description: `Win ${1} Death Roll.`,
+        maxProgress: 1,
+        reward: 25_000
+    },
+    deathRollProfit: {
+        description: `Win ${(100_000).toLocaleString()} points in Death Rolls.`,
+        maxProgress: 100_000,
+        reward: 25_000
+    },
     // Gamble Dailies
     gGame: {
         description: `Gamble ${5} times.`,
@@ -38,7 +60,35 @@ const dailies: {[key in DailyId]: Daily} = {
         description: `Gamble and win ${(100_000).toLocaleString()} points.`,
         maxProgress: 100_000,
         reward: 25_000
-    }
+    },
+    // Lottery Dailies
+    lotteryBuy: {
+        description: `Buy ${1} lottery ticket.`,
+        maxProgress: 1,
+        reward: 10_000
+    },
+    // Slots Dailies
+    slotsGame: {
+        description: `Play Slots ${5} times.`,
+        maxProgress: 5,
+        reward: 25_000
+    },
+    slotsWin: {
+        description: `Play Slots and win ${3} times.`,
+        maxProgress: 3,
+        reward: 25_000
+    },
+    slotsProfit: {
+        description: `Play Slots and win ${(100_000).toLocaleString()} points.`,
+        maxProgress: 100_000,
+        reward: 25_000
+    },
+    // Steal Dailies
+    stealAttempt: {
+        description: `Attempt to Steal ${(100_000).toLocaleString()} points.`,
+        maxProgress: 100_000,
+        reward: 25_000
+    },
 } as const;
 
 export default dailies;

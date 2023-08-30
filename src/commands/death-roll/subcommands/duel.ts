@@ -1,7 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { DeathRoll } from '../deathRoll';
-import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
-import { ProfitType, updateProfits } from '../../../sql/tables/profits';
+import { getUserCringePoints } from '../../../sql/tables/cringe-points';
 import { nanoid } from 'nanoid';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -9,11 +8,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.fetchReply();
     const user = interaction.user;
     const opponent = interaction.options.getUser('user');
-    const amount = interaction.options.getInteger('amount');
+    const wager = interaction.options.getInteger('wager');
     const startingRoll = interaction.options.getInteger('roll') ?? 100;
 
-    if (!opponent || !amount || !interaction.channel) {
-        void interaction.editReply('Error creating bet (invalid opponent or amount)');
+    if (!opponent || !wager || !interaction.channel) {
+        await interaction.editReply('Error creating bet (invalid opponent or wager).');
         return;
     }
 
@@ -29,12 +28,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const userPoints = await getUserCringePoints(user.id) ?? 0;
     const opponentPoints = await getUserCringePoints(opponent.id) ?? 0;
-    if (userPoints < amount || opponentPoints < amount) {
+    if (userPoints < wager || opponentPoints < wager) {
         await interaction.editReply('You and/or your opponent do not have enough points.');
         return;
     }
 
-    const deathRoll = new DeathRoll(user, opponent, amount, startingRoll);
+    const deathRoll = new DeathRoll(user, opponent, wager, startingRoll, interaction.client, interaction.channelId);
 
     const rollButtonId = `roll-${nanoid()}`;
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
@@ -60,7 +59,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: DeathRoll.idleTimeout, filter: rollButtonFilter });
     buttonCollector.on('collect', async buttonInteraction => {
-        const {correctUser, ended} = deathRoll.roll(buttonInteraction.user.id);
+        const {correctUser, ended} = await deathRoll.roll(buttonInteraction.user.id);
         if (ended) buttonCollector.stop();
         if (correctUser) {
             buttonCollector.resetTimer();
@@ -72,18 +71,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     buttonCollector.on('end', async () => {
-        if (deathRoll.isEnded()) {
-            const {winnerId, loserId} = deathRoll.getResults();
-            await updateCringePoints([
-                {userId: winnerId, points: amount},
-                {userId: loserId, points: -amount}
-            ]);
-            void updateProfits([
-                {userId: winnerId, type: ProfitType.DeathRoll, profit: amount},
-                {userId: loserId, type: ProfitType.DeathRoll, profit: -amount}
-            ]);
-        }
-        else {
+        if (!deathRoll.isEnded()) {
             deathRoll.expire();
         }
         await reply.edit({embeds: [deathRoll.createEmbed()], components: []});
@@ -101,8 +89,8 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setRequired(true)
     )
     .addIntegerOption(option => option
-        .setName('amount')
-        .setDescription('Enter the amount of Cringe points to duel with.')
+        .setName('wager')
+        .setDescription('Enter the wager to duel with.')
         .setRequired(true)
         .setMinValue(1)
     )

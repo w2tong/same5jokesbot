@@ -78,7 +78,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         let users = [];
         const times = [];
         for (const {USER_ID, MILLISECONDS} of timeInVoiceTogether) {
-            users.push(fetchUser(interaction.client.users, USER_ID));
+            users.push(fetchUser(interaction.client, USER_ID));
             times.push(MILLISECONDS / timeInMS.hour);
         }
         users = (await Promise.all(users)).map(user => user.username);

@@ -13,7 +13,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         void interaction.editReply('You cannot steal from bots.');
         return;
     }
-    void interaction.editReply(await newSteal(interaction.user.id, interaction.user.username, user.id, user.username, amount));
+    void interaction.editReply(await newSteal(interaction.user.id, interaction.user.username, user.id, user.username, amount, interaction.client, interaction.channelId));
 }
 
 const name = 'steal';

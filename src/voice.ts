@@ -39,7 +39,7 @@ const audioRewardCooldown = new RewardCooldown(60 * timeInMS.second, 100);
 let voiceLogChannel: TextChannel;
 async function initVoiceLogChannel(client: Client) {
     if (process.env.VOICE_LOG_CHANNEL_ID) {
-        const channel = await fetchChannel(client.channels, process.env.VOICE_LOG_CHANNEL_ID);
+        const channel = await fetchChannel(client, process.env.VOICE_LOG_CHANNEL_ID);
         if (channel?.type === ChannelType.GuildText) {
             voiceLogChannel = channel;
         }
@@ -189,7 +189,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             const audio = getAudioResponse(text);
             if (audio) {
                 playAudioFile(audio, userId, guildId);
-                audioRewardCooldown.reward(userId);
+                void audioRewardCooldown.reward(userId);
             }
         });
     });

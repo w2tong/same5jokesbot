@@ -1,4 +1,4 @@
-import { ChannelManager, Client, EmbedBuilder, time, userMention } from 'discord.js';
+import { Client, EmbedBuilder, time, userMention } from 'discord.js';
 import { blackjackEmitter } from '../commands/blackjack/BlackjackGame';
 import { gambleEmitter } from '../commands/gamble/subcommands/gamble';
 import { getRandomRange } from '../util/util';
@@ -7,12 +7,18 @@ import dailies, { DailyId } from './dailies';
 import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDailyProgress } from '../sql/tables/daily-progress';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-points';
 import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
+import { slotsEmitter } from '../commands/slots/subcommands/spin';
+import { lotteryEmitter } from '../commands/lottery/lotteryManager';
+import { stealEmitter } from '../commands/steal/stealManager';
+import { deathRollEmitter } from '../commands/death-roll/deathRoll';
+
+const DailliesPerDay = 3;
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
     currDailies = new Set();
     const keys = Object.keys(dailies) as DailyId[];
-    for (let i = 0; i < num; i++) {
+    for (let i = 0; i < num && keys.length > 0; i++) {
         const idx = getRandomRange(keys.length);
         currDailies.add(keys.splice(idx, 1)[0]);
     }
@@ -36,13 +42,13 @@ async function generateUserDailies(client: Client) {
 
 function scheduleDailiesCronJob(client: Client) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, async function() {
-        generateDailies(3);
+        generateDailies(DailliesPerDay);
         userDailies = {};
         await truncateDailyProgress();
         await generateUserDailies(client);
 
         if (process.env.CASINO_CHANNEL_ID) {
-            const casinoChannel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
+            const casinoChannel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
             if (casinoChannel?.isTextBased()) {
                 const embed = new EmbedBuilder()
                     .setTitle(`${time(new Date(), 'd')} Daily Quests`);
@@ -64,32 +70,16 @@ function scheduleDailiesCronJob(client: Client) {
     });
 }
 
-async function updateGameDaily(dailyId: DailyId, userId: string) {
+async function updateDaily(dailyId: DailyId, userId: string, progInc: number) {
     if (currDailies.has(dailyId)) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
-        daily.progress++;
-        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-    }
-}
-async function updateWinDaily(dailyId: DailyId, userId: string, profit: number) {
-    if (currDailies.has(dailyId) && profit > 0) {
-        const daily = userDailies[userId][dailyId];
-        if (daily.completed) return;
-        daily.progress++;
-        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-    }
-}
-async function updateProfitDaily(dailyId: DailyId, userId: string, profit: number) {
-    if (currDailies.has(dailyId) && profit > 0) {
-        const daily = userDailies[userId][dailyId];
-        if (daily.completed) return;
-        daily.progress += profit;
+        daily.progress += progInc;
         await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
     }
 }
 
-async function completeDaily(dailyId: DailyId, userId: string, channels: ChannelManager, channelId?: string) {
+async function completeDaily(dailyId: DailyId, userId: string, client: Client, channelId?: string) {
     if (currDailies.has(dailyId)) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
@@ -98,7 +88,7 @@ async function completeDaily(dailyId: DailyId, userId: string, channels: Channel
             daily.completed = true;
             await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
 
-            const channel = await fetchChannel(channels, channelId ?? process.env.CASINO_CHANNEL_ID ?? '');
+            const channel = await fetchChannel(client, channelId ?? process.env.CASINO_CHANNEL_ID ?? '');
             const balance = await getUserCringePoints(userId) ?? 0;
             if (channel?.isTextBased()) {
                 const embed = new EmbedBuilder()
@@ -121,28 +111,78 @@ async function completeDaily(dailyId: DailyId, userId: string, channels: Channel
 
 // TODO: send daily compelte msg (embed prob)
 
-blackjackEmitter.on('end', async (userId, wager, profit, channels, channelId) => {
-    await Promise.all([
-        updateGameDaily('bjGame', userId),
-        updateWinDaily('bjWin', userId, profit),
-        updateProfitDaily('bjProfit', userId, profit)
-    ]);
+blackjackEmitter.on('end', async (userId, wager, profit, client, channelId) => {
+    const dailyUpdates = [updateDaily('bjGame', userId, 1)];
+    if (profit > 0) {
+        dailyUpdates.push(
+            updateDaily('bjWin', userId, 1),
+            updateDaily('bjProfit', userId, profit)
+        );
+    }
+    await Promise.all(dailyUpdates);
 
-    await completeDaily('bjGame', userId, channels, channelId);
-    await completeDaily('bjWin', userId, channels, channelId);
-    await completeDaily('bjProfit', userId, channels, channelId);
+    await completeDaily('bjGame', userId, client, channelId);
+    await completeDaily('bjWin', userId, client, channelId);
+    await completeDaily('bjProfit', userId, client, channelId);
 });
 
-gambleEmitter.on('end', async (userId, wager, profit, channels, channelId) => {
+deathRollEmitter.on('end', async (winnerId, loserId, wager, client, channelId) => {
     await Promise.all([
-        updateGameDaily('gGame', userId),
-        updateWinDaily('gWin', userId, profit),
-        updateProfitDaily('gProfit', userId, profit)
+        updateDaily('deathRollGame', loserId, 1),
+        updateDaily('deathRollGame', winnerId, 1),
+        updateDaily('deathRollWin', winnerId, 1),
+        updateDaily('deathRollProfit', winnerId, wager)
     ]);
 
-    await completeDaily('gGame', userId, channels, channelId);
-    await completeDaily('gWin', userId, channels, channelId);
-    await completeDaily('gProfit', userId, channels, channelId);
+    await Promise.all([
+        completeDaily('deathRollGame', loserId, client, channelId),
+        completeDaily('deathRollGame', winnerId, client, channelId)
+    ]);
+    
+    await completeDaily('deathRollWin', winnerId, client, channelId);
+    await completeDaily('deathRollProfit', winnerId, client, channelId);
+});
+
+gambleEmitter.on('end', async (userId, wager, profit, client, channelId) => {
+    const dailyUpdates = [updateDaily('gGame', userId, 1)];
+    if (profit > 0) {
+        dailyUpdates.push(
+            updateDaily('gWin', userId, 1),
+            updateDaily('gProfit', userId, profit)
+        );
+    }
+    await Promise.all(dailyUpdates);
+
+    await completeDaily('gGame', userId, client, channelId);
+    await completeDaily('gWin', userId, client, channelId);
+    await completeDaily('gProfit', userId, client, channelId);
+});
+
+lotteryEmitter.on('buy', async (userId, tickets, client, channelId) => {
+    await updateDaily('lotteryBuy', userId, tickets);
+
+    await completeDaily('lotteryBuy', userId, client, channelId);
+});
+
+slotsEmitter.on('end', async (userId, wager, profit, client, channelId) => {
+    const dailyUpdates = [updateDaily('slotsGame', userId, 1)];
+    if (profit > 0) {
+        dailyUpdates.push(
+            updateDaily('slotsWin', userId, 1),
+            updateDaily('slotsProfit', userId, profit)
+        );
+    }
+    await Promise.all(dailyUpdates);
+
+    await completeDaily('slotsGame', userId, client, channelId);
+    await completeDaily('slotsWin', userId, client, channelId);
+    await completeDaily('slotsProfit', userId, client, channelId);
+});
+
+stealEmitter.on('steal', async (userId, amount, client, channelId) => {
+    await updateDaily('stealAttempt', userId, amount);
+
+    await completeDaily('stealAttempt', userId, client, channelId); 
 });
 
 async function loadDailyProgress() {

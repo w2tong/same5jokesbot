@@ -79,7 +79,7 @@ client.once(Events.ClientReady, async () => {
 
     console.log('Same5JokesBot online.');
     if (process.env.STATUS_CHANNEL_ID) {
-        const statusChannel = await fetchChannel(client.channels, process.env.STATUS_CHANNEL_ID);
+        const statusChannel = await fetchChannel(client, process.env.STATUS_CHANNEL_ID);
         if (statusChannel?.type === ChannelType.GuildText) {
             void statusChannel.send('Same5JokesBot online.');
         }
@@ -91,7 +91,7 @@ client.once(Events.ClientReady, async () => {
     //     }
     // }
     if (process.env.OWNER_USER_ID) {
-        const owner = await fetchUser(client.users, process.env.OWNER_USER_ID);
+        const owner = await fetchUser(client, process.env.OWNER_USER_ID);
         void owner.send('Same5JokesBot online.');
     }
 });

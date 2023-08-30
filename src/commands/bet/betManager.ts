@@ -27,7 +27,7 @@ function getBet(userId: string): Bet|null {
 async function deleteBet(userId: string, client: Client): Promise<boolean> {
     if (betManager[userId]) {
         betManager[userId].bet.delete();
-        const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
+        const channel = await fetchChannel(client, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
         try {
             await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
@@ -43,7 +43,7 @@ async function deleteBet(userId: string, client: Client): Promise<boolean> {
 
 async function endBet(userId: string, client: Client): Promise<boolean> {
     if (betManager[userId]) {
-        const channel = await fetchChannel(client.channels, betManager[userId].channelId) as TextChannel;
+        const channel = await fetchChannel(client, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
         try {
             await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
