@@ -1,9 +1,16 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
+import { ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { Emotes, emotes } from '../../../util/emotes';
 import { getRandomRange } from '../../../util/util';
 import { getUserCringePoints, houseUserTransfer } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { symbols, specialSymbols } from '../symbols';
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
+
+type SlotsEvents = {
+    end: (userId: string, wager: number, profit: number, client: Client, channelId: string) => Promise<void>
+  }
+const slotsEmitter = new EventEmitter() as TypedEmitter<SlotsEvents>;
 
 const reels = 5;
 const specialChance = 0.05;
@@ -113,6 +120,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     
         const totalPointsBet = pointsBet * numOfSpins;
         const profit = winnings - totalPointsBet;
+        slotsEmitter.emit('end', user.id, totalPointsBet, profit, interaction.client, interaction.channelId);
+
         const balanceFieldValue = `${balance.toLocaleString()} (${profit>0 ? '+' : ''}${profit.toLocaleString()})`;
         const newBalanceFieldValue = (balance + profit).toLocaleString();
     
@@ -157,4 +166,4 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     );
 
 export default { execute, name, subcommandBuilder };
-export { spin };
+export { spin, slotsEmitter };

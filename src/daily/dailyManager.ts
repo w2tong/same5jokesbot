@@ -7,6 +7,9 @@ import dailies, { DailyId } from './dailies';
 import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDailyProgress } from '../sql/tables/daily-progress';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-points';
 import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
+import { slotsEmitter } from '../commands/slots/subcommands/spin';
+
+const DailliesPerDay = 9;
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
@@ -36,7 +39,7 @@ async function generateUserDailies(client: Client) {
 
 function scheduleDailiesCronJob(client: Client) {
     schedule.scheduleJob({ second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, async function() {
-        generateDailies(3);
+        generateDailies(DailliesPerDay);
         userDailies = {};
         await truncateDailyProgress();
         await generateUserDailies(client);
@@ -143,6 +146,18 @@ gambleEmitter.on('end', async (userId, wager, profit, client, channelId) => {
     await completeDaily('gGame', userId, client, channelId);
     await completeDaily('gWin', userId, client, channelId);
     await completeDaily('gProfit', userId, client, channelId);
+});
+
+slotsEmitter.on('end', async (userId, wager, profit, client, channelId) => {
+    await Promise.all([
+        updateGameDaily('slotsGame', userId),
+        updateWinDaily('slotsWin', userId, profit),
+        updateProfitDaily('slotsProfit', userId, profit)
+    ]);
+
+    await completeDaily('slotsGame', userId, client, channelId);
+    await completeDaily('slotsWin', userId, client, channelId);
+    await completeDaily('slotsProfit', userId, client, channelId);
 });
 
 async function loadDailyProgress() {
