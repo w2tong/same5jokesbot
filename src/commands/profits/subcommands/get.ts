@@ -65,11 +65,11 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setDescription('Gets a user\'s total profits.')
     .addUserOption(option => option
         .setName('user')
-        .setDescription('Select a user')
+        .setDescription('Select a user.')
     )
     .addStringOption(option => option
         .setName('type')
-        .setDescription('Choose the type of profit')
+        .setDescription('Select the profit type.')
         .addChoices(...typeChoices)
     );
 

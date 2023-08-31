@@ -21,7 +21,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setDescription('Resolve your current bet with Yes or No.')
     .addStringOption(option => option
         .setName('result')
-        .setDescription('Select the result of the bet')
+        .setDescription('Select the result of the bet.')
         .setRequired(true)
         .addChoices(
             {name: 'Yes', value: BetResult.Yes},

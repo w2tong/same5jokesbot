@@ -11,7 +11,7 @@ const name = 'roll';
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
     .setDescription('Rolls a random number from 1 to 100 (or min and max)')
-    .addIntegerOption((option) => option.setName('min').setDescription('Enter an integer'))
-    .addIntegerOption((option) => option.setName('max').setDescription('Enter an integer'));
+    .addIntegerOption((option) => option.setName('min').setDescription('Enter an integer.'))
+    .addIntegerOption((option) => option.setName('max').setDescription('Enter an integer.'));
 
 export default { execute, name, commandBuilder };

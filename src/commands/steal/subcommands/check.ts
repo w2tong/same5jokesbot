@@ -18,6 +18,6 @@ const name = 'check';
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Check the number of points you can steal from a user.')
-    .addUserOption((option) => option.setName('user').setDescription('Select a user').setRequired(true));
+    .addUserOption((option) => option.setName('user').setDescription('Select a user.').setRequired(true));
 
 export default { execute, name, subcommandBuilder };

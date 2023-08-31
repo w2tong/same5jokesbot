@@ -21,7 +21,7 @@ const enum ComboMultiplier {
 const maxWager = 10_000;
 const maxSpins = 100;
 
-function spin(amount: number) {
+function spin(wager: number) {
     // Normal symbols
     let prevSymbolEmote = '';
     let winnings = 0;
@@ -60,7 +60,7 @@ function spin(amount: number) {
             const symbolIndex = getRandomRange(symbols.length);
             const symbol = symbols[symbolIndex];
             if (symbol.emote === prevSymbolEmote) {
-                if (currWinnings === 0) currWinnings = amount * symbol.pc;
+                if (currWinnings === 0) currWinnings = wager * symbol.pc;
                 currWinnings *= symbol.mult;
                 currStreak++;
             }
@@ -92,14 +92,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
     try {
         await interaction.deferReply();
         const user = interaction.user;
-        const pointsBet = interaction.options.getInteger('amount');
+        const wager = interaction.options.getInteger('wager');
         const numOfSpins = interaction.options.getInteger('spins') ?? 1;
-        if (!pointsBet) {
+        if (!wager) {
             void interaction.editReply('Error spinning slot machine.');
             return;
         }
+        const totalWager = wager * numOfSpins;
         const balance = await getUserCringePoints(user.id) ?? 0;
-        if (pointsBet * numOfSpins > balance) {
+        if (wager * numOfSpins > balance) {
             await interaction.editReply({content: `You do not have enough points (Balance ${bold(balance.toLocaleString())}).`, files: ['https://i.kym-cdn.com/photos/images/original/002/508/125/847.jpg'] });
             return;
         }
@@ -109,7 +110,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         let freeSpins = 0;
         
         for (let i = 0; i < numOfSpins + freeSpins; i++) {
-            const result = spin(pointsBet);
+            const result = spin(wager);
             winnings += result.winnings;
             freeSpins += result.freeSpins;
             if (result.winnings > maxWinnings) {
@@ -117,10 +118,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 bestSpin = result.spinString;
             }
         }
-    
-        const totalPointsBet = pointsBet * numOfSpins;
-        const profit = winnings - totalPointsBet;
-        slotsEmitter.emit('end', user, totalPointsBet, profit, interaction.client, interaction.channelId);
+        
+        const profit = winnings - totalWager;
+        slotsEmitter.emit('end', user, totalWager, profit, interaction.client, interaction.channelId);
 
         const balanceFieldValue = `${balance.toLocaleString()} (${profit>0 ? '+' : ''}${profit.toLocaleString()})`;
         const newBalanceFieldValue = (balance + profit).toLocaleString();
@@ -133,7 +133,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const embed = new EmbedBuilder()
             .setAuthor({name: `${user.username}'s spin${numOfSpins > 1 ? 's' : ''}`, iconURL: user.displayAvatarURL()})
             .addFields(
-                {name: 'Points Bet', value: `${pointsBet.toLocaleString()} ${(numOfSpins + freeSpins) > 1 ? `(x${numOfSpins}${freeSpins > 0 ? ` + ${freeSpins}` : ''})` : ''}`, inline: true},
+                {name: 'Points Bet', value: `${wager.toLocaleString()} ${(numOfSpins + freeSpins) > 1 ? `(x${numOfSpins}${freeSpins > 0 ? ` + ${freeSpins}` : ''})` : ''}`, inline: true},
                 {name: 'Winnings', value: `${winnings.toLocaleString()}`, inline: true},
                 {name: `Best ${emotes[Emotes.borpaSpin] ?? 'Spin'}`, value: `${bestSpin}`, inline: true},
                 {name: 'Balance ', value: balanceFieldValue, inline: true},
@@ -152,15 +152,15 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('slots spin wheel.')
     .addIntegerOption((option) => option
-        .setName('amount')
-        .setDescription('Amount to spin.')
+        .setName('wager')
+        .setDescription('Enter your wager')
         .setRequired(true)
         .setMinValue(1)
         .setMaxValue(maxWager)
     )
     .addIntegerOption((option) => option
         .setName('spins')
-        .setDescription('Number of spins.')
+        .setDescription('Enter the number of spins.')
         .setMaxValue(1)
         .setMaxValue(maxSpins)
     );

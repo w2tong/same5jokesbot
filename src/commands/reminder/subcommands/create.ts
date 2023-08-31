@@ -54,7 +54,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Set a reminder to mention someone with a message.')
     .addMentionableOption((option) => option.setName('mention').setDescription('Select user or role.').setRequired(true))
-    .addStringOption((option) => option.setName('date').setDescription('Enter a time or date (e.g. "in 5 minutes" or "friday at 5pm")').setRequired(true))
-    .addStringOption((option) => option.setName('message').setDescription('Message').setRequired(true));
+    .addStringOption((option) => option.setName('date').setDescription('Enter a time or date (e.g. "in 5 minutes" or "friday at 5pm").').setRequired(true))
+    .addStringOption((option) => option.setName('message').setDescription('Enter a message for the reminder.').setRequired(true));
 
 export default { execute, name, subcommandBuilder };

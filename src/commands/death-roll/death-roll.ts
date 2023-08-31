@@ -82,7 +82,7 @@ const name = 'death-roll';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Duel another user to a Death Roll.')
+    .setDescription('Challenge another user to a Death Roll.')
     .addUserOption(option => option
         .setName('user')
         .setDescription('Select a user to duel.')
