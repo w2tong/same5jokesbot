@@ -15,7 +15,7 @@ const name = 'play';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Plays selected audio clip')
+    .setDescription('Plays an audio clip.')
     .addStringOption((option) => option
         .setName('audio')
         .setDescription('Audio clip')

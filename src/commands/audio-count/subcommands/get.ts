@@ -93,7 +93,7 @@ const name = 'get';
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Creates a bar chart of a user\'s audio use.')
-    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
+    .addUserOption((option) => option.setName('user').setDescription('Select a user.'));
 
 export default { execute, name, subcommandBuilder };
 

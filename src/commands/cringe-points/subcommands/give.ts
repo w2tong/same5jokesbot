@@ -52,15 +52,15 @@ const name = 'give';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Give your Cringe points to another user')
+    .setDescription('Give your Cringe points to another user.')
     .addUserOption(option => option
         .setName('user')
-        .setDescription('The user you are giving points to')
+        .setDescription('Select a user.')
         .setRequired(true)
     )
     .addIntegerOption(option => option
         .setName('amount')
-        .setDescription('The amount of points you are giving.')
+        .setDescription('Enter the amount of points.')
         .setRequired(true)
         .setMinValue(1)
     );

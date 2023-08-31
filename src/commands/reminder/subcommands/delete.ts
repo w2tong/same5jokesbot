@@ -64,6 +64,6 @@ const name = 'delete';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Choose to delete your reminders.');
+    .setDescription('Select a reminder to delete.');
 
 export default { execute, name, subcommandBuilder };

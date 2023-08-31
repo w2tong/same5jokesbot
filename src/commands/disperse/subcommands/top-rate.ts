@@ -52,9 +52,9 @@ const name = 'top-rate';
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets disperse rate of all users.')
-    .addStringOption((option) => option.setName('month').setDescription('Select a month').addChoices(
+    .addStringOption((option) => option.setName('month').setDescription('Select a month.').addChoices(
         ...monthChoices
     ))
-    .addIntegerOption((option) => option.setName('year').setDescription('Select a year'));
+    .addIntegerOption((option) => option.setName('year').setDescription('Select a year.'));
 
 export default { execute, name, subcommandBuilder };

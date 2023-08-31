@@ -63,10 +63,10 @@ for (const type of Object.values(ProfitType)) {
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets top total profits (top with no type exlcudes income).')
+    .setDescription('Gets top total profits (top without type exlcudes income type).')
     .addStringOption(option => option
         .setName('type')
-        .setDescription('Choose the type of profit')
+        .setDescription('Select the profit type.')
         .addChoices(...typeChoices)
     );
 

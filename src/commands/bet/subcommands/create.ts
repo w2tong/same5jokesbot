@@ -115,7 +115,7 @@ const name = 'create';
 const subcommandBuilder = new SlashCommandSubcommandBuilder ()
     .setName(name)
     .setDescription('Create a bet with cringe points.')
-    .addStringOption((option) => option.setName('bet').setDescription('Enter a bet').setRequired(true))
-    .addNumberOption((option) => option.setName('time').setDescription('Enter the time left in minutes to bet').setRequired(true).setMinValue(0.5));
+    .addStringOption((option) => option.setName('bet').setDescription('Enter a bet.').setRequired(true))
+    .addNumberOption((option) => option.setName('time').setDescription('Enter amount of time users have to bet.').setRequired(true).setMinValue(0.5));
 
 export default { execute, name, subcommandBuilder };

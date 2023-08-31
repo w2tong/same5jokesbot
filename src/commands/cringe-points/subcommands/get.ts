@@ -17,6 +17,6 @@ const name = 'get';
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Gets a user\'s cringe points.')
-    .addUserOption((option) => option.setName('user').setDescription('Select a user'));
+    .addUserOption((option) => option.setName('user').setDescription('Select a user.'));
 
 export default { execute, name, subcommandBuilder };
