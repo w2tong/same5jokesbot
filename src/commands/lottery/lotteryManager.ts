@@ -4,7 +4,7 @@ import { Lottery, getActiveLottery, getCurrentLottery, insertLottery, updateJack
 import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe-points';
 import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery-ticket';
 import { ChannelType, Client, EmbedBuilder, User, bold, roleMention, time, userMention } from 'discord.js';
-import { emptyEmbedFieldInline, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
+import { emptyEmbedFieldInline, fetchChannel, fetchUser, MessageEmbedLimit } from '../../util/discordUtil';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
@@ -73,8 +73,8 @@ function scheduleNewLotteryCronJob(client: Client) {
                 // Send embeds of unclaimed tickets
                 const embeds = (await Promise.all(embedPromises));
                 await claimLotteryTickets(claimLotteryTicketsUpdates);
-                for (let i = 0; i < embeds.length; i += messageEmbedLimit) {
-                    await channel.send({embeds: embeds.slice(i, i+messageEmbedLimit)});
+                for (let i = 0; i < embeds.length; i += MessageEmbedLimit) {
+                    await channel.send({embeds: embeds.slice(i, i+MessageEmbedLimit)});
                 }
             }
             // Send jackpot results
