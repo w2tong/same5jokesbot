@@ -131,7 +131,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
         
         const embed = new EmbedBuilder()
-            .setTitle(`${user.username}'s ${emotes[Emotes.borpaSpin] ?? 'spin'}${numOfSpins > 1 ? 's' : ''}`)
+            .setAuthor({name: `${user.username}'s spin${numOfSpins > 1 ? 's' : ''}`, iconURL: user.displayAvatarURL()})
             .addFields(
                 {name: 'Points Bet', value: `${pointsBet.toLocaleString()} ${(numOfSpins + freeSpins) > 1 ? `(x${numOfSpins}${freeSpins > 0 ? ` + ${freeSpins}` : ''})` : ''}`, inline: true},
                 {name: 'Winnings', value: `${winnings.toLocaleString()}`, inline: true},
