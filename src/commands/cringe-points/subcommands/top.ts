@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { getTopCringePoints } from '../../../sql/tables/cringe-points';
+import { getTopCringePoints, getUserCringePoints } from '../../../sql/tables/cringe-points';
 import { MessageEmbedLimit, UsersPerEmbed, emptyEmbedFieldInline } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -14,6 +14,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             points.push(POINTS.toLocaleString());
             totalPoints += POINTS;
         }
+        const housePoints = await getUserCringePoints(process.env.CLIENT_ID ?? '') ?? 0;
 
         const embeds = [];
         for (let i = 0; i < users.length; i += UsersPerEmbed) {
@@ -24,7 +25,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 embed
                     .setTitle('Top Cringe Points')
                     .addFields(
-                        emptyEmbedFieldInline,
+                        { name: 'House Points', value: housePoints.toLocaleString(), inline: true },
                         emptyEmbedFieldInline,
                         { name: 'Total Points', value: totalPoints.toLocaleString(), inline: true }
                     );
