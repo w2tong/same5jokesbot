@@ -203,11 +203,12 @@ function createUserTicketsEmbed(userId: string, username: string, totalWinnings:
     const embed = new EmbedBuilder()
         .setTitle(`${username}'s Lottery Winnings ${jackpot ? '(JACKPOT)' : ''}`)
         .addFields(
-            {name: 'User', value: userMention(userId), inline: true},
-            {name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`, inline: true},
             emptyEmbedFieldInline,
-            
+            emptyEmbedFieldInline,
+            {name: 'Total Winnings', value: `${totalWinnings.toLocaleString()}`, inline: true},
+
             {name: 'Tickets', value: tickets.join('\n'), inline: true},
+            emptyEmbedFieldInline,
             {name: 'Winnings', value: winnings.join('\n'), inline: true},
         );
 
