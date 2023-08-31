@@ -14,7 +14,7 @@ const name = 'gamble';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Gamble Cringe points or get info about your profits.')
+    .setDescription('Gamble points.')
     .addSubcommand(gambleCringePoints.subcommandBuilder);
 
 export default { execute, name, commandBuilder };

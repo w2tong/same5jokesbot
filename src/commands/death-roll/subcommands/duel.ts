@@ -82,7 +82,7 @@ const name = 'duel';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets cringe point top slots profits.')
+    .setDescription('Duel another user to a Death Roll.')
     .addUserOption(option => option
         .setName('user')
         .setDescription('Select a user to duel.')
