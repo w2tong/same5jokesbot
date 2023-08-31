@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder, User, time, userMention } from 'discord.js';
 import { blackjackEmitter } from '../commands/blackjack/BlackjackGame';
-import { gambleEmitter } from '../commands/gamble/subcommands/gamble';
+import { gambleEmitter } from '../commands/gamble/gamble';
 import { getRandomRange } from '../util/util';
 import schedule from 'node-schedule';
 import dailies, { DailyId } from './dailies';
