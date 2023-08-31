@@ -10,8 +10,8 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type LotteryEvents = {
-    buy: (userId: string, tickets: number, client: Client, channelId: string) => Promise<void>
-    check: (userId: string, winnings: number, channelId: string) => Promise<void> // unused
+    buy: (user: User, tickets: number, client: Client, channelId: string) => Promise<void>
+    check: (user: User, winnings: number, channelId: string) => Promise<void> // unused
   }
 const lotteryEmitter = new EventEmitter() as TypedEmitter<LotteryEvents>;
 
@@ -115,15 +115,15 @@ function scheduleEndLotteryCronJob(client: Client) {
     });
 }
 
-async function buyTicket(userId: string, numbers: number[], client: Client, channelId: string): Promise<{success: boolean, res: string}> {
+async function buyTicket(user: User, numbers: number[], client: Client, channelId: string): Promise<{success: boolean, res: string}> {
     const lottery = await getActiveLottery();
     if (!lottery) return {success: false, res: 'There isn\'t an active lottery.'};
 
-    if ((await getUserLotteryTickets(userId, lottery.ID)).length >= ticketLimit) {
+    if ((await getUserLotteryTickets(user.id, lottery.ID)).length >= ticketLimit) {
         return {success: false, res: `You have reached the limit of tickets that you can buy (max: ${ticketLimit})`};
     }
 
-    const points = await getUserCringePoints(userId) ?? 0;
+    const points = await getUserCringePoints(user.id) ?? 0;
     if (points < price) {
         return {success: false, res: `You do not have enough points (${price}).`};
     }
@@ -134,12 +134,12 @@ async function buyTicket(userId: string, numbers: number[], client: Client, chan
         }
     }
 
-    await houseUserTransfer([{userId, points: -price}]);
-    await updateProfits([{userId, type: ProfitType.Lottery, profit: -price}]);
+    await houseUserTransfer([{userId: user.id, points: -price}]);
+    await updateProfits([{userId: user.id, type: ProfitType.Lottery, profit: -price}]);
     await updateJackpot(lottery.ID, price * 0.5);
-    await insertLotteryTicket(lottery.ID, userId, numbers.join(','));
+    await insertLotteryTicket(lottery.ID, user.id, numbers.join(','));
 
-    lotteryEmitter.emit('buy', userId, 1, client, channelId);
+    lotteryEmitter.emit('buy', user, 1, client, channelId);
 
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }

@@ -10,7 +10,7 @@ import TypedEmitter from 'typed-emitter';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 
 type BlackjackEvents = {
-    end: (userId: string, wager: number, profit: number, client: Client, channelId: string) => Promise<void>
+    end: (user: User, wager: number, profit: number, client: Client, channelId: string) => Promise<void>
   }
 const blackjackEmitter = new EventEmitter() as TypedEmitter<BlackjackEvents>;
 
@@ -115,7 +115,7 @@ class BlackjackGame {
         
         this.result = result;
         this.ended = true;
-        blackjackEmitter.emit('end', this.user.id, this.wager, profit, this.client, this.channelId);
+        blackjackEmitter.emit('end', this.user, this.wager, profit, this.client, this.channelId);
     }
 
     async input(option: PlayerOption): Promise<{valid: boolean, msg?: string}> {

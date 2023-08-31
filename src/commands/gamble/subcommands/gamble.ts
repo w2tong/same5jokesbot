@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
+import { ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandSubcommandBuilder, User, bold } from 'discord.js';
 import { getUserCringePoints, houseUserTransfer } from '../../../sql/tables/cringe-points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { emptyEmbedFieldInline } from '../../../util/discordUtil';
@@ -8,7 +8,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type GambleEvents = {
-    end: (userId: string, wager: number, profit: number, client: Client, channelId: string) => Promise<void>
+    end: (user: User, wager: number, profit: number, client: Client, channelId: string) => Promise<void>
   }
 const gambleEmitter = new EventEmitter() as TypedEmitter<GambleEvents>;
 
@@ -71,7 +71,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         await updateProfits([{userId: user.id, type: ProfitType.Gamble, profit: -pointsBet}]);
     }
     await houseUserTransfer([{userId: user.id, points: profit}]);
-    gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.client, interaction.channelId);
+    gambleEmitter.emit('end', user, pointsBet, profit, interaction.client, interaction.channelId);
 
     const embed = new EmbedBuilder()
         .setAuthor({name: title, iconURL: interaction.user.displayAvatarURL()})

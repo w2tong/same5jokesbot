@@ -10,7 +10,7 @@ import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 
 type StealEvents = {
-    steal: (userId: string, amount: number, client: Client, channelId: string) => Promise<void>
+    steal: (user: User, amount: number, client: Client, channelId: string) => Promise<void>
   }
 const stealEmitter = new EventEmitter() as TypedEmitter<StealEvents>;
 
@@ -153,7 +153,7 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
             {userId: victimId, type: ProfitType.Steal, profit: -amount},
         ])
     ]);
-    stealEmitter.emit('steal', stealer.id, amount, client, channelId);
+    stealEmitter.emit('steal', stealer, amount, client, channelId);
     
     // Fail
     if (result >= 0 && result < 0.55) {
