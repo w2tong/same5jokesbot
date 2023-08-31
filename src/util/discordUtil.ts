@@ -1,6 +1,7 @@
 import { Client, MessageManager, User, userMention } from 'discord.js';
 
-const messageEmbedLimit = 10;
+const MessageEmbedLimit = 10;
+const UsersPerEmbed = 25;
 const emptyEmbedField = {name: '\u200b', value: '\u200b'};
 const emptyEmbedFieldInline = {name: '\u200b', value: '\u200b', inline: true};
 const monthChoices = [
@@ -44,4 +45,4 @@ function createDispersersList(usersIdsStr: string) {
 }
 
 
-export {messageEmbedLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};
+export {MessageEmbedLimit, UsersPerEmbed, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};
