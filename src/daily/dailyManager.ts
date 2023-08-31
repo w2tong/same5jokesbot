@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder, User, time, userMention } from 'discord.js';
 import { blackjackEmitter } from '../commands/blackjack/BlackjackGame';
-import { gambleEmitter } from '../commands/gamble/subcommands/gamble';
+import { gambleEmitter } from '../commands/gamble/gamble';
 import { getRandomRange } from '../util/util';
 import schedule from 'node-schedule';
 import dailies, { DailyId } from './dailies';
@@ -10,7 +10,7 @@ import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
 import { slotsEmitter } from '../commands/slots/subcommands/spin';
 import { lotteryEmitter } from '../commands/lottery/lotteryManager';
 import { stealEmitter } from '../commands/steal/stealManager';
-import { deathRollEmitter } from '../commands/death-roll/deathRoll';
+import { deathRollEmitter } from '../commands/death-roll/DeathRoll';
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
