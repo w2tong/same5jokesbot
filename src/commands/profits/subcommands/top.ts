@@ -1,5 +1,5 @@
 import { APIApplicationCommandOptionChoice, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { emptyEmbedFieldInline } from '../../../util/discordUtil';
+import { MessageEmbedLimit, UsersPerEmbed, emptyEmbedFieldInline } from '../../../util/discordUtil';
 import { ProfitType, getTopProfits, getTotalProfits } from '../../../sql/tables/profits';
 import { capitalize } from '../../../util/util';
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -20,18 +20,38 @@ async function execute(interaction: ChatInputCommandInteraction) {
         userProfits.push(PROFITS.toLocaleString());
     }
 
-    const embed = new EmbedBuilder()
-        .setTitle(`${type ? capitalize(type) : 'Total'} Profits`)
-        .addFields(
-            {name: 'Total Winnings', value: `${totalProfits.WINNINGS.toLocaleString()}`, inline: true},
-            {name: 'Total Losses', value: `${totalProfits.LOSSES.toLocaleString()}`, inline: true},
-            {name: 'Total Profits', value: `${totalProfits.PROFITS.toLocaleString()}`, inline: true},
-            {name: 'Users', value: users.join('\n'), inline: true},
-            emptyEmbedFieldInline,
-            {name: 'Profits', value: userProfits.join('\n'), inline: true}
-        );
-    
-    await interaction.editReply({embeds: [embed]});
+    const embeds: EmbedBuilder[] = [];
+    for (let i = 0; i < users.length; i += UsersPerEmbed) {
+        const embed = new EmbedBuilder();
+        if (i === 0) {
+            embed
+                .setTitle(`${type ? capitalize(type) : 'Total'} Profits`)
+                .addFields(
+                    // {name: 'Total Winnings', value: `${totalProfits.WINNINGS.toLocaleString()}`, inline: true},
+                    // {name: 'Total Losses', value: `${totalProfits.LOSSES.toLocaleString()}`, inline: true},
+                    emptyEmbedFieldInline,
+                    emptyEmbedFieldInline,
+                    {name: 'Total Profits', value: `${totalProfits.PROFITS.toLocaleString()}`, inline: true}
+                );
+        }
+        const endRange = i + UsersPerEmbed;
+        embed
+            .addFields(
+                {name: 'Users', value: users.slice(i, endRange).join('\n'), inline: true},
+                emptyEmbedFieldInline,
+                {name: 'Profits', value: userProfits.slice(i, endRange).join('\n'), inline: true}
+            );
+        embeds.push(embed);
+    }
+
+    for (let i = 0; i < embeds.length; i += MessageEmbedLimit) {
+        if (i === 0) {
+            await interaction.editReply({ embeds: embeds.slice(i, i + MessageEmbedLimit) });
+        }
+        else {
+            await interaction.followUp({ embeds: embeds.slice(i, i + MessageEmbedLimit) });
+        }
+    }
 }
 
 const name = 'top';
@@ -43,7 +63,7 @@ for (const type of Object.values(ProfitType)) {
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets top total profits.')
+    .setDescription('Gets top total profits (top with no type exlcudes income).')
     .addStringOption(option => option
         .setName('type')
         .setDescription('Choose the type of profit')
