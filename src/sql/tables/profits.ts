@@ -129,6 +129,7 @@ ORDER BY profits DESC
 const getTopAllQuery = `
 SELECT user_id, SUM(winnings) - SUM(losses) AS profits
 FROM profits
+WHERE type != '${ProfitType.Income}'
 GROUP BY user_id
 ORDER BY profits DESC
 `;
