@@ -12,8 +12,6 @@ import { lotteryEmitter } from '../commands/lottery/lotteryManager';
 import { stealEmitter } from '../commands/steal/stealManager';
 import { deathRollEmitter } from '../commands/death-roll/deathRoll';
 
-const DailliesPerDay = 3;
-
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
     currDailies = new Set();
@@ -40,8 +38,15 @@ async function generateUserDailies(client: Client) {
     await insertDailyProgress(inserts);
 }
 
+let DailliesPerDay = 3;
+let cronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 0, minute: 0, hour: 0, tz: 'America/Toronto' };
+if (process.env.NODE_ENV === 'development') {
+    DailliesPerDay = Object.keys(dailies).length;
+    cronJobTime = '*/5 * * * *';
+}
+
 function scheduleDailiesCronJob(client: Client) {
-    schedule.scheduleJob({ second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, async function() {
+    schedule.scheduleJob(cronJobTime, async function() {
         generateDailies(DailliesPerDay);
         userDailies = {};
         await truncateDailyProgress();
