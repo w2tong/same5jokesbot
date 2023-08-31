@@ -21,7 +21,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const embed = new EmbedBuilder()
-        .setTitle(`${user.username}'s Audio request`)
+        .setAuthor({name: `${user.username}'s Audio request`, iconURL: user.displayAvatarURL()})
         .addFields(
             {name: 'User', value: `${userMention(interaction.user.id)}`, inline: true},
             {name: 'Type', value: 'Audio', inline: true},

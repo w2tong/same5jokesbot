@@ -11,7 +11,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     let ticketsBought = 0;
 
     while (ticketsBought < ticketsToBuy) {
-        const {success, res} = await lotteryManager.buyTicket(user.id, lottery.generateNumbersArray(), interaction.client, interaction.channelId);
+        const {success, res} = await lotteryManager.buyTicket(user, lottery.generateNumbersArray(), interaction.client, interaction.channelId);
         msgs.push(res);
         if (!success) break;
         ticketsBought++;

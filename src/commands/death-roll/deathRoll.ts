@@ -8,7 +8,7 @@ import { updateCringePoints } from '../../sql/tables/cringe-points';
 import { updateProfits, ProfitType } from '../../sql/tables/profits';
 
 type DeathRollEvents = {
-    end: (winnerId: string, loserId: string, wager: number, client: Client, channelId: string) => Promise<void>
+    end: (winner: User, loser: User, wager: number, client: Client, channelId: string) => Promise<void>
   }
 const deathRollEmitter = new EventEmitter() as TypedEmitter<DeathRollEvents>;
 
@@ -70,15 +70,15 @@ class DeathRoll {
             this.currentRoll = Math.ceil(Math.random() * this.currentRoll);
             this.rollHistory.push({userId, roll: this.currentRoll});
             if (this.currentRoll === 1) {
-                const {winnerId, loserId} = this.getResults();
-                deathRollEmitter.emit('end', winnerId, loserId, this.wager, this.client, this.channelId);
+                const {winner, loser} = this.getResults();
+                deathRollEmitter.emit('end', winner, loser, this.wager, this.client, this.channelId);
                 await updateCringePoints([
-                    {userId: winnerId, points: this.wager},
-                    {userId: loserId, points: -this.wager}
+                    {userId: winner.id, points: this.wager},
+                    {userId: loser.id, points: -this.wager}
                 ]);
                 void updateProfits([
-                    {userId: winnerId, type: ProfitType.DeathRoll, profit: this.wager},
-                    {userId: loserId, type: ProfitType.DeathRoll, profit: -this.wager}
+                    {userId: winner.id, type: ProfitType.DeathRoll, profit: this.wager},
+                    {userId: loser.id, type: ProfitType.DeathRoll, profit: -this.wager}
                 ]);
                 return {correctUser: true, ended: true};
             }
@@ -100,7 +100,7 @@ class DeathRoll {
     }
 
     getResults() {
-        return this.turnUser === this.creator ? {winnerId: this.creator.id, loserId: this.opponent.id} : {winnerId: this.opponent.id, loserId: this.creator.id};
+        return this.turnUser === this.creator ? {winner: this.creator, loser: this.opponent} : {winner: this.opponent, loser: this.creator};
     }
 
     static get idleTimeout() {
