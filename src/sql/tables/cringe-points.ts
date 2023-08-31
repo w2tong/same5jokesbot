@@ -39,7 +39,7 @@ async function getUserCringePoints(userId: string): Promise<number|null> {
 const getTopQuery = `
 SELECT *
 FROM cringe_points
-WHERE EXISTS (SELECT 1 FROM profits WHERE cringe_points.user_id = profits.user_id)
+WHERE EXISTS (SELECT 1 FROM profits WHERE cringe_points.user_id = profits.user_id AND type != 'income')
 ORDER BY points DESC
 `;
 
