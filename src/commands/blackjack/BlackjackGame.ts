@@ -1,4 +1,4 @@
-import { Client, EmbedBuilder, time, userMention } from 'discord.js';
+import { Client, EmbedBuilder, User, time, userMention } from 'discord.js';
 import { Value } from '../../cards/Card';
 import Deck from '../../cards/Deck';
 import Hand from '../../cards/Hand';
@@ -49,16 +49,14 @@ const cardValueMap: {[key in Value]: number} = {
     'K': 10,
 };
 class BlackjackGame {
-
-    private userId: string;
-    private username: string;
+    private user: User;
     private balance: number;
     private wager: number;
     private deck: Deck = new Deck();
     private numOfDecks: number;
     private playerHand: Hand;
     private playerHandValue: number = 0;
-    private dealerHand: Hand = new Hand(process.env.CLIENT_ID ?? '0');
+    private dealerHand: Hand = new Hand();
     private dealerHandValue: number = 0;
     private lastAction: PlayerOption|undefined;
     private ended: boolean = false;
@@ -68,14 +66,13 @@ class BlackjackGame {
     private client: Client;
     private channelId: string;
 
-    constructor(userId: string, username: string, numOfDecks: number, wager: number, balance: number, client: Client, channelId: string) {
-        this.userId = userId;
-        this.username = username;
+    constructor(user: User, numOfDecks: number, wager: number, balance: number, client: Client, channelId: string) {
+        this.user = user;
         this.wager = wager;
         this.deck = new Deck(numOfDecks);
         this.numOfDecks = numOfDecks;
         this.balance = balance;
-        this.playerHand = new Hand(userId);
+        this.playerHand = new Hand();
         this.payout = wager;
         this.client = client;
         this.channelId = channelId;
@@ -111,14 +108,14 @@ class BlackjackGame {
         }
         if (profit !== 0) {
             await Promise.all([
-                houseUserTransfer([{userId: this.userId, points: profit}]), 
-                updateProfits([{userId: this.userId, type: ProfitType.Blackjack, profit}])
+                houseUserTransfer([{userId: this.user.id, points: profit}]), 
+                updateProfits([{userId: this.user.id, type: ProfitType.Blackjack, profit}])
             ]);
         }
         
         this.result = result;
         this.ended = true;
-        blackjackEmitter.emit('end', this.userId, this.wager, profit, this.client, this.channelId);
+        blackjackEmitter.emit('end', this.user.id, this.wager, profit, this.client, this.channelId);
     }
 
     async input(option: PlayerOption): Promise<{valid: boolean, msg?: string}> {
@@ -184,9 +181,9 @@ class BlackjackGame {
             this.dealerHandValue;
 
         const embed =  new EmbedBuilder()
-            .setTitle(`${this.username}'s Blackjack Game${this.ended ? ` (${this.result})` : ''}`)
+            .setAuthor({name: `${this.user.username}'s Blackjack Game${this.ended ? ` (${this.result})` : ''}`, iconURL: this.user.displayAvatarURL()})
             .addFields(
-                {name: 'Player', value: `${userMention(this.userId)}`, inline: true},
+                {name: 'Player', value: `${userMention(this.user.id)}`, inline: true},
                 emptyEmbedFieldInline,
                 {name: 'Decks', value: `${this.numOfDecks}`, inline: true},
                 
