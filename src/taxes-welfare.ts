@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, MessageCreateOptions, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { CringePointsUpdate, getAllUserCringePoints, houseUserTransfer } from './sql/tables/cringe-points';
-import { emptyEmbedFieldInline, fetchChannel } from './util/discordUtil';
+import { fetchChannel } from './util/discordUtil';
 
 const dailyTaxBracket: {[key: number]: number} = {
     0: 0,
@@ -23,6 +23,11 @@ const taxBrackets = Object.keys(dailyTaxBracket).map(bracket => parseInt(bracket
 const welfareLimit = taxBrackets[1];
 const welfarePoolPc = 0.5;
 
+let cronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 0, minute: 5, hour: 0, tz: 'America/Toronto' };
+if (process.env.NODE_ENV === 'development') {
+    cronJobTime = '*/1 * * * *';
+}
+
 function calculateDailyTax(points: number) {
     if (points <= 0) return 0;
     let taxes = 0;
@@ -36,39 +41,73 @@ function calculateDailyTax(points: number) {
     return Math.floor(taxes);
 }
 
-function createTaxesResponse(taxesTotal: number, userIds: string[], balances: string[], newBalances: string[]): MessageCreateOptions {
-    if (userIds.length === 0 || balances.length === 0 || newBalances.length === 0) return {content: 'No taxes today.'};
-    const embed = new EmbedBuilder()
-        .setTitle(`${time(new Date(), 'd')} Taxes`)
-        .addFields(
-            emptyEmbedFieldInline,
-            emptyEmbedFieldInline,
-            {name: 'Taxes Total', value: taxesTotal.toLocaleString(), inline: true},
-            {name: 'User', value: userIds.map(id => userMention(id)).join('\n'), inline: true},
-            {name: 'Balance', value: balances.join('\n'), inline: true},
-            {name: 'New Balance', value: newBalances.join('\n'), inline: true}
+const embedsPerMessage = 10;
+const usersPerEmbed = 25;
+function createTaxesResponse(taxesTotal: number, userIds: string[], balances: string[], newBalances: string[]): MessageCreateOptions[] {
+    if (userIds.length === 0 || balances.length === 0 || newBalances.length === 0) return [{content: 'No taxes today.'}];
+
+    const taxesHeader =
+        new EmbedBuilder()
+            .setTitle(`${time(new Date(), 'd')} Taxes`)
+            .addFields(
+                {name: 'Taxes Total', value: taxesTotal.toLocaleString(), inline: true}
+            );
+    
+    const embeds = [taxesHeader];
+    for (let i = 0; i < userIds.length; i += usersPerEmbed) {
+        const endIndex = i + usersPerEmbed;
+        embeds.push(
+            new EmbedBuilder()
+                .addFields(
+                    {name: 'User', value: userIds.slice(i, endIndex).map(id => userMention(id)).join('\n'), inline: true},
+                    {name: 'Balance', value: balances.slice(i, endIndex).join('\n'), inline: true},
+                    {name: 'New Balance', value: newBalances.slice(i, endIndex).join('\n'), inline: true}
+                )
         );
-    return {embeds: [embed]};
+    }
+
+    const msgs: MessageCreateOptions[] = [];
+    for (let i = 0; i < embeds.length; i += embedsPerMessage) {
+        msgs.push({embeds: embeds.slice(i, i + embedsPerMessage)});
+    }
+    
+    return msgs;
 }
 
-function createWelfareResponse(welfareTotal: number, userIds: string[], balances: string[], newBalances: string[]): MessageCreateOptions {
-    if (userIds.length === 0 || balances.length === 0 || newBalances.length === 0) return {content: 'No welfare today.'};
-    const embed = new EmbedBuilder()
-        .setTitle(`${time(new Date(), 'd')} Welfare`)
-        .addFields(
-            emptyEmbedFieldInline,
-            emptyEmbedFieldInline,
-            {name: 'Welfare Total', value: welfareTotal.toLocaleString(), inline: true},
-            {name: 'User', value: userIds.map(id => userMention(id)).join('\n'), inline: true},
-            {name: 'Balance', value: balances.join('\n'), inline: true},
-            {name: 'New Balance', value: newBalances.join('\n'), inline: true}
+function createWelfareResponse(welfareTotal: number, userIds: string[], balances: string[], newBalances: string[]): MessageCreateOptions[] {
+    if (userIds.length === 0 || balances.length === 0 || newBalances.length === 0) return [{content: 'No welfare today.'}];
+
+    const welfareHeader = 
+        new EmbedBuilder()
+            .setTitle(`${time(new Date(), 'd')} Welfare`)
+            .addFields(
+                {name: 'Welfare Total', value: welfareTotal.toLocaleString(), inline: true}
+            );
+
+    const embeds = [welfareHeader];
+    for (let i = 0; i < userIds.length; i += usersPerEmbed) {
+        const endIndex = i + usersPerEmbed;
+        embeds.push(
+            new EmbedBuilder()
+                .addFields(
+                    {name: 'User', value: userIds.slice(i, endIndex).map(id => userMention(id)).join('\n'), inline: true},
+                    {name: 'Balance', value: balances.slice(i, endIndex).join('\n'), inline: true},
+                    {name: 'New Balance', value: newBalances.slice(i, endIndex).join('\n'), inline: true}
+                )
         );
-    return {embeds: [embed]};
+    }
+
+    const msgs: MessageCreateOptions[] = [];
+    for (let i = 0; i < embeds.length; i += embedsPerMessage) {
+        msgs.push({embeds: embeds.slice(i, i + embedsPerMessage)});
+    }
+
+    return msgs;
 }
 
 // Daily tax/welfare
 function scheduleDailyTaxWelfareCronJob(client: Client) {
-    schedule.scheduleJob({ second: 0, minute: 5, hour: 0, tz: 'America/Toronto' }, async function() {
+    schedule.scheduleJob(cronJobTime, async function() {
         if (!process.env.CLIENT_ID) return;
 
         // Calculate taxes
@@ -94,7 +133,11 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
         await houseUserTransfer(taxUpdates);
         if (process.env.CASINO_CHANNEL_ID) {
             const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
-            if (channel?.isTextBased()) await channel.send(createTaxesResponse(taxesTotal, taxUserIds, taxesBalances, taxesNewBalances));
+            if (!channel?.isTextBased()) return;
+            const msgs = createTaxesResponse(taxesTotal, taxUserIds, taxesBalances, taxesNewBalances);
+            for (const msg of msgs) {
+                await channel.send(msg);
+            }
         }
 
         // Calculate welfare
@@ -127,7 +170,11 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
         await houseUserTransfer(welfareUpdates);
         if (process.env.CASINO_CHANNEL_ID) {
             const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
-            if (channel?.isTextBased()) await channel.send(createWelfareResponse(welfareTotal, welfareUserIds, welfareBalances, welfareNewBalances));
+            if (!channel?.isTextBased()) return;
+            const msgs = createWelfareResponse(welfareTotal, welfareUserIds, welfareBalances, welfareNewBalances);
+            for (const msg of msgs) {
+                await channel.send(msg);
+            }
         }
     });
 }
