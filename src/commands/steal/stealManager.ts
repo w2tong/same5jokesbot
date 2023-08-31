@@ -1,4 +1,4 @@
-import { Client, Collection, EmbedBuilder, InteractionEditReplyOptions, bold, time, userMention } from 'discord.js';
+import { Client, Collection, EmbedBuilder, InteractionEditReplyOptions, User, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { dateToDbString, timeInMS } from '../../util/util';
 import { CringePointsUpdate, getUserCringePoints, houseUserTransfer, updateCringePoints } from '../../sql/tables/cringe-points';
@@ -20,7 +20,7 @@ const stealPcMax = 0.01;
 const stealMin = 1_000;
 const stealMax = 1_000_000;
 const victimExtraPc = 0.5;
-const houseExtraPc = 0;
+const houseExtraPc = 0.25;
 const debtLimit = -10_000;
 type stolenGood = {victimId: string, points: number, time: number};
 
@@ -50,11 +50,11 @@ function addStolenGood(jobId: string, stealerId: string, victimId: string, point
     stolenGoods.get(stealerId)?.set(jobId, {victimId, points, time});
 }
 
-async function forfeitStolenGoods(stealerId: string, stealerUsername: string, victimUsername: string, extraPc: number, house: boolean, amount: number): Promise<InteractionEditReplyOptions> {
-    await deleteUserStolenGoods(stealerId);
-    const userStolenGoods = stolenGoods.get(stealerId);
+async function forfeitStolenGoods(stealer: User, victimUsername: string, extraPc: number, house: boolean, amount: number): Promise<InteractionEditReplyOptions> {
+    await deleteUserStolenGoods(stealer.id);
+    const userStolenGoods = stolenGoods.get(stealer.id);
     if (userStolenGoods && userStolenGoods.size > 0) {
-        const stealerPoints = await getUserCringePoints(stealerId) ?? 0;
+        const stealerPoints = await getUserCringePoints(stealer.id) ?? 0;
         const profitUpdates: ProfitsUpdate[] = [];
         let pointsForfeitTotal = 0;
         const victims = [];
@@ -67,11 +67,11 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
                 const pointsExtraPc = Math.round(points * extraPc);
                 updates.push(
                     {userId: victimId, points: points + pointsExtraPc},
-                    {userId: stealerId, points: -(points + pointsExtraPc)}
+                    {userId: stealer.id, points: -(points + pointsExtraPc)}
                 );
                 profitUpdates.push(
                     {userId: victimId, type: ProfitType.Steal, profit: points + pointsExtraPc},
-                    {userId: stealerId, type: ProfitType.Steal, profit: -(points + pointsExtraPc)}
+                    {userId: stealer.id, type: ProfitType.Steal, profit: -(points + pointsExtraPc)}
                 );
                 victims.push(userMention(victimId));
                 pointsForfeitTotal += points + pointsExtraPc;
@@ -83,8 +83,8 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
         else {
             const updates: CringePointsUpdate[] = [];
             for (const {victimId, points, time} of userStolenGoods.values()) {
-                updates.push({userId: stealerId, points: -points});
-                profitUpdates.push({userId: stealerId, type: ProfitType.Steal, profit: -points});
+                updates.push({userId: stealer.id, points: -points});
+                profitUpdates.push({userId: stealer.id, type: ProfitType.Steal, profit: -points});
                 victims.push(userMention(victimId));
                 pointsForfeitTotal += points;
                 pointsForfeit.push(`${points.toLocaleString()}`);
@@ -96,7 +96,7 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
         await updateProfits(profitUpdates);
         userStolenGoods.clear();
         const embed = new EmbedBuilder()
-            .setTitle(`${stealerUsername} steal from ${victimUsername} ${bold('FAILED')}`)
+            .setAuthor({name: `${stealer.username} steal from ${victimUsername} FAILED`, iconURL: stealer.displayAvatarURL()})
             .addFields(
                 {name: 'Balance', value: `${(stealerPoints - amount).toLocaleString()} (${(-(pointsForfeitTotal - amount)).toLocaleString()})`, inline: true},
                 {name: 'New Balance', value: `${(stealerPoints - pointsForfeitTotal).toLocaleString()}`, inline: true},
@@ -113,12 +113,12 @@ async function forfeitStolenGoods(stealerId: string, stealerUsername: string, vi
     return {content: 'There are no goods to forfeit.'};
 }
 
-async function newSteal(stealerId: string, stealerUsername: string, victimId: string, victimUsername: string, amount: number, client: Client, channelId: string): Promise<InteractionEditReplyOptions> {
-    if (stealerId === victimId) {
+async function newSteal(stealer: User, victimId: string, victimUsername: string, amount: number, client: Client, channelId: string): Promise<InteractionEditReplyOptions> {
+    if (stealer.id === victimId) {
         return {content: 'You cannot steal from yourself.'};
     }
     // Check if stealer points are negative
-    const stealerPoints = await getUserCringePoints(stealerId) ?? -Infinity;
+    const stealerPoints = await getUserCringePoints(stealer.id) ?? -Infinity;
     if (stealerPoints < debtLimit) return {content: `You cannot steal when you are in debt (${debtLimit.toLocaleString()}).`};
     // Check if user has enough points and under steal limit
     const victimPoints = await getUserCringePoints(victimId) ?? 0;
@@ -142,33 +142,33 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     const result = Math.random();
     const time = Date.now() + stolenTime;
     const stolenGoodId = nanoid();
-    addStolenGood(stolenGoodId, stealerId, victimId, amount, time);
+    addStolenGood(stolenGoodId, stealer.id, victimId, amount, time);
     await Promise.all([
         await updateCringePoints([
-            {userId: stealerId, points: amount},
+            {userId: stealer.id, points: amount},
             {userId: victimId, points: -amount}
         ]),
         await updateProfits([
-            {userId: stealerId, type: ProfitType.Steal, profit: amount},
+            {userId: stealer.id, type: ProfitType.Steal, profit: amount},
             {userId: victimId, type: ProfitType.Steal, profit: -amount},
         ])
     ]);
-    stealEmitter.emit('steal', stealerId, amount, client, channelId);
+    stealEmitter.emit('steal', stealer.id, amount, client, channelId);
     
     // Fail
     if (result >= 0 && result < 0.55) {
-        return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, victimExtraPc, false, amount);
+        return await forfeitStolenGoods(stealer, victimUsername, victimExtraPc, false, amount);
     }
     // Success
     else if (result >= 0.55 && result < 0.95) {
-        scheduleSteal(stealerId, victimId, amount, time, stolenGoodId);
-        addStolenGood(stolenGoodId, stealerId, victimId, amount, time);
-        await insertStolenGood(stolenGoodId, stealerId, victimId, amount, dateToDbString(new Date(time)));
-        const {victims, points, times} = formatStolenGoodsFields(stealerId);
+        scheduleSteal(stealer.id, victimId, amount, time, stolenGoodId);
+        addStolenGood(stolenGoodId, stealer.id, victimId, amount, time);
+        await insertStolenGood(stolenGoodId, stealer.id, victimId, amount, dateToDbString(new Date(time)));
+        const {victims, points, times} = formatStolenGoodsFields(stealer.id);
         const embed = new EmbedBuilder()
-            .setTitle(`${stealerUsername} steal from ${victimUsername} ${bold('SUCCEEDED')}`)
+            .setAuthor({name: `${stealer.username} steal from ${victimUsername} SUCCEEDED`, iconURL: stealer.displayAvatarURL()})
             .addFields(
-                {name: 'Stealer', value: userMention(stealerId), inline: true},
+                {name: 'Stealer', value: userMention(stealer.id), inline: true},
                 {name: 'Victim', value: userMention(victimId), inline: true},
                 emptyEmbedFieldInline,
                 {name: 'Balance', value: `${stealerPoints?.toLocaleString()} (+${amount.toLocaleString()})`, inline: true},
@@ -185,7 +185,7 @@ async function newSteal(stealerId: string, stealerUsername: string, victimId: st
     }
     // House
     else {
-        return await forfeitStolenGoods(stealerId, stealerUsername, victimUsername, houseExtraPc, true, amount);
+        return await forfeitStolenGoods(stealer, victimUsername, houseExtraPc, true, amount);
     }
 }
 
@@ -220,12 +220,12 @@ function formatStolenGoodsFields(userId: string) {
     return {victims, points, times};
 }
 
-function displayStolenGoods(userId: string, username: string): InteractionEditReplyOptions {
-    const userStolenGoods = stolenGoods.get(userId);
+function displayStolenGoods(user: User): InteractionEditReplyOptions {
+    const userStolenGoods = stolenGoods.get(user.id);
     if (userStolenGoods && userStolenGoods.size > 0) {
-        const {victims, points, times} = formatStolenGoodsFields(userId);
+        const {victims, points, times} = formatStolenGoodsFields(user.id);
         const embed = new EmbedBuilder()
-            .setTitle(`${username}'s Stolen Goods`)
+            .setAuthor({name: `${user.username}'s Stolen Goods`, iconURL: user.displayAvatarURL()})
             .addFields(
                 {name: 'Victim', value: victims.join('\n'), inline: true},
                 {name: 'Points', value: points.join('\n'), inline: true},

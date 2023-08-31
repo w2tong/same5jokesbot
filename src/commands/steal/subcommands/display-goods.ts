@@ -3,7 +3,7 @@ import { displayStolenGoods } from '../stealManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    void interaction.editReply(displayStolenGoods(interaction.user.id, interaction.user.username));
+    void interaction.editReply(displayStolenGoods(interaction.user));
 }
 
 const name = 'display-goods';
