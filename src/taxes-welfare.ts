@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, MessageCreateOptions, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { CringePointsUpdate, getAllUserCringePoints, houseUserTransfer } from './sql/tables/cringe-points';
-import { fetchChannel } from './util/discordUtil';
+import { MessageEmbedLimit, UsersPerEmbed, emptyEmbedFieldInline, fetchChannel } from './util/discordUtil';
 
 const dailyTaxBracket: {[key: number]: number} = {
     0: 0,
@@ -41,34 +41,34 @@ function calculateDailyTax(points: number) {
     return Math.floor(taxes);
 }
 
-const embedsPerMessage = 10;
-const usersPerEmbed = 25;
 function createTaxesResponse(taxesTotal: number, userIds: string[], balances: string[], newBalances: string[]): MessageCreateOptions[] {
     if (userIds.length === 0 || balances.length === 0 || newBalances.length === 0) return [{content: 'No taxes today.'}];
 
-    const taxesHeader =
-        new EmbedBuilder()
-            .setTitle(`${time(new Date(), 'd')} Taxes`)
-            .addFields(
-                {name: 'Taxes Total', value: taxesTotal.toLocaleString(), inline: true}
-            );
-    
-    const embeds = [taxesHeader];
-    for (let i = 0; i < userIds.length; i += usersPerEmbed) {
-        const endIndex = i + usersPerEmbed;
-        embeds.push(
-            new EmbedBuilder()
+    const embeds = [];
+    for (let i = 0; i < userIds.length; i += UsersPerEmbed) {
+        const embed = new EmbedBuilder();
+        if (i === 0) {
+            embed
+                .setTitle(`${time(new Date(), 'd')} Taxes`)
                 .addFields(
-                    {name: 'User', value: userIds.slice(i, endIndex).map(id => userMention(id)).join('\n'), inline: true},
-                    {name: 'Balance', value: balances.slice(i, endIndex).join('\n'), inline: true},
-                    {name: 'New Balance', value: newBalances.slice(i, endIndex).join('\n'), inline: true}
-                )
+                    emptyEmbedFieldInline,
+                    emptyEmbedFieldInline,
+                    {name: 'Taxes Total', value: taxesTotal.toLocaleString(), inline: true}
+                );
+        }
+
+        const endIndex = i + UsersPerEmbed;
+        embed.addFields(
+            {name: 'User', value: userIds.slice(i, endIndex).map(id => userMention(id)).join('\n'), inline: true},
+            {name: 'Balance', value: balances.slice(i, endIndex).join('\n'), inline: true},
+            {name: 'New Balance', value: newBalances.slice(i, endIndex).join('\n'), inline: true}
         );
+        embeds.push(embed);
     }
 
     const msgs: MessageCreateOptions[] = [];
-    for (let i = 0; i < embeds.length; i += embedsPerMessage) {
-        msgs.push({embeds: embeds.slice(i, i + embedsPerMessage)});
+    for (let i = 0; i < embeds.length; i += MessageEmbedLimit) {
+        msgs.push({embeds: embeds.slice(i, i + MessageEmbedLimit)});
     }
     
     return msgs;
@@ -77,29 +77,31 @@ function createTaxesResponse(taxesTotal: number, userIds: string[], balances: st
 function createWelfareResponse(welfareTotal: number, userIds: string[], balances: string[], newBalances: string[]): MessageCreateOptions[] {
     if (userIds.length === 0 || balances.length === 0 || newBalances.length === 0) return [{content: 'No welfare today.'}];
 
-    const welfareHeader = 
-        new EmbedBuilder()
-            .setTitle(`${time(new Date(), 'd')} Welfare`)
-            .addFields(
-                {name: 'Welfare Total', value: welfareTotal.toLocaleString(), inline: true}
-            );
-
-    const embeds = [welfareHeader];
-    for (let i = 0; i < userIds.length; i += usersPerEmbed) {
-        const endIndex = i + usersPerEmbed;
-        embeds.push(
-            new EmbedBuilder()
+    const embeds = [];
+    for (let i = 0; i < userIds.length; i += UsersPerEmbed) {
+        const embed = new EmbedBuilder();
+        if (i === 0) {
+            embed
+                .setTitle(`${time(new Date(), 'd')} Welfare`)
                 .addFields(
-                    {name: 'User', value: userIds.slice(i, endIndex).map(id => userMention(id)).join('\n'), inline: true},
-                    {name: 'Balance', value: balances.slice(i, endIndex).join('\n'), inline: true},
-                    {name: 'New Balance', value: newBalances.slice(i, endIndex).join('\n'), inline: true}
-                )
+                    emptyEmbedFieldInline,
+                    emptyEmbedFieldInline,
+                    {name: 'Welfare Total', value: welfareTotal.toLocaleString(), inline: true}
+                );
+        }
+
+        const endIndex = i + UsersPerEmbed;
+        embed.addFields(
+            {name: 'User', value: userIds.slice(i, endIndex).map(id => userMention(id)).join('\n'), inline: true},
+            {name: 'Balance', value: balances.slice(i, endIndex).join('\n'), inline: true},
+            {name: 'New Balance', value: newBalances.slice(i, endIndex).join('\n'), inline: true}
         );
+        embeds.push(embed);
     }
 
     const msgs: MessageCreateOptions[] = [];
-    for (let i = 0; i < embeds.length; i += embedsPerMessage) {
-        msgs.push({embeds: embeds.slice(i, i + embedsPerMessage)});
+    for (let i = 0; i < embeds.length; i += MessageEmbedLimit) {
+        msgs.push({embeds: embeds.slice(i, i + MessageEmbedLimit)});
     }
 
     return msgs;
