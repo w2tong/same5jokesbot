@@ -15,7 +15,6 @@ async function execute(interaction: ChatInputCommandInteraction) {
             totalPoints += POINTS;
         }
 
-        console.log(users, points);
         const embeds = [];
         for (let i = 0; i < users.length; i += UsersPerEmbed) {
             const endRange = i + UsersPerEmbed;
