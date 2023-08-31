@@ -1,13 +1,7 @@
 import Card from './Card';
 
 class Hand {
-
-    userId: string;
     cards: Card[] = [];
-
-    constructor(userId: string) {
-        this.userId = userId;
-    }
 
     add(card: Card): void {
         this.cards.push(card);
