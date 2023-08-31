@@ -74,7 +74,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     gambleEmitter.emit('end', user.id, pointsBet, profit, interaction.client, interaction.channelId);
 
     const embed = new EmbedBuilder()
-        .setTitle(title)
+        .setAuthor({name: title, iconURL: interaction.user.displayAvatarURL()})
         .addFields(
             {name: 'Points Bet', value: `${pointsBet.toLocaleString()}`, inline: true},
             {name: 'Chance', value: `${chance}%`, inline: true},
