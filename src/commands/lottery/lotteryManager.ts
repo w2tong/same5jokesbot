@@ -3,7 +3,7 @@ import { dateToDbString, getRandomRange, timeInMS } from '../../util/util';
 import { Lottery, getActiveLottery, getCurrentLottery, insertLottery, updateJackpot } from '../../sql/tables/lottery';
 import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe-points';
 import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery-ticket';
-import { ChannelType, Client, EmbedBuilder, bold, roleMention, time, userMention } from 'discord.js';
+import { ChannelType, Client, EmbedBuilder, User, bold, roleMention, time, userMention } from 'discord.js';
 import { emptyEmbedFieldInline, fetchChannel, fetchUser, messageEmbedLimit } from '../../util/discordUtil';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 import EventEmitter from 'events';
@@ -67,7 +67,7 @@ function scheduleNewLotteryCronJob(client: Client) {
                     if (!user) continue;
                     const tickets = await getUserLotteryTickets(user.id, lottery.ID);
                     if (!tickets) continue;
-                    embedPromises.push((await claimTickets(user.id, user.username, lottery, tickets, jackpotPerTicket)).embed);
+                    embedPromises.push((await claimTickets(user, lottery, tickets, jackpotPerTicket)).embed);
                     claimLotteryTicketsUpdates.push({lotteryId: lottery.ID, userId: user.id});
                 }
                 // Send embeds of unclaimed tickets
@@ -144,7 +144,7 @@ async function buyTicket(userId: string, numbers: number[], client: Client, chan
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
 
-async function checkTickets(userId: string, username: string): Promise<{reply: {content: string, embeds: EmbedBuilder[]}, winnings: number}> {
+async function checkTickets(user: User): Promise<{reply: {content: string, embeds: EmbedBuilder[]}, winnings: number}> {
 
     const lottery = await getCurrentLottery();
     if (!lottery) return {reply: {content: 'There is currently no lottery', embeds: []}, winnings: 0};
@@ -152,21 +152,21 @@ async function checkTickets(userId: string, username: string): Promise<{reply: {
     const activeLottery = await getActiveLottery();
     if (activeLottery) return {reply: {content: 'You cannot check your ticket when the lottery is active.', embeds: []}, winnings: 0};
 
-    const tickets = await getUserLotteryTickets(userId, lottery.ID);
+    const tickets = await getUserLotteryTickets(user.id, lottery.ID);
     if (tickets.length === 0) return {reply: {content: 'You did not buy any tickets for the current lottery.', embeds: []}, winnings: 0};
 
-    const unclaimedTickets = await getUnclaimedUserTicketsCount(lottery.ID, userId);
+    const unclaimedTickets = await getUnclaimedUserTicketsCount(lottery.ID, user.id);
     if (unclaimedTickets === 0) return {reply: {content: 'You have already claimed your tickets for this lottery.', embeds: []}, winnings: 0};
 
     const jackpotWinners = await getJackpotWinners(lottery.ID);
     const jackpot = calcJackpotPerTicket(jackpotWinners, lottery.JACKPOT);
-    const {embed, winnings} = await claimTickets(userId, username, lottery, tickets, jackpot);
-    await claimLotteryTickets([{lotteryId: lottery.ID, userId}]);
+    const {embed, winnings} = await claimTickets(user, lottery, tickets, jackpot);
+    await claimLotteryTickets([{lotteryId: lottery.ID, userId: user.id}]);
     return {reply: {content: '', embeds: [embed]}, winnings};
 }
 
 type TicketWinnings = {numbers: string, winnings: number, jackpotWinnings: number};
-async function claimTickets(userId: string, username: string, lottery: Lottery, tickets: LotteryTicket[], jackpot: number): Promise<{embed: EmbedBuilder, winnings: number}> {
+async function claimTickets(user: User, lottery: Lottery, tickets: LotteryTicket[], jackpot: number): Promise<{embed: EmbedBuilder, winnings: number}> {
     let totalWinnings = 0;
     const ticketWinnings: TicketWinnings[] = [];
     const lotteryNumbers = lottery.NUMBERS.split(',');
@@ -178,9 +178,9 @@ async function claimTickets(userId: string, username: string, lottery: Lottery, 
         ticketWinnings.push({numbers: tickets[i].NUMBERS, winnings, jackpotWinnings });
         totalWinnings += winnings + jackpotWinnings;
     }
-    if (totalWinnings > 0) await houseUserTransfer([{userId, points: totalWinnings}]);
-    await updateProfits([{userId, type: ProfitType.Lottery, profit: totalWinnings}]);
-    return {embed: createUserTicketsEmbed(userId, username, totalWinnings, ticketWinnings), winnings: totalWinnings};
+    if (totalWinnings > 0) await houseUserTransfer([{userId: user.id, points: totalWinnings}]);
+    await updateProfits([{userId: user.id, type: ProfitType.Lottery, profit: totalWinnings}]);
+    return {embed: createUserTicketsEmbed(user, totalWinnings, ticketWinnings), winnings: totalWinnings};
 }
 
 function calcJackpotPerTicket(winners: JackpotWinner[], jackpot: number) {
@@ -189,7 +189,7 @@ function calcJackpotPerTicket(winners: JackpotWinner[], jackpot: number) {
     return totalTickets > 0 ? Math.ceil(jackpot/totalTickets) : jackpot;
 }
 
-function createUserTicketsEmbed(userId: string, username: string, totalWinnings: number, ticketWinnings: TicketWinnings[]): EmbedBuilder {
+function createUserTicketsEmbed(user: User, totalWinnings: number, ticketWinnings: TicketWinnings[]): EmbedBuilder {
     let jackpot = false;
     const tickets = [];
     const winnings = [];
@@ -201,7 +201,7 @@ function createUserTicketsEmbed(userId: string, username: string, totalWinnings:
     }
 
     const embed = new EmbedBuilder()
-        .setTitle(`${username}'s Lottery Winnings ${jackpot ? '(JACKPOT)' : ''}`)
+        .setAuthor({name: `${user.username}'s Lottery Winnings ${jackpot ? '(JACKPOT)' : ''}`, iconURL: user.displayAvatarURL()})
         .addFields(
             emptyEmbedFieldInline,
             emptyEmbedFieldInline,
