@@ -8,17 +8,17 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.options.getUser('user') ?? interaction.user;
     const type = interaction.options.getString('type') as ProfitType;
 
+    const embed = new EmbedBuilder()
+        .setAuthor({name: `${user.username}'s ${type ? `${capitalize(type)} ` : ''}Profits`, iconURL: user.displayAvatarURL()});
+
     if (type) {
         const profits = await getUserTypeProfits(user.id, type);
         if (profits) {
-            const embed = new EmbedBuilder()
-                .setTitle(`${user.username}'s ${type ? `${capitalize(type)} ` : ''}Profits`)
-                .addFields(
-                    {name: 'Winnings', value: `${profits.WINNINGS.toLocaleString()}`, inline: true},
-                    {name: 'Losses', value: `${profits.LOSSES.toLocaleString()}`, inline: true},
-                    {name: 'Profits', value: `${profits.PROFITS.toLocaleString()}`, inline: true}
-                );
-            await interaction.editReply({embeds: [embed]});
+            embed.addFields(
+                {name: 'Winnings', value: `${profits.WINNINGS.toLocaleString()}`, inline: true},
+                {name: 'Losses', value: `${profits.LOSSES.toLocaleString()}`, inline: true},
+                {name: 'Profits', value: `${profits.PROFITS.toLocaleString()}`, inline: true}
+            ); 
         }
         else {
             await interaction.editReply(`You do not have profits for ${capitalize(type)}.`);
@@ -36,23 +36,21 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 types.push(capitalize(TYPE));
                 profitsPerType.push(PROFITS.toLocaleString());
             }
-            const embed = new EmbedBuilder()
-                .setTitle(`${user.username}'s ${type ? `${capitalize(type)} ` : ''}Profits`)
-                .addFields(
-                    {name: 'User', value: userMention(user.id), inline: true},
-                    {name: 'Total Profits', value: totalProfits.toLocaleString(), inline: true},
-                    emptyEmbedFieldInline,
+            embed.addFields(
+                {name: 'User', value: userMention(user.id), inline: true},
+                {name: 'Total Profits', value: totalProfits.toLocaleString(), inline: true},
+                emptyEmbedFieldInline,
     
-                    {name: 'Type', value: types.join('\n'), inline: true},
-                    {name: 'Profits', value: profitsPerType.join('\n'), inline: true},
-                    emptyEmbedFieldInline
-                );
-            await interaction.editReply({embeds: [embed]});
+                {name: 'Type', value: types.join('\n'), inline: true},
+                {name: 'Profits', value: profitsPerType.join('\n'), inline: true},
+                emptyEmbedFieldInline
+            );
         }
         else {
             await interaction.editReply('You do not have profits.');
         }
     }
+    await interaction.editReply({embeds: [embed]});
 }
 
 const name = 'get';
