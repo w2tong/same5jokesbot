@@ -7,6 +7,7 @@
   "exclude": [
     "jest.config.ts",
     "src/**/*.test.ts",
-    "src/tests/*"
+    "src/tests/*",
+    "src/simulateCasino.ts"
   ]
 }
