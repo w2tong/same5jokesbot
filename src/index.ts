@@ -12,6 +12,7 @@ import { initVoiceLogChannel } from './voice';
 import { fetchChannel, fetchUser } from './util/discordUtil';
 import { loadStolenGoods } from './commands/steal/stealManager';
 import { loadDailyProgress } from './daily/dailyManager';
+import { loadUpgrades } from './upgrades/upgradeManager';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 
@@ -70,7 +71,11 @@ client.once(Events.ClientReady, async () => {
 
     console.log('Loading daily progress.');
     await loadDailyProgress();
-    console.log('Done loading daily progress.');
+    console.log('Done loading daily progress.\n');
+
+    console.log('Loading upgrades.');
+    await loadUpgrades();
+    console.log('Done loading upgrades.\n');
 
     // Init users in voice channels
     console.log('Initializing users in voice.');
