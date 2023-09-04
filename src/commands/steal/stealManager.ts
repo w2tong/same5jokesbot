@@ -22,6 +22,8 @@ const stealMax = 1_000_000;
 const victimExtraPc = 0.5;
 const houseExtraPc = 0.25;
 const debtLimit = -10_000;
+const stealChance = 0.45;
+const houseChance = 0.05;
 type stolenGood = {victimId: string, points: number, time: number};
 
 function scheduleSteal(stealerId: string, victimId: string, points: number, time: number, id?: string) {
@@ -155,12 +157,8 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
     ]);
     stealEmitter.emit('steal', stealer, amount, client, channelId);
     
-    // Fail
-    if (result >= 0 && result < 0.55) {
-        return await forfeitStolenGoods(stealer, victimUsername, victimExtraPc, false, amount);
-    }
     // Success
-    else if (result >= 0.55 && result < 0.95) {
+    if (result >= 0 && result < stealChance) {
         scheduleSteal(stealer.id, victimId, amount, time, stolenGoodId);
         addStolenGood(stolenGoodId, stealer.id, victimId, amount, time);
         await insertStolenGood(stolenGoodId, stealer.id, victimId, amount, dateToDbString(new Date(time)));
@@ -184,8 +182,12 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
         return {embeds: [embed]};
     }
     // House
-    else {
+    else if (result >= 1-houseChance) {
         return await forfeitStolenGoods(stealer, victimUsername, houseExtraPc, true, amount);
+    }
+    // Fail
+    else {
+        return await forfeitStolenGoods(stealer, victimUsername, victimExtraPc, false, amount);
     }
 }
 
