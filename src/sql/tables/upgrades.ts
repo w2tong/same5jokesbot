@@ -1,6 +1,7 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from '../query-options';
-import { upgradeIds } from '../../upgrades/upgradeManager';
+import { UpgradeId } from '../../upgrades/upgradeManager';
+import { upgradeIds } from '../../upgrades/upgrades';
 
 const createTableUpgrades = {
     name: 'UPGRADES',
@@ -83,7 +84,7 @@ MERGE INTO upgrades dest
         VALUES( src.user_id, src.upgrade_id, 1 )
 `;
 
-async function updateUpgrades(userId: string, upgradeId: string) {
+async function updateUpgrades(userId: string, upgradeId: UpgradeId) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery, {userId, upgradeId});

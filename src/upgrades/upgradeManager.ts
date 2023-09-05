@@ -1,20 +1,12 @@
-import { getAllUpgrades } from '../sql/tables/upgrades';
-import upgrades from './upgrades';
-
-type Upgrade = keyof typeof upgrades.dailyUpgrades | keyof typeof upgrades.stealUpgrades;
+import { getAllUpgrades, updateUpgrades } from '../sql/tables/upgrades';
+import { UpgradeId } from './upgrades';
 
 const userUpgrades: {[userId: string]: UserUpgrades} = {};
-type UserUpgrades = {[upgrade in Upgrade]: number};
-
-const upgradeIds: string[] = [];
-let upgradeType: keyof typeof upgrades;
-for (upgradeType in upgrades) {
-    upgradeIds.push(...Object.keys(upgrades[upgradeType]));
-}
+type UserUpgrades = {[upgrade in UpgradeId]: number};
 
 const emptyUserUpgrades: UserUpgrades = {
     //daily
-    reward: 0,
+    rewardIncrease: 0,
 
     // steal
     stealChance: 0,
@@ -23,10 +15,11 @@ const emptyUserUpgrades: UserUpgrades = {
     paybackReduction: 0
 };
 
-function upgrade(userId: string, upgrade: Upgrade) {
+async function upgrade(userId: string, upgrade: UpgradeId) {
     if (!userUpgrades[userId]) userUpgrades[userId] = JSON.parse(JSON.stringify(emptyUserUpgrades)) as UserUpgrades;
     userUpgrades[userId][upgrade]++;
-    // updateUpgrade(userId, upgrade) db func
+    await updateUpgrades(userId, upgrade);
+    return {old: userUpgrades[userId][upgrade]-1, new: userUpgrades[userId][upgrade]};
 }
 
 async function loadUpgrades() {
@@ -34,8 +27,8 @@ async function loadUpgrades() {
 
     for (const {USER_ID, UPGRADE_ID, UPGRADE_LEVEL} of upgrades) {
         if (!userUpgrades[USER_ID]) userUpgrades[USER_ID] = JSON.parse(JSON.stringify(emptyUserUpgrades)) as UserUpgrades;
-        userUpgrades[USER_ID][UPGRADE_ID as Upgrade] = UPGRADE_LEVEL;
+        userUpgrades[USER_ID][UPGRADE_ID as UpgradeId] = UPGRADE_LEVEL;
     }
 }
 
-export {Upgrade, userUpgrades, upgradeIds, upgrade, loadUpgrades};
+export {UpgradeId, userUpgrades, upgrade, loadUpgrades};
