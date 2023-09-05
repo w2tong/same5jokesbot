@@ -21,7 +21,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const embed = new EmbedBuilder()
-        .setTitle(`${interaction.user.username}'s Daily Progress`)
+        .setAuthor({name: `${interaction.user.username}'s Daily Progress`, iconURL: interaction.user.displayAvatarURL()})
         .addFields(
             {name: 'Quest', value: quests.join('\n'), inline: true},
             {name: 'Progress', value: progress.join('\n'), inline: true},
