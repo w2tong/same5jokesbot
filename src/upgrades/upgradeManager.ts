@@ -27,19 +27,19 @@ async function upgrade(user: User, upgradeId: UpgradeId): Promise<InteractionEdi
     
     const userUpgradeLevel = userUpgrades[user.id][upgradeId];
     const upgrade = upgrades[upgradeId];
-    if (userUpgradeLevel+1 >= upgrade.levels.length) return {content: `You are at the max level for ${upgrade.name}`};
+    if (userUpgradeLevel+1 >= upgrade.levels.length) return {content: `You are at the max level for ${upgrade.name}.`};
     
     const embed = new EmbedBuilder()
         .setAuthor({name: `${user.username} upgraded ${upgrade.name} from level ${userUpgradeLevel} to level ${userUpgradeLevel+1}.`, iconURL: user.displayAvatarURL()})
         .setDescription(upgrade.description)
         .addFields(
-            {name: 'Old Value', value: `${upgrade.levels[userUpgradeLevel]}`, inline: true},
+            {name: 'Old Value', value: `${upgrade.levels[userUpgradeLevel]}${upgrade.suffix ?? ''}`, inline: true},
             emptyEmbedFieldInline,
-            {name: 'New Value', value: `${upgrade.levels[userUpgradeLevel+1]}`, inline: true},
+            {name: 'New Value', value: `${upgrade.levels[userUpgradeLevel+1]}${upgrade.suffix ?? ''}`, inline: true},
 
-            {name: 'Balance', value: `${'PH'}`, inline: true},
+            {name: 'Balance', value: `${coins.toLocaleString()} (-${upgradePrice.toLocaleString()})`, inline: true},
             emptyEmbedFieldInline,
-            {name: 'New Balance', value: `${'PH'}`, inline: true}
+            {name: 'New Balance', value: `${(coins - upgradePrice).toLocaleString()}`, inline: true}
         )
     ;
 

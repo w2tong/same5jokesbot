@@ -13,7 +13,7 @@ const name = 'steal';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Upgrade steal')
+    .setDescription('Steal upgrades.')
     .addStringOption(option => option
         .setName('upgrade')
         .setDescription('Select an upgrade.')
