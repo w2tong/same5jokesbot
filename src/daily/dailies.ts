@@ -20,7 +20,7 @@ const dailies: {[key in DailyId]: Daily} = {
         reward: 10_000
     },
     bjWager: {
-        description: `Wager ${10_000} points in Blackjack games.`,
+        description: `Wager ${(10_000).toLocaleString()} points in Blackjack games.`,
         maxProgress: 10_000,
         reward: 10_000
     },
@@ -41,7 +41,7 @@ const dailies: {[key in DailyId]: Daily} = {
         reward: 10_000
     },
     deathRollWager: {
-        description: `Wager ${25_000} points in Death Rolls.`,
+        description: `Wager ${(25_000).toLocaleString()} points in Death Rolls.`,
         maxProgress: 25_000,
         reward: 10_000
     },
@@ -62,7 +62,7 @@ const dailies: {[key in DailyId]: Daily} = {
         reward: 10_000
     },
     gWager: {
-        description: `Gamble ${50_000} points.`,
+        description: `Gamble ${(50_000).toLocaleString()} points.`,
         maxProgress: 50_000,
         reward: 10_000
     },
@@ -89,7 +89,7 @@ const dailies: {[key in DailyId]: Daily} = {
         reward: 10_000
     },
     slotsWager: {
-        description: `Wager ${25_000} points in Slots.`,
+        description: `Wager ${(25_000).toLocaleString()} points in Slots.`,
         maxProgress: 25_000,
         reward: 10_000
     },
