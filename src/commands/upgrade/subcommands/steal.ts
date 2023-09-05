@@ -1,26 +1,12 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
 import { upgrade } from '../../../upgrades/upgradeManager';
-import { StealUpgradeId, stealUpgrades } from '../../../upgrades/upgrades';
-import { emptyEmbedFieldInline } from '../../../util/discordUtil';
+import { StealUpgradeId, stealUpgradeIds, upgrades } from '../../../upgrades/upgrades';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const upgradeId = interaction.options.getString('upgrade') as StealUpgradeId;
-    await upgrade(interaction.user.id, upgradeId);
-
-    const embed = new EmbedBuilder()
-        .setAuthor({name: `${stealUpgrades[upgradeId].name} Upgrade bought.`, iconURL: interaction.user.displayAvatarURL()})
-        .addFields(
-            {name: 'Old Value', value: `${'PH'}`, inline: true},
-            emptyEmbedFieldInline,
-            {name: 'New Value', value: `${'PH'}`, inline: true},
-
-            {name: 'Balance', value: `${'PH'}`, inline: true},
-            emptyEmbedFieldInline,
-            {name: 'New Balance', value: `${'PH'}`, inline: true}
-        )
-    ;
-    await interaction.editReply({embeds: [embed]});
+    const res = await upgrade(interaction.user, upgradeId);
+    await interaction.editReply(res);
 }
 
 const name = 'steal';
@@ -31,7 +17,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .addStringOption(option => option
         .setName('upgrade')
         .setDescription('Select an upgrade.')
-        .addChoices(...Object.entries(stealUpgrades).map(([id, upgrade])=> {return {name: upgrade.name, value: id};}))
+        .addChoices(...stealUpgradeIds.map(id=> {return {name: upgrades[id].name, value: id};}))
     );
 
 export default { execute, name, subcommandBuilder };

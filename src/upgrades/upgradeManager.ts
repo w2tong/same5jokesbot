@@ -1,5 +1,7 @@
+import { EmbedBuilder, InteractionEditReplyOptions, User } from 'discord.js';
 import { getAllUpgrades, updateUpgrades } from '../sql/tables/upgrades';
-import { UpgradeId } from './upgrades';
+import { UpgradeId, upgrades } from './upgrades';
+import { emptyEmbedFieldInline } from '../util/discordUtil';
 
 const userUpgrades: {[userId: string]: UserUpgrades} = {};
 type UserUpgrades = {[upgrade in UpgradeId]: number};
@@ -15,11 +17,29 @@ const emptyUserUpgrades: UserUpgrades = {
     paybackReduction: 0
 };
 
-async function upgrade(userId: string, upgrade: UpgradeId) {
-    if (!userUpgrades[userId]) userUpgrades[userId] = JSON.parse(JSON.stringify(emptyUserUpgrades)) as UserUpgrades;
-    userUpgrades[userId][upgrade]++;
-    await updateUpgrades(userId, upgrade);
-    return {old: userUpgrades[userId][upgrade]-1, new: userUpgrades[userId][upgrade]};
+async function upgrade(user: User, upgradeId: UpgradeId): Promise<InteractionEditReplyOptions> {
+    if (!userUpgrades[user.id]) userUpgrades[user.id] = JSON.parse(JSON.stringify(emptyUserUpgrades)) as UserUpgrades;
+    
+    const userUpgradeLevel = userUpgrades[user.id][upgradeId];
+    const upgrade = upgrades[upgradeId];
+    const embed = new EmbedBuilder()
+        .setAuthor({name: `${user.username} upgraded ${upgrade.name} from level ${userUpgradeLevel} to level ${userUpgradeLevel+1}.`, iconURL: user.displayAvatarURL()})
+        .setDescription(upgrade.description)
+        .addFields(
+            {name: 'Old Value', value: `${upgrade.levels[userUpgradeLevel]}`, inline: true},
+            emptyEmbedFieldInline,
+            {name: 'New Value', value: `${upgrade.levels[userUpgradeLevel+1]}`, inline: true},
+
+            {name: 'Balance', value: `${'PH'}`, inline: true},
+            emptyEmbedFieldInline,
+            {name: 'New Balance', value: `${'PH'}`, inline: true}
+        )
+    ;
+
+    userUpgrades[user.id][upgradeId]++;
+    await updateUpgrades(user.id, upgradeId);
+
+    return {embeds: [embed]};
 }
 
 async function loadUpgrades() {

@@ -6,17 +6,22 @@ type Upgrade = {
 
 const dailyUpgradeIds = ['rewardIncrease'] as const;
 type DailyUpgradeId = typeof dailyUpgradeIds[number]
-const dailyUpgrades: {[key in DailyUpgradeId]: Upgrade} = {
+const stealUpgradeIds = ['stealChance', 'stolenGoodChanceReduction', 'stealDefence', 'paybackReduction'] as const;
+type StealUpgradeId = typeof stealUpgradeIds[number]
+
+type UpgradeId = DailyUpgradeId | StealUpgradeId
+const upgradeIds = [...dailyUpgradeIds, ...stealUpgradeIds];
+
+const upgrades: {[key in UpgradeId]: Upgrade} = {
+
+    // Daily
     rewardIncrease: {
         name: 'Reward Increase',
         description: 'Increase the amount of points you are rewarded when completing a Daily Quest.',
         levels: [0,5,10,15,20,25]
-    }
-};
+    },
 
-const stealUpgradeIds = ['stealChance', 'stolenGoodChanceReduction', 'stealDefence', 'paybackReduction'] as const;
-type StealUpgradeId = typeof stealUpgradeIds[number]
-const stealUpgrades: {[key in StealUpgradeId]: Upgrade} = {
+    // Steal
     stealChance: {
         name: 'Steal Chance',
         description: 'Increase your chance to steal.',
@@ -40,14 +45,11 @@ const stealUpgrades: {[key in StealUpgradeId]: Upgrade} = {
     
 };
 
-type UpgradeId = DailyUpgradeId | StealUpgradeId
-const upgradeIds = [...dailyUpgradeIds, ...stealUpgradeIds];
-
 export {
     // Daily
-    dailyUpgradeIds, DailyUpgradeId, dailyUpgrades,
+    dailyUpgradeIds, DailyUpgradeId,
     // Steal
-    stealUpgradeIds, StealUpgradeId, stealUpgrades,
+    stealUpgradeIds, StealUpgradeId,
     // Union
-    UpgradeId, upgradeIds, 
+    UpgradeId, upgradeIds, upgrades
 };

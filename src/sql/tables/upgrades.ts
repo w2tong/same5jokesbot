@@ -11,7 +11,7 @@ const createTableUpgrades = {
             upgrade_id VARCHAR2(64) NOT NULL,
             upgrade_level NUMBER DEFAULT 0,
             CONSTRAINT pk_upgrades PRIMARY KEY (user_id, upgrade_id),
-            CONSTRAINT chk_upgrades CHECK (upgrade_level IN (${upgradeIds.map(type => `'${type}'`).join(',')}))
+            CONSTRAINT chk_upgrades CHECK (upgrade_id IN (${upgradeIds.map(type => `'${type}'`).join(',')}))
         )
     `
 };
@@ -22,7 +22,7 @@ DROP CONSTRAINT chk_upgrades
 `,
 `
 ALTER TABLE upgrades
-ADD CONSTRAINT chk_upgrades CHECK (upgrade_level IN (${upgradeIds.map(type => `'${type}'`).join(',')}))
+ADD CONSTRAINT chk_upgrades CHECK (upgrade_id IN (${upgradeIds.map(type => `'${type}'`).join(',')}))
 `
 ];
 
@@ -75,7 +75,7 @@ async function getAllUpgrades(): Promise<UpgradeRow[]> {
 
 const updateQuery = `
 MERGE INTO upgrades dest
-    USING( SELECT :userId AS user_id, :upgrade_id AS upgrade_id FROM dual) src
+    USING( SELECT :userId AS user_id, :upgradeId AS upgrade_id FROM dual) src
         ON( dest.user_id = src.user_id AND dest.upgrade_id = src.upgrade_id )
     WHEN MATCHED THEN
         UPDATE SET upgrade_level = dest.upgrade_level + 1
