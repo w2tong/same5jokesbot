@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { currDailies, userDailies } from '../daily/dailyManager';
-import dailies from '../daily/dailies';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { currDailies, userDailies } from '../../../daily/dailyManager';
+import dailies from '../../../daily/dailies';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -31,10 +31,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.editReply({embeds: [embed]});
 }
 
-const name = 'daily';
+const name = 'progress';
 
-const commandBuilder = new SlashCommandBuilder()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Check your progress on today\'s dailies.');
 
-export default { execute, name, commandBuilder };
+export default { execute, name, subcommandBuilder };

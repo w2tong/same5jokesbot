@@ -251,7 +251,9 @@ async function createLotteryInfoEmbed(): Promise<EmbedBuilder> {
             {name: 'Numbers', value: `${numbers[0]} - ${numbers[numbers.length-1]}`, inline: true},
             {name: 'Choose', value: `${choose}`, inline: true},
             {name: 'Current Jackpot', value: `${lottery?.JACKPOT.toLocaleString() ?? 'None'}`, inline: true},
+
             {name: '# of nums', value: `${numOfNums.join('\n')}`, inline: true},
+            emptyEmbedFieldInline,
             {name: 'Payout', value: `${payouts.join('\n')}${lottery ? ` + ${lottery.JACKPOT.toLocaleString()}` : ''}`, inline: true},
         );
     return embed;

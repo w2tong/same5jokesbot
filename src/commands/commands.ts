@@ -16,7 +16,8 @@ import profits from './profits/profits';
 import tax from './tax/tax';
 import steal from './steal/steal';
 import blackjack from './blackjack/blackjack';
-import daily from './daily';
+import daily from './daily/daily';
+import upgrade from './upgrade/upgrade';
 
 const commands = {
     [play.name]: play.execute,
@@ -38,6 +39,7 @@ const commands = {
     [steal.name]: steal.execute,
     [blackjack.name]: blackjack.execute,
     [daily.name]: daily.execute,
+    [upgrade.name]: upgrade.execute,
 };
 
 const commandBuilders = [
@@ -59,7 +61,8 @@ const commandBuilders = [
     tax.commandBuilder,
     steal.commandBuilder,
     blackjack.commandBuilder,
-    daily.commandBuilder
+    daily.commandBuilder,
+    upgrade.commandBuilder,
 ];
 
 export { commands, commandBuilders };

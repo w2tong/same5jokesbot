@@ -1,18 +1,18 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, bold } from 'discord.js';
-import { getUserCringePoints } from '../../../sql/tables/cringe-points';
+import { getDailyCoins } from '../../../sql/tables/daily-coins';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
-    const cringePoints = await getUserCringePoints(user.id) ?? 0;
-    void interaction.editReply(`${user} has ${bold(cringePoints.toLocaleString())} points.`);
+    const cringePoints = await getDailyCoins(user.id) ?? 0;
+    void interaction.editReply(`${user} has ${bold(cringePoints.toLocaleString())} coins.`);
 }
 
-const name = 'get';
+const name = 'coins';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets a user\'s cringe points.')
+    .setDescription('Gets a user\'s daily coins.')
     .addUserOption((option) => option.setName('user').setDescription('Select a user.'));
 
 export default { execute, name, subcommandBuilder };

@@ -14,12 +14,15 @@ import { createTableLottery } from './tables/lottery';
 import { createTableLotteryTicket } from './tables/lottery-ticket';
 import { createTableProfits, updateTableProfits } from './tables/profits';
 import { createTableStolenGoods } from './tables/stolen-goods';
-import { logError } from '../logger';
 import { createTableDailyProgress } from './tables/daily-progress';
+import { createTableUpgrades, updateTableUpgrades } from './tables/upgrades';
+import { createTableDailyCoins } from './tables/daily-coins';
 
-const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress];
+import { logError } from '../logger';
 
-const updateTableQueries = [...updateTableProfits];
+const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins];
+
+const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades];
 
 oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
 oracledb.autoCommit = true;
