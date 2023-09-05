@@ -29,13 +29,16 @@ async function upgrade(user: User, upgradeId: UpgradeId): Promise<InteractionEdi
     const upgrade = upgrades[upgradeId];
     if (userUpgradeLevel+1 >= upgrade.levels.length) return {content: `You are at the max level for ${upgrade.name}.`};
     
+    const oldValue = upgrade.percentage ? `${upgrade.levels[userUpgradeLevel] * 100}%` : `${upgrade.levels[userUpgradeLevel]}`;
+    const newValue = upgrade.percentage ? `${upgrade.levels[userUpgradeLevel+1] * 100}%` : `${upgrade.levels[userUpgradeLevel+1]}`;
+
     const embed = new EmbedBuilder()
         .setAuthor({name: `${user.username} upgraded ${upgrade.name} from level ${userUpgradeLevel} to level ${userUpgradeLevel+1}.`, iconURL: user.displayAvatarURL()})
         .setDescription(upgrade.description)
         .addFields(
-            {name: 'Old Value', value: `${upgrade.levels[userUpgradeLevel]}${upgrade.suffix ?? ''}`, inline: true},
+            {name: 'Old Value', value: oldValue, inline: true},
             emptyEmbedFieldInline,
-            {name: 'New Value', value: `${upgrade.levels[userUpgradeLevel+1]}${upgrade.suffix ?? ''}`, inline: true},
+            {name: 'New Value', value: newValue, inline: true},
 
             {name: 'Balance', value: `${coins.toLocaleString()} (-${upgradePrice.toLocaleString()})`, inline: true},
             emptyEmbedFieldInline,
@@ -59,4 +62,4 @@ async function loadUpgrades() {
     }
 }
 
-export {UpgradeId, userUpgrades, upgrade, loadUpgrades};
+export {UpgradeId, emptyUserUpgrades, userUpgrades, upgrade, loadUpgrades };

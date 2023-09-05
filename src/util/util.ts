@@ -36,4 +36,9 @@ function capitalize(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export { timeInMS, getRandomRange, getMomentTorontoCurrentTime, dateToDbString, msToString, capitalize };
+function roundToDecimalPlaces(num: number, places: number): number {
+    const mult = 10 ** places;
+    return Math.round(num * mult) / mult;
+}
+
+export { timeInMS, getRandomRange, getMomentTorontoCurrentTime, dateToDbString, msToString, capitalize, roundToDecimalPlaces };

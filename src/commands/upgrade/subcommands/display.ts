@@ -6,24 +6,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.user;
 
-    const names: string[] = [];
-    const currentLevels: string[] = [];
-    const levels: string[] = [];
+    const embed = new EmbedBuilder()
+        .setAuthor({name: `${user.username}'s Upgrades`, iconURL: user.displayAvatarURL()});
+
     for (const id of stealUpgradeIds) {
         const upgrade = upgrades[id];
         const currLvl = userUpgrades[user.id][id];
-        names.push(upgrade.name);
-        currentLevels.push(`${currLvl}/${upgrade.levels.length-1}`);
-        levels.push(`[${upgradeLevelsToString(upgrade, currLvl)}]`);
+        embed.addFields({name: upgrade.name, value: `Level: ${currLvl}/${upgrade.levels.length-1}\n[${upgradeLevelsToString(upgrade, currLvl)}]`});
     }
 
-    const embed = new EmbedBuilder()
-        .setAuthor({name: `${user.username}'s Upgrades`, iconURL: user.displayAvatarURL()})
-        .addFields(
-            {name: 'Upgrade', value: names.join('\n'), inline: true},
-            {name: 'Current Level', value: currentLevels.join('\n'), inline: true},
-            {name: 'Levels', value: levels.join('\n'), inline: true}
-        );
     await interaction.editReply({embeds: [embed]});
 }
 

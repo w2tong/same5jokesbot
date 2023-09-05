@@ -1,10 +1,11 @@
 import { bold } from 'discord.js';
+import { roundToDecimalPlaces } from '../util/util';
 
 type Upgrade = {
     name: string;
     description: string;
     readonly levels: number[];
-    suffix?: string;
+    percentage: boolean;
 }
 
 const dailyUpgradeIds = ['rewardIncrease'] as const;
@@ -20,40 +21,42 @@ const upgrades: {[key in UpgradeId]: Upgrade} = {
     rewardIncrease: {
         name: 'Reward Increase',
         description: 'Increase the amount of points you are rewarded when completing a Daily Quest.',
-        levels: [0,10,20,30,40,50],
-        suffix: '%',
+        levels: [0, 0.1, 0.2, 0.3, 0.4, 0.5],
+        percentage: true
     },
 
     // Steal
     stealChance: {
         name: 'Steal Chance',
         description: 'Increase your chance to steal.',
-        levels: [0,2,4,6,8,10],
-        suffix: '%'
+        levels: [0, 0.02, 0.04, 0.06, 0.08, 0.10],
+        percentage: true
     },
     stolenGoodChanceReduction: {
         name: 'Stolen Good Chance Reduction',
         description: 'Each stolen good reduces your chance of success.',
-        levels: [0,0.5,1,1.5,2,2.5],
-        suffix: '%'
+        levels: [0, 0.005,0.01, 0.015, 0.02, 0.025],
+        percentage: true
     },
     stealDefence: {
         name: 'Steal Defence',
         description: 'Reduce the chances of users stealing from you.',
-        levels: [0,1,2,3,4,5],
-        suffix: '%'
+        levels: [0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10],
+        percentage: true
     },
     paybackReduction: {
         name: 'Payback Reduction',
         description: 'Reduce the amount of extra points you return when you are caught.',
-        levels: [0,2,4,6,8,10],
-        suffix: '%'
+        levels: [0, 0.02, 0.04, 0.06, 0.08, 0.1],
+        percentage: true
     }
 };
 
 function upgradeLevelsToString(upgrade: Upgrade, currLvl?: number) {
-    const levels = upgrade.levels.map(lvl => `${lvl}${upgrade.suffix ?? ''}`);
-    if (currLvl) levels[currLvl] = bold(levels[currLvl]);
+    const levels = upgrade.levels.map(lvl => 
+        upgrade.percentage ? `${roundToDecimalPlaces(lvl*100, 1)}%` : `${lvl}`
+    );
+    if (currLvl) levels[currLvl] = `[${bold(levels[currLvl])}]`;
     return levels.slice(1).join(', ');
 }
 

@@ -1,6 +1,6 @@
 import { Client, Collection, EmbedBuilder, InteractionEditReplyOptions, User, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
-import { dateToDbString, timeInMS } from '../../util/util';
+import { dateToDbString, roundToDecimalPlaces, timeInMS } from '../../util/util';
 import { CringePointsUpdate, getUserCringePoints, houseUserTransfer, updateCringePoints } from '../../sql/tables/cringe-points';
 import { deleteStolenGood, deleteUserStolenGoods, getStolenGoods, insertStolenGood } from '../../sql/tables/stolen-goods';
 import { nanoid } from 'nanoid';
@@ -8,21 +8,24 @@ import { emptyEmbedFieldInline } from '../../util/discordUtil';
 import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
+import { emptyUserUpgrades, userUpgrades } from '../../upgrades/upgradeManager';
+import { upgrades } from '../../upgrades/upgrades';
 
 type StealEvents = {
     steal: (user: User, amount: number, client: Client, channelId: string) => Promise<void>
   }
 const stealEmitter = new EventEmitter() as TypedEmitter<StealEvents>;
 
-const stolenGoods: Collection<string, Collection<string, stolenGood>> = new Collection();
+const stolenGoods: Map<string, Map<string, stolenGood>> = new Map<string, Map<string, stolenGood>>();
 const stolenTime = timeInMS.minute * 15;
-const stealPcMax = 0.01;
+const stealPcMax = 0.005;
 const stealMin = 1_000;
-const stealMax = 1_000_000;
+const stealMax = 100_000;
 const victimExtraPc = 0.5;
 const houseExtraPc = 0.25;
 const debtLimit = -10_000;
-const stealChance = 0.45;
+const baseStealChance = 0.6;
+const stolenGoodChance = 0.1;
 const houseChance = 0.05;
 type stolenGood = {victimId: string, points: number, time: number};
 
@@ -52,11 +55,14 @@ function addStolenGood(jobId: string, stealerId: string, victimId: string, point
     stolenGoods.get(stealerId)?.set(jobId, {victimId, points, time});
 }
 
-async function forfeitStolenGoods(stealer: User, victimUsername: string, extraPc: number, house: boolean, amount: number): Promise<InteractionEditReplyOptions> {
+async function forfeitStolenGoods(stealer: User, victimUsername: string, extraPc: number, house: boolean, amount: number, stealChanceStr: string): Promise<InteractionEditReplyOptions> {
     await deleteUserStolenGoods(stealer.id);
     const userStolenGoods = stolenGoods.get(stealer.id);
     if (userStolenGoods && userStolenGoods.size > 0) {
         const stealerPoints = await getUserCringePoints(stealer.id) ?? 0;
+        const extraPcModifier = upgrades.paybackReduction.levels[(userUpgrades[stealer.id] ?? emptyUserUpgrades).paybackReduction];
+        extraPc = Math.max(extraPc - extraPcModifier, 0);
+
         const profitUpdates: ProfitsUpdate[] = [];
         let pointsForfeitTotal = 0;
         const victims = [];
@@ -100,12 +106,18 @@ async function forfeitStolenGoods(stealer: User, victimUsername: string, extraPc
         const embed = new EmbedBuilder()
             .setAuthor({name: `${stealer.username} steal from ${victimUsername} FAILED`, iconURL: stealer.displayAvatarURL()})
             .addFields(
+                {name: 'Success Chance', value: stealChanceStr, inline: true},
+                {name: 'Result', value: 'FAIL', inline: true},
+                emptyEmbedFieldInline,
+
                 {name: 'Balance', value: `${(stealerPoints - amount).toLocaleString()} (${(-(pointsForfeitTotal - amount)).toLocaleString()})`, inline: true},
                 {name: 'New Balance', value: `${(stealerPoints - pointsForfeitTotal).toLocaleString()}`, inline: true},
                 emptyEmbedFieldInline,
+
                 {name: 'Forfeited to', value: `${house ? 'House' : 'Victims'}`, inline: true},
                 {name: 'Extra Percent', value: `${(extraPc * 100)}%`, inline: true},
                 emptyEmbedFieldInline,
+
                 {name: 'User', value: victims.join('\n'), inline: true},
                 {name: 'Points Forfeited', value: pointsForfeit.join('\n'), inline: true},
                 {name: 'Safe', value: times.map(t => time(new Date(t), 'R')).join('\n'), inline: true}
@@ -142,21 +154,28 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
     }
         
     const result = Math.random();
+    const stealChanceModifier = upgrades.stealChance.levels[(userUpgrades[stealer.id] ?? emptyUserUpgrades).stealChance];
+    const stolenGoodModifier = (stolenGoods.get(stealer.id)?.size ?? 0) * (stolenGoodChance - upgrades.stolenGoodChanceReduction.levels[(userUpgrades[stealer.id] ?? emptyUserUpgrades).stolenGoodChanceReduction]);
+    const victimDefenceModifier = upgrades.stealDefence.levels[(userUpgrades[victimId] ?? emptyUserUpgrades).stealDefence];
+    const stealChance = baseStealChance + stealChanceModifier - stolenGoodModifier - victimDefenceModifier;
+    console.log(stealChance, stolenGoodModifier);
+
     const time = Date.now() + stolenTime;
     const stolenGoodId = nanoid();
     addStolenGood(stolenGoodId, stealer.id, victimId, amount, time);
     await Promise.all([
-        await updateCringePoints([
+        updateCringePoints([
             {userId: stealer.id, points: amount},
             {userId: victimId, points: -amount}
         ]),
-        await updateProfits([
+        updateProfits([
             {userId: stealer.id, type: ProfitType.Steal, profit: amount},
             {userId: victimId, type: ProfitType.Steal, profit: -amount},
         ])
     ]);
     
     let reply: InteractionEditReplyOptions;
+    const stealChanceStr = `${roundToDecimalPlaces(stealChance*100, 1)}%`;
     // Success
     if (result >= 0 && result < stealChance) {
         scheduleSteal(stealer.id, victimId, amount, time, stolenGoodId);
@@ -166,15 +185,22 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
         const embed = new EmbedBuilder()
             .setAuthor({name: `${stealer.username} steal from ${victimUsername} SUCCEEDED`, iconURL: stealer.displayAvatarURL()})
             .addFields(
+                {name: 'Success Chance', value: stealChanceStr, inline: true},
+                {name: 'Result', value: 'SUCCESS', inline: true},
+                emptyEmbedFieldInline,
+
                 {name: 'Stealer', value: userMention(stealer.id), inline: true},
                 {name: 'Victim', value: userMention(victimId), inline: true},
                 emptyEmbedFieldInline,
+
                 {name: 'Balance', value: `${stealerPoints?.toLocaleString()} (+${amount.toLocaleString()})`, inline: true},
                 {name: 'Balance', value: `${victimPoints.toLocaleString()} (-${amount.toLocaleString()})`, inline: true},
                 emptyEmbedFieldInline,
+
                 {name: 'New Balance', value: `${(stealerPoints + amount).toLocaleString()}`, inline: true},
                 {name: 'New Balance', value: `${(victimPoints - amount).toLocaleString()}`, inline: true},
                 emptyEmbedFieldInline,
+
                 {name: 'Victim', value: victims.join('\n'), inline: true},
                 {name: 'Points', value: points.join('\n'), inline: true},
                 {name: 'Safe', value: times.join('\n'), inline: true}
@@ -183,11 +209,11 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
     }
     // House
     else if (result >= 1-houseChance) {
-        reply = await forfeitStolenGoods(stealer, victimUsername, houseExtraPc, true, amount);
+        reply = await forfeitStolenGoods(stealer, victimUsername, houseExtraPc, true, amount, stealChanceStr);
     }
     // Fail
     else {
-        reply = await forfeitStolenGoods(stealer, victimUsername, victimExtraPc, false, amount);
+        reply = await forfeitStolenGoods(stealer, victimUsername, victimExtraPc, false, amount, stealChanceStr);
     }
 
     stealEmitter.emit('steal', stealer, amount, client, channelId);
