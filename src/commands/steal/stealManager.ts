@@ -155,8 +155,8 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
             {userId: victimId, type: ProfitType.Steal, profit: -amount},
         ])
     ]);
-    stealEmitter.emit('steal', stealer, amount, client, channelId);
     
+    let reply: InteractionEditReplyOptions;
     // Success
     if (result >= 0 && result < stealChance) {
         scheduleSteal(stealer.id, victimId, amount, time, stolenGoodId);
@@ -179,16 +179,19 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
                 {name: 'Points', value: points.join('\n'), inline: true},
                 {name: 'Safe', value: times.join('\n'), inline: true}
             );
-        return {embeds: [embed]};
+        reply = {embeds: [embed]};
     }
     // House
     else if (result >= 1-houseChance) {
-        return await forfeitStolenGoods(stealer, victimUsername, houseExtraPc, true, amount);
+        reply = await forfeitStolenGoods(stealer, victimUsername, houseExtraPc, true, amount);
     }
     // Fail
     else {
-        return await forfeitStolenGoods(stealer, victimUsername, victimExtraPc, false, amount);
+        reply = await forfeitStolenGoods(stealer, victimUsername, victimExtraPc, false, amount);
     }
+
+    stealEmitter.emit('steal', stealer, amount, client, channelId);
+    return reply;
 }
 
 async function loadStolenGoods() {
