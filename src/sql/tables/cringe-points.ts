@@ -84,6 +84,31 @@ async function getAllUserCringePoints(): Promise<CringePointsUser[]> {
     }
 }
 
+interface AvgCringePoints extends CringePoints {
+    COUNT: number;
+}
+
+const getUserAvgQuery = `
+SELECT ROUND(AVG(points)) AS points, COUNT(user_id) AS count
+FROM cringe_points
+WHERE user_id != ${process.env.CLIENT_ID}
+`;
+
+async function getUserAvgCringePoints(): Promise<AvgCringePoints|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<AvgCringePoints> = await connection.execute(getUserAvgQuery, {}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getUserAvgCringePoints: ${err}`);
+    }
+}
+
 const updateQuery = `
 MERGE INTO cringe_points dest
     USING( SELECT :userId AS user_id, :points AS points FROM dual) src
@@ -124,4 +149,4 @@ async function houseUserTransfer(arr: CringePointsUpdate[]) {
     }
 }
 
-export { createTableCringePoints, getUserCringePoints, getTopCringePoints, getAllUserCringePoints, updateCringePoints, houseUserTransfer, CringePointsUpdate };
+export { createTableCringePoints, getUserCringePoints, getTopCringePoints, getAllUserCringePoints, getUserAvgCringePoints, updateCringePoints, houseUserTransfer, CringePointsUpdate };
