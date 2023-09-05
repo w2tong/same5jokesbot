@@ -5,7 +5,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.options.getUser('user') ?? interaction.user;
     const cringePoints = await getDailyCoins(user.id) ?? 0;
-    void interaction.editReply(`${user} has ${bold(cringePoints.toLocaleString())} points.`);
+    void interaction.editReply(`${user} has ${bold(cringePoints.toLocaleString())} coins.`);
 }
 
 const name = 'coins';
