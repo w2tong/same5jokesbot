@@ -16,10 +16,11 @@ import { createTableProfits, updateTableProfits } from './tables/profits';
 import { createTableStolenGoods } from './tables/stolen-goods';
 import { createTableDailyProgress } from './tables/daily-progress';
 import { createTableUpgrades, updateTableUpgrades } from './tables/upgrades';
+import { createTableDailyCoins } from './tables/daily-coins';
 
 import { logError } from '../logger';
 
-const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades];
+const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins];
 
 const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades];
 

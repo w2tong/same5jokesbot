@@ -11,6 +11,7 @@ import { slotsEmitter } from '../commands/slots/subcommands/spin';
 import { lotteryEmitter } from '../commands/lottery/lotteryManager';
 import { stealEmitter } from '../commands/steal/stealManager';
 import { deathRollEmitter } from '../commands/death-roll/DeathRoll';
+import { getDailyCoins, updateDailyCoins } from '../sql/tables/daily-coins';
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {
@@ -95,6 +96,7 @@ async function completeDaily(dailyId: DailyId, user: User, client: Client, chann
 
             const channel = await fetchChannel(client, channelId ?? process.env.CASINO_CHANNEL_ID ?? '');
             const balance = await getUserCringePoints(user.id) ?? 0;
+            const coins = await getDailyCoins(user.id) ?? 0;
             if (channel?.isTextBased()) {
                 const embed = new EmbedBuilder()
                     .setAuthor({name: `${user.username} completed a Daily Quest`, iconURL: user.displayAvatarURL()})
@@ -102,14 +104,20 @@ async function completeDaily(dailyId: DailyId, user: User, client: Client, chann
                         {name: 'User', value: userMention(user.id), inline: true},
                         {name: 'Quest', value: dailies[dailyId].description, inline: true},
                         emptyEmbedFieldInline,
-                        {name: 'Balance', value: `${balance.toLocaleString()} (+${dailies[dailyId].reward.toLocaleString()})`, inline: true},
-                        {name: 'New Balance', value: (balance + dailies[dailyId].reward).toLocaleString(), inline: true},
+
+                        {name: 'Point Balance', value: `${balance.toLocaleString()} (+${dailies[dailyId].reward.toLocaleString()})`, inline: true},
+                        {name: 'New Point Balance', value: (balance + dailies[dailyId].reward).toLocaleString(), inline: true},
+                        emptyEmbedFieldInline,
+
+                        {name: 'Coin Balance', value: `${coins.toLocaleString()} (+1)`, inline: true},
+                        {name: 'New Coin Balance', value: (coins + 1).toLocaleString(), inline: true},
                         emptyEmbedFieldInline
                     );
                 await channel.send({embeds: [embed]});
             }
 
             await updateCringePoints([{userId: user.id, points: dailies[dailyId].reward}]);
+            await updateDailyCoins(user.id, 1);
         }
     }
 }

@@ -16,7 +16,7 @@ import profits from './profits/profits';
 import tax from './tax/tax';
 import steal from './steal/steal';
 import blackjack from './blackjack/blackjack';
-import daily from './daily';
+import daily from './daily/daily';
 import upgrade from './upgrade/upgrade';
 
 const commands = {
