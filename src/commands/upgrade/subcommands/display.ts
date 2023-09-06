@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import { stealUpgradeIds, upgradeLevelsToString, upgrades } from '../../../upgrades/upgrades';
-import { userUpgrades } from '../../../upgrades/upgradeManager';
+import { emptyUserUpgrades, userUpgrades } from '../../../upgrades/upgradeManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -11,7 +11,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     for (const id of stealUpgradeIds) {
         const upgrade = upgrades[id];
-        const currLvl = userUpgrades[user.id][id];
+        const currLvl = (userUpgrades[user.id] ?? emptyUserUpgrades)[id];
         embed.addFields({name: upgrade.name, value: `Level: ${currLvl}/${upgrade.levels.length-1}\n[${upgradeLevelsToString(upgrade, currLvl)}]`});
     }
 
