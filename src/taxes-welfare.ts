@@ -2,6 +2,7 @@ import { Client, EmbedBuilder, MessageCreateOptions, time, userMention } from 'd
 import schedule from 'node-schedule';
 import { CringePointsUpdate, getAllUserCringePoints, houseUserTransfer } from './sql/tables/cringe-points';
 import { MessageEmbedLimit, UsersPerEmbed, emptyEmbedFieldInline, fetchChannel } from './util/discordUtil';
+import { ProfitType, ProfitsUpdate, updateProfits } from './sql/tables/profits';
 
 const dailyTaxBracket: {[key: number]: number} = {
     0: 0,
@@ -114,25 +115,33 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
 
         // Calculate taxes
         let userCringePoints = await getAllUserCringePoints();
+        const taxUpdates: CringePointsUpdate[] = [];
+        const taxProfitUpdates: ProfitsUpdate[] =[];
+
         const taxUserIds: string[] = [];
         const taxesBalances: string[] = [];
         const taxesNewBalances: string[] = [];
-        const taxUpdates: CringePointsUpdate[] = [];
         let taxesTotal = 0;
+
         for (let i = 0; i < userCringePoints.length; i++) {
             const {USER_ID, POINTS} = userCringePoints[i];
             if (USER_ID === process.env.CLIENT_ID) continue;
             const tax = calculateDailyTax(POINTS);
             if (tax > 0) {
                 taxUpdates.push({userId: USER_ID, points: -tax});
+                taxProfitUpdates.push({userId: USER_ID, type: ProfitType.Tax, profit: -tax});
+
                 taxUserIds.push(USER_ID);
                 taxesBalances.push(`${POINTS.toLocaleString()} (${(-tax).toLocaleString()})`);
                 taxesNewBalances.push(`${(POINTS-tax).toLocaleString()}`);
             }
             taxesTotal += tax;
         }
-        // Update user points with taxes
+        // Update user points and profits with taxes
         await houseUserTransfer(taxUpdates);
+        void updateProfits(taxProfitUpdates);
+
+        // Send tax embed message
         if (process.env.CASINO_CHANNEL_ID) {
             const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
             if (!channel?.isTextBased()) return;
@@ -144,7 +153,10 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
 
         // Calculate welfare
         userCringePoints = await getAllUserCringePoints();
+
         const welfareUpdates: CringePointsUpdate[] = [];
+        const welfareProfitUpdates: ProfitsUpdate[] =[];
+        
         const welfareUserIds: string[] = [];
         const welfareBalances: string[] = [];
         const welfareNewBalances: string[] = [];
@@ -162,14 +174,18 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
                 welfare = welfarePerUser;
             }
             welfareUpdates.push({userId: USER_ID, points: welfare});
+            welfareProfitUpdates.push({userId: USER_ID, type: ProfitType.Welfare, profit: welfare});
             welfarePool -= welfare;
             welfareTotal += welfare;
             welfareUserIds.push(USER_ID);
             welfareBalances.push(`${POINTS.toLocaleString()} (+${(welfare).toLocaleString()})`);
             welfareNewBalances.push(`${(POINTS + welfare).toLocaleString()}`);
         }
-        // Update user points with welfare
+        // Update user points and profits with welfare
         await houseUserTransfer(welfareUpdates);
+        void updateProfits(welfareProfitUpdates);
+
+        // Send welfare embed message
         if (process.env.CASINO_CHANNEL_ID) {
             const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
             if (!channel?.isTextBased()) return;
