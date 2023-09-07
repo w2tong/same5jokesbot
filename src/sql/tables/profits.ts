@@ -9,7 +9,9 @@ enum ProfitType {
     Income = 'income',
     Lottery = 'lottery',
     Slots = 'slots',
-    Steal = 'steal'
+    Steal = 'steal',
+    Tax = 'tax',
+    Welfare = 'welfare'
 }
 
 const createTableProfits = {
