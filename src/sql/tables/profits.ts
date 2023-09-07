@@ -74,6 +74,7 @@ const getUserAllQuery = `
 SELECT type, winnings, losses, winnings - losses AS profits
 FROM profits
 WHERE user_id = :userId
+ORDER BY type ASC
 `;
 async function getUserAllProfits(userId: string): Promise<AllProfits[]> {
     try {
