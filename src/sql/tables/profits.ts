@@ -133,6 +133,8 @@ const getTopAllQuery = `
 SELECT user_id, SUM(winnings) - SUM(losses) AS profits
 FROM profits
 WHERE type != '${ProfitType.Income}'
+  AND type != '${ProfitType.Tax}'
+  AND type != '${ProfitType.Welfare}'
 GROUP BY user_id
 ORDER BY profits DESC
 `;
