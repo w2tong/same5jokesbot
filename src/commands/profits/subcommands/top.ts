@@ -25,12 +25,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const embed = new EmbedBuilder();
         if (i === 0) {
             embed
-                .setTitle(`${type ? capitalize(type) : 'Total'} Profits`)
+                .setTitle(`${type ? capitalize(type) : 'Total'} Top Profits`)
                 .addFields(
-                    // {name: 'Total Winnings', value: `${totalProfits.WINNINGS.toLocaleString()}`, inline: true},
-                    // {name: 'Total Losses', value: `${totalProfits.LOSSES.toLocaleString()}`, inline: true},
-                    emptyEmbedFieldInline,
-                    emptyEmbedFieldInline,
+                    {name: 'Total Winnings', value: `${totalProfits.WINNINGS.toLocaleString()}`, inline: true},
+                    {name: 'Total Losses', value: `${totalProfits.LOSSES.toLocaleString()}`, inline: true},
                     {name: 'Total Profits', value: `${totalProfits.PROFITS.toLocaleString()}`, inline: true}
                 );
         }

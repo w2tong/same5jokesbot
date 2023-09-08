@@ -1,5 +1,6 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from '../query-options';
+import { ProfitType } from './profits';
 
 const createTableCringePoints = {
     name: 'CRINGE_POINTS',
@@ -39,7 +40,10 @@ async function getUserCringePoints(userId: string): Promise<number|null> {
 const getTopQuery = `
 SELECT *
 FROM cringe_points
-WHERE EXISTS (SELECT 1 FROM profits WHERE cringe_points.user_id = profits.user_id AND type != 'income')
+WHERE EXISTS (
+    SELECT 1 FROM profits WHERE cringe_points.user_id = profits.user_id 
+    AND type NOT IN ('${ProfitType.Income}', '${ProfitType.Tax}', '${ProfitType.Welfare}')
+)
 ORDER BY points DESC
 `;
 
