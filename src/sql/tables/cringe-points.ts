@@ -42,9 +42,7 @@ SELECT *
 FROM cringe_points
 WHERE EXISTS (
     SELECT 1 FROM profits WHERE cringe_points.user_id = profits.user_id 
-    AND type != '${ProfitType.Income}'
-    AND type != '${ProfitType.Tax}'
-    AND type != '${ProfitType.Welfare}'
+    AND type NOT IN ('${ProfitType.Income}', '${ProfitType.Tax}', '${ProfitType.Welfare}')
 )
 ORDER BY points DESC
 `;
