@@ -1,8 +1,8 @@
 import moment from 'moment-timezone';
 
 // Random integer between 0 and max
-function getRandomRange(max: number): number {
-    return Math.floor(Math.random() * max);
+function getRandomRange({min = 0, max}: {min?: number, max: number}): number {
+    return Math.floor(Math.random() * (max - min) + min);
 }
 
 function getMomentTorontoCurrentTime() {
