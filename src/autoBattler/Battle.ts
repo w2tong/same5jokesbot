@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import Character from './Character';
-import { mapCharNameHealth, rollDice } from './util';
+import { dice, rollDice } from './util';
 import { emptyEmbedFieldInline } from '../util/discordUtil';
 
 enum Side {
@@ -30,11 +30,11 @@ class Battle {
     startCombat() {
         // Assign turn order for characters
         for (const char of this.left) {
-            const init = rollDice(1, 20) + char.initiativeBonus;
+            const init = rollDice(dice['1d20']) + char.initiativeBonus;
             this.turnOrder.push({char, init, side: Side.Left});
         }
         for (const char of this.right) {
-            const init = rollDice(1, 20) + char.initiativeBonus;
+            const init = rollDice(dice['1d20']) + char.initiativeBonus;
             this.turnOrder.push({char, init, side: Side.Right});
         }
         this.turnOrder.sort((a, b) => b.init - a.init);
@@ -49,8 +49,8 @@ class Battle {
             return {combatEnded: true, winner: Side.Left};
         }
         else {
-            const char = this.turnOrder[this.charTurn++].char;
-            const side = this.turnOrder[this.charTurn++].side;
+            const char = this.turnOrder[this.charTurn].char;
+            const side = this.turnOrder[this.charTurn].side;
 
             // Set target if current character has no target
             if (char.target === null) {
@@ -69,10 +69,10 @@ class Battle {
                 const result = char.attackTarget();
                 if (result) {
                     if (result.hit) {
-                        this.combatHistory.push(`${char.name} attacked ${char.target.name} (${result.attackDetails}) for ${result.damage ?? 0} damage (${result.damageDetails}).`);
+                        this.combatHistory.push(`${char.name} hit ${char.target.name} (${result.attackDetails}) for ${result.damageDetails} damage.`);
                     }
                     else {
-                        this.combatHistory.push(`${char.name} attacked ${char.target.name} and missed (${result.attackDetails}).`);
+                        this.combatHistory.push(`${char.name} hit ${char.target.name} and missed (${result.attackDetails}).`);
                     }
                     // Remove target from alive characters and set target to null
                     if (char.target.isDead()) {
@@ -86,22 +86,24 @@ class Battle {
                     }
                 }
             }
+            this.charTurn++;
+            if (this.charTurn >= this.turnOrder.length) this.charTurn = 0;
             return {combatEnded: false};
         }
     }
 
     generateEmbed(): EmbedBuilder {
-        const leftNames = this.left.map(mapCharNameHealth);
-        const rightNames = this.right.map(mapCharNameHealth);
+        const leftNames = this.left.map(char => char.getCharString());
+        const rightNames = this.right.map(char => char.getCharString());
 
         const embed = new EmbedBuilder()
             .setTitle('auto battle')
             .addFields(
-                {name: 'Combatants', value: leftNames.join('\n')},
+                {name: 'Combatants', value: leftNames.join('\n'), inline: true},
                 emptyEmbedFieldInline,
-                {name: 'Combatants', value: rightNames.join('\n')},
+                {name: 'Combatants', value: rightNames.join('\n'), inline: true},
 
-                {name: 'Combat History', value: this.combatHistory.join('\n')}
+                {name: 'Combat History', value: this.combatHistory.length ? this.combatHistory.join('\n') : 'None'}
             )
         ;
 

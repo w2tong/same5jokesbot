@@ -1,61 +1,71 @@
 import { getRandomRange } from '../util/util';
-import { rollDice } from './util';
+import { Dice, rollDice } from './util';
+
+type CharacterStats = {
+    attackBonus: number;
+    damage: Dice;
+    damageBonus: number;
+    armorClass: number;
+    physResist: number;
+    magicResist: number;
+    maxHealth: number;
+    currHealth?: number;
+    maxMana: number;
+    currMana?: number;
+    manaPerAtk: number;
+    manaRegen: number;
+    initiativeBonus: number;
+}
 
 class Character {
-    private _name: string;
-    private userId: string|null = null;
+    protected _name: string;
 
     // Attack stats
-    private attackBonus: number;
-    private damageMin: number;
-    private damageMax: number;
-    private damageBonus: number;
+    protected attackBonus: number;
+    protected damage: Dice;
+    protected damageBonus: number;
 
     // Defence stats
-    private _armorClass: number;
-    private physResist: number;
-    private magicResist: number;
+    protected _armorClass: number;
+    protected physResist: number;
+    protected magicResist: number;
     
     // Health
-    private maxHealth: number;
-    private currHealth: number;
+    protected maxHealth: number;
+    protected currHealth: number;
 
     // Mana
-    private maxMana: number;
-    private currMana: number;
-    private manaPerAtk: number;
-    private manaRegen: number;
+    protected maxMana: number;
+    protected currMana: number;
+    protected manaPerAtk: number;
+    protected manaRegen: number;
 
-    private _initiativeBonus: number;
+    protected _initiativeBonus: number;
 
-    private _target: Character|null = null;
-    private _index;
+    protected _target: Character|null = null;
+    protected _index;
 
-    constructor({name, userId, attackBonus, damageMin, damageMax, damageBonus, armorClass, physResist, magicResist, maxHealth, currHealth, maxMana, currMana, manaPerAtk, manaRegen, initiativeBonus, index}: {name: string, userId?: string, attackBonus: number, damageMin: number, damageMax: number, damageBonus: number, armorClass: number, physResist: number, magicResist: number, maxHealth: number, currHealth: number, maxMana: number, currMana: number, manaPerAtk: number, manaRegen: number, initiativeBonus: number, index: number}) {
+    constructor(stats: CharacterStats, name: string, index: number) {
         this._name = name;
-        if (userId) this.userId = userId;
-        this._armorClass = armorClass;
-        this.attackBonus = attackBonus;
-        this.damageMin = damageMin;
-        this.damageMax = damageMax;
-        this.damageBonus = damageBonus;
-        this._initiativeBonus = initiativeBonus;
-        this.maxHealth = maxHealth;
-        this.currHealth = currHealth ?? maxHealth;
-        this.maxMana = maxMana;
-        this.currMana = currMana ?? maxMana;
-        this.manaPerAtk = manaPerAtk;
-        this.manaRegen = manaRegen;
-        this.physResist = physResist;
-        this.magicResist = magicResist;
+        this._armorClass = stats.armorClass;
+        this.attackBonus = stats.attackBonus;
+        this.damage = stats.damage;
+        this.damageBonus = stats.damageBonus;
+        this._initiativeBonus = stats.initiativeBonus;
+        this.maxHealth = stats.maxHealth;
+        this.currHealth = stats.currHealth ?? stats.maxHealth;
+        this.maxMana = stats.maxMana;
+        this.currMana = stats.currMana ?? 0;
+        this.manaPerAtk = stats.manaPerAtk;
+        this.manaRegen = stats.manaRegen;
+        this.physResist = stats.physResist;
+        this.magicResist = stats.magicResist;
         this._index = index;
     }
 
     get name() {
         return this._name;
     }
-
-    
 
     get armorClass() {
         return this._armorClass;
@@ -77,12 +87,20 @@ class Character {
         return this._index;
     }
 
-    getFullName() {
-        return `${this._name}${this.userId ? ` (${this.userId})` : ''}`;
-    }
-
     getHealthString() {
         return `${this.currHealth}/${this.maxHealth}`;
+    }
+
+    getManaString() {
+        return `${this.currMana}/${this.maxMana}`;
+    }
+
+    getCharString() {
+        return `
+        ${this.name}
+        Health: ${this.getHealthString()}
+        Mana: ${this.getManaString()}
+        `;
     }
 
     setRandomTarget(chars: Character[]) {
@@ -90,21 +108,21 @@ class Character {
             this.target = null;
         }
         else {
-            this.target = chars[getRandomRange({max: chars.length})];
+            this.target = chars[getRandomRange(chars.length)];
         }   
     }
 
     attackTarget(): {hit: boolean, attackDetails?: string, damage?: number, damageDetails?: string} | null {
-        if (this.target) {
-            const attackRoll = rollDice(1, 20);
+        if (this.target) { 
+            const attackRoll = rollDice({num: 1, sides: 20});
             const attack = attackRoll + this.attackBonus;
-            const attackDetails = `${attack} (${attackRoll}${this.attackBonus ? `${this.attackBonus > 0 ? '+' : ''}${this.attackBonus}` : ''}) vs. ${this.target.armorClass}`;
+            const attackDetails = `${attack}${this.attackBonus ? ` (${this.attackBonus > 0 ? '+' : ''}${this.attackBonus})` : ''} vs. ${this.target.armorClass}`;
             if (attack >= this.target.armorClass) {
-                const damageRoll = getRandomRange({min: this.damageMin, max: this.damageMax});
+                const damageRoll = rollDice(this.damage);
                 const damage = damageRoll + this.damageBonus;
                 const damageDone = this.target.takeDamage(damage);
                 // TODO: include resistances in damageDetails
-                const damageDetails = `${damage} (${damageRoll}${this.damageBonus ? `${this.damageBonus > 0 ? '+' : ''}${this.damageBonus}` : ''})`;
+                const damageDetails = `${damage}${this.damageBonus ? ` (${this.damageBonus > 0 ? '+' : ''}${this.damageBonus})` : ''}`;
                 return {hit: true, attackDetails, damage: damageDone, damageDetails};
             }
             else {
@@ -127,3 +145,4 @@ class Character {
 }
 
 export default Character;
+export { CharacterStats };
