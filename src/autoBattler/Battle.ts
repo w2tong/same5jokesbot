@@ -21,7 +21,7 @@ class Battle {
     private right: Character[] = [];
     private rightAlive: Set<number> = new Set();
 
-    private charTurn = 0;
+    private turnIndex = -1;
     private turnOrder: {char: Character, init: number}[] = [];
 
     private combatLog = new CombatLog();
@@ -46,12 +46,16 @@ class Battle {
     }
 
     setCharDead(side: Side, index: number) {
+        let char: Character;
         if (side === Side.Left) {
+            char = this.left[index];
             this.leftAlive.delete(index);
         }
         else {
+            char = this.right[index];
             this.rightAlive.delete(index);
         }
+        this.turnOrder = this.turnOrder.filter(c => c.char !== char);
     }
 
     combatLogAdd(str: string) {
@@ -86,19 +90,11 @@ class Battle {
             this.combatLog.add(`${bold('Left')} wins!`);
         }
         else {
-            // Remove dead characters from turnOrder
-            while (this.turnOrder[this.charTurn].char.isDead()) {
-                this.turnOrder.splice(this.charTurn, 1);
-                if (this.charTurn >= this.turnOrder.length) {
-                    this.charTurn = 0;
-                }
-            }
-
-            const char = this.turnOrder[this.charTurn].char;
+            this.turnIndex++;
+            if (this.turnIndex >= this.turnOrder.length) this.turnIndex = 0;
+            const char = this.turnOrder[this.turnIndex].char;
             char.doTurn();
 
-            this.charTurn++;
-            if (this.charTurn >= this.turnOrder.length) this.charTurn = 0;
             return {combatEnded: false};
         }
 
@@ -109,6 +105,11 @@ class Battle {
         const leftChars = this.left.map(char => char.getCharString());
         const rightChars = this.right.map(char => char.getCharString());
 
+        const turnOrder = this.turnOrder.slice().map(charTurn => charTurn.char.name);
+        if (this.turnIndex >= 0 && this.turnIndex < this.turnOrder.length) {
+            turnOrder[this.turnIndex] = bold(`[${turnOrder[this.turnIndex]}]`);
+        }
+
         const embed = new EmbedBuilder()
             .setTitle(`Auto Battle${this.winner ? ` (WINNER: ${bold(this.winner)})` : ''}`)
             .addFields(
@@ -117,7 +118,7 @@ class Battle {
                 {name: 'Right', value: rightChars.join('\n\n'), inline: true},
 
                 //TODO: add turn order eg. [Player1], Player2, brackets indicates whos turn it is
-                // {name: 'Turn Order' value: turnOrder},
+                {name: 'Turn Order', value: turnOrder && turnOrder.length ? turnOrder.join(', ') : 'N/A'},
 
                 {name: 'Combat Log', value: this.combatLog.getLog()}
             )
