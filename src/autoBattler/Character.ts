@@ -1,5 +1,6 @@
+import { bold } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { Dice, rollDice } from './util';
+import { Dice, HitType, rollDice } from './util';
 
 type CharacterStats = {
     attackBonus: number;
@@ -108,12 +109,12 @@ class Character {
         return `${this.currMana}/${this.maxMana}`;
     }
 
+    getName() {
+        return this.name;
+    }
+
     getCharString() {
-        return `
-        ${this.name}
-        Health: ${this.getHealthString()}
-        Mana: ${this.getManaString()}
-        `;
+        return `${bold(this.getName())}\nHP: ${this.getHealthString()}${this.maxMana > 0 ? `\nMP: ${this.getManaString()}` : ''}`;
     }
 
     setRandomTarget(chars: Character[]) {
@@ -125,25 +126,29 @@ class Character {
         }   
     }
 
-    attackTarget(): {hit: boolean, attackDetails?: string, damage?: number, damageDetails?: string} | null {
+    attackTarget(): {hit: HitType, attackDetails?: string, damage?: number} | null {
         if (this.target) { 
             const attackRoll = rollDice({num: 1, sides: 20});
-            const attack = attackRoll + this.attackBonus;
-            const attackDetails = `${attack}${this.attackBonus ? ` (${attackRoll}${this.attackBonus > 0 ? '+' : ''}${this.attackBonus})` : ''} vs. ${this.target.armorClass}`;
+            const rollToHitTaget = this.target.armorClass - this.attackBonus;
+
+            const attackDetails = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
+
             if (attackRoll === 1) {
-                return {hit: false, attackDetails};
+                return {hit: HitType.CritMiss, attackDetails};
             }
-            else if (attackRoll === 20 || attack >= this.target.armorClass) {
+            else if (attackRoll === 20 || attackRoll >= rollToHitTaget) {
                 const damageRoll = rollDice(this.damage);
                 let damage = damageRoll + this.damageBonus;
-                if (attackRoll >= this.critRange) damage *= this.critMult;
+                let hitType = HitType.Hit;
+                if (attackRoll >= this.critRange) {
+                    damage *= this.critMult;
+                    hitType = HitType.Crit;
+                }
                 const damageDone = this.target.takeDamage(damage);
-                // TODO: include resistances in damageDetails
-                const damageDetails = `${damage}${this.damageBonus ? ` (${damageRoll}${this.damageBonus > 0 ? '+' : ''}${this.damageBonus})` : ''}`;
-                return {hit: true, attackDetails, damage: damageDone, damageDetails};
+                return {hit: hitType, attackDetails, damage: damageDone};
             }
             else {
-                return {hit: false, attackDetails};
+                return {hit: HitType.Miss, attackDetails};
             }
         }
         return null;

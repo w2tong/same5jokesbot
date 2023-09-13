@@ -1,11 +1,17 @@
 import { EmbedBuilder, bold } from 'discord.js';
 import Character from './Character';
-import { dice, rollDice } from './util';
+import { HitType, dice, rollDice } from './util';
 import { emptyEmbedFieldInline } from '../util/discordUtil';
+import CombatLog from './CombatLog';
 
 enum Side {
-    Left = 'left',
-    Right = 'right'
+    Left = 'Left',
+    Right = 'Right'
+}
+
+type TurnRes = {
+    combatEnded: boolean;
+    winner?: Side;
 }
 
 class Battle {
@@ -17,7 +23,10 @@ class Battle {
 
     private charTurn = 0;
     private turnOrder: {char: Character, init: number, side: Side}[] = [];
-    private combatLog: string[] = [];
+
+    private combatLog = new CombatLog();
+
+    private winner?: Side; 
 
     constructor(left: Character[], right: Character[]) {
         this.left = left;
@@ -40,15 +49,29 @@ class Battle {
         this.turnOrder.sort((a, b) => b.init - a.init);
     }
 
-    nextTurn(): {combatEnded: boolean, winner?: Side} {
+    nextTurn(): TurnRes {
+        const res: TurnRes = {combatEnded: false};
         if (this.leftAlive.size === 0) {
-            return {combatEnded: true, winner: Side.Right};
-            // right wins
+            this.winner = Side.Right;
+            res.combatEnded = true;
+            res.winner = Side.Right;
+            this.combatLog.add(`${bold('Right')} wins!`);
         }
         else if (this.rightAlive.size === 0) {
-            return {combatEnded: true, winner: Side.Left};
+            this.winner = Side.Left;
+            res.combatEnded = true;
+            res.winner = Side.Left;
+            this.combatLog.add(`${bold('Left')} wins!`);
         }
         else {
+            // Remove dead characters from turnOrder
+            while (this.turnOrder[this.charTurn].char.isDead()) {
+                this.turnOrder.splice(this.charTurn, 1);
+                if (this.charTurn >= this.turnOrder.length) {
+                    this.charTurn = 0;
+                }
+            }
+
             const char = this.turnOrder[this.charTurn].char;
             const side = this.turnOrder[this.charTurn].side;
 
@@ -68,16 +91,15 @@ class Battle {
             if (char.target !== null) {
                 const result = char.attackTarget();
                 if (result) {
-                    // TODO add critical miss and hit to combat history
-                    // TODO inline/code block attack/damage details
-                    if (result.hit) {
-                        this.combatLog.push(`${bold(char.name)} atked ${bold(char.target.name)} (${result.attackDetails}) for ${result.damageDetails} damage.`);
+                    if (result.hit === HitType.Hit || result.hit === HitType.Crit) {
+                        this.combatLog.add(`${bold(char.name)} atk ${bold(char.target.name)} (${result.attackDetails}). ${bold((result.damage ?? 0).toString())} dmg${result.hit === HitType.Crit ? ' (Crit)' : ''}.`);
                     }
                     else {
-                        this.combatLog.push(`${bold(char.name)} atked ${bold(char.target.name)} (${result.attackDetails}).`);
+                        this.combatLog.add(`${bold(char.name)} atk ${bold(char.target.name)} (${result.attackDetails}). ${bold(`${result.hit === HitType.CritMiss ? 'Crit ' : ''}Miss`)}.`);
                     }
-                    // Remove target from alive characters and set target to null
+                    
                     if (char.target.isDead()) {
+                        this.combatLog.add(`${bold(char.target.getName())} died.`);
                         if (side === Side.Left) {
                             this.rightAlive.delete(char.target.index);
                         }
@@ -92,6 +114,8 @@ class Battle {
             if (this.charTurn >= this.turnOrder.length) this.charTurn = 0;
             return {combatEnded: false};
         }
+
+        return res;
     }
 
     generateEmbed(): EmbedBuilder {
@@ -99,14 +123,14 @@ class Battle {
         const rightNames = this.right.map(char => char.getCharString());
 
         const embed = new EmbedBuilder()
-            .setTitle('Auto Battle')
+            .setTitle(`Auto Battle${this.winner ? ` (WINNER: ${bold(this.winner)})` : ''}`)
             .addFields(
-                {name: 'Combatants', value: leftNames.join('\n'), inline: true},
+                {name: 'Left', value: leftNames.join('\n\n'), inline: true},
                 emptyEmbedFieldInline,
-                {name: 'Combatants', value: rightNames.join('\n'), inline: true},
+                {name: 'Right', value: rightNames.join('\n\n'), inline: true},
 
                 // TODO: add character limit to combat log 
-                {name: 'Combat Log', value: this.combatLog.length ? this.combatLog.join('\n') : 'None'}
+                {name: 'Combat Log', value: this.combatLog.getLog()}
             )
         ;
 

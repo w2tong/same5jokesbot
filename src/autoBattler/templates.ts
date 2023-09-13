@@ -1,21 +1,38 @@
 import { CharacterStats } from './Character';
 import { dice } from './util';
 
-// Fighter
-const fighterStats: CharacterStats = {
-    attackBonus: 1,
-    damage: dice['1d6'],
-    damageBonus: 1,
+// Rat
+const ratStats: CharacterStats = {
+    attackBonus: -3,
+    damage: dice['1d4'],
+    damageBonus: 0,
     critRange: 20,
     critMult: 2,
-    armorClass: 10,
+    armorClass: 8,
     physResist: 0,
     magicResist: 0,
-    maxHealth: 100,
+    maxHealth: 5,
     maxMana: 0, 
     manaPerAtk: 0,
     manaRegen: 0,
     initiativeBonus: 0
 };
 
-export { fighterStats };
+// Fighter
+const fighterStats: CharacterStats = {
+    attackBonus: 0,
+    damage: dice['1d6'],
+    damageBonus: 0,
+    critRange: 20,
+    critMult: 2,
+    armorClass: 10,
+    physResist: 0,
+    magicResist: 0,
+    maxHealth: 20,
+    maxMana: 0, 
+    manaPerAtk: 0,
+    manaRegen: 0,
+    initiativeBonus: 0
+};
+
+export { ratStats, fighterStats };
