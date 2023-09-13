@@ -18,4 +18,11 @@ function rollDice(dice: Dice): number {
     return sum;
 }
 
-export { Dice, dice, rollDice };
+enum HitType {
+    Hit,
+    Crit,
+    Miss,
+    CritMiss
+}
+
+export { Dice, dice, rollDice, HitType };
