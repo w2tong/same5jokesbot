@@ -1,3 +1,5 @@
+import { bold } from 'discord.js';
+
 type Dice = {num: number, sides: number}
 
 type DiceRoll = '1d4'|'1d6'|'1d8'|'1d10'|'1d12'|'1d20'
@@ -19,10 +21,14 @@ function rollDice(dice: Dice): number {
 }
 
 enum HitType {
-    Hit,
-    Crit,
-    Miss,
-    CritMiss
+    Hit = 'Hit',
+    Crit = 'Crit',
+    Miss = 'Miss',
+    CritMiss = 'Crit Miss'
 }
 
-export { Dice, dice, rollDice, HitType };
+function generateCombatAttack(charName: string, tarName: string, attackDetails: string, hitType: HitType) {
+    return `${bold(charName)} attacked ${bold(tarName)} (${attackDetails}). ${bold(hitType.toString())}.`;
+}
+
+export { Dice, dice, rollDice, HitType, generateCombatAttack };
