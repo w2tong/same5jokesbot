@@ -1,6 +1,6 @@
 import { EmbedBuilder, bold } from 'discord.js';
 import Character from './Character';
-import { HitType, dice, rollDice } from './util';
+import { dice, rollDice } from './util';
 import { emptyEmbedFieldInline } from '../util/discordUtil';
 import CombatLog from './CombatLog';
 
@@ -15,20 +15,20 @@ type TurnRes = {
 }
 
 class Battle {
-    private left: Character[];
-    private leftAlive: Set<number>;
+    private left: Character[] = [];
+    private leftAlive: Set<number> = new Set();
 
-    private right: Character[];
+    private right: Character[] = [];
     private rightAlive: Set<number> = new Set();
 
-    private charTurn = 0;
-    private turnOrder: {char: Character, init: number, side: Side}[] = [];
+    private turnIndex = -1;
+    private turnOrder: {char: Character, init: number}[] = [];
 
     private combatLog = new CombatLog();
 
     private winner?: Side; 
 
-    constructor(left: Character[], right: Character[]) {
+    addChars(left: Character[], right: Character[]) {
         this.left = left;
         this.leftAlive = new Set(Array(left.length).keys());
 
@@ -36,15 +36,41 @@ class Battle {
         this.rightAlive = new Set(Array(right.length).keys());
     }
 
+    getTargets(side: Side) {
+        if (side === Side.Left) {
+            return Array.from(this.rightAlive.values()).map(i => this.right[i]);
+        }
+        else {
+            return Array.from(this.leftAlive.values()).map(i => this.left[i]);
+        }
+    }
+
+    setCharDead(side: Side, index: number) {
+        let char: Character;
+        if (side === Side.Left) {
+            char = this.left[index];
+            this.leftAlive.delete(index);
+        }
+        else {
+            char = this.right[index];
+            this.rightAlive.delete(index);
+        }
+        this.turnOrder = this.turnOrder.filter(c => c.char !== char);
+    }
+
+    combatLogAdd(str: string) {
+        this.combatLog.add(str);
+    }
+
     startCombat() {
         // Assign turn order for characters
         for (const char of this.left) {
             const init = rollDice(dice['1d20']) + char.initiativeBonus;
-            this.turnOrder.push({char, init, side: Side.Left});
+            this.turnOrder.push({char, init});
         }
         for (const char of this.right) {
             const init = rollDice(dice['1d20']) + char.initiativeBonus;
-            this.turnOrder.push({char, init, side: Side.Right});
+            this.turnOrder.push({char, init});
         }
         this.turnOrder.sort((a, b) => b.init - a.init);
     }
@@ -64,54 +90,11 @@ class Battle {
             this.combatLog.add(`${bold('Left')} wins!`);
         }
         else {
-            // Remove dead characters from turnOrder
-            while (this.turnOrder[this.charTurn].char.isDead()) {
-                this.turnOrder.splice(this.charTurn, 1);
-                if (this.charTurn >= this.turnOrder.length) {
-                    this.charTurn = 0;
-                }
-            }
+            this.turnIndex++;
+            if (this.turnIndex >= this.turnOrder.length) this.turnIndex = 0;
+            const char = this.turnOrder[this.turnIndex].char;
+            char.doTurn();
 
-            const char = this.turnOrder[this.charTurn].char;
-            const side = this.turnOrder[this.charTurn].side;
-
-            // Set target if current character has no target
-            if (char.target === null) {
-                let targets: Character[];
-                if (side === Side.Left) {
-                    targets = Array.from(this.rightAlive.values()).map(i => this.right[i]);
-                }
-                else {
-                    targets = Array.from(this.leftAlive.values()).map(i => this.left[i]);
-                }
-                char.setRandomTarget(targets);
-            }
-
-            // Attempt to attack target
-            if (char.target !== null) {
-                const result = char.attackTarget();
-                if (result) {
-                    if (result.hit === HitType.Hit || result.hit === HitType.Crit) {
-                        this.combatLog.add(`${bold(char.name)} atk ${bold(char.target.name)} (${result.attackDetails}). ${bold((result.damage ?? 0).toString())} dmg${result.hit === HitType.Crit ? ' (Crit)' : ''}.`);
-                    }
-                    else {
-                        this.combatLog.add(`${bold(char.name)} atk ${bold(char.target.name)} (${result.attackDetails}). ${bold(`${result.hit === HitType.CritMiss ? 'Crit ' : ''}Miss`)}.`);
-                    }
-                    
-                    if (char.target.isDead()) {
-                        this.combatLog.add(`${bold(char.target.getName())} died.`);
-                        if (side === Side.Left) {
-                            this.rightAlive.delete(char.target.index);
-                        }
-                        else {
-                            this.leftAlive.delete(char.target.index);
-                        }
-                        char.target = null;
-                    }
-                }
-            }
-            this.charTurn++;
-            if (this.charTurn >= this.turnOrder.length) this.charTurn = 0;
             return {combatEnded: false};
         }
 
@@ -119,17 +102,24 @@ class Battle {
     }
 
     generateEmbed(): EmbedBuilder {
-        const leftNames = this.left.map(char => char.getCharString());
-        const rightNames = this.right.map(char => char.getCharString());
+        const leftChars = this.left.map(char => char.getCharString());
+        const rightChars = this.right.map(char => char.getCharString());
+
+        const turnOrder = this.turnOrder.slice().map(charTurn => charTurn.char.name);
+        if (this.turnIndex >= 0 && this.turnIndex < this.turnOrder.length) {
+            turnOrder[this.turnIndex] = bold(`[${turnOrder[this.turnIndex]}]`);
+        }
 
         const embed = new EmbedBuilder()
             .setTitle(`Auto Battle${this.winner ? ` (WINNER: ${bold(this.winner)})` : ''}`)
             .addFields(
-                {name: 'Left', value: leftNames.join('\n\n'), inline: true},
+                {name: 'Left', value: leftChars.join('\n\n'), inline: true},
                 emptyEmbedFieldInline,
-                {name: 'Right', value: rightNames.join('\n\n'), inline: true},
+                {name: 'Right', value: rightChars.join('\n\n'), inline: true},
 
-                // TODO: add character limit to combat log 
+                //TODO: add turn order eg. [Player1], Player2, brackets indicates whos turn it is
+                {name: 'Turn Order', value: turnOrder && turnOrder.length ? turnOrder.join(', ') : 'N/A'},
+
                 {name: 'Combat Log', value: this.combatLog.getLog()}
             )
         ;
@@ -139,3 +129,4 @@ class Battle {
 }
 
 export default Battle;
+export { Side };

@@ -29,9 +29,9 @@ const fighterStats: CharacterStats = {
     physResist: 0,
     magicResist: 0,
     maxHealth: 20,
-    maxMana: 0, 
-    manaPerAtk: 0,
-    manaRegen: 0,
+    maxMana: 10, 
+    manaPerAtk: 2,
+    manaRegen: 1,
     initiativeBonus: 0
 };
 
