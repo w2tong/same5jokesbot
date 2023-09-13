@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, bold } from 'discord.js';
 import Character from './Character';
 import { dice, rollDice } from './util';
 import { emptyEmbedFieldInline } from '../util/discordUtil';
@@ -17,7 +17,7 @@ class Battle {
 
     private charTurn = 0;
     private turnOrder: {char: Character, init: number, side: Side}[] = [];
-    private combatHistory: string[] = [];
+    private combatLog: string[] = [];
 
     constructor(left: Character[], right: Character[]) {
         this.left = left;
@@ -68,11 +68,13 @@ class Battle {
             if (char.target !== null) {
                 const result = char.attackTarget();
                 if (result) {
+                    // TODO add critical miss and hit to combat history
+                    // TODO inline/code block attack/damage details
                     if (result.hit) {
-                        this.combatHistory.push(`${char.name} hit ${char.target.name} (${result.attackDetails}) for ${result.damageDetails} damage.`);
+                        this.combatLog.push(`${bold(char.name)} atked ${bold(char.target.name)} (${result.attackDetails}) for ${result.damageDetails} damage.`);
                     }
                     else {
-                        this.combatHistory.push(`${char.name} hit ${char.target.name} and missed (${result.attackDetails}).`);
+                        this.combatLog.push(`${bold(char.name)} atked ${bold(char.target.name)} (${result.attackDetails}).`);
                     }
                     // Remove target from alive characters and set target to null
                     if (char.target.isDead()) {
@@ -97,13 +99,14 @@ class Battle {
         const rightNames = this.right.map(char => char.getCharString());
 
         const embed = new EmbedBuilder()
-            .setTitle('auto battle')
+            .setTitle('Auto Battle')
             .addFields(
                 {name: 'Combatants', value: leftNames.join('\n'), inline: true},
                 emptyEmbedFieldInline,
                 {name: 'Combatants', value: rightNames.join('\n'), inline: true},
 
-                {name: 'Combat History', value: this.combatHistory.length ? this.combatHistory.join('\n') : 'None'}
+                // TODO: add character limit to combat log 
+                {name: 'Combat Log', value: this.combatLog.length ? this.combatLog.join('\n') : 'None'}
             )
         ;
 

@@ -18,7 +18,7 @@ import steal from './steal/steal';
 import blackjack from './blackjack/blackjack';
 import daily from './daily/daily';
 import upgrade from './upgrade/upgrade';
-import autoBattle from './auto-battle';
+import autoBattle from './auto-battler/auto-battler';
 
 const commands = {
     [play.name]: play.execute,

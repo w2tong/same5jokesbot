@@ -5,6 +5,8 @@ type CharacterStats = {
     attackBonus: number;
     damage: Dice;
     damageBonus: number;
+    critRange: number;
+    critMult: number;
     armorClass: number;
     physResist: number;
     magicResist: number;
@@ -24,6 +26,8 @@ class Character {
     protected attackBonus: number;
     protected damage: Dice;
     protected damageBonus: number;
+    protected critRange: number;
+    protected critMult: number;
 
     // Defence stats
     protected _armorClass: number;
@@ -46,20 +50,29 @@ class Character {
     protected _index;
 
     constructor(stats: CharacterStats, name: string, index: number) {
-        this._name = name;
-        this._armorClass = stats.armorClass;
+        
+        
         this.attackBonus = stats.attackBonus;
         this.damage = stats.damage;
         this.damageBonus = stats.damageBonus;
-        this._initiativeBonus = stats.initiativeBonus;
+        this.critRange = stats.critRange;
+        this.critMult = stats.critMult;
+
+        this._armorClass = stats.armorClass;
+        this.physResist = stats.physResist;
+        this.magicResist = stats.magicResist;
+        
         this.maxHealth = stats.maxHealth;
         this.currHealth = stats.currHealth ?? stats.maxHealth;
+
         this.maxMana = stats.maxMana;
         this.currMana = stats.currMana ?? 0;
         this.manaPerAtk = stats.manaPerAtk;
         this.manaRegen = stats.manaRegen;
-        this.physResist = stats.physResist;
-        this.magicResist = stats.magicResist;
+
+        this._initiativeBonus = stats.initiativeBonus;
+
+        this._name = name;
         this._index = index;
     }
 
@@ -116,13 +129,17 @@ class Character {
         if (this.target) { 
             const attackRoll = rollDice({num: 1, sides: 20});
             const attack = attackRoll + this.attackBonus;
-            const attackDetails = `${attack}${this.attackBonus ? ` (${this.attackBonus > 0 ? '+' : ''}${this.attackBonus})` : ''} vs. ${this.target.armorClass}`;
-            if (attack >= this.target.armorClass) {
+            const attackDetails = `${attack}${this.attackBonus ? ` (${attackRoll}${this.attackBonus > 0 ? '+' : ''}${this.attackBonus})` : ''} vs. ${this.target.armorClass}`;
+            if (attackRoll === 1) {
+                return {hit: false, attackDetails};
+            }
+            else if (attackRoll === 20 || attack >= this.target.armorClass) {
                 const damageRoll = rollDice(this.damage);
-                const damage = damageRoll + this.damageBonus;
+                let damage = damageRoll + this.damageBonus;
+                if (attackRoll >= this.critRange) damage *= this.critMult;
                 const damageDone = this.target.takeDamage(damage);
                 // TODO: include resistances in damageDetails
-                const damageDetails = `${damage}${this.damageBonus ? ` (${this.damageBonus > 0 ? '+' : ''}${this.damageBonus})` : ''}`;
+                const damageDetails = `${damage}${this.damageBonus ? ` (${damageRoll}${this.damageBonus > 0 ? '+' : ''}${this.damageBonus})` : ''}`;
                 return {hit: true, attackDetails, damage: damageDone, damageDetails};
             }
             else {
@@ -134,7 +151,6 @@ class Character {
 
     takeDamage(damage: number): number {
         // calculate damage after physResist and magicResist
-        console.log(Math.log(this.physResist), Math.log(this.magicResist));
         this.currHealth -= damage;
         return damage;
     }

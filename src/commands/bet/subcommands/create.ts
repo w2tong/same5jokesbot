@@ -112,7 +112,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
 const name = 'create';
 
-const subcommandBuilder = new SlashCommandSubcommandBuilder ()
+const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
     .setDescription('Create a bet with cringe points.')
     .addStringOption((option) => option.setName('bet').setDescription('Enter a bet.').setRequired(true))
