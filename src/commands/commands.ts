@@ -18,6 +18,7 @@ import steal from './steal/steal';
 import blackjack from './blackjack/blackjack';
 import daily from './daily/daily';
 import upgrade from './upgrade/upgrade';
+import autoBattle from './auto-battler/auto-battler';
 
 const commands = {
     [play.name]: play.execute,
@@ -40,6 +41,7 @@ const commands = {
     [blackjack.name]: blackjack.execute,
     [daily.name]: daily.execute,
     [upgrade.name]: upgrade.execute,
+    [autoBattle.name]: autoBattle.execute,
 };
 
 const commandBuilders = [
@@ -63,6 +65,7 @@ const commandBuilders = [
     blackjack.commandBuilder,
     daily.commandBuilder,
     upgrade.commandBuilder,
+    autoBattle.commandBuilder,
 ];
 
 export { commands, commandBuilders };

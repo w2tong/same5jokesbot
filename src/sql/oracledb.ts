@@ -24,7 +24,6 @@ const createTableQueries = [createTableCurrentDisperseStreak, createTableDispers
 
 const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades];
 
-oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_DIR });
 oracledb.autoCommit = true;
 if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = parseInt(process.env.ORACLEDB_POOL_MIN);
 if (process.env.ORACLEDB_POOL_MAX) oracledb.poolMax = parseInt(process.env.ORACLEDB_POOL_MAX);
