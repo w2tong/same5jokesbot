@@ -122,8 +122,6 @@ async function completeDaily(dailyId: DailyId, user: User, client: Client, chann
     }
 }
 
-// TODO: send daily compelte msg (embed prob)
-
 blackjackEmitter.on('end', async (user, wager, profit, client, channelId) => {
     const dailyUpdates = [
         updateDaily('bjGame', user.id, 1),
