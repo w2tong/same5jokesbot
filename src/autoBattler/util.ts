@@ -27,8 +27,8 @@ enum HitType {
     CritMiss = 'Crit Miss'
 }
 
-function generateCombatAttack(charName: string, tarName: string, attackDetails: string, hitType: HitType) {
-    return `${bold(charName)} attacked ${bold(tarName)} (${attackDetails}). ${bold(hitType.toString())}.`;
+function generateCombatAttack(charName: string, tarName: string, attackDetails: string, hitType: HitType, sneak: boolean) {
+    return `${bold(charName)} 🗡️ ${bold(tarName)} (${attackDetails}). ${bold(hitType.toString())}${sneak ? ' (Sneak Attack)' : ''}.`;
 }
 
 export { Dice, dice, rollDice, HitType, generateCombatAttack };

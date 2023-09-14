@@ -24,9 +24,13 @@ class Battle {
     private turnIndex = -1;
     private turnOrder: {char: Character, init: number}[] = [];
 
-    private combatLog = new CombatLog();
+    private _combatLog = new CombatLog();
 
     private winner?: Side; 
+
+    get combatLog() {
+        return this._combatLog;
+    }
 
     addChars(left: Character[], right: Character[]) {
         this.left = left;
@@ -37,12 +41,8 @@ class Battle {
     }
 
     getTargets(side: Side) {
-        if (side === Side.Left) {
-            return Array.from(this.rightAlive.values()).map(i => this.right[i]);
-        }
-        else {
-            return Array.from(this.leftAlive.values()).map(i => this.left[i]);
-        }
+        // Get alive chars
+        return side === Side.Left ? Array.from(this.rightAlive.values()).map(i => this.right[i]) : Array.from(this.leftAlive.values()).map(i => this.left[i]);
     }
 
     setCharDead(side: Side, index: number) {
@@ -56,10 +56,6 @@ class Battle {
             this.rightAlive.delete(index);
         }
         this.turnOrder = this.turnOrder.filter(c => c.char !== char);
-    }
-
-    combatLogAdd(str: string) {
-        this.combatLog.add(str);
     }
 
     startCombat() {
