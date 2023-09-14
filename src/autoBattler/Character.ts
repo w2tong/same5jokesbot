@@ -1,7 +1,9 @@
 import { bold, userMention } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { Dice, HitType, generateCombatAttack, rollDice } from './util';
+import { Dice, HitType, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
+import BuffTracker from './Buffs/BuffTracker';
+import { Buff } from './Buffs/buffs';
 
 type CharacterStats = {
     attackBonus: number;
@@ -50,11 +52,14 @@ class Character {
 
     protected _initiativeBonus: number;
 
-    protected _target: Character|null = null;
+    // Buffs/Debuffs
+    protected buffTracker: BuffTracker = new BuffTracker(this);
 
+    // Battle Info
+    protected _target: Character|null = null;
     protected _index;
     protected side: Side;
-    protected battle: Battle;
+    protected _battle: Battle;
 
     constructor(stats: CharacterStats, name: string, index: number, side: Side, battle: Battle, userId?: string) {
         if (userId) this.userId = userId;
@@ -83,7 +88,7 @@ class Character {
 
         this._index = index;
         this.side = side;
-        this.battle = battle;
+        this._battle = battle;
     }
 
     get name() {
@@ -108,6 +113,10 @@ class Character {
 
     get index() {
         return this._index;
+    }
+
+    get battle() {
+        return this._battle;
     }
 
     getHealthString() {
@@ -137,6 +146,18 @@ class Character {
         }   
     }
 
+    setTarget() {
+        if (this.target?.isDead() || this.target?.isInvisible()) {
+            this.target = null;
+        }
+        if (!this.target) {
+            // TODO: add condition if this char can see invisible targets
+            // Filter out invisble targets
+            const targets = this.battle.getTargets(this.side).filter(char => !char.isInvisible());
+            this.setRandomTarget(targets);
+        }
+    }
+
     doTurn() {
         if (this.maxMana !== 0 && this.currMana === this.maxMana) {
             this.currMana = 0;
@@ -149,34 +170,30 @@ class Character {
     }
 
     attack() {
-        if (this.target?.isDead()) {
-            this.target = null;
-        }
-        if (!this.target) {
-            this.setRandomTarget(this.battle.getTargets(this.side));
-        }
+        this.setTarget();
         if (this.target) { 
             const attackRoll = rollDice({num: 1, sides: 20});
             const rollToHitTaget = this.target.armorClass - this.attackBonus;
             const attackDetails = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
 
             if (attackRoll === 1) {
-                this.battle.combatLogAdd(generateCombatAttack(this.name, this.target.name, attackDetails, HitType.CritMiss));
+                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attackDetails, HitType.CritMiss, false));
             }
             else if (attackRoll === 20 || attackRoll >= rollToHitTaget) {
                 const damageRoll = rollDice(this.damage);
-                let damage = damageRoll + this.damageBonus;
+                const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
+                let damage = damageRoll + this.damageBonus + sneakDamage;
                 let hitType = HitType.Hit;
                 if (attackRoll >= this.critRange) {
                     damage *= this.critMult;
                     hitType = HitType.Crit;
                 }
-                this.battle.combatLogAdd(generateCombatAttack(this.name, this.target.name, attackDetails, hitType));
+                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attackDetails, hitType, sneakDamage > 0));
                 this.target.takeDamage(this.name, damage);
                 this.addMana(this.manaPerAtk);
             }
             else {
-                this.battle.combatLogAdd(generateCombatAttack(this.name, this.target.name, attackDetails, HitType.Miss));
+                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attackDetails, HitType.Miss, false));
             }
         }
     }
@@ -190,10 +207,10 @@ class Character {
     takeDamage(source: string, damage: number) {
         // calculate damage after physResist and magicResist
         this.currHealth -= damage;
-        this.battle.combatLogAdd(`${bold(this.name)} took ${bold(damage.toString())} damage from ${bold(source)}.`);
+        this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} damage from ${bold(source)}.`);
         if (this.isDead()) {
             this.battle.setCharDead(this.side, this.index);
-            this.battle.combatLogAdd(`${bold(this.name)} died.`);
+            this.battle.combatLog.add(`${bold(this.name)} died.`);
         }
     }
 
@@ -203,6 +220,10 @@ class Character {
 
     isDead() {
         return this.currHealth <= 0;
+    }
+
+    isInvisible() {
+        return this.buffTracker.getBuff(Buff.Invisible) > 0;
     }
 }
 

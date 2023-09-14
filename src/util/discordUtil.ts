@@ -45,5 +45,11 @@ function createDispersersList(usersIdsStr: string) {
     return Object.keys(userIdCount).map(userId => `${userMention(userId)} ${userIdCount[userId] > 1 ? '('+userIdCount[userId].toString()+')': ''}`).join('\n');
 }
 
+function getBalanceStrings(bal: number, profit: number): { balance: string, newBalance: string} {
+    return {
+        balance: `${bal.toLocaleString()} (${profit > 0 ? '+' : ''}${profit.toLocaleString()})`,
+        newBalance: `${(bal + profit).toLocaleString()}`
+    };
+}
 
-export {MessageEmbedLimit, UsersPerEmbed, fieldValueCharLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList};
+export {MessageEmbedLimit, UsersPerEmbed, fieldValueCharLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings};
