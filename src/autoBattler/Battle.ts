@@ -117,7 +117,6 @@ class Battle {
                 emptyEmbedFieldInline,
                 {name: 'Right', value: rightChars.join('\n\n'), inline: true},
 
-                //TODO: add turn order eg. [Player1], Player2, brackets indicates whos turn it is
                 {name: 'Turn Order', value: turnOrder && turnOrder.length ? turnOrder.join(', ') : 'N/A'},
 
                 {name: 'Combat Log', value: this.combatLog.getLog()}
