@@ -15,9 +15,6 @@ Same5JokesBot is a discord bot written TypeScript using the discord.js library. 
 npm i
 ```
 
-### Setting up Oracle DB
-https://www.oracle.com/database/technologies/appdev/quickstartnodejs.html
-
 ### Setting up [wit.ai](https://wit.ai/) for Voice Recognition
 1. Create a [wit.ai](https://wit.ai/) account by logging into Facebook. and create a new app. 
 2. Create a new app.
@@ -41,7 +38,6 @@ WITAI_KEY=Wit Ai Client Access Token
 ORACLEDB_USER=username
 ORACLEDB_PW=password
 ORACLEDB_CONN_STR=connection string
-ORACLE_CLIENT_DIR=instant client directory
 UV_THREADPOOL_SIZE=4
 ORACLEDB_POOL_MIN=1
 ORACLEDB_POOL_MAX=4
