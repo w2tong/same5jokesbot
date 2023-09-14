@@ -40,7 +40,7 @@ async function generateUserDailies(client: Client) {
 }
 
 let DailliesPerDay = 3;
-let cronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 0, minute: 10, hour: 0, tz: 'America/Toronto' };
+let cronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 0, minute: 0, hour: 0, tz: 'America/Toronto' };
 if (process.env.NODE_ENV === 'development') {
     DailliesPerDay = Object.keys(dailies).length;
     cronJobTime = '*/5 * * * *';
