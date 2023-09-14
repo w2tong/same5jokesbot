@@ -66,5 +66,3 @@ npm start
 ```shell
 src/node deploy-commands.ts
 ```
-
-test commit1
