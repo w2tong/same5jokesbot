@@ -66,5 +66,3 @@ npm start
 ```shell
 npm run deploy
 ```
-
-test commit1
