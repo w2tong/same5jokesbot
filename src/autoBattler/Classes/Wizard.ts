@@ -1,6 +1,6 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
-import { Debuff } from '../Buffs/debuffs';
+import { DebuffId } from '../Buffs/buffs';
 import { HitType, rollDice } from '../util';
 
 class Wizard extends Character {
@@ -15,9 +15,8 @@ class Wizard extends Character {
                 let damage = rollDice(this.damage);
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
                 this.target.takeDamage(this.name, damage);
-                this.target?.buffTracker.addDebuff(Debuff.Burn, 3, this);
+                this.target?.buffTracker.addDebuff(DebuffId.Burn, 3, this);
             }
-            
         }
     }
 }

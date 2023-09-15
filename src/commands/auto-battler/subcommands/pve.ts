@@ -12,18 +12,19 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
     const battle = new Battle();
-    /*
+    
     const left = [
         new Fighter(fighterStats, 'Fighter', 0, Side.Left, battle, interaction.user.id),
         new Rogue(rogueStats, 'Rogue', 1, Side.Left, battle, interaction.user.id),
+        new Wizard(wizardStats, 'Wizard', 2, Side.Left, battle, interaction.user.id),
         // new Character(ratStats, 'Rat Pet', 1, Side.Left, battle)
     ];
     const right = [
         new Fighter(fighterStats, 'Fighter NPC', 0, Side.Right, battle),
         new Rogue(rogueStats, 'Rogue NPC', 1, Side.Right, battle,),
+        new Wizard(wizardStats, 'Wizard NPC', 2, Side.Right, battle),
         // new Character(ratStats, 'Rat NPC', 1, Side.Right, battle)
     ];
-    */
 
     /*
     const left = [
@@ -34,12 +35,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
     ];
     */
 
+    /*
     const left = [
         new Wizard(wizardStats, 'Wizard', 0, Side.Left, battle, interaction.user.id),
     ];
     const right = [
         new Wizard(wizardStats, 'Wizard NPC', 0, Side.Right, battle,),
     ];
+    */
 
     battle.addChars(left, right);
     
