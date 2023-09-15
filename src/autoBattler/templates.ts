@@ -28,7 +28,7 @@ const fighterStats: CharacterStats = {
     armorClass: 10,
     physResist: 0,
     magicResist: 0,
-    maxHealth: 12,
+    maxHealth: 20,
     maxMana: 10, 
     manaPerAtk: 2,
     manaRegen: 1,
@@ -45,11 +45,28 @@ const rogueStats: CharacterStats = {
     armorClass: 10,
     physResist: 0,
     magicResist: 0,
-    maxHealth: 10,
+    maxHealth: 20,
     maxMana: 10, 
     manaPerAtk: 2,
     manaRegen: 1,
     initiativeBonus: 0
 };
 
-export { ratStats, fighterStats, rogueStats };
+// Wizard
+const wizardStats: CharacterStats = {
+    attackBonus: 0,
+    damage: dice['1d6'],
+    damageBonus: 0,
+    critRange: 20,
+    critMult: 2,
+    armorClass: 10,
+    physResist: 0,
+    magicResist: 0,
+    maxHealth: 20,
+    maxMana: 10, 
+    manaPerAtk: 1,
+    manaRegen: 2,
+    initiativeBonus: 0
+};
+
+export { ratStats, fighterStats, rogueStats, wizardStats };
