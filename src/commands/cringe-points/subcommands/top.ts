@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { getTopCringePoints, getUserCringePoints } from '../../../sql/tables/cringe_points';
+import { getTopCringePoints, getUserCringePoints } from '../../../sql/tables/cringe-points';
 import { MessageEmbedLimit, UsersPerEmbed, emptyEmbedFieldInline } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -57,6 +57,6 @@ const name = 'top';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets cringe points of the top active users.');
+    .setDescription('Gets Cringe points of the top active users.');
 
 export default { execute, name, subcommandBuilder };
