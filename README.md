@@ -64,5 +64,5 @@ npm start
 
 ### Deploy slash commands to server
 ```shell
-src/node deploy-commands.ts
+npm run deploy
 ```
