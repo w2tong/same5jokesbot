@@ -5,6 +5,7 @@ import { Debuff } from './debuffs';
 
 type BuffInfo = {
     duration: number;
+    source: Character;
     new: boolean;
 }
 
@@ -21,13 +22,13 @@ class BuffTracker {
         return this.buffs[id]?.duration ?? 0;
     }
 
-    addBuff(id: Buff, duration: number) {
-        this.buffs[id] = {duration, new: true};
+    addBuff(id: Buff, duration: number, source: Character) {
+        this.buffs[id] = {duration, source, new: true};
         this.char.battle.combatLog.add(`${this.char.name} gained buff ${id} (${duration}).`);
     }
 
-    addDebuff(id: Debuff, duration: number) {
-        this.debuffs[id] = {duration, new: true};
+    addDebuff(id: Debuff, duration: number, source: Character) {
+        this.debuffs[id] = {duration, source, new: true};
         this.char.battle.combatLog.add(`${this.char.name} gained debuff ${bold(`${id} (${duration})`)}.`);
     }
 
@@ -43,6 +44,19 @@ class BuffTracker {
         }
 
         // TODO: add tick for debuffs
+        for (const [id, debuff] of Object.entries(this.debuffs)) {
+
+            if (id as Debuff === Debuff.Burn) {
+                this.char.takeDamage(Debuff.Burn, debuff.duration);
+            }
+
+            debuff.duration -= 1;
+
+            if (debuff.duration <= 0) {
+                delete this.buffs[id as Buff];
+                this.char.battle.combatLog.add(`${this.char.name} lost buff ${id}.`);
+            }
+        }
     }
 }
 
