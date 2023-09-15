@@ -1,8 +1,8 @@
 import { Client, Collection, EmbedBuilder, InteractionEditReplyOptions, User, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { dateToDbString, roundToDecimalPlaces, timeInMS } from '../../util/util';
-import { CringePointsUpdate, getUserCringePoints, houseUserTransfer, updateCringePoints } from '../../sql/tables/cringe-points';
-import { deleteStolenGood, deleteUserStolenGoods, getStolenGoods, insertStolenGood } from '../../sql/tables/stolen-goods';
+import { CringePointsUpdate, getUserCringePoints, houseUserTransfer, updateCringePoints } from '../../sql/tables/cringe_points';
+import { deleteStolenGood, deleteUserStolenGoods, getStolenGoods, insertStolenGood } from '../../sql/tables/stolen_goods';
 import { nanoid } from 'nanoid';
 import { emptyEmbedFieldInline } from '../../util/discordUtil';
 import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';

@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import { updateCringePoints } from './sql/tables/cringe-points';
+import { updateCringePoints } from './sql/tables/cringe_points';
 
 class Cooldown {
     private timestamps = new Collection<string, number>();

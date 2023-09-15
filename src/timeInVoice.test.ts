@@ -1,6 +1,6 @@
 import timeInVoice from './timeInVoice';
-import * as sqlTimeInVoice from './sql/tables/time-in-voice';
-import * as sqlTimeInVoiceTogether from './sql/tables/time-in-voice-together';
+import * as sqlTimeInVoice from './sql/tables/time_in_voice';
+import * as sqlTimeInVoiceTogether from './sql/tables/time_in_voice-together';
 // import MockDiscord from './tests/mockDiscord';
 // const mockDiscord = new MockDiscord();
 import { mockVoidPromise } from './tests/testUtil';

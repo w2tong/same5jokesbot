@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatIn
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util/util';
 import { createBet, deleteBet, endBet } from '../betManager';
-import { getUserCringePoints } from '../../../sql/tables/cringe-points';
+import { getUserCringePoints } from '../../../sql/tables/cringe_points';
 import { logError } from '../../../logger';
 
 async function execute(interaction: ChatInputCommandInteraction) {

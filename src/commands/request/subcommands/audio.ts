@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { emptyEmbedField, fetchUser } from '../../../util/discordUtil';
-import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe-points';
+import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe_points';
 import { audio, fetchAudioRequestPrice } from '../requestManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {

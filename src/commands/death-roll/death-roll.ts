@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder, userMention } from 'discord.js';
 import { DeathRoll } from './DeathRoll';
-import { getUserCringePoints } from '../../sql/tables/cringe-points';
+import { getUserCringePoints } from '../../sql/tables/cringe_points';
 import { nanoid } from 'nanoid';
 
 async function execute(interaction: ChatInputCommandInteraction) {

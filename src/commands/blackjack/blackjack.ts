@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
 import BlackjackGame, { PlayerOption, PlayerOptions, maxDecks, maxWager } from './BlackjackGame';
 import { nanoid } from 'nanoid';
-import { getUserCringePoints } from '../../sql/tables/cringe-points';
+import { getUserCringePoints } from '../../sql/tables/cringe_points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

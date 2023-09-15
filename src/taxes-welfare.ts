@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder, MessageCreateOptions, time, userMention } from 'discord.js';
 import schedule from 'node-schedule';
-import { CringePointsUpdate, getAllUserCringePoints, houseUserTransfer } from './sql/tables/cringe-points';
+import { CringePointsUpdate, getAllUserCringePoints, houseUserTransfer } from './sql/tables/cringe_points';
 import { MessageEmbedLimit, UsersPerEmbed, emptyEmbedFieldInline, fetchChannel } from './util/discordUtil';
 import { ProfitType, ProfitsUpdate, updateProfits } from './sql/tables/profits';
 

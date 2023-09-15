@@ -1,11 +1,11 @@
 import { Emotes, emotes } from '../util/emotes';
-import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/tables/current-disperse-streak';
-import { updateDisperseStreakBreaks } from '../sql/tables/disperse-streak-breaks';
-import { insertDisperseStreakHighScore } from '../sql/tables/disperse-streak-highscore';
-import { updateGamersStats } from '../sql/tables/gamers-stats';
+import { getCurrentDisperseStreak, updateCurrentDisperseStreak } from '../sql/tables/current_disperse_streak';
+import { updateDisperseStreakBreaks } from '../sql/tables/disperse_streak_breaks';
+import { insertDisperseStreakHighScore } from '../sql/tables/disperse_streak_highscore';
+import { updateGamersStats } from '../sql/tables/gamers_stats';
 import { getRandomRange } from '../util/util';
 import { logError } from '../logger';
-import { updateCringePoints } from '../sql/tables/cringe-points';
+import { updateCringePoints } from '../sql/tables/cringe_points';
 import { bold } from 'discord.js';
 
 // Where is Andy random response
