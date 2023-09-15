@@ -2,7 +2,7 @@ import { EmbedBuilder, InteractionEditReplyOptions, User } from 'discord.js';
 import { getAllUpgrades, updateUpgrades } from '../sql/tables/upgrades';
 import { UpgradeId, upgrades } from './upgrades';
 import { emptyEmbedFieldInline } from '../util/discordUtil';
-import { getDailyCoins, updateDailyCoins } from '../sql/tables/daily-coins';
+import { getDailyCoins, updateDailyCoins } from '../sql/tables/daily_coins';
 
 const upgradePrice = 10;
 const userUpgrades: {[userId: string]: UserUpgrades} = {};

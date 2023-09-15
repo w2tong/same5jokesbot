@@ -4,7 +4,7 @@ import { timeInMS } from '../../util/util';
 
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import { updateCringePoints } from '../../sql/tables/cringe-points';
+import { updateCringePoints } from '../../sql/tables/cringe_points';
 import { updateProfits, ProfitType } from '../../sql/tables/profits';
 
 type DeathRollEvents = {

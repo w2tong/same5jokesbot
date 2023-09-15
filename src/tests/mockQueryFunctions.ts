@@ -1,4 +1,4 @@
-import { CurrentDisperseStreak } from '../sql/tables/current-disperse-streak';
+import { CurrentDisperseStreak } from '../sql/tables/current_disperse_streak';
 
 const mockGetCurrentDisperseStreakResponseZero: CurrentDisperseStreak = {
     STREAK_DATE: '2023-01-01T00:00:00.000Z',

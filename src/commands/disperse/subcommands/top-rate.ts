@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../../../sql/tables/gamers-stats';
+import { getTopDisperseRateMonthYear, getTopDisperseRateYear } from '../../../sql/tables/gamers_stats';
 import { monthChoices } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {

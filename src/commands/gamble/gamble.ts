@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandBuilder, User, bold } from 'discord.js';
-import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe-points';
+import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe_points';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 import { emptyEmbedFieldInline } from '../../util/discordUtil';
 import { joinVoicePlayAudio } from '../../voice';

@@ -1,4 +1,4 @@
-import { getUserAvgCringePoints } from '../../sql/tables/cringe-points';
+import { getUserAvgCringePoints } from '../../sql/tables/cringe_points';
 
 const audio = {
     min: 1_000_000,

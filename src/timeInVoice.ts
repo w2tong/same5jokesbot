@@ -1,8 +1,8 @@
 import { ChannelType, Client } from 'discord.js';
 import schedule from 'node-schedule';
-import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe-points';
-import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/tables/time-in-voice';
-import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time-in-voice-together';
+import { updateCringePoints, CringePointsUpdate } from './sql/tables/cringe_points';
+import { TimeInVoiceUpdate, updateTimeInVoice } from './sql/tables/time_in_voice';
+import { insertUserPairs, updateTimeInVoiceTogether, TimeInVoiceTogetherUpdate, PairInsert } from './sql/tables/time_in_voice-together';
 import { ProfitType, ProfitsUpdate, updateProfits } from './sql/tables/profits';
 
 const pointMultiplier = 2;

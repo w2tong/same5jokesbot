@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { getTopDisperseStreakBreaks } from '../../../sql/tables/disperse-streak-breaks';
+import { getTopDisperseStreakBreaks } from '../../../sql/tables/disperse_streak_breaks';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

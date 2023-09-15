@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, bold, time, userMention } from 'discord.js';
 import { emptyEmbedFieldInline, fetchChannel, fetchMessage } from '../../util/discordUtil';
-import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe-points';
+import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe_points';
 import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';
 import { logError } from '../../logger';
 

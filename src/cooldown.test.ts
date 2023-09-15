@@ -1,5 +1,5 @@
 import { Cooldown, RewardCooldown } from './cooldown';
-import * as sqlCringePoints from './sql/tables/cringe-points';
+import * as sqlCringePoints from './sql/tables/cringe_points';
 import { mockVoidPromise } from './tests/testUtil';
 
 beforeEach(() => {

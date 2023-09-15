@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import { getTopCringePoints, getUserCringePoints } from '../../../sql/tables/cringe-points';
+import { getTopCringePoints, getUserCringePoints } from '../../../sql/tables/cringe_points';
 import { MessageEmbedLimit, UsersPerEmbed, emptyEmbedFieldInline } from '../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {

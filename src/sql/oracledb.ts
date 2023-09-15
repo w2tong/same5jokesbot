@@ -1,28 +1,29 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import oracledb from 'oracledb';
-import { createTableCurrentDisperseStreak } from './tables/current-disperse-streak';
-import { createTableDisperseStreakBreaks } from './tables/disperse-streak-breaks';
-import { createTableDisperseStreakHighscore } from './tables/disperse-streak-highscore';
-import { createTableGamersStats } from './tables/gamers-stats';
+import { createTableCurrentDisperseStreak } from './tables/current_disperse_streak';
+import { createTableDisperseStreakBreaks } from './tables/disperse_streak_breaks';
+import { createTableDisperseStreakHighscore } from './tables/disperse_streak_highscore';
+import { createTableGamersStats } from './tables/gamers_stats';
 import { createTableReminders } from './tables/reminders';
-import { createTableTimeInVoice } from './tables/time-in-voice';
+import { createTableTimeInVoice } from './tables/time_in_voice';
 import { createTableAudioCount } from './tables/audio-count';
-import { createTableUserIdPairs, createTableTimeInVoiceTogether } from './tables/time-in-voice-together';
-import { createTableCringePoints } from './tables/cringe-points';
+import { createTableUserIdPairs, createTableTimeInVoiceTogether } from './tables/time_in_voice-together';
+import { createTableCringePoints } from './tables/cringe_points';
 import { createTableLottery } from './tables/lottery';
-import { createTableLotteryTicket } from './tables/lottery-ticket';
+import { createTableLotteryTicket } from './tables/lottery_ticket';
 import { createTableProfits, updateTableProfits } from './tables/profits';
-import { createTableStolenGoods } from './tables/stolen-goods';
-import { createTableDailyProgress } from './tables/daily-progress';
+import { createTableStolenGoods } from './tables/stolen_goods';
+import { createTableDailyProgress } from './tables/daily_progress';
 import { createTableUpgrades, updateTableUpgrades } from './tables/upgrades';
-import { createTableDailyCoins } from './tables/daily-coins';
+import { createTableDailyCoins } from './tables/daily_coins';
+import { createTableABCharacters, updateTableABCharacters } from './tables/ab_characters';
 
 import { logError } from '../logger';
 
-const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins];
+const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins, createTableABCharacters];
 
-const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades];
+const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters];
 
 oracledb.autoCommit = true;
 if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = parseInt(process.env.ORACLEDB_POOL_MIN);
