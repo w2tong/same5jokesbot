@@ -1,16 +1,18 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import Character from '../../../autoBattler/Character';
 import Battle, { Side } from '../../../autoBattler/Battle';
-import { fighterStats, ratStats, rogueStats } from '../../../autoBattler/templates';
+import { fighterStats, ratStats, rogueStats, wizardStats } from '../../../autoBattler/templates';
 import { timeInMS } from '../../../util/util';
 import Fighter from '../../../autoBattler/Classes/Fighter';
 import Rogue from '../../../autoBattler/Classes/Rogue';
+import Wizard from '../../../autoBattler/Classes/Wizard';
 
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
     const battle = new Battle();
+    /*
     const left = [
         new Fighter(fighterStats, 'Fighter', 0, Side.Left, battle, interaction.user.id),
         new Rogue(rogueStats, 'Rogue', 1, Side.Left, battle, interaction.user.id),
@@ -21,6 +23,24 @@ async function execute(interaction: ChatInputCommandInteraction) {
         new Rogue(rogueStats, 'Rogue NPC', 1, Side.Right, battle,),
         // new Character(ratStats, 'Rat NPC', 1, Side.Right, battle)
     ];
+    */
+
+    /*
+    const left = [
+        new Rogue(rogueStats, 'Rogue', 0, Side.Left, battle, interaction.user.id),
+    ];
+    const right = [
+        new Rogue(rogueStats, 'Rogue NPC', 0, Side.Right, battle,),
+    ];
+    */
+
+    const left = [
+        new Wizard(wizardStats, 'Wizard', 0, Side.Left, battle, interaction.user.id),
+    ];
+    const right = [
+        new Wizard(wizardStats, 'Wizard NPC', 0, Side.Right, battle,),
+    ];
+
     battle.addChars(left, right);
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});

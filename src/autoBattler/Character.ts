@@ -5,6 +5,9 @@ import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { Buff } from './Buffs/buffs';
 
+const healthBarLength = 10;
+const manaBarLength = 10;
+
 type CharacterStats = {
     attackBonus: number;
     damage: Dice;
@@ -53,7 +56,7 @@ class Character {
     protected _initiativeBonus: number;
 
     // Buffs/Debuffs
-    protected buffTracker: BuffTracker = new BuffTracker(this);
+    protected _buffTracker: BuffTracker = new BuffTracker(this);
 
     // Battle Info
     protected _target: Character|null = null;
@@ -107,6 +110,10 @@ class Character {
         return this._target;
     }
 
+    get buffTracker() {
+        return this._buffTracker;
+    }
+
     set target(char: Character | null) {
         this._target = char;
     }
@@ -127,6 +134,18 @@ class Character {
         return `${this.currMana}/${this.maxMana}`;
     }
 
+    getHealthBar() {
+        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*healthBarLength);
+        const numRed = healthBarLength - numGreen;
+        return '🟩'.repeat(numGreen) + '🟥'.repeat(numRed);
+    }
+
+    getManaBar() {
+        const numBlue = Math.ceil(this.currMana/this.maxMana*manaBarLength);
+        const numWhite = manaBarLength - numBlue;
+        return '🟦'.repeat(numBlue) + '⬜'.repeat(numWhite);
+    }
+
     getName() {
         let name = this.name;
         if (this.userId) name += ` (${userMention(this.userId)})`;
@@ -134,7 +153,20 @@ class Character {
     }
 
     getCharString() {
-        return `${bold(this.getName())}${this.isDead() ? ' 💀' : ''}\nHP: ${this.getHealthString()}${this.maxMana > 0 ? `\nMP: ${this.getManaString()}` : ''}`;
+        const lines = [];
+        // Name
+        lines.push(`${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`);
+        // HP
+        lines.push(`${this.getHealthBar()} ${this.getHealthString()}`);
+        // MP
+        if (this.maxMana > 0) {
+            lines.push(`${this.getManaBar()} ${this.getManaString()}`);
+        }
+        
+        // TODO: Buff
+        // TODO: Debuff
+
+        return lines.join('\n');
     }
 
     setRandomTarget(chars: Character[]) {
@@ -160,40 +192,50 @@ class Character {
 
     doTurn() {
         if (this.maxMana !== 0 && this.currMana === this.maxMana) {
-            this.currMana = 0;
             this.specialAbility();
         }
         else {
             this.attack();
         }
         this.addMana(this.manaRegen);
+        this.buffTracker.tick();
+    }
+
+    attackRoll(): {hitType: HitType, details: string} {
+        if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
+        const attackRoll = rollDice({num: 1, sides: 20});
+        const rollToHitTaget = this.target.armorClass - this.attackBonus;
+        const details = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
+        if (attackRoll === 1) {
+            return {hitType: HitType.CritMiss, details};
+        }
+        else if (attackRoll === 20) {
+            return {hitType: HitType.Crit, details};
+        }
+        else if (attackRoll >= rollToHitTaget) {
+            return {hitType: HitType.Hit, details};
+        }
+        else {
+            return {hitType: HitType.Miss, details};
+        }
     }
 
     attack() {
         this.setTarget();
         if (this.target) { 
-            const attackRoll = rollDice({num: 1, sides: 20});
-            const rollToHitTaget = this.target.armorClass - this.attackBonus;
-            const attackDetails = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
-
-            if (attackRoll === 1) {
-                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attackDetails, HitType.CritMiss, false));
-            }
-            else if (attackRoll === 20 || attackRoll >= rollToHitTaget) {
+            const attack = this.attackRoll();
+            
+            if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                 const damageRoll = rollDice(this.damage);
                 const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
                 let damage = damageRoll + this.damageBonus + sneakDamage;
-                let hitType = HitType.Hit;
-                if (attackRoll >= this.critRange) {
-                    damage *= this.critMult;
-                    hitType = HitType.Crit;
-                }
-                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attackDetails, hitType, sneakDamage > 0));
+                if (attack.hitType === HitType.Crit) damage *= this.critMult;
+                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                 this.target.takeDamage(this.name, damage);
                 this.addMana(this.manaPerAtk);
             }
             else {
-                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attackDetails, HitType.Miss, false));
+                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
             }
         }
     }
