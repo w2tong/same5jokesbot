@@ -3,7 +3,7 @@ import { Value } from '../../cards/Card';
 import Deck from '../../cards/Deck';
 import Hand from '../../cards/Hand';
 import { emptyEmbedField, emptyEmbedFieldInline } from '../../util/discordUtil';
-import { houseUserTransfer } from '../../sql/tables/cringe-points';
+import { houseUserTransfer } from '../../sql/tables/cringe_points';
 import { timeInMS } from '../../util/util';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';

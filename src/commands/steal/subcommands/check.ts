@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
-import { getUserCringePoints } from '../../../sql/tables/cringe-points';
+import { getUserCringePoints } from '../../../sql/tables/cringe_points';
 import { stealPcMax } from '../stealManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {

@@ -4,14 +4,14 @@ import { gambleEmitter } from '../commands/gamble/gamble';
 import { getRandomRange } from '../util/util';
 import schedule from 'node-schedule';
 import dailies, { DailyId } from './dailies';
-import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDailyProgress } from '../sql/tables/daily-progress';
-import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe-points';
+import { getDailyProgress, insertDailyProgress, truncateDailyProgress, updateDailyProgress } from '../sql/tables/daily_progress';
+import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe_points';
 import { emptyEmbedFieldInline, fetchChannel } from '../util/discordUtil';
 import { slotsEmitter } from '../commands/slots/subcommands/spin';
 import { lotteryEmitter } from '../commands/lottery/lotteryManager';
 import { stealEmitter } from '../commands/steal/stealManager';
 import { deathRollEmitter } from '../commands/death-roll/DeathRoll';
-import { getDailyCoins, updateDailyCoins } from '../sql/tables/daily-coins';
+import { getDailyCoins, updateDailyCoins } from '../sql/tables/daily_coins';
 
 let currDailies: Set<DailyId> = new Set<DailyId>();
 function generateDailies(num: number) {

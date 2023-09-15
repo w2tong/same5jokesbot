@@ -1,8 +1,8 @@
 import schedule from 'node-schedule';
 import { dateToDbString, getRandomRange, timeInMS } from '../../util/util';
 import { Lottery, getActiveLottery, getCurrentLottery, insertLottery, updateJackpot } from '../../sql/tables/lottery';
-import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe-points';
-import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery-ticket';
+import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe_points';
+import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery_ticket';
 import { ChannelType, Client, EmbedBuilder, User, bold, roleMention, time, userMention } from 'discord.js';
 import { emptyEmbedFieldInline, fetchChannel, fetchUser, MessageEmbedLimit } from '../../util/discordUtil';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';

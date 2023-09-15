@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import { calculateDailyTax } from '../../../taxes-welfare';
-import { getUserCringePoints } from '../../../sql/tables/cringe-points';
+import { getUserCringePoints } from '../../../sql/tables/cringe_points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();

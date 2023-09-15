@@ -1,10 +1,10 @@
 import getTextResponse from './text';
 import { mockGetCurrentDisperseStreakZero, mockGetCurrentDisperseStreakThree } from '../tests/mockQueryFunctions';
-import * as sqlCurrentDisperseStreak from '../sql/tables/current-disperse-streak';
-import * as sqlDisperseStreakBreaks from '../sql/tables/disperse-streak-breaks';
-import * as sqlDisperseStreakHighscore from '../sql/tables/disperse-streak-highscore';
-import * as sqlGamerStats from '../sql/tables/gamers-stats';
-import * as sqlCringePoints from '../sql/tables/cringe-points';
+import * as sqlCurrentDisperseStreak from '../sql/tables/current_disperse_streak';
+import * as sqlDisperseStreakBreaks from '../sql/tables/disperse_streak_breaks';
+import * as sqlDisperseStreakHighscore from '../sql/tables/disperse_streak_highscore';
+import * as sqlGamerStats from '../sql/tables/gamers_stats';
+import * as sqlCringePoints from '../sql/tables/cringe_points';
 import { Emotes, emotes } from '../util/emotes';
 import * as logger from '../logger';
 import { mockVoidPromise, mockTruePromise, mockFalsePromise } from '../tests/testUtil';

@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandSubcommandBuilder, User, bold } from 'discord.js';
 import { Emotes, emotes } from '../../../util/emotes';
 import { getRandomRange } from '../../../util/util';
-import { getUserCringePoints, houseUserTransfer } from '../../../sql/tables/cringe-points';
+import { getUserCringePoints, houseUserTransfer } from '../../../sql/tables/cringe_points';
 import { ProfitType, updateProfits } from '../../../sql/tables/profits';
 import { symbols, specialSymbols } from '../symbols';
 import EventEmitter from 'events';

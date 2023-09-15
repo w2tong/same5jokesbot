@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, bold } from 'discord.js';
-import { getDailyCoins } from '../../../sql/tables/daily-coins';
+import { getDailyCoins } from '../../../sql/tables/daily_coins';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
