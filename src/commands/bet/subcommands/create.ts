@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatIn
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util/util';
 import { createBet, deleteBet, endBet } from '../betManager';
-import { getUserCringePoints } from '../../../sql/tables/cringe_points';
+import { getUserCringePoints } from '../../../sql/tables/cringe-points';
 import { logError } from '../../../logger';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -114,7 +114,7 @@ const name = 'create';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Create a bet with cringe points.')
+    .setDescription('Create a bet with Cringe points.')
     .addStringOption((option) => option.setName('bet').setDescription('Enter a bet.').setRequired(true))
     .addNumberOption((option) => option.setName('time').setDescription('Enter amount of time users have to bet.').setRequired(true).setMinValue(0.5));
 
