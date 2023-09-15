@@ -5,6 +5,9 @@ import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { Buff } from './Buffs/buffs';
 
+const healthBarLength = 10;
+const manaBarLength = 10;
+
 type CharacterStats = {
     attackBonus: number;
     damage: Dice;
@@ -131,6 +134,18 @@ class Character {
         return `${this.currMana}/${this.maxMana}`;
     }
 
+    getHealthBar() {
+        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*healthBarLength);
+        const numRed = healthBarLength - numGreen;
+        return '🟩'.repeat(numGreen) + '🟥'.repeat(numRed);
+    }
+
+    getManaBar() {
+        const numBlue = Math.ceil(this.currMana/this.maxMana*manaBarLength);
+        const numWhite = manaBarLength - numBlue;
+        return '🟦'.repeat(numBlue) + '⬜'.repeat(numWhite);
+    }
+
     getName() {
         let name = this.name;
         if (this.userId) name += ` (${userMention(this.userId)})`;
@@ -142,9 +157,12 @@ class Character {
         // Name
         lines.push(`${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`);
         // HP
-        lines.push(`HP: ${this.getHealthString()}`);
+        lines.push(`${this.getHealthBar()} ${this.getHealthString()}`);
         // MP
-        if (this.maxMana > 0) lines.push(`MP: ${this.getManaString()}`);
+        if (this.maxMana > 0) {
+            lines.push(`${this.getManaBar()} ${this.getManaString()}`);
+        }
+        
         // TODO: Buff
         // TODO: Debuff
 
