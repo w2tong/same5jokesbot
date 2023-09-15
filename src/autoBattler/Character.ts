@@ -3,7 +3,7 @@ import { getRandomRange } from '../util/util';
 import { Dice, HitType, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
-import { Buff } from './Buffs/buffs';
+import { BuffId } from './Buffs/buffs';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
@@ -125,34 +125,34 @@ class Character {
     get battle() {
         return this._battle;
     }
-
-    getHealthString() {
-        return `${this.currHealth}/${this.maxHealth}`;
-    }
-
-    getManaString() {
-        return `${this.currMana}/${this.maxMana}`;
-    }
-
-    getHealthBar() {
-        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*healthBarLength);
-        const numRed = healthBarLength - numGreen;
-        return '🟩'.repeat(numGreen) + '🟥'.repeat(numRed);
-    }
-
-    getManaBar() {
-        const numBlue = Math.ceil(this.currMana/this.maxMana*manaBarLength);
-        const numWhite = manaBarLength - numBlue;
-        return '🟦'.repeat(numBlue) + '⬜'.repeat(numWhite);
-    }
-
-    getName() {
+    
+    getName(): string {
         let name = this.name;
         if (this.userId) name += ` (${userMention(this.userId)})`;
         return name;
     }
 
-    getCharString() {
+    getHealthString(): string {
+        return `${this.currHealth}/${this.maxHealth}`;
+    }
+
+    getManaString(): string {
+        return `${this.currMana}/${this.maxMana}`;
+    }
+
+    getHealthBar(): string {
+        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*healthBarLength);
+        const numRed = healthBarLength - numGreen;
+        return '🟩'.repeat(numGreen) + '🟥'.repeat(numRed);
+    }
+
+    getManaBar(): string {
+        const numBlue = Math.ceil(this.currMana/this.maxMana*manaBarLength);
+        const numWhite = manaBarLength - numBlue;
+        return '🟦'.repeat(numBlue) + '⬜'.repeat(numWhite);
+    }
+
+    getCharString(): string {
         const lines = [];
         // Name
         lines.push(`${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`);
@@ -162,14 +162,25 @@ class Character {
         if (this.maxMana > 0) {
             lines.push(`${this.getManaBar()} ${this.getManaString()}`);
         }
-        
-        // TODO: Buff
-        // TODO: Debuff
+        // Buffs
+        if (this.buffTracker.getBuffCount() > 0) {
+            lines.push(`Buffs: ${this.buffTracker.getBuffString()}`);
+        }
+        else {
+            lines.push('');
+        }
+        // Debuffs
+        if (this.buffTracker.getDebuffCount() > 0) {
+            lines.push(`Debuffs: ${this.buffTracker.getDebuffString()}`);
+        }
+        else {
+            lines.push('');
+        }
 
         return lines.join('\n');
     }
 
-    setRandomTarget(chars: Character[]) {
+    setRandomTarget(chars: Character[]): void {
         if (chars.length === 0) {
             this.target = null;
         }
@@ -178,7 +189,7 @@ class Character {
         }   
     }
 
-    setTarget() {
+    setTarget(): void {
         if (this.target?.isDead() || this.target?.isInvisible()) {
             this.target = null;
         }
@@ -190,7 +201,7 @@ class Character {
         }
     }
 
-    doTurn() {
+    doTurn(): void {
         if (this.maxMana !== 0 && this.currMana === this.maxMana) {
             this.specialAbility();
         }
@@ -220,7 +231,7 @@ class Character {
         }
     }
 
-    attack() {
+    attack(): void {
         this.setTarget();
         if (this.target) { 
             const attack = this.attackRoll();
@@ -246,8 +257,8 @@ class Character {
         this.attack();        
     }
 
-    takeDamage(source: string, damage: number) {
-        // calculate damage after physResist and magicResist
+    takeDamage(source: string, damage: number): void {
+        // TODO: calculate damage after physResist and magicResist
         this.currHealth -= damage;
         this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} damage from ${bold(source)}.`);
         if (this.isDead()) {
@@ -256,16 +267,16 @@ class Character {
         }
     }
 
-    addMana(mana: number) {
+    addMana(mana: number): void {
         this.currMana = Math.min(this.currMana + mana, this.maxMana);
     }
 
-    isDead() {
+    isDead(): boolean {
         return this.currHealth <= 0;
     }
 
-    isInvisible() {
-        return this.buffTracker.getBuff(Buff.Invisible) > 0;
+    isInvisible(): boolean {
+        return this.buffTracker.getBuff(BuffId.Invisible) > 0;
     }
 }
 
