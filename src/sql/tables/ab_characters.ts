@@ -43,6 +43,4 @@ async function insertABCharacter(userId: string, name: string, className: ClassN
     }
 }
 
-console.log(createTableABCharacters.query);
-
 export { createTableABCharacters, updateTableABCharacters, insertABCharacter };
