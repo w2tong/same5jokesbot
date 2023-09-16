@@ -1,6 +1,6 @@
 import { bold, userMention } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { Dice, HitType, dice, generateCombatAttack, rollDice } from './util';
+import { DamageType, Dice, HitType, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
@@ -13,6 +13,7 @@ type CharacterStats = {
     attackBonus: number;
     damage: Dice;
     damageBonus: number;
+    damageType: DamageType;
     critRange: number;
     critMult: number;
     armorClass: number;
@@ -38,6 +39,7 @@ class Character {
     protected attackBonus: number;
     protected damage: Dice;
     protected damageBonus: number;
+    protected damageType: DamageType;
     protected critRange: number;
     protected critMult: number;
 
@@ -77,6 +79,7 @@ class Character {
         this.attackBonus = stats.attackBonus;
         this.damage = stats.damage;
         this.damageBonus = stats.damageBonus;
+        this.damageType = stats.damageType;
         this.critRange = stats.critRange;
         this.critMult = stats.critMult;
 
@@ -255,7 +258,7 @@ class Character {
                 let damage = damageRoll + this.damageBonus + sneakDamage;
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
                 this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
-                this.target.takeDamage(this.name, damage);
+                this.target.takeDamage(this.name, damage, this.damageType);
                 this.addMana(this.manaPerAtk);
             }
             else {
@@ -270,10 +273,10 @@ class Character {
         this.attack();        
     }
 
-    takeDamage(source: string, damage: number): void {
+    takeDamage(source: string, damage: number, type: DamageType): void {
         // TODO: calculate damage after physResist and magicResist
         this.currHealth -= damage;
-        this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} damage from ${bold(source)}.`);
+        this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} ${type} from ${bold(source)}.`);
         if (this.isDead()) {
             this.battle.setCharDead(this.side, this.index);
             this.battle.combatLog.add(`${bold(this.name)} died.`);

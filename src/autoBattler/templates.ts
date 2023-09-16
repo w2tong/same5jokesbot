@@ -1,6 +1,6 @@
 import { CharacterStats } from './Character';
 import { ClassName } from './Classes/classes';
-import { dice } from './util';
+import { DamageType, dice } from './util';
 
 const ClassStats: {[name in ClassName]: CharacterStats} = {
     Fighter: {
@@ -8,6 +8,7 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
         attackBonus: 0,
         damage: dice['1d6'],
         damageBonus: 0,
+        damageType: DamageType.Physical,
         critRange: 20,
         critMult: 2,
         armorClass: 10,
@@ -24,6 +25,7 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
         attackBonus: 0,
         damage: dice['1d6'],
         damageBonus: 0,
+        damageType: DamageType.Physical,
         critRange: 20,
         critMult: 2,
         armorClass: 10,
@@ -38,8 +40,9 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
     Wizard: {
         level: 1,
         attackBonus: 0,
-        damage: dice['1d6'],
+        damage: dice['1d4'],
         damageBonus: 0,
+        damageType: DamageType.Physical,
         critRange: 20,
         critMult: 2,
         armorClass: 10,
@@ -48,7 +51,7 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
         maxHealth: 20,
         maxMana: 10, 
         manaPerAtk: 1,
-        manaRegen: 2,
+        manaRegen: 3,
         initiativeBonus: 0
     }
 };
@@ -57,8 +60,9 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
 const RatStats: CharacterStats = {
     level: 1,
     attackBonus: -3,
-    damage: dice['1d4'],
+    damage: dice['1d2'],
     damageBonus: 0,
+    damageType: DamageType.Physical,
     critRange: 20,
     critMult: 2,
     armorClass: 8,

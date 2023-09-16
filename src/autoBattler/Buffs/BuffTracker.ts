@@ -1,6 +1,7 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
 import { Buff, BuffId, Debuff, DebuffId } from './buffs';
+import { DamageType } from '../util';
 
 type BuffInfo = {
     duration: number;
@@ -70,7 +71,7 @@ class BuffTracker {
         for (const [id, debuff] of Object.entries(this.debuffs)) {
 
             if (id as DebuffId === DebuffId.Burn) {
-                this.char.takeDamage(Debuff.Burn.name, debuff.duration);
+                this.char.takeDamage(Debuff.Burn.name, debuff.duration, DamageType.Magic);
             }
 
             debuff.duration -= 1;
