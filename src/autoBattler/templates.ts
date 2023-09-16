@@ -4,6 +4,7 @@ import { dice } from './util';
 
 const ClassStats: {[name in ClassName]: CharacterStats} = {
     Fighter: {
+        level: 1,
         attackBonus: 0,
         damage: dice['1d6'],
         damageBonus: 0,
@@ -19,6 +20,7 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
         initiativeBonus: 0
     },
     Rogue: {
+        level: 1,
         attackBonus: 0,
         damage: dice['1d6'],
         damageBonus: 0,
@@ -34,6 +36,7 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
         initiativeBonus: 0
     },
     Wizard: {
+        level: 1,
         attackBonus: 0,
         damage: dice['1d6'],
         damageBonus: 0,
@@ -52,6 +55,7 @@ const ClassStats: {[name in ClassName]: CharacterStats} = {
 
 // Rat
 const RatStats: CharacterStats = {
+    level: 1,
     attackBonus: -3,
     damage: dice['1d4'],
     damageBonus: 0,

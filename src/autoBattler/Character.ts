@@ -9,6 +9,7 @@ const healthBarLength = 10;
 const manaBarLength = 10;
 
 type CharacterStats = {
+    level: number;
     attackBonus: number;
     damage: Dice;
     damageBonus: number;
@@ -30,6 +31,8 @@ class Character {
     private userId?: string;
 
     protected _name: string;
+
+    protected level: number;
 
     // Attack stats
     protected attackBonus: number;
@@ -68,6 +71,8 @@ class Character {
         if (userId) this.userId = userId;
 
         this._name = name;
+
+        this.level = stats.level;
         
         this.attackBonus = stats.attackBonus;
         this.damage = stats.damage;
@@ -132,6 +137,10 @@ class Character {
         return name;
     }
 
+    getClass(): string {
+        return this.name;
+    }
+
     getHealthString(): string {
         return `${this.currHealth}/${this.maxHealth}`;
     }
@@ -153,11 +162,15 @@ class Character {
     }
 
     getCharString(): string {
-        const lines = [];
-        // Name
-        lines.push(`${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`);
-        // HP
-        lines.push(`${this.getHealthBar()} ${this.getHealthString()}`);
+        const lines = [
+            // Name
+            `${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`,
+            // Level and Class
+            `Lvl. ${this.level} ${this.getClass()}`,
+            // HP
+            `${this.getHealthBar()} ${this.getHealthString()}`
+        ];
+
         // MP
         if (this.maxMana > 0) {
             lines.push(`${this.getManaBar()} ${this.getManaString()}`);
