@@ -1,10 +1,9 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder, bold } from 'discord.js';
 import { deleteABCharacter, getABPlayerCharacters } from '../../../../sql/tables/ab_characters';
-import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply();
 
     const user = interaction.user;
 
@@ -14,9 +13,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const selectId = `delete-ab-char-${nanoid()}`;
-    const select = new StringSelectMenuBuilder()
-        .setCustomId(selectId)
+    const selectMenu = new StringSelectMenuBuilder()
+        .setCustomId('delete')
         .setPlaceholder('Select a character to delete.')
         .addOptions(...chars.map(char => new StringSelectMenuOptionBuilder()
             .setLabel(char.CHAR_NAME)
@@ -24,20 +22,23 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setValue(char.CHAR_NAME)
         ));
 
-    const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+    const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
     const res = await interaction.editReply({components: [row]});
 
-    const filter = (i: StringSelectMenuInteraction) => i.customId === selectId && i.user.id === user.id;
+    const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
     const collector = res.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
 
     collector.on('collect', async i => {
         const name = i.values[0];
         await Promise.all([
-            deleteABCharacter(interaction.user.id, name),
-            i.reply(`${i.user} deleted character ${bold(name)}.`),
+            deleteABCharacter(i.user.id, name),
+            i.update({content: `${i.user} deleted character ${bold(name)}.`, components: []}),
         ]);
-        await interaction.deleteReply();
         collector.stop();
+    });
+
+    collector.on('end', async () => {
+        if (!collector.lastCollectedTimestamp) await res.delete();
     });
 }
 
