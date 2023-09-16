@@ -122,7 +122,7 @@ async function resolveBet(userId: string, result: BetResult, client: Client): Pr
 type Betters = {[key: string]: number};
 
 const sortBettersDesc = ([,valueA]: [string, number], [,valueB]: [string, number]) => valueB - valueA;
-const mapBetters = ([userId, points]: [string, number])  => `${userMention(userId)}: ${points}`;
+const mapBetters = ([userId, points]: [string, number])  => `${userMention(userId)}: ${points.toLocaleString()}`;
 function createBettersList(betManager: Betters): string {
     return Object.entries(betManager).sort(sortBettersDesc).map(mapBetters).join('\n');
 }
@@ -237,9 +237,9 @@ class Bet {
             .setTitle(`${this.name} ${this.isEnded() && !this.isValid() ? '(INVALID)' : ''}`)
             .addFields(
                 timeField,
-                { name: 'Yes', value: `${!isNaN(yesPercent) ? yesPercent : 0}%\n${bold('Points')}: ${this.yesTotal}\n${bold('Return')}: 1:${!isNaN(yesReturn) ? yesReturn : 1}\n${bold('Voters')}: ${yesNumVoters}`, inline: true },
+                { name: 'Yes', value: `${!isNaN(yesPercent) ? yesPercent : 0}%\n${bold('Points')}: ${this.yesTotal.toLocaleString()}\n${bold('Return')}: 1:${!isNaN(yesReturn) ? yesReturn : 1}\n${bold('Voters')}: ${yesNumVoters}`, inline: true },
                 emptyEmbedFieldInline,
-                { name: 'No', value: `${!isNaN(noPercent) ? noPercent : 0}%\n${bold('Points')}: ${this.noTotal}\n${bold('Return')}: 1:${!isNaN(noReturn) ? noReturn : 1}\n${bold('Voters')}: ${noNumVoters}`, inline: true },
+                { name: 'No', value: `${!isNaN(noPercent) ? noPercent : 0}%\n${bold('Points')}: ${this.noTotal.toLocaleString()}\n${bold('Return')}: 1:${!isNaN(noReturn) ? noReturn : 1}\n${bold('Voters')}: ${noNumVoters}`, inline: true },
                 { name: 'Yes Betters', value: `${yesBetters.length ? yesBetters : 'None'}`, inline: true },
                 emptyEmbedFieldInline,
                 { name: 'No Betters', value: `${noBetters.length ? noBetters : 'None'}`, inline: true }

@@ -1,7 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder, userMention } from 'discord.js';
 import { DeathRoll } from './DeathRoll';
 import { getUserCringePoints } from '../../sql/tables/cringe_points';
-import { nanoid } from 'nanoid';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -11,7 +10,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const wager = interaction.options.getInteger('wager');
     const startingRoll = interaction.options.getInteger('roll') ?? 100;
 
-    if (!opponent || !wager || !interaction.channel) {
+    if (!opponent || !wager) {
         await interaction.editReply('Error creating bet (invalid opponent or wager).');
         return;
     }
@@ -35,21 +34,17 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const deathRoll = new DeathRoll(user, opponent, wager, startingRoll, interaction.client, interaction.channelId);
 
-    const rollButtonId = `roll-${nanoid()}`;
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     buttonsRow.addComponents(
         new ButtonBuilder()
-            .setCustomId(rollButtonId)
+            .setCustomId('roll')
             .setLabel('Roll')
             .setStyle(ButtonStyle.Success)
     );
-    await interaction.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to a death roll.`);
+    await reply.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to a death roll.`);
     await interaction.editReply({embeds: [deathRoll.createEmbed()], components: !deathRoll.isEnded() && !deathRoll.isExpired() ? [buttonsRow] : []});
     
     const rollButtonFilter = async (i: ButtonInteraction) => {
-        if (i.customId !== rollButtonId) {
-            return false;
-        }
         if (user.id !== i.user.id && opponent.id !== i.user.id) {
             await i.reply({content: 'You are not in this death roll.', ephemeral: true});
             return false;
@@ -57,7 +52,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: DeathRoll.idleTimeout, filter: rollButtonFilter });
+    const buttonCollector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: DeathRoll.idleTimeout, filter: rollButtonFilter });
     buttonCollector.on('collect', async buttonInteraction => {
         const {correctUser, ended} = await deathRoll.roll(buttonInteraction.user.id);
         if (ended) buttonCollector.stop();
