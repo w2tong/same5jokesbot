@@ -8,6 +8,7 @@ import { emptyEmbedFieldInline, fetchChannel, fetchUser, MessageEmbedLimit } fro
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
+import { getAllLotteryAutoBuy } from '../../sql/tables/lottery_auto_buy';
 
 type LotteryEvents = {
     buy: (user: User, tickets: number, client: Client, channelId: string) => Promise<void>
@@ -30,9 +31,11 @@ const ticketLimit = 10;
 
 let startCronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 0, minute: 0, hour: startTime, tz: 'America/Toronto' };
 let endCronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 0, minute: 0, hour: startTime + lotteryLengthHours, tz: 'America/Toronto' };
+let autoBuyCronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 30, minute: 0, hour: startTime, tz: 'America/Toronto' };
 if (process.env.NODE_ENV === 'development') {
     startCronJobTime = '*/2 * * * *';
     endCronJobTime = '1-59/2 * * * *';
+    autoBuyCronJobTime = '10 */2 * * * *';
     lotteryLengthHours = 1/60;
 }
 
@@ -112,6 +115,23 @@ function scheduleEndLotteryCronJob(client: Client) {
                 );
             await channel.send({embeds: [embed]});
         }
+    });
+}
+
+function scheduleLotteryAutoBuyCronJob(client: Client) {
+    schedule.scheduleJob(autoBuyCronJobTime, async function() {
+        if (!process.env.CASINO_CHANNEL_ID) return;
+        const channel = await fetchChannel(client, process.env.CASINO_CHANNEL_ID);
+        if (!channel || channel.type !== ChannelType.GuildText) return;
+
+        const users = await Promise.all((await getAllLotteryAutoBuy()).map(async userId => fetchUser(client, userId)));
+        const msgs = (
+            await Promise.all(users.map(async user => {
+                const ticketsBought = (await buyAuto(user, ticketLimit, client, channel.id)).ticketsBought;
+                return (ticketsBought > 0) ? `${user} bought ${ticketsBought} lottery ticket${ticketsBought > 1  ? 's' : ''}.` : '';
+            }))
+        ).filter(msg => msg.length !== 0);
+        if (msgs.length > 0) await channel.send(`${bold('Lottery Auto Buy')}\n${msgs.join('\n')}`);
     });
 }
 
@@ -286,6 +306,7 @@ export default {
 export {
     scheduleNewLotteryCronJob,
     scheduleEndLotteryCronJob,
+    scheduleLotteryAutoBuyCronJob,
     createLotteryInfoEmbed,
     lotteryEmitter
 };

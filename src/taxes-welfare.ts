@@ -24,7 +24,7 @@ const taxBrackets = Object.keys(dailyTaxBracket).map(bracket => parseInt(bracket
 const welfareLimit = taxBrackets[1];
 const welfarePoolPc = 0.5;
 
-let cronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 0, minute: 5, hour: 0, tz: 'America/Toronto' };
+let cronJobTime: string | schedule.RecurrenceSpecObjLit = { second: 15, minute: 0, hour: 0, tz: 'America/Toronto' };
 if (process.env.NODE_ENV === 'development') {
     cronJobTime = '*/1 * * * *';
 }
