@@ -5,11 +5,7 @@ import { getUserCringePoints } from '../../sql/tables/cringe_points';
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const user = interaction.user;
-    const res = await interaction.fetchReply();
-    if (!interaction.channel) {
-        await interaction.editReply('There was an error creating the blackjack game.');
-        return;
-    }
+
     const wager = interaction.options.getInteger('wager');
     if (!wager) {
         await interaction.editReply('There was an error getting your wager');
@@ -55,7 +51,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     buttonsRow.addComponents(hitButton, standButton);
 
-    await interaction.editReply({embeds: [blackjack.createEmbed()], components: [firstTurnButtonsRow]});
+    const res = await interaction.editReply({embeds: [blackjack.createEmbed()], components: [firstTurnButtonsRow]});
 
     const buttonFilter = async (i: ButtonInteraction) => {
         if (user.id !== i.user.id) {
