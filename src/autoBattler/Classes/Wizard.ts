@@ -1,7 +1,7 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
 import { DebuffId } from '../Buffs/buffs';
-import { HitType, generateCombatAttack, rollDice } from '../util';
+import { DamageType, HitType, generateCombatAttack, rollDice } from '../util';
 
 class Wizard extends Character {
     getClass() {
@@ -16,10 +16,10 @@ class Wizard extends Character {
             const attack = this.attackRoll();
             this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
-                let damage = rollDice(this.damage);
+                let damage = rollDice(this.damage) + this.damageBonus;
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
-                this.target.takeDamage(this.name, damage);
-                this.target?.buffTracker.addDebuff(DebuffId.Burn, 3, this);
+                this.target.takeDamage(this.name, damage, DamageType.Magic);
+                this.target?.buffTracker.addDebuff(DebuffId.Burn, 2, this);
             }
         }
     }
