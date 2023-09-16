@@ -31,6 +31,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setDescription('Enter your character\'s name.')
         .setMinLength(1)
         .setMaxLength(32)
+        .setRequired(true)
     )
     .addStringOption(option => option
         .setName('class')
@@ -38,6 +39,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .addChoices(
             ...Object.keys(Classes).map(className => {return {name: className, value: className};})
         )
+        .setRequired(true)
     );
 
 export default { execute, name, subcommandBuilder };
