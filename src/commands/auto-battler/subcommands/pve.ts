@@ -38,16 +38,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
             if (res.combatEnded) {
                 clearInterval(interval);
                 // const balanceEmbed = new EmbedBuilder().addFields;
-
                 await interaction.editReply({embeds: [battle.generateEmbed()]});
             }
             else {
                 await interaction.editReply({embeds: [battle.generateEmbed()]});
             }
-            
-            
         })();
-    }, 0.5 * timeInMS.second);
+    }, 1 * timeInMS.second);
 }
 
 const name = 'pve';
