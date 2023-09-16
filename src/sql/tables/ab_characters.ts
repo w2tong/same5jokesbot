@@ -14,7 +14,7 @@ const createTableABCharacters = {
             experience INTEGER DEFAULT 0 NOT NULL,
             selected NUMBER(1,0) DEFAULT 0 NOT NULL,
             CONSTRAINT pk_ab_characters PRIMARY KEY (user_id, char_name),
-            CONSTRAINT chk_class_name CHECK (class_name IN (${Object.keys(Classes).map(type => `'${type}'`).join(',')})),
+            CONSTRAINT chk_class_name CHECK (class_name IN (${Object.keys(Classes).map(type => `'${type}'`).join(',')}))
         )
     `
 };
