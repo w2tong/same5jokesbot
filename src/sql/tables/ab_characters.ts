@@ -1,6 +1,6 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from '../query-options';
-import { classes, ClassName } from '../../autoBattler/Classes/classes';
+import { Classes, ClassName } from '../../autoBattler/Classes/classes';
 import { logError } from '../../logger';
 
 const createTableABCharacters = {
@@ -12,8 +12,9 @@ const createTableABCharacters = {
             class_name VARCHAR2(16) NOT NULL,
             char_level INTEGER DEFAULT 1 NOT NULL,
             experience INTEGER DEFAULT 0 NOT NULL,
+            selected NUMBER(1,0) DEFAULT 0 NOT NULL,
             CONSTRAINT pk_ab_characters PRIMARY KEY (user_id, char_name),
-            CONSTRAINT chk_class_name CHECK (class_name IN (${Object.keys(classes).map(type => `'${type}'`).join(',')}))
+            CONSTRAINT chk_class_name CHECK (class_name IN (${Object.keys(Classes).map(type => `'${type}'`).join(',')})),
         )
     `
 };
@@ -24,7 +25,7 @@ DROP CONSTRAINT chk_class_name
 `,
 `
 ALTER TABLE ab_characters
-ADD CONSTRAINT chk_class_name CHECK (class_name IN (${Object.keys(classes).map(type => `'${type}'`).join(',')}))
+ADD CONSTRAINT chk_class_name CHECK (class_name IN (${Object.keys(Classes).map(type => `'${type}'`).join(',')}))
 `
 ];
 
@@ -72,7 +73,7 @@ WHERE user_id = :userId
 type ABCharacter = {
     USER_ID: string;
     CHAR_NAME: string;
-    CLASS_NAME: string,
+    CLASS_NAME: ClassName,
     CHAR_LEVEL: number;
     EXPERIENCE: number;
 }
@@ -91,4 +92,41 @@ async function getABPlayerCharacters(userId: string): Promise<ABCharacter[]> {
     }
 }
 
-export { createTableABCharacters, updateTableABCharacters, insertABCharacter, deleteABCharacter, getABPlayerCharacters };
+const selectCharacterQuery = `
+UPDATE ab_characters
+SET selected = (CASE char_name WHEN :name THEN 1 ELSE 0 END)
+WHERE user_id = :userId
+`;
+async function selectABCharacter(userId: string, name: string) {
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(selectCharacterQuery, {userId, name});
+        await connection.close();
+    }
+    catch (err) {
+        throw new Error(`selectABCharacter: ${err}`);
+    }
+}
+
+const getSelectedCharacterQuery = `
+SELECT *
+FROM ab_characters
+WHERE user_id = :userId
+AND selected = 1
+`;
+async function getABPSelectedCharacter(userId: string): Promise<ABCharacter|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<ABCharacter> = await connection.execute(getSelectedCharacterQuery, {userId}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getABPSelectedCharacter: ${err}`);
+    }
+}
+
+export { createTableABCharacters, updateTableABCharacters, insertABCharacter, deleteABCharacter, getABPlayerCharacters, selectABCharacter, getABPSelectedCharacter };

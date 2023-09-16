@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder, bold } from 'discord.js';
-import { deleteABCharacter, getABPlayerCharacters } from '../../../../sql/tables/ab_characters';
+import { selectABCharacter, getABPlayerCharacters } from '../../../../sql/tables/ab_characters';
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../../util/util';
 
@@ -10,14 +10,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const chars = await getABPlayerCharacters(interaction.user.id);
     if (chars.length === 0) {
-        await interaction.editReply('You don\'t have any characters to delete.');
+        await interaction.editReply('You don\'t have any characters to select.');
         return;
     }
 
-    const selectId = `delete-ab-char-${nanoid()}`;
+    const selectId = `select-ab-char-${nanoid()}`;
     const select = new StringSelectMenuBuilder()
         .setCustomId(selectId)
-        .setPlaceholder('Select a character to delete.')
+        .setPlaceholder('Select a character.')
         .addOptions(...chars.map(char => new StringSelectMenuOptionBuilder()
             .setLabel(char.CHAR_NAME)
             .setDescription(`Lvl. ${char.CHAR_LEVEL} ${char.CLASS_NAME}`)
@@ -33,18 +33,20 @@ async function execute(interaction: ChatInputCommandInteraction) {
     collector.on('collect', async i => {
         const name = i.values[0];
         await Promise.all([
-            deleteABCharacter(interaction.user.id, name),
-            i.reply(`${i.user} deleted character ${bold(name)}.`),
+            selectABCharacter(interaction.user.id, name),
+            i.reply(`${i.user} selected character ${bold(name)}.`),
         ]);
+    });
+
+    collector.on('end', async () => {
         await interaction.deleteReply();
-        collector.stop();
     });
 }
 
-const name = 'delete';
+const name = 'select';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Delete a character.');
+    .setDescription('Select a character.');
 
 export default { execute, name, subcommandBuilder };

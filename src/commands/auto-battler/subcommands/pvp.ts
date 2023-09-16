@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import Battle, { Side } from '../../../autoBattler/Battle';
-import { fighterStats } from '../../../autoBattler/templates';
+import { ClassStats } from '../../../autoBattler/templates';
 import { nanoid } from 'nanoid';
 import { DeathRoll } from '../../death-roll/DeathRoll';
 import Fighter from '../../../autoBattler/Classes/Fighter';
@@ -16,8 +16,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const battle = new Battle();
-    const userChar = new Fighter(fighterStats, user.username, 0, Side.Left, battle, user.id);
-    const opponentChar = new Fighter(fighterStats, opponent.username, 0, Side.Right, battle, opponent.id);
+    const userChar = new Fighter(ClassStats.Fighter, user.username, 0, Side.Left, battle, user.id);
+    const opponentChar = new Fighter(ClassStats.Fighter, opponent.username, 0, Side.Right, battle, opponent.id);
     battle.addChars([userChar], [opponentChar]);
 
     const acceptButtonId = `ab-accept-${nanoid()}`;

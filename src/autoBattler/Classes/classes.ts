@@ -2,12 +2,12 @@ import Fighter from './Fighter';
 import Rogue from './Rogue';
 import Wizard from './Wizard';
 
-const classes = {
+const Classes = {
     Fighter: Fighter,
     Rogue: Rogue,
     Wizard: Wizard
 } as const;
 
-type ClassName = keyof typeof classes;
+type ClassName = keyof typeof Classes;
 
-export { classes, ClassName };
+export { Classes, ClassName };

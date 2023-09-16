@@ -1,48 +1,31 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
-import Character from '../../../autoBattler/Character';
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
 import Battle, { Side } from '../../../autoBattler/Battle';
-import { fighterStats, ratStats, rogueStats, wizardStats } from '../../../autoBattler/templates';
+import { ClassStats } from '../../../autoBattler/templates';
 import { timeInMS } from '../../../util/util';
 import Fighter from '../../../autoBattler/Classes/Fighter';
-import Rogue from '../../../autoBattler/Classes/Rogue';
-import Wizard from '../../../autoBattler/Classes/Wizard';
+import { getABPSelectedCharacter } from '../../../sql/tables/ab_characters';
+import { Classes } from '../../../autoBattler/Classes/classes';
 
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
-    const battle = new Battle();
+    const player = await getABPSelectedCharacter(interaction.user.id);
+
+    if (!player) {
+        await interaction.editReply('You do not have a selected character.');
+        return;
+    }
     
-    const left = [
-        new Fighter(fighterStats, 'Fighter', 0, Side.Left, battle, interaction.user.id),
-        new Rogue(rogueStats, 'Rogue', 1, Side.Left, battle, interaction.user.id),
-        new Wizard(wizardStats, 'Wizard', 2, Side.Left, battle, interaction.user.id),
-        // new Character(ratStats, 'Rat Pet', 1, Side.Left, battle)
-    ];
-    const right = [
-        new Fighter(fighterStats, 'Fighter NPC', 0, Side.Right, battle),
-        new Rogue(rogueStats, 'Rogue NPC', 1, Side.Right, battle,),
-        new Wizard(wizardStats, 'Wizard NPC', 2, Side.Right, battle),
-        // new Character(ratStats, 'Rat NPC', 1, Side.Right, battle)
-    ];
+    const battle = new Battle();
 
-    /*
+    const playerChar = new Classes[player.CLASS_NAME](ClassStats[player.CLASS_NAME], player.CHAR_NAME, 0, Side.Left, battle, interaction.user.id);
     const left = [
-        new Rogue(rogueStats, 'Rogue', 0, Side.Left, battle, interaction.user.id),
+        playerChar
     ];
     const right = [
-        new Rogue(rogueStats, 'Rogue NPC', 0, Side.Right, battle,),
+        new Fighter(ClassStats.Fighter, 'Fighter NPC', 0, Side.Right, battle),
     ];
-    */
-
-    /*
-    const left = [
-        new Wizard(wizardStats, 'Wizard', 0, Side.Left, battle, interaction.user.id),
-    ];
-    const right = [
-        new Wizard(wizardStats, 'Wizard NPC', 0, Side.Right, battle,),
-    ];
-    */
 
     battle.addChars(left, right);
     
@@ -54,7 +37,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             const res = battle.nextTurn();
             if (res.combatEnded) {
                 clearInterval(interval);
-                const balanceEmbed = new EmbedBuilder().addFields;
+                // const balanceEmbed = new EmbedBuilder().addFields;
 
                 await interaction.editReply({embeds: [battle.generateEmbed()]});
             }
