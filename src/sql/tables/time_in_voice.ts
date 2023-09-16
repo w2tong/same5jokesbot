@@ -45,15 +45,15 @@ async function getTimeInVoice(userId: string, guildId: string, dateRange?: strin
     try {
         let query = getTotalQuery; 
         switch(dateRange) {
-        case 'today':
-            query = getTodayQuery;
-            break;
-        case 'month':
-            query = getMonthQuery;
-            break;
-        case 'year':
-            query = getYearQuery;
-            break;
+            case 'today':
+                query = getTodayQuery;
+                break;
+            case 'month':
+                query = getMonthQuery;
+                break;
+            case 'year':
+                query = getYearQuery;
+                break;
         }
 
         const connection = await oracledb.getConnection();

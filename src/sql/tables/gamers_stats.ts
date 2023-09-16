@@ -145,15 +145,15 @@ MERGE INTO gamers_stats dest
 async function updateGamersStats(userId: string, gamersWord: string) {
     let query = '';
     switch(gamersWord) {
-    case 'Discharge!':
-        query = updateDischargeQuery;
-        break;
-    case 'Disperse!':
-        query = updateDisperseQuery;
-        break;
-    case 'Rise up!':
-        query = updateRiseUpQuery;
-        break;
+        case 'Discharge!':
+            query = updateDischargeQuery;
+            break;
+        case 'Disperse!':
+            query = updateDisperseQuery;
+            break;
+        case 'Rise up!':
+            query = updateRiseUpQuery;
+            break;
     }
     try {
         const connection = await oracledb.getConnection();
