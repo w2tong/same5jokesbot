@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { logError } from './logger';
 import { scheduleUpdateTimeInVoiceCronJob, scheduleUpdateTimeInVoiceTogetherCronJob, scheduleUpdateCringePointsCronJob } from './timeInVoice';
-import { scheduleEndLotteryCronJob, scheduleNewLotteryCronJob } from './commands/lottery/lotteryManager'; 
+import { scheduleEndLotteryCronJob, scheduleLotteryAutoBuyCronJob, scheduleNewLotteryCronJob } from './commands/lottery/lotteryManager'; 
 import { fetchChannel } from './util/discordUtil';
 import { scheduleDailyTaxWelfareCronJob } from './taxes-welfare';
 import { scheduleDailiesCronJob } from './daily/dailyManager';
@@ -41,6 +41,7 @@ function createCronJobs(client: Client) {
     scheduleUpdateCringePointsCronJob(client);
     scheduleNewLotteryCronJob(client);
     scheduleEndLotteryCronJob(client);
+    scheduleLotteryAutoBuyCronJob(client);
     scheduleDailyTaxWelfareCronJob(client);
     scheduleDailiesCronJob(client);
 }
