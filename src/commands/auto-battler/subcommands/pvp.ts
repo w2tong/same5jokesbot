@@ -3,7 +3,9 @@ import Battle, { Side } from '../../../autoBattler/Battle';
 import { ClassStats } from '../../../autoBattler/templates';
 import { nanoid } from 'nanoid';
 import { DeathRoll } from '../../death-roll/DeathRoll';
-import Fighter from '../../../autoBattler/Classes/Fighter';
+import { getABPSelectedCharacter } from '../../../sql/tables/ab_characters';
+import { Classes } from '../../../autoBattler/Classes/classes';
+import { timeInMS } from '../../../util/util';
 
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -16,9 +18,23 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const battle = new Battle();
-    const userChar = new Fighter(ClassStats.Fighter, user.username, 0, Side.Left, battle, user.id);
-    const opponentChar = new Fighter(ClassStats.Fighter, opponent.username, 0, Side.Right, battle, opponent.id);
-    battle.addChars([userChar], [opponentChar]);
+
+    const userChar = await getABPSelectedCharacter(user.id);
+    const opponentChar = await getABPSelectedCharacter(opponent.id);
+
+    if (!userChar) {
+        await interaction.editReply('You do not have a selected character.');
+        return;
+    }
+    if (!opponentChar) {
+        await interaction.editReply(`${opponent} does not have a selected character.`);
+        return;
+    }
+
+    battle.addChars(
+        [new Classes[userChar.CLASS_NAME](ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, 0, Side.Left, battle, interaction.user.id)],
+        [new Classes[opponentChar.CLASS_NAME](ClassStats[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, 0, Side.Right, battle, interaction.user.id)],
+    );
 
     const acceptButtonId = `ab-accept-${nanoid()}`;
     const decliceButtonId = `ab-decline-${nanoid()}`;
@@ -53,15 +69,19 @@ async function execute(interaction: ChatInputCommandInteraction) {
         buttonCollector.stop();
         if (buttonInteraction.customId === acceptButtonId) {
             battle.startCombat();
-            let combatEnd = false;
-            // let winner;
-            while(!combatEnd) {
-                const res = battle.nextTurn();
-                await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
-                combatEnd = res.combatEnded;
-                // winner = res.winner;
-            }
-            await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
+            const interval = setInterval(() => {
+                void (async () => {
+                    const res = battle.nextTurn();
+                    if (res.combatEnded) {
+                        clearInterval(interval);
+                        // const balanceEmbed = new EmbedBuilder().addFields;
+                        await interaction.editReply({embeds: [battle.generateEmbed()]});
+                    }
+                    else {
+                        await interaction.editReply({embeds: [battle.generateEmbed()]});
+                    }
+                })();
+            }, 1 * timeInMS.second);
         }
         else {
             await buttonInteraction.editReply({content: `${userMention(opponent.id)} declined the auto battle.`, embeds: []});
