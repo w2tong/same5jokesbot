@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, bold, userMention } from 'discord.js';
-import { ClassName, classes } from '../../../../autoBattler/Classes/classes';
+import { ClassName, Classes } from '../../../../autoBattler/Classes/classes';
 import { insertABCharacter } from '../../../../sql/tables/ab_characters';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -36,7 +36,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setName('class')
         .setDescription('Select your class.')
         .addChoices(
-            ...Object.keys(classes).map(className => {return {name: className, value: className};})
+            ...Object.keys(Classes).map(className => {return {name: className, value: className};})
         )
     );
 
