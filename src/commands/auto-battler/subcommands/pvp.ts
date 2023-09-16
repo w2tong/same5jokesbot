@@ -6,7 +6,7 @@ import { Classes } from '../../../autoBattler/Classes/classes';
 import { timeInMS } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    const reply = await interaction.deferReply();
+    await interaction.deferReply();
     const user = interaction.user;
     const opponent = interaction.options.getUser('user');
     if (!opponent || !interaction.channel) {
@@ -46,7 +46,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('Decline')
             .setStyle(ButtonStyle.Danger)
     );
-    await interaction.editReply({embeds: [battle.generateEmbed()], components: [buttonsRow]});
+    const reply = await interaction.editReply({embeds: [battle.generateEmbed()], components: [buttonsRow]});
     await interaction.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to an auto battle.`);
 
     const buttonFilter = async (i: ButtonInteraction) => {
