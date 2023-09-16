@@ -77,8 +77,8 @@ class BuffTracker {
             debuff.duration -= 1;
 
             if (debuff.duration <= 0) {
-                delete this.buffs[id as BuffId];
-                this.char.battle.combatLog.add(`${this.char.name} lost buff ${id}.`);
+                delete this.debuffs[id as DebuffId];
+                this.char.battle.combatLog.add(`${this.char.name} lost debuff ${id}.`);
             }
         }
     }
