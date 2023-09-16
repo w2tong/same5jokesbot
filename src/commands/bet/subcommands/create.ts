@@ -12,7 +12,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     
     const betTitle = interaction.options.getString('bet');
     const time = interaction.options.getNumber('time');
-    if (!betTitle || !time || !interaction.channel) {
+    if (!betTitle || !time) {
         void interaction.editReply('Error creating bet (invalid bet or time)');
         return;
     }
@@ -37,9 +37,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('No')
             .setStyle(ButtonStyle.Danger),
     );
-    const res = await interaction.editReply({embeds: [bet.createBetEmbed()], components: [buttonsRow]});
+    const reply = await interaction.editReply({embeds: [bet.createBetEmbed()], components: [buttonsRow]});
 
-    const buttonCollector = res.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.minute});
+    const buttonCollector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.minute});
     buttonCollector.on('collect', async buttonInteraction => {
         if (buttonInteraction.customId === yesButtonCustomId && bet.isNoBetter(buttonInteraction.user.id) ||
             buttonInteraction.customId === noButtonCustomId && bet.isYesBetter(buttonInteraction.user.id)) {
@@ -92,7 +92,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             await modalSubmitInteraction.deferReply();
             betYes ? bet.addYesBetter(user.id, currBetPoints) : bet.addNoBetter(user.id, currBetPoints);
             await buttonInteraction.editReply({embeds: [bet.createBetEmbed()]});
-            await modalSubmitInteraction.editReply(`${userMention(user.id)} bet ${bold(betYes ? 'YES' : 'NO')} with ${bold(currBetPoints.toLocaleString())} Cringe points (${bold((pointsBet + currBetPoints).toLocaleString())} total, ${bold((pointsAvailable - pointsBet - currBetPoints).toLocaleString())} left).`);
+            await modalSubmitInteraction.editReply(`${userMention(user.id)} bet ${bold(betYes ? 'YES' : 'NO')} with ${bold(currBetPoints.toLocaleString())} points.`);
         }
         catch (err) {
             logError(err);
@@ -101,11 +101,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     buttonCollector.on('end', () => {
         if (!bet.isDeleted()) {
             if (bet.isValid()) {
-                void endBet(user.id, res.client);
+                void endBet(user.id, reply.client);
             }
             else {
-                void deleteBet(user.id, res.client);
-                void res.reply(`Invalid bet ${betTitle} (not enough betters).`);
+                void deleteBet(user.id, reply.client);
+                void reply.reply(`Invalid bet ${betTitle} (not enough betters).`);
             }
         }
     });
