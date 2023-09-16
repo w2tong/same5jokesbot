@@ -274,9 +274,16 @@ class Character {
     }
 
     takeDamage(source: string, damage: number, type: DamageType): void {
-        // TODO: calculate damage after physResist and magicResist
+        let damageResisted = 0;
+        if (type === DamageType.Physical) {
+            damageResisted = Math.round(damage * this.physResist/100);
+        }
+        else if (type === DamageType.Magic) {
+            damageResisted = Math.round(damage * this.magicResist/100);
+        }
+        damage -= damageResisted;
         this.currHealth -= damage;
-        this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} ${type} from ${bold(source)}.`);
+        this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} ${type}${damageResisted > 0 ? ` (${damageResisted} resisted)` : ''} from ${bold(source)}.`);
         if (this.isDead()) {
             this.battle.setCharDead(this.side, this.index);
             this.battle.combatLog.add(`${bold(this.name)} died.`);
