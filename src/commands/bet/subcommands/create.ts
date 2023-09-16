@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle, bold, userMention } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, ComponentType, ModalActionRowComponentBuilder, ModalBuilder, SlashCommandSubcommandBuilder, TextInputBuilder, TextInputStyle, bold, userMention } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util/util';
 import { createBet, deleteBet, endBet } from '../betManager';
@@ -7,6 +7,9 @@ import { logError } from '../../../logger';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
+
+    const user = interaction.user;
+    
     const betTitle = interaction.options.getString('bet');
     const time = interaction.options.getNumber('time');
     if (!betTitle || !time || !interaction.channel) {
@@ -14,16 +17,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
     
-    const userId = interaction.user.id;
     const endTime = new Date(Date.now() + time * timeInMS.minute).getTime();
-    const bet = createBet(betTitle, userId, endTime, interaction.channelId, (await interaction.fetchReply()).id);
+    const bet = createBet(betTitle, user.id, endTime, interaction.channelId, (await interaction.fetchReply()).id);
     if (!bet) {
         void interaction.editReply('You already have an active bet.');
         return;
     }
 
-    const yesButtonCustomId = `yes-${nanoid()}`;
-    const noButtonCustomId = `no-${nanoid()}`;
+    const yesButtonCustomId = 'yes';
+    const noButtonCustomId = 'no';
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     buttonsRow.addComponents(
         new ButtonBuilder()
@@ -35,14 +37,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('No')
             .setStyle(ButtonStyle.Danger),
     );
-    void interaction.editReply({embeds: [bet.createBetEmbed()], components: [buttonsRow]});
+    const res = await interaction.editReply({embeds: [bet.createBetEmbed()], components: [buttonsRow]});
 
-    const betButtonFilter = (i: ButtonInteraction) => i.customId === yesButtonCustomId || i.customId === noButtonCustomId;
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.minute, filter: betButtonFilter});
+    const buttonCollector = res.createMessageComponentCollector({ componentType: ComponentType.Button, time: time * timeInMS.minute});
     buttonCollector.on('collect', async buttonInteraction => {
         if (buttonInteraction.customId === yesButtonCustomId && bet.isNoBetter(buttonInteraction.user.id) ||
             buttonInteraction.customId === noButtonCustomId && bet.isYesBetter(buttonInteraction.user.id)) {
-            void buttonInteraction.reply({content: 'You cannot vote both Yes and No.', ephemeral: true});
+            await buttonInteraction.reply({content: 'You cannot vote both Yes and No.', ephemeral: true});
             return;
         }
 
@@ -57,23 +58,23 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setCustomId(nanoid())
             .setTitle(`Vote ${betYes ? 'YES' : 'NO'}`)
             .setComponents(pointsActionRow);
-        void buttonInteraction.showModal(modal);
+        await buttonInteraction.showModal(modal);
 
         try {
             const modalSubmitInteraction = await buttonInteraction.awaitModalSubmit({ time: 60_000 });
             const user = modalSubmitInteraction.user;
             if (modalSubmitInteraction.customId !== modal.data.custom_id) return;
             if (bet.isEnded()) {
-                void modalSubmitInteraction.reply({content: 'Error: The bet has ended.', ephemeral: true});
+                await modalSubmitInteraction.reply({content: 'Error: The bet has ended.', ephemeral: true});
                 return;
             }
             const currBetPoints = parseInt(modalSubmitInteraction.fields.getTextInputValue('points'));
             if (isNaN(currBetPoints)) {
-                void modalSubmitInteraction.reply({content: 'Error: Invalid input. Enter a number.', ephemeral: true});
+                await modalSubmitInteraction.reply({content: 'Error: Invalid input. Enter a number.', ephemeral: true});
                 return;
             }
             if (currBetPoints <= 0) {
-                void modalSubmitInteraction.reply({content: 'Error: Invalid input. Enter a number greater than 0.', ephemeral: true});
+                await modalSubmitInteraction.reply({content: 'Error: Invalid input. Enter a number greater than 0.', ephemeral: true});
                 return;
             }
             const pointsAvailable = await getUserCringePoints(user.id);
@@ -90,7 +91,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             
             await modalSubmitInteraction.deferReply();
             betYes ? bet.addYesBetter(user.id, currBetPoints) : bet.addNoBetter(user.id, currBetPoints);
-            await interaction.editReply({embeds: [bet.createBetEmbed()]});
+            await buttonInteraction.editReply({embeds: [bet.createBetEmbed()]});
             await modalSubmitInteraction.editReply(`${userMention(user.id)} bet ${bold(betYes ? 'YES' : 'NO')} with ${bold(currBetPoints.toLocaleString())} Cringe points (${bold((pointsBet + currBetPoints).toLocaleString())} total, ${bold((pointsAvailable - pointsBet - currBetPoints).toLocaleString())} left).`);
         }
         catch (err) {
@@ -100,11 +101,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     buttonCollector.on('end', () => {
         if (!bet.isDeleted()) {
             if (bet.isValid()) {
-                void endBet(interaction.user.id, interaction.client);
+                void endBet(user.id, res.client);
             }
             else {
-                void deleteBet(interaction.user.id, interaction.client);
-                void interaction.followUp(`Invalid bet ${betTitle} (not enough betters).`);
+                void deleteBet(user.id, res.client);
+                void res.reply(`Invalid bet ${betTitle} (not enough betters).`);
             }
         }
     });
