@@ -144,6 +144,20 @@ async function buyTicket(user: User, numbers: number[], client: Client, channelI
     return {success: true, res: `You bought a lottery ticket with the numbers: ${bold(numbers.join(', '))}.`};
 }
 
+async function buyAuto(user: User, ticketsToBuy: number, client: Client, channelId: string) {
+    let ticketsBought = 0;
+    const msgs = [];
+
+    while (ticketsBought < ticketsToBuy) {
+        const {success, res} = await buyTicket(user, generateNumbersArray(), client, channelId);
+        msgs.push(res);
+        if (!success) break;
+        ticketsBought++;
+    }
+
+    return {msg: msgs.join('\n'), ticketsBought};
+}
+
 async function checkTickets(user: User): Promise<{reply: {content: string, embeds: EmbedBuilder[]}, winnings: number}> {
 
     const lottery = await getCurrentLottery();
@@ -265,6 +279,7 @@ export default {
     price,
     ticketLimit,
     buyTicket,
+    buyAuto,
     checkTickets,
     generateNumbersArray
 };

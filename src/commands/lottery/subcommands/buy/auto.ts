@@ -4,19 +4,11 @@ import lotteryManager from '../../lotteryManager';
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ephemeral: true});
     const user = interaction.user;
-    const msgs = [];
-
     const ticketsToBuy = interaction.options.getInteger('number') ?? lotteryManager.ticketLimit;
-    let ticketsBought = 0;
 
-    while (ticketsBought < ticketsToBuy) {
-        const {success, res} = await lotteryManager.buyTicket(user, lotteryManager.generateNumbersArray(), interaction.client, interaction.channelId);
-        msgs.push(res);
-        if (!success) break;
-        ticketsBought++;
-    }
+    const {msg, ticketsBought} = await lotteryManager.buyAuto(user, ticketsToBuy, interaction.client, interaction.channelId);
     
-    void interaction.editReply(msgs.join('\n'));
+    void interaction.editReply(msg);
     if (ticketsBought > 0) void interaction.channel?.send(`${user} bought ${ticketsBought} lottery ticket${ticketsBought > 1  ? 's' : ''}.`);
 }
 
