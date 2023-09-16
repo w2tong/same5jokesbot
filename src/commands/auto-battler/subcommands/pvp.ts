@@ -6,7 +6,7 @@ import { Classes } from '../../../autoBattler/Classes/classes';
 import { timeInMS } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    const reply = await interaction.deferReply();
     const user = interaction.user;
     const opponent = interaction.options.getUser('user');
     if (!opponent || !interaction.channel) {
@@ -46,7 +46,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('Decline')
             .setStyle(ButtonStyle.Danger)
     );
-    const res = await interaction.editReply({embeds: [battle.generateEmbed()], components: [buttonsRow]});
+    await interaction.editReply({embeds: [battle.generateEmbed()], components: [buttonsRow]});
     await interaction.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to an auto battle.`);
 
     const buttonFilter = async (i: ButtonInteraction) => {
@@ -57,7 +57,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = res.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15*timeInMS.minute, filter: buttonFilter });
+    const buttonCollector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15*timeInMS.minute, filter: buttonFilter });
     buttonCollector.on('collect', async buttonInteraction => {
         await buttonInteraction.update({});
         buttonCollector.stop();
@@ -83,7 +83,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     buttonCollector.on('end', async () => {
-        await res.edit({components: []});
+        await reply.edit({components: []});
     });
 }
 
