@@ -3,7 +3,7 @@ import BlackjackGame, { PlayerOption, PlayerOptions, maxDecks, maxWager } from '
 import { getUserCringePoints } from '../../sql/tables/cringe_points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    const reply = await interaction.deferReply();
     const user = interaction.user;
 
     const wager = interaction.options.getInteger('wager');
@@ -51,7 +51,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     buttonsRow.addComponents(hitButton, standButton);
 
-    const res = await interaction.editReply({embeds: [blackjack.createEmbed()], components: [firstTurnButtonsRow]});
+    await interaction.editReply({embeds: [blackjack.createEmbed()], components: [firstTurnButtonsRow]});
 
     const buttonFilter = async (i: ButtonInteraction) => {
         if (user.id !== i.user.id) {
@@ -61,7 +61,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = res.createMessageComponentCollector({ componentType: ComponentType.Button, time: BlackjackGame.idleTimeout, filter: buttonFilter });
+    const buttonCollector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: BlackjackGame.idleTimeout, filter: buttonFilter });
 
     buttonCollector.on('collect', async buttonInteraction => {
         buttonCollector.resetTimer();
@@ -82,7 +82,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (!blackjack.isEnded()) {
             await blackjack.input('Stand');
         }
-        await res.edit({embeds: [blackjack.createEmbed()], components: []});
+        await reply.edit({embeds: [blackjack.createEmbed()], components: []});
     });
 }
 
