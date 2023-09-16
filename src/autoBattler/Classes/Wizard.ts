@@ -1,7 +1,7 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
 import { DebuffId } from '../Buffs/buffs';
-import { HitType, rollDice } from '../util';
+import { HitType, generateCombatAttack, rollDice } from '../util';
 
 class Wizard extends Character {
     getClass() {
@@ -14,6 +14,7 @@ class Wizard extends Character {
             this.currMana = 0;
             this.battle.combatLog.add(`${bold(this.name)} casted ${bold('Firebolt')}.`);
             const attack = this.attackRoll();
+            this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                 let damage = rollDice(this.damage);
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
