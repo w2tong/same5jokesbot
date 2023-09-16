@@ -3,7 +3,7 @@ import { selectABCharacter, getABPlayerCharacters } from '../../../../sql/tables
 import { timeInMS } from '../../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    const reply = await interaction.deferReply();
 
     const user = interaction.user;
 
@@ -23,10 +23,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         ));
 
     const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
-    const res = await interaction.editReply({components: [row]});
+    await interaction.editReply({components: [row]});
 
     const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
-    const collector = res.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
+    const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
 
     collector.on('collect', async i => {
         const name = i.values[0];
@@ -37,7 +37,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     collector.on('end', async () => {
-        await res.delete();
+        await reply.delete();
     });
 }
 
