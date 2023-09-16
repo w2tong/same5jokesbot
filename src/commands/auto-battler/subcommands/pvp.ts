@@ -29,8 +29,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     battle.addChars(
-        [new Classes[userChar.CLASS_NAME](ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, 0, Side.Left, battle, interaction.user.id)],
-        [new Classes[opponentChar.CLASS_NAME](ClassStats[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, 0, Side.Right, battle, interaction.user.id)],
+        [new Classes[userChar.CLASS_NAME](ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, 0, Side.Left, battle, user.id)],
+        [new Classes[opponentChar.CLASS_NAME](ClassStats[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, 0, Side.Right, battle, opponent.id)],
     );
 
     const acceptButtonId = 'accept';
