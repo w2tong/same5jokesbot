@@ -1,12 +1,9 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
 import Battle, { Side } from '../../../autoBattler/Battle';
 import { ClassStats } from '../../../autoBattler/templates';
-import { nanoid } from 'nanoid';
-import { DeathRoll } from '../../death-roll/DeathRoll';
 import { getABPSelectedCharacter } from '../../../sql/tables/ab_characters';
 import { Classes } from '../../../autoBattler/Classes/classes';
 import { timeInMS } from '../../../util/util';
-
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -36,8 +33,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         [new Classes[opponentChar.CLASS_NAME](ClassStats[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, 0, Side.Right, battle, interaction.user.id)],
     );
 
-    const acceptButtonId = `ab-accept-${nanoid()}`;
-    const decliceButtonId = `ab-decline-${nanoid()}`;
+    const acceptButtonId = 'accept';
+    const decliceButtonId = 'decline';
     const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
     buttonsRow.addComponents(
         new ButtonBuilder()
@@ -49,13 +46,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
             .setLabel('Decline')
             .setStyle(ButtonStyle.Danger)
     );
-    await interaction.editReply({embeds: [battle.generateEmbed()], components: [buttonsRow]});
+    const res = await interaction.editReply({embeds: [battle.generateEmbed()], components: [buttonsRow]});
     await interaction.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to an auto battle.`);
 
     const buttonFilter = async (i: ButtonInteraction) => {
-        if (i.customId !== acceptButtonId && i.customId !== decliceButtonId) {
-            return false;
-        }
         if (i.user.id !== opponent.id) {
             await i.reply({content: 'You are not in this auto battle.', ephemeral: true});
             return false;
@@ -63,9 +57,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: DeathRoll.idleTimeout, filter: buttonFilter });
+    const buttonCollector = res.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15*timeInMS.minute, filter: buttonFilter });
     buttonCollector.on('collect', async buttonInteraction => {
-        await buttonInteraction.update({components: []});
+        await buttonInteraction.update({});
         buttonCollector.stop();
         if (buttonInteraction.customId === acceptButtonId) {
             battle.startCombat();
@@ -75,17 +69,21 @@ async function execute(interaction: ChatInputCommandInteraction) {
                     if (res.combatEnded) {
                         clearInterval(interval);
                         // const balanceEmbed = new EmbedBuilder().addFields;
-                        await interaction.editReply({embeds: [battle.generateEmbed()]});
+                        await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
                     }
                     else {
-                        await interaction.editReply({embeds: [battle.generateEmbed()]});
+                        await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
                     }
                 })();
             }, 1 * timeInMS.second);
         }
         else {
-            await buttonInteraction.editReply({content: `${userMention(opponent.id)} declined the auto battle.`, embeds: []});
+            await buttonInteraction.editReply({content: `${userMention(opponent.id)} declined the auto battle.`, embeds: [], components: []});
         }
+    });
+
+    buttonCollector.on('end', async () => {
+        await res.edit({components: []});
     });
 }
 
