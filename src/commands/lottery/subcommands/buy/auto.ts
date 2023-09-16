@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
-import lottery from '../../lotteryManager';
 import lotteryManager from '../../lotteryManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -7,11 +6,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     const msgs = [];
 
-    const ticketsToBuy = interaction.options.getInteger('number') ?? lottery.ticketLimit;
+    const ticketsToBuy = interaction.options.getInteger('number') ?? lotteryManager.ticketLimit;
     let ticketsBought = 0;
 
     while (ticketsBought < ticketsToBuy) {
-        const {success, res} = await lotteryManager.buyTicket(user, lottery.generateNumbersArray(), interaction.client, interaction.channelId);
+        const {success, res} = await lotteryManager.buyTicket(user, lotteryManager.generateNumbersArray(), interaction.client, interaction.channelId);
         msgs.push(res);
         if (!success) break;
         ticketsBought++;
@@ -25,12 +24,12 @@ const name = 'auto';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy up to ${lottery.ticketLimit} lottery tickets (${lottery.price} points each). Numbers are automatically picked.`)
+    .setDescription(`Buy up to ${lotteryManager.ticketLimit} lottery tickets (${lotteryManager.price} points each). Numbers are automatically picked.`)
     .addIntegerOption(option => option
         .setName('number')
         .setDescription('Enter the number of tickets to buy.')
         .setMinValue(1)
-        .setMaxValue(lottery.choose)
+        .setMaxValue(lotteryManager.choose)
     );
 
 export default { execute, name, subcommandBuilder };
