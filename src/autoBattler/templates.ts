@@ -1,8 +1,57 @@
 import { CharacterStats } from './Character';
+import { ClassName } from './Classes/classes';
 import { dice } from './util';
 
+const ClassStats: {[name in ClassName]: CharacterStats} = {
+    Fighter: {
+        attackBonus: 0,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        armorClass: 10,
+        physResist: 0,
+        magicResist: 0,
+        maxHealth: 20,
+        maxMana: 10, 
+        manaPerAtk: 2,
+        manaRegen: 1,
+        initiativeBonus: 0
+    },
+    Rogue: {
+        attackBonus: 0,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        armorClass: 10,
+        physResist: 0,
+        magicResist: 0,
+        maxHealth: 20,
+        maxMana: 10, 
+        manaPerAtk: 2,
+        manaRegen: 1,
+        initiativeBonus: 0
+    },
+    Wizard: {
+        attackBonus: 0,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        armorClass: 10,
+        physResist: 0,
+        magicResist: 0,
+        maxHealth: 20,
+        maxMana: 10, 
+        manaPerAtk: 1,
+        manaRegen: 2,
+        initiativeBonus: 0
+    }
+};
+
 // Rat
-const ratStats: CharacterStats = {
+const RatStats: CharacterStats = {
     attackBonus: -3,
     damage: dice['1d4'],
     damageBonus: 0,
@@ -18,55 +67,4 @@ const ratStats: CharacterStats = {
     initiativeBonus: 0
 };
 
-// Fighter
-const fighterStats: CharacterStats = {
-    attackBonus: 0,
-    damage: dice['1d6'],
-    damageBonus: 0,
-    critRange: 20,
-    critMult: 2,
-    armorClass: 10,
-    physResist: 0,
-    magicResist: 0,
-    maxHealth: 20,
-    maxMana: 10, 
-    manaPerAtk: 2,
-    manaRegen: 1,
-    initiativeBonus: 0
-};
-
-// Rogue
-const rogueStats: CharacterStats = {
-    attackBonus: 0,
-    damage: dice['1d6'],
-    damageBonus: 0,
-    critRange: 20,
-    critMult: 2,
-    armorClass: 10,
-    physResist: 0,
-    magicResist: 0,
-    maxHealth: 20,
-    maxMana: 10, 
-    manaPerAtk: 2,
-    manaRegen: 1,
-    initiativeBonus: 0
-};
-
-// Wizard
-const wizardStats: CharacterStats = {
-    attackBonus: 0,
-    damage: dice['1d6'],
-    damageBonus: 0,
-    critRange: 20,
-    critMult: 2,
-    armorClass: 10,
-    physResist: 0,
-    magicResist: 0,
-    maxHealth: 20,
-    maxMana: 10, 
-    manaPerAtk: 1,
-    manaRegen: 2,
-    initiativeBonus: 0
-};
-
-export { ratStats, fighterStats, rogueStats, wizardStats };
+export { ClassStats, RatStats };
