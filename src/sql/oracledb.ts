@@ -12,6 +12,7 @@ import { createTableUserIdPairs, createTableTimeInVoiceTogether } from './tables
 import { createTableCringePoints } from './tables/cringe_points';
 import { createTableLottery } from './tables/lottery';
 import { createTableLotteryTicket } from './tables/lottery_ticket';
+import { createTableLotteryAutoBuy } from './tables/lottery_auto_buy';
 import { createTableProfits, updateTableProfits } from './tables/profits';
 import { createTableStolenGoods } from './tables/stolen_goods';
 import { createTableDailyProgress } from './tables/daily_progress';
@@ -21,7 +22,7 @@ import { createTableABCharacters, updateTableABCharacters } from './tables/ab_ch
 
 import { logError } from '../logger';
 
-const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins, createTableABCharacters];
+const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableLotteryAutoBuy, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins, createTableABCharacters];
 
 const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters];
 
