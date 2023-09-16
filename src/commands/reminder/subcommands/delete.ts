@@ -6,7 +6,7 @@ import { cancelReminder } from '../reminderManager';
 import { timeInMS } from '../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    const reply = await interaction.deferReply({ephemeral: true});
+    await interaction.deferReply({ephemeral: true});
     const userId = interaction.user.id;
     const reminders = await getUserReminders(userId);
     const embeds: EmbedBuilder[] = [];
@@ -29,7 +29,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         embeds.push(embed);
     }
     if (embeds.length !== 0 && row) {
-        void interaction.editReply({embeds, components: [row]});
+        const reply = await interaction.editReply({embeds, components: [row]});
     
         const buttonFilter = (i: ButtonInteraction) => i.user.id === userId;
         const collector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: 5 * timeInMS.minute, filter: buttonFilter });
