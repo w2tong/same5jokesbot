@@ -56,7 +56,6 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setName('wager')
         .setDescription('Enter a wager.')
         .setMinValue(1)
-        .setRequired(false)
     );
 
 export default { execute, name, subcommandBuilder };

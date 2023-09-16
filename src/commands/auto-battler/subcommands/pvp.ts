@@ -95,12 +95,12 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .addUserOption(option => option
         .setName('user')
         .setDescription('Select a user')
+        .setRequired(true)
     )
     .addIntegerOption(option => option
         .setName('wager')
         .setDescription('Enter a wager.')
         .setMinValue(1)
-        .setRequired(false)
     );
 
 export default { execute, name, subcommandBuilder };
