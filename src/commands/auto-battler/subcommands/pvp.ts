@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, userMention } from 'discord.js';
-import Battle, { Side } from '../../../autoBattler/Battle';
+import Battle from '../../../autoBattler/Battle';
 import { ClassStats } from '../../../autoBattler/statTemplates';
 import { getABPSelectedCharacter } from '../../../sql/tables/ab_characters';
 import { Classes } from '../../../autoBattler/Classes/classes';
@@ -14,8 +14,6 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const battle = new Battle();
-
     const userChar = await getABPSelectedCharacter(user.id);
     const opponentChar = await getABPSelectedCharacter(opponent.id);
 
@@ -28,9 +26,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    battle.addChars(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, {ref: battle, side: Side.Left, index: 0}, {userId: user.id})],
-        [new Classes[opponentChar.CLASS_NAME](opponentChar.CHAR_LEVEL, ClassStats[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, {ref: battle, side: Side.Right, index: 0}, {userId: opponent.id})],
+    const battle = new Battle(
+        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, {userId: user.id})],
+        [new Classes[opponentChar.CLASS_NAME](opponentChar.CHAR_LEVEL, ClassStats[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, {userId: opponent.id})],
     );
 
     const acceptButtonId = 'accept';

@@ -49,11 +49,9 @@ class Character {
 
     // Battle Info
     protected _target: Character|null = null;
-    protected _index;
-    protected side: Side;
-    protected _battle: Battle;
+    protected _battle : {ref: Battle, side: Side, index: number} | null = null;
 
-    constructor(level: number, stats: CharacterStatTemplate, name: string, battle: {ref: Battle, side: Side, index: number}, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
+    constructor(level: number, stats: CharacterStatTemplate, name: string, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
         if (options?.userId) this.userId = options.userId;
 
         this._name = name;
@@ -83,10 +81,14 @@ class Character {
         this.manaPerAtk = calcStatValue(stats.manaPerAtk, level);
         this.manaRegen = calcStatValue(stats.manaRegen, level);
         this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
+    }
 
-        this._battle = battle.ref;
-        this.side = battle.side;
-        this._index = battle.index;
+    setBattle(ref: Battle, side: Side, index: number) {
+        this._battle = {
+            ref,
+            side,
+            index
+        };
     }
 
     get name() {
@@ -105,20 +107,16 @@ class Character {
         return this._target;
     }
 
-    get buffTracker() {
-        return this._buffTracker;
-    }
-
     set target(char: Character | null) {
         this._target = char;
     }
 
-    get index() {
-        return this._index;
-    }
-
     get battle() {
         return this._battle;
+    }
+
+    get buffTracker() {
+        return this._buffTracker;
     }
     
     getName(): string {
@@ -165,16 +163,16 @@ class Character {
         if (this.buffTracker.getBuffCount() > 0) {
             lines.push(`Buffs: ${this.buffTracker.getBuffString()}`);
         }
-        else {
-            lines.push('');
-        }
+        // else {
+        //     lines.push('');
+        // }
         // Debuffs
         if (this.buffTracker.getDebuffCount() > 0) {
             lines.push(`Debuffs: ${this.buffTracker.getDebuffString()}`);
         }
-        else {
-            lines.push('');
-        }
+        // else {
+        //     lines.push('');
+        // }
 
         return lines.join('\n');
     }
@@ -189,13 +187,14 @@ class Character {
     }
 
     setTarget(): void {
+        if (!this.battle) return;
         if (this.target?.isDead() || this.target?.isInvisible()) {
             this.target = null;
         }
         if (!this.target) {
             // TODO: add condition if this char can see invisible targets
             // Filter out invisble targets
-            const targets = this.battle.getTargets(this.side).filter(char => !char.isInvisible());
+            const targets = this.battle.ref.getTargets(this.battle.side).filter(char => !char.isInvisible());
             this.setRandomTarget(targets);
         }
     }
@@ -231,6 +230,7 @@ class Character {
     }
 
     attack(): void {
+        if (!this.battle) return;
         this.setTarget();
         if (this.target) { 
             const attack = this.attackRoll();
@@ -240,12 +240,12 @@ class Character {
                 const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
                 let damage = damageRoll + this.damageBonus + sneakDamage;
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
-                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
+                this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                 this.target.takeDamage(this.name, damage, this.damageType);
                 this.addMana(this.manaPerAtk);
             }
             else {
-                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
+                this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
             }
         }
     }
@@ -257,6 +257,7 @@ class Character {
     }
 
     takeDamage(source: string, damage: number, type: DamageType): void {
+        if (!this.battle) return;
         let damageResisted = 0;
         if (type === DamageType.Physical) {
             damageResisted = Math.round(damage * this.physResist/100);
@@ -266,10 +267,10 @@ class Character {
         }
         damage -= damageResisted;
         this.currHealth -= damage;
-        this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} ${type}${damageResisted > 0 ? ` (${damageResisted} resisted)` : ''} from ${bold(source)}.`);
+        this.battle.ref.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} ${type}${damageResisted > 0 ? ` (${damageResisted} resisted)` : ''} from ${bold(source)}.`);
         if (this.isDead()) {
-            this.battle.setCharDead(this.side, this.index);
-            this.battle.combatLog.add(`${bold(this.name)} died.`);
+            this.battle.ref.setCharDead(this.battle.side, this.battle.index);
+            this.battle.ref.combatLog.add(`${bold(this.name)} died.`);
         }
     }
 
