@@ -4,10 +4,6 @@ import { DebuffId } from '../Buffs/buffs';
 import { DamageType, HitType, generateCombatAttack, rollDice } from '../util';
 
 class Wizard extends Character {
-    getClass() {
-        return 'Wizard';
-    }
-
     specialAbility(): void {
         this.setTarget();
         if (this.target) {
