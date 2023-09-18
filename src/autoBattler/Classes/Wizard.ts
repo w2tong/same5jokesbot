@@ -5,12 +5,13 @@ import { DamageType, HitType, generateCombatAttack, rollDice } from '../util';
 
 class Wizard extends Character {
     specialAbility(): void {
+        if (!this.battle) return;
         this.setTarget();
         if (this.target) {
             this.currMana = 0;
-            this.battle.combatLog.add(`${bold(this.name)} casted ${bold('Firebolt')}.`);
+            this.battle.ref.combatLog.add(`${bold(this.name)} casted ${bold('Firebolt')}.`);
             const attack = this.attackRoll();
-            this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
+            this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                 let damage = rollDice(this.damage) + this.damageBonus;
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;

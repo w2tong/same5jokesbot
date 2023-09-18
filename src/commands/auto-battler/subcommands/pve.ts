@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
-import Battle, { Side } from '../../../autoBattler/Battle';
+import Battle from '../../../autoBattler/Battle';
 import { ClassStats } from '../../../autoBattler/statTemplates';
 import { timeInMS } from '../../../util/util';
 import { getABPSelectedCharacter } from '../../../sql/tables/ab_characters';
@@ -18,10 +18,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
     
-    const battle = new Battle();
-    battle.addChars(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, {ref: battle, side: Side.Left, index: 0}, {userId: user.id})],
-        getRandomEncounter(battle, 1)
+    const battle = new Battle(
+        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME)],
+        getRandomEncounter(1)
     );
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});
