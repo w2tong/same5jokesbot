@@ -1,33 +1,28 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
 import Battle, { Side } from '../../../autoBattler/Battle';
-import { ClassStats } from '../../../autoBattler/templates';
+import { ClassStats } from '../../../autoBattler/statTemplates';
 import { timeInMS } from '../../../util/util';
-import Fighter from '../../../autoBattler/Classes/Fighter';
 import { getABPSelectedCharacter } from '../../../sql/tables/ab_characters';
 import { Classes } from '../../../autoBattler/Classes/classes';
+import { getRandomEncounter } from '../../../autoBattler/encounters';
 
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
-    const player = await getABPSelectedCharacter(interaction.user.id);
+    const user = interaction.user;
+    const userChar = await getABPSelectedCharacter(user.id);
 
-    if (!player) {
+    if (!userChar) {
         await interaction.editReply('You do not have a selected character.');
         return;
     }
     
     const battle = new Battle();
-
-    const playerChar = new Classes[player.CLASS_NAME](ClassStats[player.CLASS_NAME], player.CHAR_NAME, 0, Side.Left, battle, interaction.user.id);
-    const left = [
-        playerChar
-    ];
-    const right = [
-        new Fighter(ClassStats.Fighter, 'Fighter NPC', 0, Side.Right, battle),
-    ];
-
-    battle.addChars(left, right);
+    battle.addChars(
+        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, {ref: battle, side: Side.Left, index: 0}, {userId: user.id})],
+        getRandomEncounter(battle, 1)
+    );
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});
 
