@@ -2,10 +2,6 @@ import { bold } from 'discord.js';
 import Character from '../Character';
 
 class Fighter extends Character {
-    getClass() {
-        return 'Fighter';
-    }
-
     specialAbility(): void {
         this.setTarget();
         if (this.target) {

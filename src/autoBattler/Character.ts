@@ -1,37 +1,19 @@
 import { bold, userMention } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { DamageType, Dice, HitType, dice, generateCombatAttack, rollDice } from './util';
+import { DamageType, Dice, HitType, calcStatValue, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
+import { CharacterStatTemplate } from './statTemplates';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
-
-type CharacterStats = {
-    level: number;
-    attackBonus: number;
-    damage: Dice;
-    damageBonus: number;
-    damageType: DamageType;
-    critRange: number;
-    critMult: number;
-    armorClass: number;
-    physResist: number;
-    magicResist: number;
-    maxHealth: number;
-    currHealth?: number;
-    maxMana: number;
-    currMana?: number;
-    manaPerAtk: number;
-    manaRegen: number;
-    initiativeBonus: number;
-}
 
 class Character {
     private userId?: string;
 
     protected _name: string;
+    protected className: string;
 
     protected level: number;
 
@@ -45,6 +27,8 @@ class Character {
 
     // Defence stats
     protected _armorClass: number;
+    protected physDR: number;
+    protected magicDR: number;
     protected physResist: number;
     protected magicResist: number;
     
@@ -69,37 +53,40 @@ class Character {
     protected side: Side;
     protected _battle: Battle;
 
-    constructor(stats: CharacterStats, name: string, index: number, side: Side, battle: Battle, userId?: string) {
-        if (userId) this.userId = userId;
+    constructor(level: number, stats: CharacterStatTemplate, name: string, battle: {ref: Battle, side: Side, index: number}, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
+        if (options?.userId) this.userId = options.userId;
 
         this._name = name;
+        this.className = stats.className;
 
-        this.level = stats.level;
-        
-        this.attackBonus = stats.attackBonus;
-        this.damage = stats.damage;
-        this.damageBonus = stats.damageBonus;
+        this.level = level;
+
+        this.attackBonus = calcStatValue(stats.attackBonus, level);
         this.damageType = stats.damageType;
+        this.damage = stats.damage;
+        this.damageBonus = calcStatValue(stats.damageBonus, level);
         this.critRange = stats.critRange;
         this.critMult = stats.critMult;
 
-        this._armorClass = stats.armorClass;
-        this.physResist = stats.physResist;
-        this.magicResist = stats.magicResist;
+        this._armorClass = calcStatValue(stats.armorClass, level);
+        this.physDR = calcStatValue(stats.physDR, level);
+        this.magicDR = calcStatValue(stats.magicDR, level);
+        this.physResist = calcStatValue(stats.physResist, level);
+        this.magicResist = calcStatValue(stats.magicResist, level);
         
-        this.maxHealth = stats.maxHealth;
-        this.currHealth = stats.currHealth ?? stats.maxHealth;
+        this.maxHealth = calcStatValue(stats.health, level);
+        this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
 
-        this.maxMana = stats.maxMana;
-        this.currMana = stats.currMana ?? 0;
-        this.manaPerAtk = stats.manaPerAtk;
-        this.manaRegen = stats.manaRegen;
+        this.maxMana = stats.mana;
+        this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : this.maxMana;
 
-        this._initiativeBonus = stats.initiativeBonus;
+        this.manaPerAtk = calcStatValue(stats.manaPerAtk, level);
+        this.manaRegen = calcStatValue(stats.manaRegen, level);
+        this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
 
-        this._index = index;
-        this.side = side;
-        this._battle = battle;
+        this._battle = battle.ref;
+        this.side = battle.side;
+        this._index = battle.index;
     }
 
     get name() {
@@ -140,10 +127,6 @@ class Character {
         return name;
     }
 
-    getClass(): string {
-        return this.name;
-    }
-
     getHealthString(): string {
         return `${this.currHealth}/${this.maxHealth}`;
     }
@@ -169,7 +152,7 @@ class Character {
             // Name
             `${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`,
             // Level and Class
-            `Lvl. ${this.level} ${this.getClass()}`,
+            `Lvl. ${this.level} ${this.className}`,
             // HP
             `${this.getHealthBar()} ${this.getHealthString()}`
         ];
@@ -304,4 +287,3 @@ class Character {
 }
 
 export default Character;
-export { CharacterStats };
