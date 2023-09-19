@@ -154,23 +154,25 @@ async function getABPSelectedChar(userId: string): Promise<ABCharacter|null> {
 // TODO: level up character if they are past exp threshold
 const updateExpQuery = `
 UPDATE ab_characters
-SET char_level = :level, experience = :exp
-WHERE user_id = :userId and char_name = :charName
+SET char_level = :charLevel, experience = :experience
+WHERE user_id = :userId and char_name = :name
 `;
-async function updateABCharExp(userId: string, name: string, amount: number): Promise<void> {
+async function updateABCharExp(userId: string, name: string, amount: number): Promise<{level: number, exp: number}|null> {
     try {
         const connection = await oracledb.getConnection();
         const char = await getABPlayerChar(userId, name);
-        if (!char) return;
-        if (!levelExp[char.CHAR_LEVEL]) return;
-        let exp = char.EXPERIENCE + amount;
-        let level = char.CHAR_LEVEL;
-        if (exp >= levelExp[char.CHAR_LEVEL]) {
-            exp -= levelExp[char.CHAR_LEVEL];
-            level++;
+        if (!char) return null;
+        if (!levelExp[char.CHAR_LEVEL]) return null;
+        let experience = Math.max(char.EXPERIENCE + amount, 0);
+        let charLevel = char.CHAR_LEVEL;
+        while (levelExp[charLevel] && experience >= levelExp[charLevel]) {
+            experience -= levelExp[charLevel];
+            charLevel++;
         }
-        await connection.execute(updateExpQuery, {userId, name, level, exp}, selectExecuteOptions);
+        if (!levelExp[charLevel]) experience = 0;
+        await connection.execute(updateExpQuery, {userId, name, charLevel, experience}, selectExecuteOptions);
         await connection.close();
+        return {level: charLevel, exp: experience};
     }
     catch (err) {
         throw new Error(`updateABCharExp: ${err}`);
