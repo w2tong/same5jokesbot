@@ -53,7 +53,31 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         rogueEncounter({level: 1, count: 1}),
         wizardEncounter({level: 1, count: 1}),
         ratEncounter({level: 1, count: 3})
-    ]
+    ],
+    2: [
+        fighterEncounter({level: 2, count: 1}),
+        rogueEncounter({level: 2, count: 1}),
+        wizardEncounter({level: 2, count: 1}),
+        ratEncounter({level: 2, count: 3})
+    ],
+    3: [
+        fighterEncounter({level: 3, count: 1}),
+        rogueEncounter({level: 3, count: 1}),
+        wizardEncounter({level: 3, count: 1}),
+        ratEncounter({level: 3, count: 3})
+    ],
+    4: [
+        fighterEncounter({level: 4, count: 1}),
+        rogueEncounter({level: 4, count: 1}),
+        wizardEncounter({level: 4, count: 1}),
+        ratEncounter({level: 4, count: 3})
+    ],
+    5: [
+        fighterEncounter({level: 5, count: 1}),
+        rogueEncounter({level: 5, count: 1}),
+        wizardEncounter({level: 5, count: 1}),
+        ratEncounter({level: 5, count: 3})
+    ],
 };
 
 function getRandomEncounter(level: number): Character[] {
