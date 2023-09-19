@@ -8,6 +8,9 @@ import { CharacterStatTemplate } from './statTemplates';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
+const dualWieldPenalty = -2;
+const offHandPenalty = -4;
+const offHandManaPenalty = 0.5;
 
 class Character {
     private userId?: string;
@@ -19,7 +22,10 @@ class Character {
 
     // Attack stats
     protected attackBonus: number;
-    protected damage: Dice;
+    protected damage: {
+        mainHand: Dice,
+        offHand?: Dice
+    };
     protected _damageBonus: number;
     protected damageType: DamageType;
     protected critRange: number;
@@ -61,7 +67,10 @@ class Character {
 
         this.attackBonus = calcStatValue(stats.attackBonus, level);
         this.damageType = stats.damageType;
-        this.damage = stats.damage;
+        this.damage = {
+            mainHand: stats.damage.mainHand,
+            offHand: stats.damage.offHand
+        };
         this._damageBonus = calcStatValue(stats.damageBonus, level);
         this.critRange = stats.critRange;
         this.critMult = stats.critMult;
@@ -214,10 +223,10 @@ class Character {
         this.buffTracker.tick();
     }
 
-    attackRoll(): {hitType: HitType, details: string} {
+    attackRoll(offHandHit: boolean): {hitType: HitType, details: string} {
         if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
         const attackRoll = rollDice({num: 1, sides: 20});
-        const rollToHitTaget = this.target.armorClass - this.attackBonus;
+        const rollToHitTaget = this.target.armorClass - this.attackBonus - (this.damage.offHand ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
         const details = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
         if (attackRoll === 1) {
             return {hitType: HitType.CritMiss, details};
@@ -237,10 +246,10 @@ class Character {
         if (!this.battle) return;
         this.setTarget();
         if (this.target) { 
-            const attack = this.attackRoll();
-            
+            let attack = this.attackRoll(false);
+            // Main hand attack
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
-                const damageRoll = rollDice(this.damage);
+                const damageRoll = rollDice(this.damage.mainHand);
                 const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
                 let damage = damageRoll + this.damageBonus + sneakDamage;
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
@@ -250,6 +259,23 @@ class Character {
             }
             else {
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
+            }
+
+            // Off hand attack
+            if (this.damage.offHand) {
+                attack = this.attackRoll(true);
+                if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
+                    const damageRoll = rollDice(this.damage.offHand);
+                    const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
+                    let damage = damageRoll + this.damageBonus + sneakDamage;
+                    if (attack.hitType === HitType.Crit) damage *= this.critMult;
+                    this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
+                    this.target.takeDamage(this.name, damage, this.damageType);
+                    this.addMana(Math.floor(this.manaPerAtk * offHandManaPenalty));
+                }
+                else {
+                    this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
+                }
             }
         }
     }
