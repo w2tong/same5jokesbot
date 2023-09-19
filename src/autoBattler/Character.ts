@@ -76,7 +76,7 @@ class Character {
         this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
 
         this.maxMana = stats.mana;
-        this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : this.maxMana;
+        this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
 
         this.manaPerAtk = calcStatValue(stats.manaPerAtk, level);
         this.manaRegen = calcStatValue(stats.manaRegen, level);
