@@ -249,7 +249,7 @@ const RatStats: CharacterStatTemplate = {
         perLvl: 0.25
     },
     health: {
-        base: 5,
+        base: 6,
         perLvl: 2
     },
     mana: 0, 

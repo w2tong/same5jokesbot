@@ -33,7 +33,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     
     const battle = new Battle(
         [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME)],
-        getRandomEncounter(1)
+        getRandomEncounter(userChar.CHAR_LEVEL)
     );
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});
