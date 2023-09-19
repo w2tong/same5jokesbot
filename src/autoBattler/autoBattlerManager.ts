@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, userMention } from 'discord.js';
-import { getABPSelectedCharacter } from '../sql/tables/ab_characters';
+import { getABPSelectedChar } from '../sql/tables/ab_characters';
 import { timeInMS } from '../util/util';
 import Battle, { Side } from './Battle';
 import { Classes } from './Classes/classes';
@@ -20,7 +20,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedCharacter(user.id);
+    const userChar = await getABPSelectedChar(user.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');
@@ -42,8 +42,14 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
             const res = battle.nextTurn();
             if (res.combatEnded) {
                 clearInterval(interval);
-                // const balanceEmbed = new EmbedBuilder().addFields;
                 await interaction.editReply({embeds: [battle.generateEmbed()]});
+                if (res.winner === Side.Left) {
+                    // TODO: add exp to player char
+                    // TODO: send exp gain and level embed
+                }
+                else {
+                    // TODO: set char curr health to 1
+                }
             }
             else {
                 await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -74,8 +80,8 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedCharacter(user.id);
-    const opponentChar = await getABPSelectedCharacter(opponent.id);
+    const userChar = await getABPSelectedChar(user.id);
+    const opponentChar = await getABPSelectedChar(opponent.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');

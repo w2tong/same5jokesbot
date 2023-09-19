@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, bold, userMention } from 'discord.js';
 import { ClassName, Classes } from '../../../../autoBattler/Classes/classes';
-import { insertABCharacter } from '../../../../sql/tables/ab_characters';
+import { insertABChar } from '../../../../sql/tables/ab_characters';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -12,7 +12,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const success = await insertABCharacter(interaction.user.id, name, className);
+    const success = await insertABChar(interaction.user.id, name, className);
     if (success) {
         await interaction.editReply(`${userMention(interaction.user.id)} created a new character ${bold(name)} (${className}).`);
     }
