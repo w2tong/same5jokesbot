@@ -111,7 +111,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     buttonsRow.addComponents(
         new ButtonBuilder()
             .setCustomId(acceptButtonId)
-            .setLabel('Accept')
+            .setLabel(`Accept (Wager: ${wager.toLocaleString()})`)
             .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
             .setCustomId(decliceButtonId)
@@ -142,7 +142,6 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
                     const res = battle.nextTurn();
                     if (res.combatEnded) {
                         clearInterval(interval);
-                        // const balanceEmbed = new EmbedBuilder().addFields;
                         usersInBattle.delete(user.id,);
                         usersInBattle.delete(opponent.id);
 
