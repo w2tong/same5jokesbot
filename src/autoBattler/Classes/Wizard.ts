@@ -10,10 +10,10 @@ class Wizard extends Character {
         if (this.target) {
             this.currMana = 0;
             this.battle.ref.combatLog.add(`${bold(this.name)} casted ${bold('Firebolt')}.`);
-            const attack = this.attackRoll();
+            const attack = this.attackRoll(false);
             this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
-                let damage = rollDice(this.damage) + this.damageBonus;
+                let damage = rollDice(this.damage.mainHand) + this.damageBonus;
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
                 this.target.takeDamage(this.name, damage, DamageType.Magic);
                 this.target?.buffTracker.addDebuff(DebuffId.Burn, 2, this);
