@@ -2,6 +2,7 @@ import oracledb from 'oracledb';
 import { selectExecuteOptions } from '../query-options';
 import { Classes, ClassName } from '../../autoBattler/Classes/classes';
 import { logError } from '../../logger';
+import { levelExp } from '../../autoBattler/experience';
 
 const createTableABCharacters = {
     name: 'AB_CHARACTERS',
@@ -34,7 +35,7 @@ INSERT INTO ab_characters (user_id, char_name, class_name)
 VALUES (:userId, :name, :className)
 `;
 
-async function insertABCharacter(userId: string, name: string, className: ClassName): Promise<boolean> {
+async function insertABChar(userId: string, name: string, className: ClassName): Promise<boolean> {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(insertQuery, {userId, name, className});
@@ -53,7 +54,7 @@ WHERE user_id = :userId
 AND char_name = :name
 `;
 
-async function deleteABCharacter(userId: string, name: string) {
+async function deleteABChar(userId: string, name: string) {
     try {
         const connection = await oracledb.getConnection();
         const res = await connection.execute(deleteQuery, {userId, name});
@@ -61,63 +62,20 @@ async function deleteABCharacter(userId: string, name: string) {
         return res;
     }
     catch (err) {
-        throw new Error(`deleteABCharacter: ${err}`);
+        throw new Error(`deleteABChar: ${err}`);
     }
 }
 
-const getPlayerCharactersQuery = `
+const getPlayerCharQuery = `
 SELECT *
 FROM ab_characters
 WHERE user_id = :userId
+AND char_name = :name
 `;
-type ABCharacter = {
-    USER_ID: string;
-    CHAR_NAME: string;
-    CLASS_NAME: ClassName,
-    CHAR_LEVEL: number;
-    EXPERIENCE: number;
-}
-async function getABPlayerCharacters(userId: string): Promise<ABCharacter[]> {
+async function getABPlayerChar(userId: string, name: string): Promise<ABCharacter|null> {
     try {
         const connection = await oracledb.getConnection();
-        const result: oracledb.Result<ABCharacter> = await connection.execute(getPlayerCharactersQuery, {userId}, selectExecuteOptions);
-        await connection.close();
-        if (result && result.rows && result.rows.length !== 0) {
-            return result.rows;
-        }
-        return [];
-    }
-    catch (err) {
-        throw new Error(`getABPlayerCharacters: ${err}`);
-    }
-}
-
-const selectCharacterQuery = `
-UPDATE ab_characters
-SET selected = (CASE char_name WHEN :name THEN 1 ELSE 0 END)
-WHERE user_id = :userId
-`;
-async function selectABCharacter(userId: string, name: string) {
-    try {
-        const connection = await oracledb.getConnection();
-        await connection.execute(selectCharacterQuery, {userId, name});
-        await connection.close();
-    }
-    catch (err) {
-        throw new Error(`selectABCharacter: ${err}`);
-    }
-}
-
-const getSelectedCharacterQuery = `
-SELECT *
-FROM ab_characters
-WHERE user_id = :userId
-AND selected = 1
-`;
-async function getABPSelectedCharacter(userId: string): Promise<ABCharacter|null> {
-    try {
-        const connection = await oracledb.getConnection();
-        const result: oracledb.Result<ABCharacter> = await connection.execute(getSelectedCharacterQuery, {userId}, selectExecuteOptions);
+        const result: oracledb.Result<ABCharacter> = await connection.execute(getPlayerCharQuery, {userId, name}, selectExecuteOptions);
         await connection.close();
         if (result && result.rows && result.rows.length !== 0) {
             return result.rows[0];
@@ -125,8 +83,98 @@ async function getABPSelectedCharacter(userId: string): Promise<ABCharacter|null
         return null;
     }
     catch (err) {
-        throw new Error(`getABPSelectedCharacter: ${err}`);
+        throw new Error(`getABPlayerChars: ${err}`);
     }
 }
 
-export { createTableABCharacters, updateTableABCharacters, insertABCharacter, deleteABCharacter, getABPlayerCharacters, selectABCharacter, getABPSelectedCharacter };
+const getPlayerCharsQuery = `
+SELECT *
+FROM ab_characters
+WHERE user_id = :userId
+`;
+type ABCharacter = {
+    USER_ID: string;
+    CHAR_NAME: string;
+    CLASS_NAME: ClassName;
+    CHAR_LEVEL: number;
+    EXPERIENCE: number;
+}
+async function getABPlayerChars(userId: string): Promise<ABCharacter[]> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<ABCharacter> = await connection.execute(getPlayerCharsQuery, {userId}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getABPlayerChars: ${err}`);
+    }
+}
+
+const selectCharQuery = `
+UPDATE ab_characters
+SET selected = (CASE char_name WHEN :name THEN 1 ELSE 0 END)
+WHERE user_id = :userId
+`;
+async function selectABChar(userId: string, name: string) {
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(selectCharQuery, {userId, name});
+        await connection.close();
+    }
+    catch (err) {
+        throw new Error(`selectABChar: ${err}`);
+    }
+}
+
+const getSelectedCharQuery = `
+SELECT *
+FROM ab_characters
+WHERE user_id = :userId
+AND selected = 1
+`;
+async function getABPSelectedChar(userId: string): Promise<ABCharacter|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<ABCharacter> = await connection.execute(getSelectedCharQuery, {userId}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getABPSelectedChar: ${err}`);
+    }
+}
+
+// TODO: level up character if they are past exp threshold
+const updateExpQuery = `
+UPDATE ab_characters
+SET char_level = :level, experience = :exp
+WHERE user_id = :userId and char_name = :charName
+`;
+async function updateABCharExp(userId: string, name: string, amount: number): Promise<void> {
+    try {
+        const connection = await oracledb.getConnection();
+        const char = await getABPlayerChar(userId, name);
+        if (!char) return;
+        if (!levelExp[char.CHAR_LEVEL]) return;
+        let exp = char.EXPERIENCE + amount;
+        let level = char.CHAR_LEVEL;
+        if (exp >= levelExp[char.CHAR_LEVEL]) {
+            exp -= levelExp[char.CHAR_LEVEL];
+            level++;
+        }
+        await connection.execute(updateExpQuery, {userId, name, level, exp}, selectExecuteOptions);
+        await connection.close();
+    }
+    catch (err) {
+        throw new Error(`updateABCharExp: ${err}`);
+    }
+}
+
+export { createTableABCharacters, updateTableABCharacters, insertABChar, deleteABChar, getABPlayerChars, selectABChar, getABPSelectedChar, updateABCharExp };

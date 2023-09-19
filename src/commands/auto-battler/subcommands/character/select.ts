@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder, bold } from 'discord.js';
-import { selectABCharacter, getABPlayerCharacters } from '../../../../sql/tables/ab_characters';
+import { selectABChar, getABPlayerChars } from '../../../../sql/tables/ab_characters';
 import { timeInMS } from '../../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -7,7 +7,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const user = interaction.user;
 
-    const chars = await getABPlayerCharacters(interaction.user.id);
+    const chars = await getABPlayerChars(interaction.user.id);
     if (chars.length === 0) {
         await interaction.editReply('You don\'t have any characters to select.');
         return;
@@ -31,7 +31,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     collector.on('collect', async i => {
         const name = i.values[0];
         await Promise.all([
-            selectABCharacter(i.user.id, name),
+            selectABChar(i.user.id, name),
             i.reply(`${i.user} selected character ${bold(name)}.`),
         ]);
     });
