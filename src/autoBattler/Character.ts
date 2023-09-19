@@ -20,7 +20,7 @@ class Character {
     // Attack stats
     protected attackBonus: number;
     protected damage: Dice;
-    protected damageBonus: number;
+    protected _damageBonus: number;
     protected damageType: DamageType;
     protected critRange: number;
     protected critMult: number;
@@ -62,7 +62,7 @@ class Character {
         this.attackBonus = calcStatValue(stats.attackBonus, level);
         this.damageType = stats.damageType;
         this.damage = stats.damage;
-        this.damageBonus = calcStatValue(stats.damageBonus, level);
+        this._damageBonus = calcStatValue(stats.damageBonus, level);
         this.critRange = stats.critRange;
         this.critMult = stats.critMult;
 
@@ -93,6 +93,10 @@ class Character {
 
     get name() {
         return this._name;
+    }
+
+    get damageBonus() {
+        return this._damageBonus;
     }
 
     get armorClass() {

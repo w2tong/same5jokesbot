@@ -1,7 +1,7 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
 import { Buff, BuffId, Debuff, DebuffId } from './buffs';
-import { DamageType } from '../util';
+import { DamageType, dice, rollDice } from '../util';
 
 type BuffInfo = {
     duration: number;
@@ -72,9 +72,9 @@ class BuffTracker {
 
         // TODO: add tick for debuffs
         for (const [id, debuff] of Object.entries(this.debuffs)) {
-
-            if (id as DebuffId === DebuffId.Burn) {
-                this.char.takeDamage(Debuff.Burn.name, debuff.duration, DamageType.Magic);
+            // TODO: separate debuffs such as burn by source to calculate damage for each source
+            if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
+                this.char.takeDamage(Debuff.Burn.name, rollDice(dice['1d3']) + this.debuffs.Burn.source.damageBonus, DamageType.Magic);
             }
 
             debuff.duration -= 1;
