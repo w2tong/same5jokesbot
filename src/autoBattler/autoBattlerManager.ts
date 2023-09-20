@@ -8,6 +8,7 @@ import { ClassStats } from './statTemplates';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe_points';
 import { emptyEmbedFieldInline, getBalanceStrings } from '../util/discordUtil';
 import { encounterExp, levelExp } from './experience';
+import { defaultEquipment } from './Equipment/Equipment';
 
 const usersInBattle: Set<string> = new Set();
 const ExpLoss = 0.05;
@@ -32,7 +33,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     usersInBattle.add(user.id);
     
     const battle = new Battle(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME)],
+        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME)],
         getRandomEncounter(userChar.CHAR_LEVEL)
     );
     
@@ -143,8 +144,8 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     }
 
     const battle = new Battle(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME, {userId: user.id})],
-        [new Classes[opponentChar.CLASS_NAME](opponentChar.CHAR_LEVEL, ClassStats[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, {userId: opponent.id})],
+        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME, {userId: user.id})],
+        [new Classes[opponentChar.CLASS_NAME](opponentChar.CHAR_LEVEL, ClassStats[opponentChar.CLASS_NAME], defaultEquipment[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, {userId: opponent.id})],
     );
 
     const acceptButtonId = 'accept';

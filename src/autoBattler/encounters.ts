@@ -3,20 +3,22 @@ import Character from './Character';
 import Fighter from './Classes/Fighter';
 import Rogue from './Classes/Rogue';
 import Wizard from './Classes/Wizard';
+import { Equipment, defaultEquipment } from './Equipment/Equipment';
+import { weapons } from './Equipment/Weapons';
 import { CharacterStatTemplate, ClassStats, RatStats } from './statTemplates';
 
-function createCharsFunc(chars: {class: typeof Character, stats: CharacterStatTemplate, name: string}[], level: number, count: number) {
+function createCharsFunc(chars: {class: typeof Character, stats: CharacterStatTemplate, equipment: Equipment, name: string}[], level: number, count: number) {
     return () => {
         const charsArr: Character[] = [];
         if (count === 1) {
             for (const char of chars) {
-                charsArr.push(new char.class(level, char.stats, `${char.name}`));
+                charsArr.push(new char.class(level, char.stats, char.equipment, `${char.name}`));
             }
         }
         else {
             for (let i = 0; i < count; i++) {
                 for (const char of chars) {
-                    charsArr.push(new char.class(level, char.stats, `${char.name} ${i+1}`));
+                    charsArr.push(new char.class(level, char.stats, char.equipment, `${char.name} ${i+1}`));
                 }
             }
         }
@@ -28,22 +30,22 @@ function createCharsFunc(chars: {class: typeof Character, stats: CharacterStatTe
 type EncounterParams = {level: number, count: number}
 function fighterEncounter({level, count}: EncounterParams) {
     return createCharsFunc([
-        {class: Fighter, stats: ClassStats.Fighter, name: 'Fighter'}
+        {class: Fighter, stats: ClassStats.Fighter, equipment: defaultEquipment.Fighter, name: 'Fighter'}
     ], level, count);
 }
 function rogueEncounter({level, count}: EncounterParams) {
     return createCharsFunc([
-        {class: Rogue, stats: ClassStats.Rogue, name: 'Rogue'}
+        {class: Rogue, stats: ClassStats.Rogue, equipment: defaultEquipment.Rogue, name: 'Rogue'}
     ], level, count);
 }
 function wizardEncounter({level, count}: EncounterParams) {
     return createCharsFunc([
-        {class: Wizard, stats: ClassStats.Wizard, name: 'Wizard'}
+        {class: Wizard, stats: ClassStats.Wizard, equipment: defaultEquipment.Wizard, name: 'Wizard'}
     ], level, count);
 }
 function ratEncounter({level, count}: EncounterParams) {
     return createCharsFunc([
-        {class: Character, stats: RatStats, name: 'Rat'}
+        {class: Character, stats: RatStats, equipment: {mainHand: weapons.una1}, name: 'Rat'}
     ], level, count);
 }
 

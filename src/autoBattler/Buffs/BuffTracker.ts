@@ -74,7 +74,7 @@ class BuffTracker {
         for (const [id, debuff] of Object.entries(this.debuffs)) {
             // TODO: separate debuffs such as burn by source to calculate damage for each source
             if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
-                this.char.takeDamage(Debuff.Burn.name, rollDice(dice['1d3']) + this.debuffs.Burn.source.damageBonus, DamageType.Magic);
+                this.char.takeDamage(Debuff.Burn.name, rollDice(dice['1d3']) + this.debuffs.Burn.source.mainHand.damageBonus, DamageType.Magic);
             }
 
             debuff.duration -= 1;

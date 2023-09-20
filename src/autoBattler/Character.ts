@@ -1,16 +1,18 @@
 import { bold, userMention } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { DamageType, Dice, HitType, calcStatValue, dice, generateCombatAttack, rollDice } from './util';
+import { DamageType, HitType, calcStatValue, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
 import { CharacterStatTemplate } from './statTemplates';
+import { Weapon } from './Equipment/Weapons';
+import { Shield } from './Equipment/Shield';
+import { Equipment } from './Equipment/Equipment';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
 const dualWieldPenalty = -2;
 const offHandPenalty = -4;
-const offHandManaPenalty = 0.5;
 
 class Character {
     private userId?: string;
@@ -20,16 +22,9 @@ class Character {
 
     protected level: number;
 
-    // Attack stats
-    protected attackBonus: number;
-    protected damage: {
-        mainHand: Dice,
-        offHand?: Dice
-    };
-    protected _damageBonus: number;
-    protected damageType: DamageType;
-    protected critRange: number;
-    protected critMult: number;
+    protected _mainHand: Weapon;
+    protected offHandWeapon?: Weapon;
+    protected offHandShield?: Shield;
 
     // Defence stats
     protected _armorClass: number;
@@ -45,7 +40,6 @@ class Character {
     // Mana
     protected maxMana: number;
     protected currMana: number;
-    protected manaPerAtk: number;
     protected manaRegen: number;
 
     protected _initiativeBonus: number;
@@ -57,7 +51,7 @@ class Character {
     protected _target: Character|null = null;
     protected _battle : {ref: Battle, side: Side, index: number} | null = null;
 
-    constructor(level: number, stats: CharacterStatTemplate, name: string, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
+    constructor(level: number, stats: CharacterStatTemplate, equipment: Equipment, name: string, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
         if (options?.userId) this.userId = options.userId;
 
         this._name = name;
@@ -65,21 +59,40 @@ class Character {
 
         this.level = level;
 
-        this.attackBonus = calcStatValue(stats.attackBonus, level);
-        this.damageType = stats.damageType;
-        this.damage = {
-            mainHand: stats.damage.mainHand,
-            offHand: stats.damage.offHand
-        };
-        this._damageBonus = calcStatValue(stats.damageBonus, level);
-        this.critRange = stats.critRange;
-        this.critMult = stats.critMult;
+        const lvlAttackBonus = calcStatValue(stats.attackBonus, level);
+        const lvlDamageBonus = calcStatValue(stats.damageBonus, level);
+        const lvlManaPerAtk = calcStatValue(stats.manaPerAtk, level);
+
+        // Main hand weapon
+        this._mainHand = equipment.mainHand;
+        this._mainHand.attackBonus += lvlAttackBonus;
+        this._mainHand.damageBonus += lvlDamageBonus;
+        this._mainHand.manaPerAtk += lvlManaPerAtk;
 
         this._armorClass = calcStatValue(stats.armorClass, level);
         this.physDR = calcStatValue(stats.physDR, level);
         this.magicDR = calcStatValue(stats.magicDR, level);
         this.physResist = calcStatValue(stats.physResist, level);
         this.magicResist = calcStatValue(stats.magicResist, level);
+
+        // Off hand weapon/shield
+        if (equipment.offHandWeapon && equipment.offHandShield) {
+            throw Error('cannot have both weapon and shield in offhand');
+        }
+        if (equipment.offHandWeapon) {
+            this.offHandWeapon = equipment.offHandWeapon;
+            this.offHandWeapon.attackBonus += lvlAttackBonus;
+            this.offHandWeapon.damageBonus += lvlDamageBonus;
+            this.offHandWeapon.manaPerAtk += lvlManaPerAtk;
+        }
+        else if (equipment.offHandShield) {
+            const shield = equipment.offHandShield;
+            this._armorClass += shield.armorClass;
+            this.physDR += shield.physDR ?? 0;
+            this.magicDR += shield.magicDR ?? 0;
+            this.physResist += shield.physResist ?? 0;
+            this.magicResist += shield.magicResist ?? 0;
+        }
         
         this.maxHealth = calcStatValue(stats.health, level);
         this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
@@ -87,7 +100,6 @@ class Character {
         this.maxMana = stats.mana;
         this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
 
-        this.manaPerAtk = calcStatValue(stats.manaPerAtk, level);
         this.manaRegen = calcStatValue(stats.manaRegen, level);
         this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
     }
@@ -104,8 +116,8 @@ class Character {
         return this._name;
     }
 
-    get damageBonus() {
-        return this._damageBonus;
+    get mainHand() {
+        return this._mainHand;
     }
 
     get armorClass() {
@@ -223,10 +235,10 @@ class Character {
         this.buffTracker.tick();
     }
 
-    attackRoll(offHandHit: boolean): {hitType: HitType, details: string} {
+    attackRoll(weapon: Weapon, offHandHit: boolean): {hitType: HitType, details: string} {
         if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
         const attackRoll = rollDice({num: 1, sides: 20});
-        const rollToHitTaget = this.target.armorClass - this.attackBonus - (this.damage.offHand ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
+        const rollToHitTaget = this.target.armorClass - weapon.attackBonus - (this.offHandWeapon ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
         const details = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
         if (attackRoll === 1) {
             return {hitType: HitType.CritMiss, details};
@@ -246,32 +258,32 @@ class Character {
         if (!this.battle) return;
         this.setTarget();
         if (this.target) { 
-            let attack = this.attackRoll(false);
+            let attack = this.attackRoll(this.mainHand, false);
             // Main hand attack
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
-                const damageRoll = rollDice(this.damage.mainHand);
+                const damageRoll = rollDice(this.mainHand.damage);
                 const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
-                let damage = damageRoll + this.damageBonus + sneakDamage;
-                if (attack.hitType === HitType.Crit) damage *= this.critMult;
+                let damage = damageRoll + this.mainHand.damageBonus + sneakDamage;
+                if (attack.hitType === HitType.Crit) damage *= this.mainHand.critMult;
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
-                this.target.takeDamage(this.name, damage, this.damageType);
-                this.addMana(this.manaPerAtk);
+                this.target.takeDamage(this.name, damage, this.mainHand.damageType);
+                this.addMana(this.mainHand.manaPerAtk);
             }
             else {
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
             }
 
             // Off hand attack
-            if (this.damage.offHand) {
-                attack = this.attackRoll(true);
+            if (this.offHandWeapon) {
+                attack = this.attackRoll(this.offHandWeapon, true);
                 if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
-                    const damageRoll = rollDice(this.damage.offHand);
+                    const damageRoll = rollDice(this.offHandWeapon.damage);
                     const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
-                    let damage = damageRoll + this.damageBonus + sneakDamage;
-                    if (attack.hitType === HitType.Crit) damage *= this.critMult;
+                    let damage = damageRoll + this.offHandWeapon.damageBonus + sneakDamage;
+                    if (attack.hitType === HitType.Crit) damage *= this.offHandWeapon.critMult;
                     this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
-                    this.target.takeDamage(this.name, damage, this.damageType);
-                    this.addMana(Math.floor(this.manaPerAtk * offHandManaPenalty));
+                    this.target.takeDamage(this.name, damage, this.offHandWeapon.damageType);
+                    this.addMana(this.offHandWeapon.manaPerAtk);
                 }
                 else {
                     this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
