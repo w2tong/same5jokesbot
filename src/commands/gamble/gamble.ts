@@ -90,7 +90,7 @@ const name = 'gamble';
 
 const commandBuilder = new SlashCommandBuilder()
     .setName(name)
-    .setDescription('Gamble your cringe points. Default bet is 50% chance with 2x payout.')
+    .setDescription('Gamble your Cringe points. Default bet is 50% chance with 2x payout.')
     .addIntegerOption(option => option
         .setName('points')
         .setDescription('The number of points you are betting.')

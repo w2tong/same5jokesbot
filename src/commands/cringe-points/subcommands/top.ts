@@ -23,7 +23,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
             if (i === 0) {
                 embed
-                    .setTitle('Top Cringe Points')
+                    .setTitle('Top Cringe points')
                     .addFields(
                         { name: 'House Points', value: housePoints.toLocaleString(), inline: true },
                         emptyEmbedFieldInline,
@@ -57,6 +57,6 @@ const name = 'top';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Gets cringe points of the top active users.');
+    .setDescription('Gets Cringe points of the top active users.');
 
 export default { execute, name, subcommandBuilder };
