@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, userMention } from 'discord.js';
-import { getABPSelectedCharacter } from '../sql/tables/ab_characters';
+import { getABPSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
 import { timeInMS } from '../util/util';
 import Battle, { Side } from './Battle';
 import { Classes } from './Classes/classes';
@@ -7,8 +7,10 @@ import { getRandomEncounter } from './encounters';
 import { ClassStats } from './statTemplates';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe_points';
 import { emptyEmbedFieldInline, getBalanceStrings } from '../util/discordUtil';
+import { encounterExp, levelExp } from './experience';
 
 const usersInBattle: Set<string> = new Set();
+const ExpLoss = 0.05;
 
 async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -20,7 +22,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedCharacter(user.id);
+    const userChar = await getABPSelectedChar(user.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');
@@ -31,7 +33,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     
     const battle = new Battle(
         [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], userChar.CHAR_NAME)],
-        getRandomEncounter(1)
+        getRandomEncounter(userChar.CHAR_LEVEL)
     );
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -42,8 +44,48 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
             const res = battle.nextTurn();
             if (res.combatEnded) {
                 clearInterval(interval);
-                // const balanceEmbed = new EmbedBuilder().addFields;
-                await interaction.editReply({embeds: [battle.generateEmbed()]});
+                if (!encounterExp[userChar.CHAR_LEVEL]) {
+                    await interaction.editReply({embeds: [battle.generateEmbed()]});
+                }
+                else {
+                    const resultEmbed = new EmbedBuilder();
+                    let expChange = 0;
+                    if (res.winner === Side.Left) {
+                        expChange = encounterExp[userChar.CHAR_LEVEL];
+                        resultEmbed
+                            .setTitle('Victory');
+                    }
+                    else {    
+                        expChange = -levelExp[userChar.CHAR_LEVEL] * ExpLoss;
+                        resultEmbed
+                            .setTitle('Defeat');
+                        // TODO: set char curr health to 1
+                    }
+                    const newLevelAndExp = await updateABCharExp(user.id, userChar.CHAR_NAME, expChange);
+                    if (newLevelAndExp) {
+                        if (newLevelAndExp.level > userChar.CHAR_LEVEL) {
+                            resultEmbed.addFields(
+                                {name: 'Level', value: `${userChar.CHAR_LEVEL}`, inline: true},
+                                {name: 'New Level', value: `${newLevelAndExp.level}`, inline: true},
+                                emptyEmbedFieldInline
+                            );
+                        }
+                        resultEmbed.addFields(
+                            {name: 'Exp Gain', value: `${userChar.EXPERIENCE.toLocaleString()}(${expChange > 0 ? '+' : ''}${expChange.toLocaleString()})/${levelExp[userChar.CHAR_LEVEL].toLocaleString()}`, inline: true},
+                            
+                        );
+                        if (levelExp[newLevelAndExp.level]) {
+                            resultEmbed.addFields(
+                                {name: 'New Exp', value: `${newLevelAndExp.exp.toLocaleString()}/${levelExp[newLevelAndExp.level].toLocaleString()}`, inline: true},
+                                {name: 'Next Lvl', value: `${(levelExp[newLevelAndExp.level] - newLevelAndExp.exp).toLocaleString()}`, inline: true}
+                            );
+                        }
+                    }
+                    else {
+                        resultEmbed.setDescription(`${userChar.CHAR_NAME} is at max level.`);
+                    }
+                    await interaction.editReply({embeds: [battle.generateEmbed(), resultEmbed]});
+                }
             }
             else {
                 await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -74,8 +116,8 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedCharacter(user.id);
-    const opponentChar = await getABPSelectedCharacter(opponent.id);
+    const userChar = await getABPSelectedChar(user.id);
+    const opponentChar = await getABPSelectedChar(opponent.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');

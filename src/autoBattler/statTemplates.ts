@@ -8,7 +8,10 @@ type CharacterStatTemplate = {
         perLvl: number;
     };
     damageType: DamageType;  // TODO: change to weapon dmg type when equipment implemented
-    damage: Dice; // TODO: change to weapon dmg when equipment implemented
+    damage: { // TODO: change to weapon dmg when equipment implemented
+        mainHand: Dice;
+        offHand?: Dice;
+    };
     damageBonus: {
         base: number;
         perLvl: number;
@@ -62,7 +65,9 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             perLvl: 1
         },
         damageType: DamageType.Physical,
-        damage: dice['1d6'],
+        damage: {
+            mainHand: dice['1d6']
+        },
         damageBonus: {
             base: 0,
             perLvl: 0.5
@@ -114,7 +119,10 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             perLvl: 1
         },
         damageType: DamageType.Physical,
-        damage: dice['1d6'],
+        damage: {
+            mainHand: dice['1d4'],
+            offHand: dice['1d4']
+        },
         damageBonus: {
             base: 0,
             perLvl: 0.5
@@ -166,7 +174,9 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             perLvl: 1
         },
         damageType: DamageType.Physical,
-        damage: dice['1d4'],
+        damage: {
+            mainHand: dice['1d4']
+        },
         damageBonus: {
             base: 0,
             perLvl: 0.5
@@ -221,7 +231,9 @@ const RatStats: CharacterStatTemplate = {
         perLvl: 0.5
     },
     damageType: DamageType.Physical,
-    damage: dice['1d3'],
+    damage: {
+        mainHand: dice['1d3']
+    },
     damageBonus: {
         base: 0,
         perLvl: 0.5
@@ -249,7 +261,7 @@ const RatStats: CharacterStatTemplate = {
         perLvl: 0.25
     },
     health: {
-        base: 5,
+        base: 6,
         perLvl: 2
     },
     mana: 0, 
