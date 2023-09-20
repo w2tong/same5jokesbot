@@ -56,12 +56,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
     buttonCollector.on('collect', async buttonInteraction => {
         const {correctUser, ended} = await deathRoll.roll(buttonInteraction.user.id);
         if (ended) buttonCollector.stop();
-        if (correctUser) {
-            buttonCollector.resetTimer();
-            await buttonInteraction.update({embeds: [deathRoll.createEmbed()]});
-        }
         else {
-            await buttonInteraction.reply({content: 'It is not your turn.', ephemeral: true});
+            if (correctUser) {
+                buttonCollector.resetTimer();
+                await buttonInteraction.update({embeds: [deathRoll.createEmbed()]});
+            }
+            else {
+                await buttonInteraction.reply({content: 'It is not your turn.', ephemeral: true});
+            }
         }
     });
 
