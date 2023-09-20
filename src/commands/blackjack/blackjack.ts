@@ -1,15 +1,11 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, SlashCommandBuilder } from 'discord.js';
 import BlackjackGame, { PlayerOption, PlayerOptions, maxDecks, maxWager } from './BlackjackGame';
-import { nanoid } from 'nanoid';
 import { getUserCringePoints } from '../../sql/tables/cringe_points';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
-    const reply = await interaction.fetchReply();
-    if (!interaction.channel) {
-        await interaction.editReply('There was an error creating the blackjack game.');
-        return;
-    }
+    const reply = await interaction.deferReply();
+    const user = interaction.user;
+
     const wager = interaction.options.getInteger('wager');
     if (!wager) {
         await interaction.editReply('There was an error getting your wager');
@@ -18,38 +14,33 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const numOfDecks = interaction.options.getInteger('decks') ?? 1;
 
-    const balance = await getUserCringePoints(interaction.user.id) ?? 0;
+    const balance = await getUserCringePoints(user.id) ?? 0;
     if (balance < wager) {
         await interaction.editReply(`You do not have enough points (Balance: ${balance.toLocaleString()}).`);
         return;
     }
 
-    const blackjack = new BlackjackGame(interaction.user, numOfDecks, wager, balance, interaction.client, interaction.channelId);
+    const blackjack = new BlackjackGame(user, numOfDecks, wager, balance, interaction.client, interaction.channelId);
     await blackjack.startGame();
     if (blackjack.isEnded()) {
         await interaction.editReply({embeds: [blackjack.createEmbed()]});
         return;
     }
 
-    const hitButtonId = `${PlayerOptions.Hit}-${nanoid()}`;
-    const standButtonId = `${PlayerOptions.Stand}-${nanoid()}`;
-    const doubleButtonId = `${PlayerOptions.Double}-${nanoid()}`;
-    const splitButtonId = `${PlayerOptions.Split}-${nanoid()}`;
-
     const hitButton = new ButtonBuilder()
-        .setCustomId(hitButtonId)
+        .setCustomId(PlayerOptions.Hit)
         .setLabel('Hit')
         .setStyle(ButtonStyle.Success);
     const standButton = new ButtonBuilder()
-        .setCustomId(standButtonId)
+        .setCustomId(PlayerOptions.Stand)
         .setLabel('Stand')
         .setStyle(ButtonStyle.Danger);
     const doubleButton = new ButtonBuilder()
-        .setCustomId(doubleButtonId)
+        .setCustomId(PlayerOptions.Double)
         .setLabel('Double Down')
         .setStyle(ButtonStyle.Primary);
     // const splitButton = new ButtonBuilder()
-    //     .setCustomId(splitButtonId)
+    //     .setCustomId(PlayerOptions.Split)
     //     .setLabel('Split')
     //     .setStyle(ButtonStyle.Secondary);
 
@@ -63,24 +54,21 @@ async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.editReply({embeds: [blackjack.createEmbed()], components: [firstTurnButtonsRow]});
 
     const buttonFilter = async (i: ButtonInteraction) => {
-        if (i.customId !== hitButtonId && i.customId !== standButtonId && i.customId !== doubleButtonId && i.customId !== splitButtonId) {
-            return false;
-        }
-        if (interaction.user.id !== i.user.id) {
+        if (user.id !== i.user.id) {
             await i.reply({content: 'You are not in this blackjack game.', ephemeral: true});
             return false;
         }
         return true;
     };
 
-    const buttonCollector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: BlackjackGame.idleTimeout, filter: buttonFilter });
+    const buttonCollector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: BlackjackGame.idleTimeout, filter: buttonFilter });
 
     buttonCollector.on('collect', async buttonInteraction => {
         buttonCollector.resetTimer();
-        const input = await blackjack.input(buttonInteraction.customId.split('-')[0] as PlayerOption);
-        if (buttonInteraction.customId.split('-')[0] === 'Split') {
-            void execute(interaction);
-        }
+        const input = await blackjack.input(buttonInteraction.customId as PlayerOption);
+        // if (buttonInteraction.customId.split('-')[0] === 'Split') {
+        //     void execute(interaction);
+        // }
         if (input.valid) {
             await buttonInteraction.update({embeds: [blackjack.createEmbed()], components: [buttonsRow]});
             if (blackjack.isEnded()) buttonCollector.stop();

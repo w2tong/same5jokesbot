@@ -2,9 +2,11 @@ import { bold } from 'discord.js';
 
 type Dice = {num: number, sides: number}
 
-type DiceRoll = '1d4'|'1d6'|'1d8'|'1d10'|'1d12'|'1d20'
+type DiceRoll = '1d2'|'1d3'|'1d4'|'1d6'|'1d8'|'1d10'|'1d12'|'1d20'
 const dice: {[key in DiceRoll]: Dice} = {
-    '1d4': {num: 1, sides: 6},
+    '1d2': {num: 1, sides: 2},
+    '1d3': {num: 1, sides: 3},
+    '1d4': {num: 1, sides: 4},
     '1d6': {num: 1, sides: 6},
     '1d8': {num: 1, sides: 8},
     '1d10': {num: 1, sides: 10},
@@ -28,7 +30,16 @@ enum HitType {
 }
 
 function generateCombatAttack(charName: string, tarName: string, attackDetails: string, hitType: HitType, sneak: boolean) {
-    return `${bold(charName)} 🗡️ ${bold(tarName)} (${attackDetails}). ${bold(hitType.toString())}${sneak ? ' (Sneak Attack)' : ''}.`;
+    return `${bold(charName)} ⚔️ ${bold(tarName)} (${attackDetails}). ${bold(hitType.toString())}${sneak ? ' (Sneak Attack)' : ''}.`;
 }
 
-export { Dice, dice, rollDice, HitType, generateCombatAttack };
+enum DamageType {
+    Physical = '🪨',
+    Magic = '✨'
+}
+
+function calcStatValue(stat:{base: number, perLvl: number}, level: number) {
+    return stat.base + Math.floor(stat.perLvl * (level - 1));
+}
+
+export { Dice, dice, rollDice, HitType, generateCombatAttack, DamageType, calcStatValue };

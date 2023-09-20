@@ -1,45 +1,40 @@
 import { bold, userMention } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { Dice, HitType, dice, generateCombatAttack, rollDice } from './util';
+import { DamageType, Dice, HitType, calcStatValue, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
+import { CharacterStatTemplate } from './statTemplates';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
-
-type CharacterStats = {
-    attackBonus: number;
-    damage: Dice;
-    damageBonus: number;
-    critRange: number;
-    critMult: number;
-    armorClass: number;
-    physResist: number;
-    magicResist: number;
-    maxHealth: number;
-    currHealth?: number;
-    maxMana: number;
-    currMana?: number;
-    manaPerAtk: number;
-    manaRegen: number;
-    initiativeBonus: number;
-}
+const dualWieldPenalty = -2;
+const offHandPenalty = -4;
+const offHandManaPenalty = 0.5;
 
 class Character {
     private userId?: string;
 
     protected _name: string;
+    protected className: string;
+
+    protected level: number;
 
     // Attack stats
     protected attackBonus: number;
-    protected damage: Dice;
-    protected damageBonus: number;
+    protected damage: {
+        mainHand: Dice,
+        offHand?: Dice
+    };
+    protected _damageBonus: number;
+    protected damageType: DamageType;
     protected critRange: number;
     protected critMult: number;
 
     // Defence stats
     protected _armorClass: number;
+    protected physDR: number;
+    protected magicDR: number;
     protected physResist: number;
     protected magicResist: number;
     
@@ -60,42 +55,57 @@ class Character {
 
     // Battle Info
     protected _target: Character|null = null;
-    protected _index;
-    protected side: Side;
-    protected _battle: Battle;
+    protected _battle : {ref: Battle, side: Side, index: number} | null = null;
 
-    constructor(stats: CharacterStats, name: string, index: number, side: Side, battle: Battle, userId?: string) {
-        if (userId) this.userId = userId;
+    constructor(level: number, stats: CharacterStatTemplate, name: string, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
+        if (options?.userId) this.userId = options.userId;
 
         this._name = name;
-        
-        this.attackBonus = stats.attackBonus;
-        this.damage = stats.damage;
-        this.damageBonus = stats.damageBonus;
+        this.className = stats.className;
+
+        this.level = level;
+
+        this.attackBonus = calcStatValue(stats.attackBonus, level);
+        this.damageType = stats.damageType;
+        this.damage = {
+            mainHand: stats.damage.mainHand,
+            offHand: stats.damage.offHand
+        };
+        this._damageBonus = calcStatValue(stats.damageBonus, level);
         this.critRange = stats.critRange;
         this.critMult = stats.critMult;
 
-        this._armorClass = stats.armorClass;
-        this.physResist = stats.physResist;
-        this.magicResist = stats.magicResist;
+        this._armorClass = calcStatValue(stats.armorClass, level);
+        this.physDR = calcStatValue(stats.physDR, level);
+        this.magicDR = calcStatValue(stats.magicDR, level);
+        this.physResist = calcStatValue(stats.physResist, level);
+        this.magicResist = calcStatValue(stats.magicResist, level);
         
-        this.maxHealth = stats.maxHealth;
-        this.currHealth = stats.currHealth ?? stats.maxHealth;
+        this.maxHealth = calcStatValue(stats.health, level);
+        this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
 
-        this.maxMana = stats.maxMana;
-        this.currMana = stats.currMana ?? 0;
-        this.manaPerAtk = stats.manaPerAtk;
-        this.manaRegen = stats.manaRegen;
+        this.maxMana = stats.mana;
+        this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
 
-        this._initiativeBonus = stats.initiativeBonus;
+        this.manaPerAtk = calcStatValue(stats.manaPerAtk, level);
+        this.manaRegen = calcStatValue(stats.manaRegen, level);
+        this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
+    }
 
-        this._index = index;
-        this.side = side;
-        this._battle = battle;
+    setBattle(ref: Battle, side: Side, index: number) {
+        this._battle = {
+            ref,
+            side,
+            index
+        };
     }
 
     get name() {
         return this._name;
+    }
+
+    get damageBonus() {
+        return this._damageBonus;
     }
 
     get armorClass() {
@@ -110,20 +120,16 @@ class Character {
         return this._target;
     }
 
-    get buffTracker() {
-        return this._buffTracker;
-    }
-
     set target(char: Character | null) {
         this._target = char;
     }
 
-    get index() {
-        return this._index;
-    }
-
     get battle() {
         return this._battle;
+    }
+
+    get buffTracker() {
+        return this._buffTracker;
     }
     
     getName(): string {
@@ -153,11 +159,15 @@ class Character {
     }
 
     getCharString(): string {
-        const lines = [];
-        // Name
-        lines.push(`${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`);
-        // HP
-        lines.push(`${this.getHealthBar()} ${this.getHealthString()}`);
+        const lines = [
+            // Name
+            `${bold(this.getName())}${this.isDead() ? ' 💀' : ''}`,
+            // Level and Class
+            `Lvl. ${this.level} ${this.className}`,
+            // HP
+            `${this.getHealthBar()} ${this.getHealthString()}`
+        ];
+
         // MP
         if (this.maxMana > 0) {
             lines.push(`${this.getManaBar()} ${this.getManaString()}`);
@@ -166,16 +176,16 @@ class Character {
         if (this.buffTracker.getBuffCount() > 0) {
             lines.push(`Buffs: ${this.buffTracker.getBuffString()}`);
         }
-        else {
-            lines.push('');
-        }
+        // else {
+        //     lines.push('');
+        // }
         // Debuffs
         if (this.buffTracker.getDebuffCount() > 0) {
             lines.push(`Debuffs: ${this.buffTracker.getDebuffString()}`);
         }
-        else {
-            lines.push('');
-        }
+        // else {
+        //     lines.push('');
+        // }
 
         return lines.join('\n');
     }
@@ -190,13 +200,14 @@ class Character {
     }
 
     setTarget(): void {
+        if (!this.battle) return;
         if (this.target?.isDead() || this.target?.isInvisible()) {
             this.target = null;
         }
         if (!this.target) {
             // TODO: add condition if this char can see invisible targets
             // Filter out invisble targets
-            const targets = this.battle.getTargets(this.side).filter(char => !char.isInvisible());
+            const targets = this.battle.ref.getTargets(this.battle.side).filter(char => !char.isInvisible());
             this.setRandomTarget(targets);
         }
     }
@@ -212,10 +223,10 @@ class Character {
         this.buffTracker.tick();
     }
 
-    attackRoll(): {hitType: HitType, details: string} {
+    attackRoll(offHandHit: boolean): {hitType: HitType, details: string} {
         if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
         const attackRoll = rollDice({num: 1, sides: 20});
-        const rollToHitTaget = this.target.armorClass - this.attackBonus;
+        const rollToHitTaget = this.target.armorClass - this.attackBonus - (this.damage.offHand ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
         const details = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
         if (attackRoll === 1) {
             return {hitType: HitType.CritMiss, details};
@@ -232,21 +243,39 @@ class Character {
     }
 
     attack(): void {
+        if (!this.battle) return;
         this.setTarget();
         if (this.target) { 
-            const attack = this.attackRoll();
-            
+            let attack = this.attackRoll(false);
+            // Main hand attack
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
-                const damageRoll = rollDice(this.damage);
+                const damageRoll = rollDice(this.damage.mainHand);
                 const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
                 let damage = damageRoll + this.damageBonus + sneakDamage;
                 if (attack.hitType === HitType.Crit) damage *= this.critMult;
-                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
-                this.target.takeDamage(this.name, damage);
+                this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
+                this.target.takeDamage(this.name, damage, this.damageType);
                 this.addMana(this.manaPerAtk);
             }
             else {
-                this.battle.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
+                this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
+            }
+
+            // Off hand attack
+            if (this.damage.offHand) {
+                attack = this.attackRoll(true);
+                if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
+                    const damageRoll = rollDice(this.damage.offHand);
+                    const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
+                    let damage = damageRoll + this.damageBonus + sneakDamage;
+                    if (attack.hitType === HitType.Crit) damage *= this.critMult;
+                    this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
+                    this.target.takeDamage(this.name, damage, this.damageType);
+                    this.addMana(Math.floor(this.manaPerAtk * offHandManaPenalty));
+                }
+                else {
+                    this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
+                }
             }
         }
     }
@@ -257,13 +286,21 @@ class Character {
         this.attack();        
     }
 
-    takeDamage(source: string, damage: number): void {
-        // TODO: calculate damage after physResist and magicResist
+    takeDamage(source: string, damage: number, type: DamageType): void {
+        if (!this.battle) return;
+        let damageResisted = 0;
+        if (type === DamageType.Physical) {
+            damageResisted = Math.round(damage * this.physResist/100);
+        }
+        else if (type === DamageType.Magic) {
+            damageResisted = Math.round(damage * this.magicResist/100);
+        }
+        damage -= damageResisted;
         this.currHealth -= damage;
-        this.battle.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} damage from ${bold(source)}.`);
+        this.battle.ref.combatLog.add(`${bold(this.name)} took ${bold(damage.toString())} ${type}${damageResisted > 0 ? ` (${damageResisted} resisted)` : ''} from ${bold(source)}.`);
         if (this.isDead()) {
-            this.battle.setCharDead(this.side, this.index);
-            this.battle.combatLog.add(`${bold(this.name)} died.`);
+            this.battle.ref.setCharDead(this.battle.side, this.battle.index);
+            this.battle.ref.combatLog.add(`${bold(this.name)} died.`);
         }
     }
 
@@ -281,4 +318,3 @@ class Character {
 }
 
 export default Character;
-export { CharacterStats };

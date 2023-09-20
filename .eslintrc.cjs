@@ -29,7 +29,7 @@ module.exports = {
             'error',
             'always'
         ],
-        '@typescript-eslint/restrict-template-expressions': 'off'
+        '@typescript-eslint/restrict-template-expressions': 'off',
     },
     ignorePatterns: ['.eslintrc.cjs']
 };

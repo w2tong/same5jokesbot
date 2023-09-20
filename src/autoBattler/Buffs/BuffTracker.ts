@@ -1,6 +1,7 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
 import { Buff, BuffId, Debuff, DebuffId } from './buffs';
+import { DamageType, dice, rollDice } from '../util';
 
 type BuffInfo = {
     duration: number;
@@ -46,38 +47,41 @@ class BuffTracker {
     }
 
     addBuff(id: BuffId, duration: number, source: Character) {
+        if (!this.char.battle) return;
         this.buffs[id] = {duration, source, new: true};
-        this.char.battle.combatLog.add(`${this.char.name} gained buff ${id}(${duration}).`);
+        this.char.battle.ref.combatLog.add(`${this.char.name} gained buff ${id}(${duration}).`);
     }
 
     addDebuff(id: DebuffId, duration: number, source: Character) {
+        if (!this.char.battle) return;
         this.debuffs[id] = {duration, source, new: true};
-        this.char.battle.combatLog.add(`${this.char.name} gained debuff ${bold(`${id}(${duration})`)}.`);
+        this.char.battle.ref.combatLog.add(`${this.char.name} gained debuff ${bold(`${id}(${duration})`)}.`);
     }
 
     tick() {
+        if (!this.char.battle) return;
         for (const [id, buff] of Object.entries(this.buffs)) {
             if (buff.new) buff.new = false;
             else buff.duration -= 1;
 
             if (buff.duration <= 0) {
                 delete this.buffs[id as BuffId];
-                this.char.battle.combatLog.add(`${this.char.name} lost buff ${id}.`);
+                this.char.battle.ref.combatLog.add(`${this.char.name} lost buff ${id}.`);
             }
         }
 
         // TODO: add tick for debuffs
         for (const [id, debuff] of Object.entries(this.debuffs)) {
-
-            if (id as DebuffId === DebuffId.Burn) {
-                this.char.takeDamage(Debuff.Burn.name, debuff.duration);
+            // TODO: separate debuffs such as burn by source to calculate damage for each source
+            if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
+                this.char.takeDamage(Debuff.Burn.name, rollDice(dice['1d3']) + this.debuffs.Burn.source.damageBonus, DamageType.Magic);
             }
 
             debuff.duration -= 1;
 
             if (debuff.duration <= 0) {
-                delete this.buffs[id as BuffId];
-                this.char.battle.combatLog.add(`${this.char.name} lost buff ${id}.`);
+                delete this.debuffs[id as DebuffId];
+                this.char.battle.ref.combatLog.add(`${this.char.name} lost debuff ${id}.`);
             }
         }
     }

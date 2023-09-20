@@ -32,12 +32,18 @@ class Battle {
         return this._combatLog;
     }
 
-    addChars(left: Character[], right: Character[]) {
+    constructor(left: Character[], right: Character[]) {
         this.left = left;
         this.leftAlive = new Set(Array(left.length).keys());
+        for (let i = 0; i < this.left.length; i++) {
+            this.left[i].setBattle(this, Side.Left, i);
+        }
 
         this.right = right;
         this.rightAlive = new Set(Array(right.length).keys());
+        for (let i = 0; i < this.right.length; i++) {
+            this.right[i].setBattle(this, Side.Right, i);
+        }
     }
 
     getTargets(side: Side) {

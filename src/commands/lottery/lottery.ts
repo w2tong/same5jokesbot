@@ -3,12 +3,14 @@ import auto from './subcommands/buy/auto';
 import pick from './subcommands/buy/pick';
 import check from './subcommands/check';
 import info from './subcommands/info';
+import toggleAutoBuy from './subcommands/toggle-auto-buy';
 
 const subcommands = {
     [auto.name]: auto.execute,
     [pick.name]: pick.execute,
     [check.name]: check.execute,
-    [info.name]: info.execute
+    [info.name]: info.execute,
+    [toggleAutoBuy.name]: toggleAutoBuy.execute
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -28,6 +30,7 @@ const commandBuilder = new SlashCommandBuilder()
         .addSubcommand(auto.subcommandBuilder)
     )
     .addSubcommand(check.subcommandBuilder)
-    .addSubcommand(info.subcommandBuilder);
+    .addSubcommand(info.subcommandBuilder)
+    .addSubcommand(toggleAutoBuy.subcommandBuilder);
 
 export default { execute, name, commandBuilder };
