@@ -1,8 +1,8 @@
 const levelExp: {[level: number]: number} = {
-    1: 1000,
-    2: 2000,
-    3: 4000,
-    4: 16000,
+    1: 500,
+    2: 1000,
+    3: 2000,
+    4: 4000,
 } as const;
 
 const encounterExp: {[level: number]: number} = {
