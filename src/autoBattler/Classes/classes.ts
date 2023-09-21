@@ -2,12 +2,16 @@ import Fighter from './Fighter';
 import Rogue from './Rogue';
 import Wizard from './Wizard';
 
-const Classes = {
-    Fighter: Fighter,
-    Rogue: Rogue,
-    Wizard: Wizard
-} as const;
+enum ClassName {
+    Fighter = 'Fighter',
+    Rogue = 'Rogue',
+    Wizard = 'Wizard'
+}
 
-type ClassName = keyof typeof Classes;
+const Classes = {
+    [ClassName.Fighter]: Fighter,
+    [ClassName.Rogue]: Rogue,
+    [ClassName.Wizard]: Wizard
+} as const;
 
 export { Classes, ClassName };
