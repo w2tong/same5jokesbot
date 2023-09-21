@@ -10,14 +10,14 @@ type Equipment = {
 
 const defaultEquipment: {[name in ClassName]: Equipment} = {
     [ClassName.Fighter]: {
-        mainHand: weapons.gs1
+        mainHand: weapons.gs0
     },
     [ClassName.Rogue]: {
-        mainHand: weapons.da1,
-        offHandWeapon: weapons.da1
+        mainHand: weapons.da0,
+        offHandWeapon: weapons.da0
     },
     [ClassName.Wizard]: {
-        mainHand: weapons.qs1
+        mainHand: weapons.qs0
     }
 };
 

@@ -27,14 +27,15 @@ type Weapon = {
     manaRegen?: number;
 }
 
-type WeaponId = 'ua1' | 
-'gs1' | 
-'ls1' |
-'da1' | 
-'qs1'
+type WeaponId = 
+'ua0' | 
+'ls0' | 'ls1' | 
+'gs0' | 'gs1' |
+'da0' | 'da1' | 
+'qs0' | 'qs1'
 const weapons: {[id in WeaponId]: Weapon} = {
     // Unarmed
-    ua1: {
+    ua0: {
         name: 'Unarmed',
         type: WeaponType.Unarmed,
         range: RangeType.Melee,
@@ -48,8 +49,21 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 1,
     },
     // Longswords
+    ls0: {
+        name: 'Longsword',
+        type: WeaponType.Longsword,
+        range: RangeType.Melee,
+        twoHanded: true,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 2,
+    },
     ls1: {
-        name: 'Rusty Longsword',
+        name: 'Longsword +1',
         type: WeaponType.Longsword,
         range: RangeType.Melee,
         twoHanded: true,
@@ -62,8 +76,21 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 2,
     },
     // Greatswords
+    gs0: {
+        name: 'Greatsword',
+        type: WeaponType.Greatsword,
+        range: RangeType.Melee,
+        twoHanded: true,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d8'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 2,
+    },
     gs1: {
-        name: 'Rusty Greatsword',
+        name: 'Greatsword +1',
         type: WeaponType.Greatsword,
         range: RangeType.Melee,
         twoHanded: true,
@@ -76,8 +103,21 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 2,
     },
     // Daggers
+    da0: {
+        name: 'Dagger',
+        type: WeaponType.Dagger,
+        range: RangeType.Melee,
+        twoHanded: false,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d4'],
+        damageBonus: 0,
+        critRange: 19,
+        critMult: 2,
+        manaPerAtk: 1,
+    },
     da1: {
-        name: 'Rusty Dagger',
+        name: 'Dagger +1',
         type: WeaponType.Dagger,
         range: RangeType.Melee,
         twoHanded: false,
@@ -90,8 +130,21 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 1,
     },
     // Staves
+    qs0: {
+        name: 'Quarterstaff',
+        type: WeaponType.Quarterstaff,
+        range: RangeType.Melee,
+        twoHanded: true,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 2,
+    },
     qs1: {
-        name: 'Rotten Quarterstaff',
+        name: 'Quarterstaff +1',
         type: WeaponType.Quarterstaff,
         range: RangeType.Melee,
         twoHanded: true,
