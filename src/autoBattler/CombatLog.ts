@@ -1,4 +1,4 @@
-import { fieldValueCharLimit } from '../util/discordUtil';
+import { FieldValueCharLimit } from '../util/discordUtil';
 
 class CombatLog {
     
@@ -11,7 +11,7 @@ class CombatLog {
     add(line: string) {
         this.log.push(line);
         this.logLength += line.length + 1;
-        while (this.logLength > fieldValueCharLimit) {
+        while (this.logLength > FieldValueCharLimit) {
             this.logLength -= this.log[this.logIndex++].length;
         }
     }
