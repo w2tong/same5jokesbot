@@ -12,7 +12,8 @@ const Buff = {
 
 enum DebuffId {
     Burn = 'Burn',
-    Frozen = 'Frozen'
+    Frozen = 'Frozen',
+    Poison = 'Poison'
 }
 const Debuff: {[id in DebuffId]: {name: string, symbol: string}} = {
     Burn: {
@@ -22,6 +23,10 @@ const Debuff: {[id in DebuffId]: {name: string, symbol: string}} = {
     Frozen: {
         name: 'Frozen',
         symbol: '🧊'
+    },
+    Poison: {
+        name: 'Poison',
+        symbol: '🤢'
     }
 } as const;
 

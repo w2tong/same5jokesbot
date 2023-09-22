@@ -3,6 +3,9 @@ import Character from '../Character';
 import { Buff, BuffId, Debuff, DebuffId } from './buffs';
 import { DamageType, dice, rollDice } from '../util';
 
+const BurnDamage = dice['1d3'];
+const PoisonDamage = 1;
+
 type BuffInfo = {
     duration: number;
     source: Character;
@@ -74,7 +77,10 @@ class BuffTracker {
         for (const [id, debuff] of Object.entries(this.debuffs)) {
             // TODO: separate debuffs such as burn by source to calculate damage for each source
             if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
-                this.char.takeDamage(Debuff.Burn.name, rollDice(dice['1d3']) + this.debuffs.Burn.source.mainHand.damageBonus, DamageType.Magic);
+                this.char.takeDamage(Debuff.Burn.name, rollDice(BurnDamage) + this.debuffs.Burn.source.mainHand.damageBonus, DamageType.Magic);
+            }
+            if (id as DebuffId === DebuffId.Poison && this.debuffs.Poison) {
+                this.char.takeDamage(Debuff.Poison.name, PoisonDamage, DamageType.Physical);
             }
 
             debuff.duration -= 1;
