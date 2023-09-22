@@ -81,7 +81,7 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             perLvl: 1
         },
         health: {
-            base: 25,
+            base: 20,
             perLvl: 8
         },
         mana: 10, 
@@ -129,7 +129,7 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             perLvl: 0.5
         },
         health: {
-            base: 22,
+            base: 20,
             perLvl: 6
         },
         mana: 10, 
