@@ -2,9 +2,10 @@ import { DamageType, Dice, dice } from '../util';
 
 enum WeaponType {
     Unarmed = 'Unarmed',
-    Sword = 'Sword',
+    Longsword = 'Longsword',
+    Greatsword = 'Greatsword',
     Dagger = 'Dagger',
-    Staff = 'Staff'
+    Quarterstaff = 'Quarterstaff'
 }
 enum RangeType {
     Melee = 'Melee',
@@ -12,6 +13,7 @@ enum RangeType {
     LongRange = 'LongRange'
 }
 type Weapon = {
+    name: string;
     type: WeaponType;
     range: RangeType;
     twoHanded: boolean;
@@ -25,13 +27,19 @@ type Weapon = {
     manaRegen?: number;
 }
 
-type WeaponId = 'una1' | 'swo1' | 'dag1' | 'sta1'
+type WeaponId = 
+'ua0' | 
+'ls0' | 'ls1' | 
+'gs0' | 'gs1' |
+'da0' | 'da1' | 
+'qs0' | 'qs1'
 const weapons: {[id in WeaponId]: Weapon} = {
     // Unarmed
-    una1: {
+    ua0: {
+        name: 'Unarmed',
         type: WeaponType.Unarmed,
         range: RangeType.Melee,
-        twoHanded: true,
+        twoHanded: false,
         attackBonus: 0,
         damageType: DamageType.Physical,
         damage: dice['1d4'],
@@ -40,9 +48,50 @@ const weapons: {[id in WeaponId]: Weapon} = {
         critMult: 2,
         manaPerAtk: 1,
     },
-    // Swords
-    swo1: {
-        type: WeaponType.Sword,
+    // Longswords
+    ls0: {
+        name: 'Longsword',
+        type: WeaponType.Longsword,
+        range: RangeType.Melee,
+        twoHanded: true,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 2,
+    },
+    ls1: {
+        name: 'Longsword +1',
+        type: WeaponType.Longsword,
+        range: RangeType.Melee,
+        twoHanded: true,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 2,
+    },
+    // Greatswords
+    gs0: {
+        name: 'Greatsword',
+        type: WeaponType.Greatsword,
+        range: RangeType.Melee,
+        twoHanded: true,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d8'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 2,
+    },
+    gs1: {
+        name: 'Greatsword +1',
+        type: WeaponType.Greatsword,
         range: RangeType.Melee,
         twoHanded: true,
         attackBonus: 0,
@@ -54,8 +103,22 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 2,
     },
     // Daggers
-    dag1: {
-        type: WeaponType.Sword,
+    da0: {
+        name: 'Dagger',
+        type: WeaponType.Dagger,
+        range: RangeType.Melee,
+        twoHanded: false,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d4'],
+        damageBonus: 0,
+        critRange: 19,
+        critMult: 2,
+        manaPerAtk: 1,
+    },
+    da1: {
+        name: 'Dagger +1',
+        type: WeaponType.Dagger,
         range: RangeType.Melee,
         twoHanded: false,
         attackBonus: 0,
@@ -67,10 +130,24 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 1,
     },
     // Staves
-    sta1: {
-        type: WeaponType.Sword,
+    qs0: {
+        name: 'Quarterstaff',
+        type: WeaponType.Quarterstaff,
         range: RangeType.Melee,
-        twoHanded: false,
+        twoHanded: true,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 2,
+    },
+    qs1: {
+        name: 'Quarterstaff +1',
+        type: WeaponType.Quarterstaff,
+        range: RangeType.Melee,
+        twoHanded: true,
         attackBonus: 0,
         damageType: DamageType.Physical,
         damage: dice['1d6'],

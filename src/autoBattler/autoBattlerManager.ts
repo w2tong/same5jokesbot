@@ -103,7 +103,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     const opponent = interaction.options.getUser('user');
     const wager = interaction.options.getInteger('wager') ?? 0;
     
-    if (!opponent || !wager || !interaction.channel) {
+    if (!opponent || !interaction.channel) {
         await interaction.editReply('There was an error creating the auto battle.');
         return;
     }

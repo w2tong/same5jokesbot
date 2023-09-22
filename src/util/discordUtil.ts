@@ -2,7 +2,8 @@ import { Client, MessageManager, User, userMention } from 'discord.js';
 
 const MessageEmbedLimit = 10;
 const UsersPerEmbed = 25;
-const fieldValueCharLimit = 1024;
+const FieldValueCharLimit = 1024;
+const SelectMenuOptionLimit = 25;
 const emptyEmbedField = {name: '\u200b', value: '\u200b'};
 const emptyEmbedFieldInline = {name: '\u200b', value: '\u200b', inline: true};
 const monthChoices = [
@@ -52,4 +53,4 @@ function getBalanceStrings(bal: number, profit: number): { balance: string, newB
     };
 }
 
-export {MessageEmbedLimit, UsersPerEmbed, fieldValueCharLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings};
+export {MessageEmbedLimit, UsersPerEmbed, FieldValueCharLimit, SelectMenuOptionLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings};
