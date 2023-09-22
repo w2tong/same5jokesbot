@@ -1,3 +1,5 @@
+import { DebuffId } from '../Buffs/buffs';
+import Character from '../Character';
 import { DamageType, Dice, dice } from '../util';
 
 enum WeaponType {
@@ -25,6 +27,7 @@ type Weapon = {
     damageBonus: number;
     manaPerAtk: number;
     manaRegen?: number;
+    onHit?: (self: Character, target: Character) => void;
 }
 
 type WeaponId = 
@@ -32,7 +35,8 @@ type WeaponId =
 'ls0' | 'ls1' | 
 'gs0' | 'gs1' |
 'da0' | 'da1' | 
-'qs0' | 'qs1'
+'qs0' | 'qs1' |
+'pb0'
 const weapons: {[id in WeaponId]: Weapon} = {
     // Unarmed
     ua0: {
@@ -155,6 +159,24 @@ const weapons: {[id in WeaponId]: Weapon} = {
         critRange: 20,
         critMult: 2,
         manaPerAtk: 2,
+    },
+    // NPC Weapons
+    // Poison Bite
+    pb0: {
+        name: 'Poison Bite',
+        type: WeaponType.Unarmed,
+        range: RangeType.Melee,
+        twoHanded: false,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d3'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 1,
+        onHit: (self: Character, target: Character) => {
+            target.buffTracker.addDebuff(DebuffId.Poison, 1, self);
+        }
     }
 } as const;
 

@@ -6,7 +6,8 @@ import CombatLog from './CombatLog';
 
 enum Side {
     Left = 'Left',
-    Right = 'Right'
+    Right = 'Right',
+    Tie = 'Tie'
 }
 
 type TurnRes = {
@@ -79,7 +80,13 @@ class Battle {
 
     nextTurn(): TurnRes {
         const res: TurnRes = {combatEnded: false};
-        if (this.leftAlive.size === 0) {
+        if (this.leftAlive.size === 0 && this.rightAlive.size === 0) {
+            this.winner = Side.Tie;
+            res.combatEnded = true;
+            res.winner = Side.Tie;
+            this.combatLog.add(bold('Tie!'));
+        }
+        else if (this.leftAlive.size === 0) {
             this.winner = Side.Right;
             res.combatEnded = true;
             res.winner = Side.Right;

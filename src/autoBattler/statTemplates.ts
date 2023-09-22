@@ -208,7 +208,7 @@ const RatStats: CharacterStatTemplate = {
         perLvl: 0.5
     },
     armorClass: {
-        base: 5,
+        base: 8,
         perLvl: 0.5
     },
     physDR: {
@@ -228,8 +228,8 @@ const RatStats: CharacterStatTemplate = {
         perLvl: 0.25
     },
     health: {
-        base: 6,
-        perLvl: 2
+        base: 3,
+        perLvl: 1
     },
     mana: 0, 
     manaPerAtk: {

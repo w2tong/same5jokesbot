@@ -49,43 +49,48 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
                     await interaction.editReply({embeds: [battle.generateEmbed()]});
                 }
                 else {
-                    const resultEmbed = new EmbedBuilder();
-                    let expChange = 0;
-                    if (res.winner === Side.Left) {
-                        expChange = encounterExp[userChar.CHAR_LEVEL];
-                        resultEmbed
-                            .setTitle('Victory');
-                    }
-                    else {    
-                        expChange = -levelExp[userChar.CHAR_LEVEL] * ExpLoss;
-                        resultEmbed
-                            .setTitle('Defeat');
-                        // TODO: set char curr health to 1
-                    }
-                    const newLevelAndExp = await updateABCharExp(user.id, userChar.CHAR_NAME, expChange);
-                    if (newLevelAndExp) {
-                        if (newLevelAndExp.level > userChar.CHAR_LEVEL) {
-                            resultEmbed.addFields(
-                                {name: 'Level', value: `${userChar.CHAR_LEVEL}`, inline: true},
-                                {name: 'New Level', value: `${newLevelAndExp.level}`, inline: true},
-                                emptyEmbedFieldInline
-                            );
+                    if (res.winner !== Side.Tie) {
+                        const resultEmbed = new EmbedBuilder();
+                        let expChange = 0;
+                        if (res.winner === Side.Left) {
+                            expChange = encounterExp[userChar.CHAR_LEVEL];
+                            resultEmbed
+                                .setTitle('Victory');
                         }
-                        resultEmbed.addFields(
-                            {name: 'Exp Gain', value: `${userChar.EXPERIENCE.toLocaleString()}(${expChange > 0 ? '+' : ''}${expChange.toLocaleString()})/${levelExp[userChar.CHAR_LEVEL].toLocaleString()}`, inline: true},
-                            
-                        );
-                        if (levelExp[newLevelAndExp.level]) {
-                            resultEmbed.addFields(
-                                {name: 'New Exp', value: `${newLevelAndExp.exp.toLocaleString()}/${levelExp[newLevelAndExp.level].toLocaleString()}`, inline: true},
-                                {name: 'Next Lvl', value: `${(levelExp[newLevelAndExp.level] - newLevelAndExp.exp).toLocaleString()}`, inline: true}
-                            );
+                        else {    
+                            expChange = -levelExp[userChar.CHAR_LEVEL] * ExpLoss;
+                            resultEmbed
+                                .setTitle('Defeat');
+                            // TODO: set char curr health to 1
                         }
+                        const newLevelAndExp = await updateABCharExp(user.id, userChar.CHAR_NAME, expChange);
+                        if (newLevelAndExp) {
+                            if (newLevelAndExp.level > userChar.CHAR_LEVEL) {
+                                resultEmbed.addFields(
+                                    {name: 'Level', value: `${userChar.CHAR_LEVEL}`, inline: true},
+                                    {name: 'New Level', value: `${newLevelAndExp.level}`, inline: true},
+                                    emptyEmbedFieldInline
+                                );
+                            }
+                            resultEmbed.addFields(
+                                {name: 'Exp Gain', value: `${userChar.EXPERIENCE.toLocaleString()}(${expChange > 0 ? '+' : ''}${expChange.toLocaleString()})/${levelExp[userChar.CHAR_LEVEL].toLocaleString()}`, inline: true},
+                                
+                            );
+                            if (levelExp[newLevelAndExp.level]) {
+                                resultEmbed.addFields(
+                                    {name: 'New Exp', value: `${newLevelAndExp.exp.toLocaleString()}/${levelExp[newLevelAndExp.level].toLocaleString()}`, inline: true},
+                                    {name: 'Next Lvl', value: `${(levelExp[newLevelAndExp.level] - newLevelAndExp.exp).toLocaleString()}`, inline: true}
+                                );
+                            }
+                        }
+                        else {
+                            resultEmbed.setDescription(`${userChar.CHAR_NAME} is at max level.`);
+                        }
+                        await interaction.editReply({embeds: [battle.generateEmbed(), resultEmbed]});
                     }
                     else {
-                        resultEmbed.setDescription(`${userChar.CHAR_NAME} is at max level.`);
-                    }
-                    await interaction.editReply({embeds: [battle.generateEmbed(), resultEmbed]});
+                        await interaction.editReply({embeds: [battle.generateEmbed()]});
+                    }               
                 }
             }
             else {
@@ -188,39 +193,46 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
                         usersInBattle.delete(user.id,);
                         usersInBattle.delete(opponent.id);
 
-                        let userBalanceStr;
-                        let opponentBalanceStr;
                         
-                        if (res.winner === Side.Left) {
-                            userBalanceStr = getBalanceStrings(userBalance, wager);
-                            opponentBalanceStr = getBalanceStrings(opponentBalance, -wager);
-                            await updateCringePoints([
-                                {userId: user.id, points: wager},
-                                {userId: opponent.id, points: -wager},
-                            ]);
-                            
+                        
+                        if (res.winner === Side.Tie) {
+                            await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
+                            return;
                         }
                         else {
-                            userBalanceStr = getBalanceStrings(userBalance, -wager);
-                            opponentBalanceStr = getBalanceStrings(opponentBalance, wager);
-                            await updateCringePoints([
-                                {userId: user.id, points: -wager},
-                                {userId: opponent.id, points: wager},
-                            ]);
-                        }
-                        
-                        const balanceEmbed = new EmbedBuilder()
-                            .setTitle('Auto Battle Balance')
-                            .addFields(
-                                {name: `${user.username} Balance`, value: userBalanceStr.balance, inline: true},
-                                emptyEmbedFieldInline,
-                                {name: `${opponent.username} Balance`, value: opponentBalanceStr.balance, inline: true},
+                            let userBalanceStr;
+                            let opponentBalanceStr;
+                            if (res.winner === Side.Left) {
+                                userBalanceStr = getBalanceStrings(userBalance, wager);
+                                opponentBalanceStr = getBalanceStrings(opponentBalance, -wager);
+                                await updateCringePoints([
+                                    {userId: user.id, points: wager},
+                                    {userId: opponent.id, points: -wager},
+                                ]);
+                            
+                            }
+                            else {
+                                userBalanceStr = getBalanceStrings(userBalance, -wager);
+                                opponentBalanceStr = getBalanceStrings(opponentBalance, wager);
+                                await updateCringePoints([
+                                    {userId: user.id, points: -wager},
+                                    {userId: opponent.id, points: wager},
+                                ]);
+                            }
 
-                                {name: `${user.username} New Balance`, value: userBalanceStr.newBalance, inline: true},
-                                emptyEmbedFieldInline,
-                                {name: `${opponent.username} New Balance`, value: opponentBalanceStr.newBalance, inline: true}
-                            );
-                        await buttonInteraction.editReply({embeds: [battle.generateEmbed(), balanceEmbed]});
+                            const balanceEmbed = new EmbedBuilder()
+                                .setTitle('Auto Battle Balance')
+                                .addFields(
+                                    {name: `${user.username} Balance`, value: userBalanceStr.balance, inline: true},
+                                    emptyEmbedFieldInline,
+                                    {name: `${opponent.username} Balance`, value: opponentBalanceStr.balance, inline: true},
+
+                                    {name: `${user.username} New Balance`, value: userBalanceStr.newBalance, inline: true},
+                                    emptyEmbedFieldInline,
+                                    {name: `${opponent.username} New Balance`, value: opponentBalanceStr.newBalance, inline: true}
+                                );
+                            await buttonInteraction.editReply({embeds: [battle.generateEmbed(), balanceEmbed]});
+                        }
                     }
                     else {
                         await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
