@@ -17,6 +17,7 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .addStringOption(option => option
         .setName('upgrade')
         .setDescription('Select an upgrade.')
+        .setRequired(true)
         .addChoices(...stealUpgradeIds.map(id=> {return {name: upgrades[id].name, value: id};}))
     );
 
