@@ -180,4 +180,4 @@ const weapons: {[id in WeaponId]: Weapon} = {
     }
 } as const;
 
-export { Weapon, weapons };
+export { Weapon, WeaponId, weapons };
