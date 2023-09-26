@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, userMention } from 'discord.js';
-import { getABPSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
+import { getABSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
 import { timeInMS } from '../util/util';
 import Battle, { Side } from './Battle';
 import { Classes } from './Classes/classes';
@@ -23,7 +23,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedChar(user.id);
+    const userChar = await getABSelectedChar(user.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');
@@ -122,8 +122,8 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedChar(user.id);
-    const opponentChar = await getABPSelectedChar(opponent.id);
+    const userChar = await getABSelectedChar(user.id);
+    const opponentChar = await getABSelectedChar(opponent.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');
