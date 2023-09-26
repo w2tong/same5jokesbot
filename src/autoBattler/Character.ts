@@ -27,7 +27,7 @@ class Character {
     protected offHandShield?: Shield;
 
     // Defence stats
-    protected _armorClass: number;
+    protected _armourClass: number;
     protected physDR: number;
     protected magicDR: number;
     protected physResist: number;
@@ -69,7 +69,7 @@ class Character {
         this._mainHand.damageBonus += lvlDamageBonus;
         this._mainHand.manaPerAtk += lvlManaPerAtk;
 
-        this._armorClass = calcStatValue(stats.armorClass, level);
+        this._armourClass = calcStatValue(stats.armourClass, level);
         this.physDR = calcStatValue(stats.physDR, level);
         this.magicDR = calcStatValue(stats.magicDR, level);
         this.physResist = calcStatValue(stats.physResist, level);
@@ -87,7 +87,7 @@ class Character {
         }
         else if (equipment.offHandShield) {
             const shield = equipment.offHandShield;
-            this._armorClass += shield.armorClass;
+            this._armourClass += shield.armourClass;
             this.physDR += shield.physDR ?? 0;
             this.magicDR += shield.magicDR ?? 0;
             this.physResist += shield.physResist ?? 0;
@@ -120,8 +120,8 @@ class Character {
         return this._mainHand;
     }
 
-    get armorClass() {
-        return this._armorClass;
+    get armourClass() {
+        return this._armourClass;
     }
 
     get initiativeBonus() {
@@ -238,7 +238,7 @@ class Character {
     attackRoll(weapon: Weapon, offHandHit: boolean): {hitType: HitType, details: string} {
         if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
         const attackRoll = rollDice({num: 1, sides: 20});
-        const rollToHitTaget = this.target.armorClass - weapon.attackBonus - (this.offHandWeapon ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
+        const rollToHitTaget = this.target.armourClass - weapon.attackBonus - (this.offHandWeapon ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
         const details = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
         if (attackRoll === 1) {
             return {hitType: HitType.CritMiss, details};
@@ -328,6 +328,25 @@ class Character {
 
     isInvisible(): boolean {
         return this.buffTracker.getBuff(BuffId.Invisible) > 0;
+    }
+
+    info() {
+        return {
+            name: this.name,
+            className: this.className,
+            level: this.level,
+            mainHand: this.mainHand,
+            offHandWeapon: this.offHandWeapon,
+            armourClass: this.armourClass,
+            physDR: this.physDR,
+            magicDR: this.magicDR,
+            physResist: this.physResist,
+            magicResist: this.magicResist,
+            health: this.maxHealth,
+            mana: this.maxMana,
+            manaRegen: this.manaRegen,
+            initiativeBonus: this.initiativeBonus
+        };
     }
 }
 

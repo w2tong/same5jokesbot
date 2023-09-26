@@ -9,7 +9,7 @@ enum ShieldType {
 interface Shield extends Item {
     itemType: ItemType.Shield;
     type: ShieldType;
-    armorClass: number;
+    armourClass: number;
     physDR?: number;
     magicDR?: number;
     physResist?: number;
