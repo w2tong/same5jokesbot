@@ -80,7 +80,7 @@ class Character {
             throw Error('cannot have both weapon and shield in offhand');
         }
         if (equipment.offHandWeapon) {
-            this.offHandWeapon = equipment.offHandWeapon;
+            this.offHandWeapon = Object.assign({}, equipment.offHandWeapon);
             this.offHandWeapon.attackBonus += lvlAttackBonus;
             this.offHandWeapon.damageBonus += lvlDamageBonus;
             this.offHandWeapon.manaPerAtk += lvlManaPerAtk;

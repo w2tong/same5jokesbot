@@ -1,6 +1,7 @@
 import { DebuffId } from '../Buffs/buffs';
 import Character from '../Character';
 import { DamageType, Dice, dice } from '../util';
+import { Item, ItemType } from './Item';
 
 enum WeaponType {
     Unarmed = 'Unarmed',
@@ -14,8 +15,8 @@ enum RangeType {
     ShortRange = 'ShortRange',
     LongRange = 'LongRange'
 }
-type Weapon = {
-    name: string;
+interface Weapon extends Item {
+    itemType: ItemType.Weapon
     type: WeaponType;
     range: RangeType;
     twoHanded: boolean;
@@ -40,6 +41,8 @@ type WeaponId =
 const weapons: {[id in WeaponId]: Weapon} = {
     // Unarmed
     ua0: {
+        id: 'ua0',
+        itemType: ItemType.Weapon,
         name: 'Unarmed',
         type: WeaponType.Unarmed,
         range: RangeType.Melee,
@@ -54,6 +57,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
     },
     // Longswords
     ls0: {
+        id: 'ls0',
+        itemType: ItemType.Weapon,
         name: 'Longsword',
         type: WeaponType.Longsword,
         range: RangeType.Melee,
@@ -67,6 +72,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 2,
     },
     ls1: {
+        id: 'ls1',
+        itemType: ItemType.Weapon,
         name: 'Longsword +1',
         type: WeaponType.Longsword,
         range: RangeType.Melee,
@@ -81,6 +88,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
     },
     // Greatswords
     gs0: {
+        id: 'gs0',
+        itemType: ItemType.Weapon,
         name: 'Greatsword',
         type: WeaponType.Greatsword,
         range: RangeType.Melee,
@@ -94,6 +103,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 2,
     },
     gs1: {
+        id: 'gs1',
+        itemType: ItemType.Weapon,
         name: 'Greatsword +1',
         type: WeaponType.Greatsword,
         range: RangeType.Melee,
@@ -108,6 +119,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
     },
     // Daggers
     da0: {
+        id: 'da0',
+        itemType: ItemType.Weapon,
         name: 'Dagger',
         type: WeaponType.Dagger,
         range: RangeType.Melee,
@@ -121,6 +134,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 1,
     },
     da1: {
+        id: 'da1',
+        itemType: ItemType.Weapon,
         name: 'Dagger +1',
         type: WeaponType.Dagger,
         range: RangeType.Melee,
@@ -135,6 +150,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
     },
     // Staves
     qs0: {
+        id: 'qs0',
+        itemType: ItemType.Weapon,
         name: 'Quarterstaff',
         type: WeaponType.Quarterstaff,
         range: RangeType.Melee,
@@ -148,6 +165,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
         manaPerAtk: 2,
     },
     qs1: {
+        id: 'qs1',
+        itemType: ItemType.Weapon,
         name: 'Quarterstaff +1',
         type: WeaponType.Quarterstaff,
         range: RangeType.Melee,
@@ -163,6 +182,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
     // NPC Weapons
     // Poison Bite
     pb0: {
+        id: 'pb0',
+        itemType: ItemType.Weapon,
         name: 'Poison Bite',
         type: WeaponType.Unarmed,
         range: RangeType.Melee,

@@ -1,10 +1,13 @@
+import { Item, ItemType } from './Item';
+
 enum ShieldType {
     Light = 'Light',
     Medium = 'Medium',
     Heavy = 'Heavy'
 }
 
-type Shield = {
+interface Shield extends Item {
+    itemType: ItemType.Shield;
     type: ShieldType;
     armorClass: number;
     physDR?: number;
