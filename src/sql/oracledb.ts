@@ -20,13 +20,13 @@ import { createTableUpgrades, updateTableUpgrades } from './tables/upgrades';
 import { createTableDailyCoins } from './tables/daily_coins';
 import { createTableABCharacters, updateTableABCharacters } from './tables/ab_characters';
 import { createTableABEquipment } from './tables/ab_equipment';
-import { createTableABInventory, updateTableABInventory } from './tables/ab_inventory';
+import { createTableABInventory } from './tables/ab_inventory';
 
 import { logError } from '../logger';
 
 const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableLotteryAutoBuy, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins, createTableABCharacters, createTableABEquipment, createTableABInventory];
 
-const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters, ...updateTableABInventory];
+const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters];
 
 oracledb.autoCommit = true;
 if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = parseInt(process.env.ORACLEDB_POOL_MIN);

@@ -1,33 +1,21 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from '../query-options';
-import { ItemType } from '../../autoBattler/Equipment/Item';
 
 const createTableABInventory = {
     name: 'AB_INVENTORY',
     query: `
-        CREATE TABLE ab_inventory (
-            id NUMBER GENERATED ALWAYS AS IDENTITY,
+        CREATE TABLE ab_inventory ( 
             user_id VARCHAR2(64) NOT NULL,
+            id NUMBER GENERATED ALWAYS AS IDENTITY,
             item_id VARCHAR2(16) NOT NULL,
-            item_type VARCHAR(16) NOT NULL,
-            CONSTRAINT chk_item_type CHECK (item_type IN (${Object.values(ItemType).map(type => `'${type}'`).join(',')}))
+            PRIMARY KEY (user_id, id)
         )
     `
 };
 
-const updateTableABInventory = [`
-ALTER TABLE ab_inventory
-DROP CONSTRAINT chk_item_type
-`,
-`
-ALTER TABLE ab_inventory
-ADD CONSTRAINT chk_item_type CHECK (item_type IN (${Object.values(ItemType).map(type => `'${type}'`).join(',')}))
-`
-];
-
 const insertQuery = `
-INSERT INTO ab_inventory (user_id, item_id, item_type)
-VALUES (:userId, :itemId, :itemType)
+INSERT INTO ab_inventory (user_id, item_id)
+VALUES (:userId, :itemId)
 `;
 
 async function insertABInventoryItem(userId: string, itemId: string): Promise<boolean> {
@@ -69,7 +57,6 @@ type InventoryItem = {
     ID: number;
     USER_ID: string;
     ITEM_ID: string;
-    ITEM_TYPE: ItemType;
 }
 async function getABInventory(userId: string): Promise<InventoryItem[]> {
     try {
@@ -86,4 +73,4 @@ async function getABInventory(userId: string): Promise<InventoryItem[]> {
     }
 }
 
-export { createTableABInventory, updateTableABInventory, insertABInventoryItem, deleteABInventoryItem, getABInventory };
+export { createTableABInventory, insertABInventoryItem, deleteABInventoryItem, getABInventory };
