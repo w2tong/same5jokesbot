@@ -267,7 +267,7 @@ class Character {
                 if (attack.hitType === HitType.Crit) damage *= this.mainHand.critMult;
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                 this.target.takeDamage(this.name, damage, this.mainHand.damageType);
-                if (this.mainHand.onHit) this.mainHand.onHit(this, this.target);
+                if (this.mainHand.onHit) this.mainHand.onHit.func(this, this.target);
                 this.addMana(this.mainHand.manaPerAtk);
             }
             else {
@@ -284,7 +284,7 @@ class Character {
                     if (attack.hitType === HitType.Crit) damage *= this.offHandWeapon.critMult;
                     this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                     this.target.takeDamage(this.name, damage, this.offHandWeapon.damageType);
-                    if (this.offHandWeapon.onHit) this.offHandWeapon.onHit(this, this.target);
+                    if (this.offHandWeapon.onHit) this.offHandWeapon.onHit.func(this, this.target);
                     this.addMana(this.offHandWeapon.manaPerAtk);
                 }
                 else {

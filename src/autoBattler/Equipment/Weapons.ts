@@ -1,3 +1,4 @@
+import { bold } from 'discord.js';
 import { DebuffId } from '../Buffs/buffs';
 import Character from '../Character';
 import { DamageType, Dice, dice } from '../util';
@@ -28,7 +29,24 @@ interface Weapon extends Item {
     damageBonus: number;
     manaPerAtk: number;
     manaRegen?: number;
-    onHit?: (self: Character, target: Character) => void;
+    onHit?: {
+        func: (self: Character, target: Character) => void;
+        description: string;
+    }
+}
+
+function getWeaponTooltip(weapon: Weapon) {
+    return {
+        name: weapon.name,
+        tooltip: `
+        ${weapon.type}, ${weapon.range}
+        ${bold('Attack Bonus')}: ${weapon.attackBonus}
+        ${bold('Damage')}: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus} ${weapon.damageType}
+        ${bold('Crit')}: ${weapon.critRange} (x${weapon.critMult})
+        ${bold('Mana/Atk')}: ${weapon.manaPerAtk}
+        ${weapon.onHit?.description ?? ''}
+        `
+    };
 }
 
 type WeaponId = 
@@ -195,10 +213,13 @@ const weapons: {[id in WeaponId]: Weapon} = {
         critRange: 20,
         critMult: 2,
         manaPerAtk: 1,
-        onHit: (self: Character, target: Character) => {
-            target.buffTracker.addDebuff(DebuffId.Poison, 1, self);
+        onHit: {
+            func: (self: Character, target: Character) => {
+                target.buffTracker.addDebuff(DebuffId.Poison, 1, self);
+            },
+            description: 'Inflict 1 Poison on hit.'
         }
     }
 } as const;
 
-export { Weapon, WeaponId, weapons };
+export { Weapon, getWeaponTooltip, WeaponId, weapons };
