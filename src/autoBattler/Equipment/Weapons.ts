@@ -42,7 +42,7 @@ function getWeaponTooltip(weapon: Weapon) {
         ${weapon.type}, ${weapon.range}
         ${bold('Attack Bonus')}: ${weapon.attackBonus}
         ${bold('Damage')}: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus} ${weapon.damageType}
-        ${bold('Crit')}: ${weapon.critRange} (x${weapon.critMult})
+        ${bold('Crit')}: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})
         ${bold('Mana/Atk')}: ${weapon.manaPerAtk}
         ${weapon.onHit?.description ?? ''}
         `
