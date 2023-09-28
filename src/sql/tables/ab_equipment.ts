@@ -1,6 +1,5 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from '../query-options';
-import { logError } from '../../logger';
 import { WeaponId } from '../../autoBattler/Equipment/Weapons';
 
 const createTableABEquipment = {
@@ -31,16 +30,14 @@ INSERT INTO ab_equipment (user_id, char_name)
 VALUES (:userId, :name)
 `;
 
-async function insertABEquipment(userId: string, name: string): Promise<boolean> {
+async function insertABEquipment(userId: string, name: string): Promise<void> {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(insertQuery, {userId, name});
         await connection.close();
-        return true;
     }
     catch (err) {
-        logError(err);
-        return false;
+        throw new Error(`insertABEquipment: ${err}`);
     }
 }
 
@@ -115,23 +112,23 @@ async function updateABEquipment(userId: string, name: string, equipSlot: EquipS
 
 const getEquipmentQuery = `
 SELECT *
-FROM ab_characters
+FROM ab_equipment
 WHERE user_id = :userId
 AND char_name = :name
 `;
 type CharEquipment = {
     USER_ID: string
     CHAR_NAME: string
-    MAIN_HAND: WeaponId
-    OFF_HAND: string
-    HEAD: string
-    AMULET: string
-    ARMOUR: string
-    HANDS: string
-    BELT: string
-    RING1: string
-    RING2: string
-    POTION: string
+    MAIN_HAND: WeaponId | null
+    OFF_HAND: string | null
+    HEAD: string | null
+    AMULET: string | null
+    ARMOUR: string | null
+    HANDS: string | null
+    BELT: string | null
+    RING1: string | null
+    RING2: string | null
+    POTION: string | null
 }
 async function getABEquipment(userId: string, name: string): Promise<CharEquipment|null> {
     try {
