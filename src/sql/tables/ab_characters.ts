@@ -98,6 +98,7 @@ type ABCharacter = {
     CLASS_NAME: ClassName;
     CHAR_LEVEL: number;
     EXPERIENCE: number;
+    SELECTED: number;
 }
 async function getABPlayerChars(userId: string): Promise<ABCharacter[]> {
     try {

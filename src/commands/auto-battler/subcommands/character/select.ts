@@ -3,7 +3,7 @@ import { selectABChar, getABPlayerChars } from '../../../../sql/tables/ab_charac
 import { timeInMS } from '../../../../util/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    const reply = await interaction.deferReply({ephemeral: true});
 
     const user = interaction.user;
 
@@ -16,14 +16,19 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const selectMenu = new StringSelectMenuBuilder()
         .setCustomId('select')
         .setPlaceholder('Select a character for combat.')
-        .addOptions(...chars.map(char => new StringSelectMenuOptionBuilder()
-            .setLabel(char.CHAR_NAME)
-            .setDescription(`Lvl. ${char.CHAR_LEVEL} ${char.CLASS_NAME}`)
-            .setValue(char.CHAR_NAME)
-        ));
+        .addOptions(...chars.map(char => {
+            const option = new StringSelectMenuOptionBuilder()
+                .setLabel(char.CHAR_NAME)
+                .setDescription(`Lvl. ${char.CHAR_LEVEL} ${char.CLASS_NAME}`)
+                .setValue(char.CHAR_NAME);
+            if (char.SELECTED) {
+                option.setDefault(true);
+            }
+            return option;
+        }));
 
     const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
-    const reply = await interaction.editReply({components: [row]});
+    await interaction.editReply({components: [row]});
 
     const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
     const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
@@ -32,12 +37,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const name = i.values[0];
         await Promise.all([
             selectABChar(i.user.id, name),
-            i.reply(`${i.user} selected character ${bold(name)}.`),
+            i.reply({content: `You selected character ${bold(name)}.`, ephemeral: true}),
         ]);
     });
 
     collector.on('end', async () => {
-        await reply.delete();
+        await reply.edit({content: 'Character selection expired.', components: []});
     });
 }
 
