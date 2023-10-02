@@ -45,7 +45,7 @@ function wizardEncounter({level, count}: EncounterParams) {
 }
 function ratEncounter({level, count}: EncounterParams) {
     return createCharsFunc([
-        {class: Character, stats: RatStats, equipment: {mainHand: weapons.pb0}, name: 'Rat'}
+        {class: Character, stats: RatStats, equipment: {mainHand: weapons.poisonbite0}, name: 'Rat'}
     ], level, count);
 }
 
