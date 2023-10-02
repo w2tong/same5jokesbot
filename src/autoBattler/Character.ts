@@ -239,7 +239,7 @@ class Character {
         if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
         const attackRoll = rollDice({num: 1, sides: 20});
         const rollToHitTaget = this.target.armourClass - weapon.attackBonus - (this.offHandWeapon ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
-        const details = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
+        const details = `${attackRoll} vs. ${rollToHitTaget <= 2 ? 2 : rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
         if (attackRoll === 1) {
             return {hitType: HitType.CritMiss, details};
         }
