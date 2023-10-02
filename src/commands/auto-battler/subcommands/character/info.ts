@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilde
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 // import { getABEquipment } from '../../../../sql/tables/ab_equipment';
 import { Classes } from '../../../../autoBattler/Classes/classes';
-import { fetchEquipment } from '../../../../autoBattler/Equipment/Equipment';
+import { defaultEquipment, fetchEquipment } from '../../../../autoBattler/Equipment/Equipment';
 import { ClassStats } from '../../../../autoBattler/statTemplates';
 import { getWeaponTooltip } from '../../../../autoBattler/Equipment/Weapons';
 
@@ -18,6 +18,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
     
     const equipment = await fetchEquipment(user.id, char.CHAR_NAME);
+    // Set main hand to class default if missing
+    if (!equipment.mainHand) equipment.mainHand = defaultEquipment[char.CLASS_NAME].mainHand;
     const charInfo = new Classes[char.CLASS_NAME](char.CHAR_LEVEL, ClassStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId: user.id}).info();
 
     const embed = new EmbedBuilder()

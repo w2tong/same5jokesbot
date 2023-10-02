@@ -113,10 +113,12 @@ class Character {
             const userId = options.userId;
             this.userId = userId;
             // Add user upgrades
-            this.mainHand.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
-            if (this.offHandWeapon) this.offHandWeapon.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
-            this._armourClass += upgrades.armourClass.levels[userUpgrades[userId].armourClass];
-            this.maxHealth += upgrades.health.levels[userUpgrades[userId].health];
+            if (userUpgrades[userId]) {
+                this.mainHand.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
+                if (this.offHandWeapon) this.offHandWeapon.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
+                this._armourClass += upgrades.armourClass.levels[userUpgrades[userId].armourClass];
+                this.maxHealth += upgrades.health.levels[userUpgrades[userId].health];
+            }
         }
         this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
     }
