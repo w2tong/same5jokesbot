@@ -152,7 +152,6 @@ async function getABSelectedChar(userId: string): Promise<ABCharacter|null> {
     }
 }
 
-// TODO: level up character if they are past exp threshold
 const updateExpQuery = `
 UPDATE ab_characters
 SET char_level = :charLevel, experience = :experience

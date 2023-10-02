@@ -17,7 +17,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    // TODO: repalce with actual equipment from DB
+    // TODO: replace with actual equipment from DB
     // const equipment = await getABEquipment(user.id, char.CHAR_NAME);
     const charInfo = new Classes[char.CLASS_NAME](char.CHAR_LEVEL, ClassStats[char.CLASS_NAME], defaultEquipment[char.CLASS_NAME], char.CHAR_NAME).info();
 
