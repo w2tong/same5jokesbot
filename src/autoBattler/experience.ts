@@ -1,15 +1,15 @@
 const levelExp: {[level: number]: number} = {
-    1: 500,
-    2: 1000,
-    3: 2000,
-    4: 4000,
+    1: 100,
+    2: 250,
+    3: 500,
+    4: 1000,
 } as const;
 
 const encounterExp: {[level: number]: number} = {
-    1: 25,
-    2: 50,
-    3: 75,
-    4: 100,
+    1: 10,
+    2: 20,
+    3: 30,
+    4: 40,
 } as const;
 
 export {levelExp, encounterExp};
