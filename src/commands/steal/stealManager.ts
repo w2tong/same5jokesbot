@@ -158,7 +158,6 @@ async function newSteal(stealer: User, victimId: string, victimUsername: string,
     const stolenGoodModifier = (stolenGoods.get(stealer.id)?.size ?? 0) * (stolenGoodChance - upgrades.stolenGoodChanceReduction.levels[(userUpgrades[stealer.id] ?? emptyUserUpgrades).stolenGoodChanceReduction]);
     const victimDefenceModifier = upgrades.stealDefence.levels[(userUpgrades[victimId] ?? emptyUserUpgrades).stealDefence];
     const stealChance = baseStealChance + stealChanceModifier - stolenGoodModifier - victimDefenceModifier;
-    console.log(stealChance, stolenGoodModifier);
 
     const time = Date.now() + stolenTime;
     const stolenGoodId = nanoid();

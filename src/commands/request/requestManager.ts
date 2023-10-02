@@ -10,7 +10,6 @@ async function fetchAudioRequestPrice(): Promise<number> {
     const avg = avgCount?.POINTS ?? 0;
     const count = avgCount?.COUNT ?? 1;
     const price = avg * count / 4;
-    console.log(price);
     return Math.max(audio.min, price);
 }
 
