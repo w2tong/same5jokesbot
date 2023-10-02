@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, userMention } from 'discord.js';
-import { getABPSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
+import { getABSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
 import { timeInMS } from '../util/util';
 import Battle, { Side } from './Battle';
 import { Classes } from './Classes/classes';
@@ -23,7 +23,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedChar(user.id);
+    const userChar = await getABSelectedChar(user.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');
@@ -33,7 +33,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     usersInBattle.add(user.id);
     
     const battle = new Battle(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME)],
+        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME, {userId: user.id})],
         getRandomEncounter(userChar.CHAR_LEVEL)
     );
     
@@ -44,6 +44,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
         void (async () => {
             const res = battle.nextTurn();
             if (res.combatEnded) {
+                usersInBattle.delete(user.id);
                 clearInterval(interval);
                 if (!encounterExp[userChar.CHAR_LEVEL]) {
                     await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -98,8 +99,6 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
             }
         })();
     }, 1 * timeInMS.second);
-
-    usersInBattle.delete(user.id);
 }
 
 async function newPvPBattle(interaction: ChatInputCommandInteraction) {
@@ -122,8 +121,8 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const userChar = await getABPSelectedChar(user.id);
-    const opponentChar = await getABPSelectedChar(opponent.id);
+    const userChar = await getABSelectedChar(user.id);
+    const opponentChar = await getABSelectedChar(opponent.id);
 
     if (!userChar) {
         await interaction.editReply('You do not have a selected character.');
@@ -192,8 +191,6 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
                         clearInterval(interval);
                         usersInBattle.delete(user.id,);
                         usersInBattle.delete(opponent.id);
-
-                        
                         
                         if (res.winner === Side.Tie) {
                             await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});

@@ -8,15 +8,37 @@ type Upgrade = {
     percentage: boolean;
 }
 
+const autoBattlerUpgradeIds = ['attackBonus', 'armourClass', 'health'] as const;
+type AutoBattlerId = typeof autoBattlerUpgradeIds[number]
 const dailyUpgradeIds = ['rewardIncrease'] as const;
 type DailyUpgradeId = typeof dailyUpgradeIds[number]
 const stealUpgradeIds = ['stealChance', 'stolenGoodChanceReduction', 'stealDefence', 'paybackReduction'] as const;
 type StealUpgradeId = typeof stealUpgradeIds[number]
 
-type UpgradeId = DailyUpgradeId | StealUpgradeId
-const upgradeIds = [...dailyUpgradeIds, ...stealUpgradeIds];
+type UpgradeId = AutoBattlerId | DailyUpgradeId | StealUpgradeId
+const upgradeIds = [...autoBattlerUpgradeIds, ...dailyUpgradeIds, ...stealUpgradeIds];
 
 const upgrades: {[key in UpgradeId]: Upgrade} = {
+    // Auto Battler
+    attackBonus: {
+        name: 'Auto Battler - Attack Bonus',
+        description: 'Increase the Attack Bonus of all your Auto Battler characters.',
+        levels: [0, 1, 2, 3],
+        percentage: false
+    },
+    armourClass: {
+        name: 'Auto Battler - Armour Class',
+        description: 'Increase the Armour Class of all your Auto Battler characters.',
+        levels: [0, 1, 2, 3],
+        percentage: false
+    },
+    health: {
+        name: 'Auto Battler - Health',
+        description: 'Increase the Health of all your Auto Battler characters.',
+        levels: [0, 2, 4, 6, 8, 10],
+        percentage: false
+    },
+
     // Daily
     rewardIncrease: {
         name: 'Reward Increase',
@@ -61,6 +83,8 @@ function upgradeLevelsToString(upgrade: Upgrade, currLvl?: number) {
 }
 
 export {
+    // Auto Battler
+    autoBattlerUpgradeIds, AutoBattlerId,
     // Daily
     dailyUpgradeIds, DailyUpgradeId,
     // Steal

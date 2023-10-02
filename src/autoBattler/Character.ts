@@ -8,6 +8,8 @@ import { CharacterStatTemplate } from './statTemplates';
 import { Weapon } from './Equipment/Weapons';
 import { Shield } from './Equipment/Shield';
 import { Equipment } from './Equipment/Equipment';
+import { userUpgrades } from '../upgrades/upgradeManager';
+import { upgrades } from '../upgrades/upgrades';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
@@ -27,7 +29,7 @@ class Character {
     protected offHandShield?: Shield;
 
     // Defence stats
-    protected _armorClass: number;
+    protected _armourClass: number;
     protected physDR: number;
     protected magicDR: number;
     protected physResist: number;
@@ -52,8 +54,6 @@ class Character {
     protected _battle : {ref: Battle, side: Side, index: number} | null = null;
 
     constructor(level: number, stats: CharacterStatTemplate, equipment: Equipment, name: string, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
-        if (options?.userId) this.userId = options.userId;
-
         this._name = name;
         this.className = stats.className;
 
@@ -69,7 +69,7 @@ class Character {
         this._mainHand.damageBonus += lvlDamageBonus;
         this._mainHand.manaPerAtk += lvlManaPerAtk;
 
-        this._armorClass = calcStatValue(stats.armorClass, level);
+        this._armourClass = calcStatValue(stats.armourClass, level);
         this.physDR = calcStatValue(stats.physDR, level);
         this.magicDR = calcStatValue(stats.magicDR, level);
         this.physResist = calcStatValue(stats.physResist, level);
@@ -80,14 +80,14 @@ class Character {
             throw Error('cannot have both weapon and shield in offhand');
         }
         if (equipment.offHandWeapon) {
-            this.offHandWeapon = equipment.offHandWeapon;
+            this.offHandWeapon = Object.assign({}, equipment.offHandWeapon);
             this.offHandWeapon.attackBonus += lvlAttackBonus;
             this.offHandWeapon.damageBonus += lvlDamageBonus;
             this.offHandWeapon.manaPerAtk += lvlManaPerAtk;
         }
         else if (equipment.offHandShield) {
             const shield = equipment.offHandShield;
-            this._armorClass += shield.armorClass;
+            this._armourClass += shield.armourClass;
             this.physDR += shield.physDR ?? 0;
             this.magicDR += shield.magicDR ?? 0;
             this.physResist += shield.physResist ?? 0;
@@ -95,13 +95,23 @@ class Character {
         }
         
         this.maxHealth = calcStatValue(stats.health, level);
-        this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
 
         this.maxMana = stats.mana;
         this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
 
         this.manaRegen = calcStatValue(stats.manaRegen, level);
         this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
+
+        if (options?.userId) {
+            const userId = options.userId;
+            this.userId = userId;
+            // Add user upgrades
+            this.mainHand.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
+            if (this.offHandWeapon) this.offHandWeapon.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
+            this._armourClass += upgrades.armourClass.levels[userUpgrades[userId].armourClass];
+            this.maxHealth += upgrades.health.levels[userUpgrades[userId].health];
+        }
+        this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
     }
 
     setBattle(ref: Battle, side: Side, index: number) {
@@ -120,8 +130,8 @@ class Character {
         return this._mainHand;
     }
 
-    get armorClass() {
-        return this._armorClass;
+    get armourClass() {
+        return this._armourClass;
     }
 
     get initiativeBonus() {
@@ -238,8 +248,8 @@ class Character {
     attackRoll(weapon: Weapon, offHandHit: boolean): {hitType: HitType, details: string} {
         if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
         const attackRoll = rollDice({num: 1, sides: 20});
-        const rollToHitTaget = this.target.armorClass - weapon.attackBonus - (this.offHandWeapon ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
-        const details = `${attackRoll} vs. ${rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
+        const rollToHitTaget = this.target.armourClass - weapon.attackBonus - (this.offHandWeapon ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
+        const details = `${attackRoll} vs. ${rollToHitTaget <= 2 ? 2 : rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
         if (attackRoll === 1) {
             return {hitType: HitType.CritMiss, details};
         }
@@ -267,7 +277,7 @@ class Character {
                 if (attack.hitType === HitType.Crit) damage *= this.mainHand.critMult;
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                 this.target.takeDamage(this.name, damage, this.mainHand.damageType);
-                if (this.mainHand.onHit) this.mainHand.onHit(this, this.target);
+                if (this.mainHand.onHit) this.mainHand.onHit.func(this, this.target);
                 this.addMana(this.mainHand.manaPerAtk);
             }
             else {
@@ -284,7 +294,7 @@ class Character {
                     if (attack.hitType === HitType.Crit) damage *= this.offHandWeapon.critMult;
                     this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                     this.target.takeDamage(this.name, damage, this.offHandWeapon.damageType);
-                    if (this.offHandWeapon.onHit) this.offHandWeapon.onHit(this, this.target);
+                    if (this.offHandWeapon.onHit) this.offHandWeapon.onHit.func(this, this.target);
                     this.addMana(this.offHandWeapon.manaPerAtk);
                 }
                 else {
@@ -328,6 +338,25 @@ class Character {
 
     isInvisible(): boolean {
         return this.buffTracker.getBuff(BuffId.Invisible) > 0;
+    }
+
+    info() {
+        return {
+            name: this.name,
+            className: this.className,
+            level: this.level,
+            mainHand: this.mainHand,
+            offHandWeapon: this.offHandWeapon,
+            armourClass: this.armourClass,
+            physDR: this.physDR,
+            magicDR: this.magicDR,
+            physResist: this.physResist,
+            magicResist: this.magicResist,
+            health: this.maxHealth,
+            mana: this.maxMana,
+            manaRegen: this.manaRegen,
+            initiativeBonus: this.initiativeBonus
+        };
     }
 }
 

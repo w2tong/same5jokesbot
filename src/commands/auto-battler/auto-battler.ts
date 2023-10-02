@@ -4,6 +4,7 @@ import pvp from './subcommands/pvp';
 import createCharacter from './subcommands/character/create';
 import deleteCharacter from './subcommands/character/delete';
 import selectCharacter from './subcommands/character/select';
+import characterInfo from './subcommands/character/info';
 
 const subcommands = {
     [pve.name]: pve.execute,
@@ -11,6 +12,7 @@ const subcommands = {
     [createCharacter.name]: createCharacter.execute,
     [deleteCharacter.name]: deleteCharacter.execute,
     [selectCharacter.name]: selectCharacter.execute,
+    [characterInfo.name]: characterInfo.execute,
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -31,6 +33,7 @@ const commandBuilder = new SlashCommandBuilder()
         .addSubcommand(createCharacter.subcommandBuilder)
         .addSubcommand(deleteCharacter.subcommandBuilder)
         .addSubcommand(selectCharacter.subcommandBuilder)
+        .addSubcommand(characterInfo.subcommandBuilder)
     );
 
 export default { execute, name, commandBuilder };

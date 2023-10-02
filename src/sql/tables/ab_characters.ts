@@ -98,6 +98,7 @@ type ABCharacter = {
     CLASS_NAME: ClassName;
     CHAR_LEVEL: number;
     EXPERIENCE: number;
+    SELECTED: number;
 }
 async function getABPlayerChars(userId: string): Promise<ABCharacter[]> {
     try {
@@ -136,7 +137,7 @@ FROM ab_characters
 WHERE user_id = :userId
 AND selected = 1
 `;
-async function getABPSelectedChar(userId: string): Promise<ABCharacter|null> {
+async function getABSelectedChar(userId: string): Promise<ABCharacter|null> {
     try {
         const connection = await oracledb.getConnection();
         const result: oracledb.Result<ABCharacter> = await connection.execute(getSelectedCharQuery, {userId}, selectExecuteOptions);
@@ -147,11 +148,10 @@ async function getABPSelectedChar(userId: string): Promise<ABCharacter|null> {
         return null;
     }
     catch (err) {
-        throw new Error(`getABPSelectedChar: ${err}`);
+        throw new Error(`getABSelectedChar: ${err}`);
     }
 }
 
-// TODO: level up character if they are past exp threshold
 const updateExpQuery = `
 UPDATE ab_characters
 SET char_level = :charLevel, experience = :experience
@@ -179,4 +179,4 @@ async function updateABCharExp(userId: string, name: string, amount: number): Pr
     }
 }
 
-export { createTableABCharacters, updateTableABCharacters, insertABChar, deleteABChar, getABPlayerChars, selectABChar, getABPSelectedChar, updateABCharExp };
+export { createTableABCharacters, updateTableABCharacters, insertABChar, deleteABChar, getABPlayerChars, selectABChar, getABSelectedChar, updateABCharExp };

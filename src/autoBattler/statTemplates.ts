@@ -10,7 +10,7 @@ type CharacterStatTemplate = {
         base: number;
         perLvl: number;
     };
-    armorClass: {
+    armourClass: {
         base: number;
         perLvl: number;
     };
@@ -60,7 +60,7 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             base: 0,
             perLvl: 0.5
         },
-        armorClass: {
+        armourClass: {
             base: 10,
             perLvl: 1
         },
@@ -108,7 +108,7 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             base: 0,
             perLvl: 0.5
         },
-        armorClass: {
+        armourClass: {
             base: 10,
             perLvl: 1
         },
@@ -156,7 +156,7 @@ const ClassStats: {[name in ClassName]: CharacterStatTemplate} = {
             base: 0,
             perLvl: 0.5
         },
-        armorClass: {
+        armourClass: {
             base: 10,
             perLvl: 1
         },
@@ -207,7 +207,7 @@ const RatStats: CharacterStatTemplate = {
         base: 0,
         perLvl: 0.5
     },
-    armorClass: {
+    armourClass: {
         base: 8,
         perLvl: 0.5
     },
