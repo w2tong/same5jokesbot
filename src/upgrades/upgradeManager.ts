@@ -9,10 +9,15 @@ const userUpgrades: {[userId: string]: UserUpgrades} = {};
 type UserUpgrades = {[upgrade in UpgradeId]: number};
 
 const emptyUserUpgrades: UserUpgrades = {
-    //daily
+    // Auto Battler
+    attackBonus: 0,
+    armourClass: 0,
+    health: 0,
+
+    // Daily
     rewardIncrease: 0,
 
-    // steal
+    // Steal
     stealChance: 0,
     stolenGoodChanceReduction: 0,
     stealDefence: 0,
