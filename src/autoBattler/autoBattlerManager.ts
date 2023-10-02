@@ -14,7 +14,7 @@ import { insertABInventoryItem } from '../sql/tables/ab_inventory';
 
 const usersInBattle: Set<string> = new Set();
 const ExpLoss = 0.05;
-const lootChance = 1;
+const lootChance = 0.25;
 
 async function addLoot(userId: string, level: number): Promise<string|null> {
     if (Math.random() < lootChance) {
