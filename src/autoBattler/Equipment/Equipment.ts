@@ -1,6 +1,8 @@
 import { ClassName } from '../Classes/classes';
-import { Shield } from './Shield';
+import { Shield, shields } from './Shield';
 import { Weapon, weapons } from './Weapons';
+
+const items = {...weapons, ...shields};
 
 type Equipment = {
     mainHand: Weapon
@@ -21,4 +23,4 @@ const defaultEquipment: {[name in ClassName]: Equipment} = {
     }
 };
 
-export { Equipment, defaultEquipment };
+export { items, Equipment, defaultEquipment };
