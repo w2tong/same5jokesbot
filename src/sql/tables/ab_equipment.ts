@@ -50,6 +50,23 @@ async function insertABEquipment(userId: string, name: string): Promise<void> {
     }
 }
 
+const deleteQuery = `
+DELETE FROM ab_equipment
+WHERE user_id = :userId
+AND char_name = :name
+`;
+
+async function deleteABEquipment(userId: string, name: string): Promise<void> {
+    try {
+        const connection = await oracledb.getConnection();
+        await connection.execute(deleteQuery, {userId, name});
+        await connection.close();
+    }
+    catch (err) {
+        throw new Error(`deleteABEquipment: ${err}`);
+    }
+}
+
 enum EquipSlot {
     MainHand = 'Main Hand',
     OffHand = 'Off Hand',
@@ -194,4 +211,4 @@ async function getABEquipment(userId: string, name: string): Promise<CharEquipme
 //     }
 // }
 
-export { createTableABEquipment, EquipSlot, insertABEquipment, updateABEquipment, getABEquipment };
+export { createTableABEquipment, EquipSlot, insertABEquipment, deleteABEquipment, updateABEquipment, getABEquipment };

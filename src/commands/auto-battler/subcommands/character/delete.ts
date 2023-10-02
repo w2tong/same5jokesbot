@@ -1,9 +1,10 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder, bold } from 'discord.js';
 import { deleteABChar, getABPlayerChars } from '../../../../sql/tables/ab_characters';
 import { timeInMS } from '../../../../util/util';
+import { deleteABEquipment } from '../../../../sql/tables/ab_equipment';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    const reply = await interaction.deferReply({ephemeral: true});
 
     const user = interaction.user;
 
@@ -23,12 +24,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
         ));
 
     const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
-    const reply = await interaction.editReply({components: [row]});
+    await interaction.editReply({components: [row]});
 
     const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
     const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
     collector.on('collect', async i => {
         const name = i.values[0];
+        await deleteABEquipment(i.user.id, name);
         await Promise.all([
             deleteABChar(i.user.id, name),
             i.update({content: `${i.user} deleted character ${bold(name)}.`, components: []}),

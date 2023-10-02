@@ -7,7 +7,7 @@ import { EquipSlot, getABEquipment, updateABEquipment } from '../../../../sql/ta
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
+    const reply = await interaction.deferReply({ephemeral: true});
 
     const user = interaction.user;
 
@@ -91,7 +91,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         await interaction.editReply('You do not have equipment to swap to.');
         return;
     }
-    const reply = await interaction.editReply({content: 'Swap your equipment.', components});
+    await interaction.editReply({content: 'Swap your equipment.', components});
 
     const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
     const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
