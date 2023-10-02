@@ -5,10 +5,9 @@ const createTableABInventory = {
     name: 'AB_INVENTORY',
     query: `
         CREATE TABLE ab_inventory ( 
+            id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             user_id VARCHAR2(64) NOT NULL,
-            id NUMBER GENERATED ALWAYS AS IDENTITY,
-            item_id VARCHAR2(16) NOT NULL,
-            PRIMARY KEY (user_id, id)
+            item_id VARCHAR2(16) NOT NULL
         )
     `
 };
@@ -49,15 +48,18 @@ async function deleteABInventoryItem(userId: string, id: string) {
 }
 
 const getQuery = `
-SELECT *
+SELECT id, item_id
 FROM ab_inventory
 WHERE user_id = :userId
+AND (id,id,id,id,id,id,id,id,id,id) NOT IN (SELECT main_hand, off_hand, head, amulet, armour, hands, belt, ring1, ring2, potion FROM ab_equipment
+    WHERE user_id = :userId
+)
 `;
 type InventoryItem = {
     ID: number;
-    USER_ID: string;
     ITEM_ID: string;
 }
+
 async function getABInventory(userId: string): Promise<InventoryItem[]> {
     try {
         const connection = await oracledb.getConnection();
@@ -73,4 +75,28 @@ async function getABInventory(userId: string): Promise<InventoryItem[]> {
     }
 }
 
-export { createTableABInventory, insertABInventoryItem, deleteABInventoryItem, getABInventory };
+const getCharQuery = `
+SELECT id, item_id
+FROM ab_inventory
+WHERE user_id = :userId
+AND (id,id,id,id,id,id,id,id,id,id) NOT IN (SELECT main_hand, off_hand, head, amulet, armour, hands, belt, ring1, ring2, potion FROM ab_equipment
+    WHERE user_id = :userId
+    AND char_name != :name
+)`;
+
+async function getABCharInventory(userId: string, name: string): Promise<InventoryItem[]> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<InventoryItem> = await connection.execute(getCharQuery, {userId, name}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows;
+        }
+        return [];
+    }
+    catch (err) {
+        throw new Error(`getABCharInventory: ${err}`);
+    }
+}
+
+export { createTableABInventory, insertABInventoryItem, deleteABInventoryItem, getABInventory, getABCharInventory };
