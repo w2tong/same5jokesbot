@@ -33,7 +33,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     usersInBattle.add(user.id);
     
     const battle = new Battle(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME)],
+        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME, {userId: user.id})],
         getRandomEncounter(userChar.CHAR_LEVEL)
     );
     

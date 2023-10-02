@@ -8,6 +8,8 @@ import { CharacterStatTemplate } from './statTemplates';
 import { Weapon } from './Equipment/Weapons';
 import { Shield } from './Equipment/Shield';
 import { Equipment } from './Equipment/Equipment';
+import { userUpgrades } from '../upgrades/upgradeManager';
+import { upgrades } from '../upgrades/upgrades';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
@@ -52,8 +54,6 @@ class Character {
     protected _battle : {ref: Battle, side: Side, index: number} | null = null;
 
     constructor(level: number, stats: CharacterStatTemplate, equipment: Equipment, name: string, options?: {userId?: string, currHealthPc?: number, currManaPc?: number}) {
-        if (options?.userId) this.userId = options.userId;
-
         this._name = name;
         this.className = stats.className;
 
@@ -95,13 +95,25 @@ class Character {
         }
         
         this.maxHealth = calcStatValue(stats.health, level);
-        this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
 
         this.maxMana = stats.mana;
         this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
 
         this.manaRegen = calcStatValue(stats.manaRegen, level);
         this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
+
+        if (options?.userId) {
+            console.log(userUpgrades);
+            const userId = options.userId;
+            this.userId = userId;
+            // Add user upgrades
+            this.mainHand.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
+            if (this.offHandWeapon) this.offHandWeapon.attackBonus += upgrades.attackBonus.levels[userUpgrades[userId].attackBonus];
+            this._armourClass += upgrades.armourClass.levels[userUpgrades[userId].armourClass];
+            console.log(upgrades.health.levels[userUpgrades[userId].health]);
+            this.maxHealth += upgrades.health.levels[userUpgrades[userId].health];
+        }
+        this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
     }
 
     setBattle(ref: Battle, side: Side, index: number) {

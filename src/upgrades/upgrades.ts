@@ -84,7 +84,7 @@ function upgradeLevelsToString(upgrade: Upgrade, currLvl?: number) {
 
 export {
     // Auto Battler
-
+    autoBattlerUpgradeIds, AutoBattlerId,
     // Daily
     dailyUpgradeIds, DailyUpgradeId,
     // Steal
