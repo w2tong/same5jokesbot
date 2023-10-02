@@ -1,10 +1,11 @@
+import { ArmourId } from './Equipment/Armour';
 import { ShieldId } from './Equipment/Shield';
 import { WeaponId } from './Equipment/Weapons';
 
-type LootTable = (WeaponId|ShieldId)[];
+type LootTable = (WeaponId|ShieldId|ArmourId)[];
 
 const lootTiers: {[tier: number]: LootTable} = {
-    0: ['longsword0', 'greatsword0', 'dagger0', 'quarterstaff0', 'buckler0'],
+    0: ['longsword0', 'greatsword0', 'dagger0', 'quarterstaff0', 'buckler0', 'robe0', 'lightarmour0', 'mediumarmour0', 'heavyarmour0'],
     1: ['longsword1', 'greatsword1', 'dagger1', 'quarterstaff1'],
 };
 

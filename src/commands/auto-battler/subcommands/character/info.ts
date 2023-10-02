@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilde
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 // import { getABEquipment } from '../../../../sql/tables/ab_equipment';
 import { Classes } from '../../../../autoBattler/Classes/classes';
-import { defaultEquipment } from '../../../../autoBattler/Equipment/Equipment';
+import { fetchEquipment } from '../../../../autoBattler/Equipment/Equipment';
 import { ClassStats } from '../../../../autoBattler/statTemplates';
 import { getWeaponTooltip } from '../../../../autoBattler/Equipment/Weapons';
 
@@ -16,10 +16,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         await interaction.editReply('You do not have a selected character.');
         return;
     }
-
-    // TODO: replace with actual equipment from DB
-    // const equipment = await getABEquipment(user.id, char.CHAR_NAME);
-    const charInfo = new Classes[char.CLASS_NAME](char.CHAR_LEVEL, ClassStats[char.CLASS_NAME], defaultEquipment[char.CLASS_NAME], char.CHAR_NAME).info();
+    
+    const equipment = await fetchEquipment(user.id, char.CHAR_NAME);
+    const charInfo = new Classes[char.CLASS_NAME](char.CHAR_LEVEL, ClassStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId: user.id}).info();
 
     const embed = new EmbedBuilder()
         .setAuthor({name: `${user.username} - ${charInfo.name}`, iconURL: user.displayAvatarURL()})

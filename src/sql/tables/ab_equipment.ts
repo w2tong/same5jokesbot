@@ -179,36 +179,48 @@ async function getABEquipment(userId: string, name: string): Promise<CharEquipme
     }
 }
 
-// const getEquipmentRowsQuery = `
-// SELECT equip_slot, abe.id, abi.item_id
-// FROM (
-//     SELECT * FROM ab_equipment
-//     WHERE user_id = :userId
-//     AND char_name = :name
-// )
-// UNPIVOT ( id FOR equip_slot IN (main_hand, off_hand, head, amulet, armour, hands, belt, ring1, ring2, potion)
-// ) abe
-// JOIN ab_inventory abi ON abe.id = abi.id
-// `;
+const getEquipmentItemIdsQuery = `
+SELECT
+(SELECT item_id FROM ab_inventory WHERE id = main_hand) as main_hand,
+(SELECT item_id FROM ab_inventory WHERE id = off_hand) as off_hand,
+(SELECT item_id FROM ab_inventory WHERE id = head) as head,
+(SELECT item_id FROM ab_inventory WHERE id = amulet) as amulet,
+(SELECT item_id FROM ab_inventory WHERE id = armour) as armour,
+(SELECT item_id FROM ab_inventory WHERE id = hands) as hands,
+(SELECT item_id FROM ab_inventory WHERE id = belt) as belt,
+(SELECT item_id FROM ab_inventory WHERE id = ring1) as ring1,
+(SELECT item_id FROM ab_inventory WHERE id = ring2) as ring2,
+(SELECT item_id FROM ab_inventory WHERE id = potion) as potion
+FROM ab_equipment
+WHERE user_id = :userId
+AND char_name = :name
+`;
 
-// type InventoryItem = {
-//     EQUIP_SLOT: EquipSlot
-//     ID: number;
-//     ITEM_ID: string;
-// }
-// async function getABEquipmentRows(userId: string, name: string): Promise<InventoryItem|null> {
-//     try {
-//         const connection = await oracledb.getConnection();
-//         const result: oracledb.Result<InventoryItem> = await connection.execute(getEquipmentQuery, {userId, name}, selectExecuteOptions);
-//         await connection.close();
-//         if (result && result.rows && result.rows.length !== 0) {
-//             return result.rows[0];
-//         }
-//         return null;
-//     }
-//     catch (err) {
-//         throw new Error(`getABEquipmentRows: ${err}`);
-//     }
-// }
+type CharEquipmentItemId = {
+    MAIN_HAND: string | null
+    OFF_HAND: string | null
+    HEAD: string | null
+    AMULET: string | null
+    ARMOUR: string | null
+    HANDS: string | null
+    BELT: string | null
+    RING1: string | null
+    RING2: string | null
+    POTION: string | null
+}
+async function getABEquipmentItemIds(userId: string, name: string): Promise<CharEquipmentItemId|null> {
+    try {
+        const connection = await oracledb.getConnection();
+        const result: oracledb.Result<CharEquipmentItemId> = await connection.execute(getEquipmentItemIdsQuery, {userId, name}, selectExecuteOptions);
+        await connection.close();
+        if (result && result.rows && result.rows.length !== 0) {
+            return result.rows[0];
+        }
+        return null;
+    }
+    catch (err) {
+        throw new Error(`getABEquipmentItemIds: ${err}`);
+    }
+}
 
-export { createTableABEquipment, EquipSlot, insertABEquipment, deleteABEquipment, updateABEquipment, getABEquipment };
+export { createTableABEquipment, EquipSlot, insertABEquipment, deleteABEquipment, updateABEquipment, getABEquipment, getABEquipmentItemIds };
