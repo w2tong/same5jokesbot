@@ -39,11 +39,18 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
     }
 
+    // Main Hand select menu
     const mainHandSelectMenu = new StringSelectMenuBuilder()
         .setCustomId(EquipSlot.MainHand)
         .setPlaceholder('Main Hand is empty.');
-    if (Object.keys(mainHands).length) {
-        mainHandSelectMenu.addOptions(...Object.entries(mainHands).map(([id, weapon]) => {
+    const mainHandEmptyOption = new StringSelectMenuOptionBuilder()
+        .setLabel('Empty Main Hand')
+        .setDescription('Empty slot')
+        .setValue('NULL');
+    if (!equip.MAIN_HAND) mainHandEmptyOption.setDefault(true);
+    mainHandSelectMenu.addOptions(
+        mainHandEmptyOption,
+        ...Object.entries(mainHands).map(([id, weapon]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(weapon.name)
                 .setDescription(getWeaponTooltip(weapon).tooltip)
@@ -51,13 +58,20 @@ async function execute(interaction: ChatInputCommandInteraction) {
             if (equip.MAIN_HAND && equip.MAIN_HAND === parseInt(id)) option.setDefault(true);
             return option;
         }));
-    }
+    if (mainHandSelectMenu.options.length === 1) mainHandSelectMenu.setDisabled(true);
 
+    // Off Hand select menu
     const offHandSelectMenu = new StringSelectMenuBuilder()
         .setCustomId(EquipSlot.OffHand)
         .setPlaceholder('Off Hand is empty.');
-    if (Object.keys(offHands).length) {
-        offHandSelectMenu.addOptions(...Object.entries(offHands).map(([id, offHand]) => {
+    const offHandEmptyOption = new StringSelectMenuOptionBuilder()
+        .setLabel('Empty Off Hand')
+        .setDescription('Empty slot')
+        .setValue('NULL');
+    if (!equip.OFF_HAND) offHandEmptyOption.setDefault(true);
+    offHandSelectMenu.addOptions(
+        offHandEmptyOption,
+        ...Object.entries(offHands).map(([id, offHand]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(offHand.name)
                 .setDescription('description here')
@@ -65,12 +79,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
             if (equip.OFF_HAND && equip.OFF_HAND === parseInt(id)) option.setDefault(true);
             return option;
         }));
-    }
+    if (offHandSelectMenu.options.length === 1) offHandSelectMenu.setDisabled(true);
 
-    const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [];
-    if (mainHandSelectMenu.options.length) components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(mainHandSelectMenu));
-    if (offHandSelectMenu.options.length) components.push(new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(offHandSelectMenu));
+    const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(mainHandSelectMenu),
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(offHandSelectMenu)
+    ];
 
+    // TODO: change to if all slots are empty
     if (components.length === 0) {
         await interaction.editReply('You do not have equipment to swap to.');
         return;
@@ -81,12 +97,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
 
     collector.on('collect', async i => {
-        const id = parseInt(i.values[0]);
+        const id = i.values[0] !== 'NULL' ? parseInt(i.values[0]) : null;
         // TODO: unequip off hand if main hand is two-handed
         // TODO: check if weapon is already in use by other hand
         await updateABEquipment(user.id, char.CHAR_NAME, i.customId as EquipSlot, id);
         await Promise.all([
-            i.reply({content: `${bold(i.customId)} swapped to ${bold(mainHands[id].name)}.`, ephemeral: true}),
+            i.reply({content: `${bold(i.customId)} swapped to ${bold(id ? mainHands[id].name : 'Empty')}.`, ephemeral: true}),
         ]);
     });
 

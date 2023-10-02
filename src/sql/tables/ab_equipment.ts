@@ -116,7 +116,7 @@ const updateQuery: {[key in EquipSlot]: string} = {
     `,
 };
 
-async function updateABEquipment(userId: string, name: string, equipSlot: EquipSlot, id: number) {
+async function updateABEquipment(userId: string, name: string, equipSlot: EquipSlot, id: number | null) {
     try {
         const connection = await oracledb.getConnection();
         await connection.execute(updateQuery[equipSlot], {userId, name, id});
