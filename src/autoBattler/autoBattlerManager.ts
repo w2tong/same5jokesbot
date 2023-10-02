@@ -44,6 +44,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
         void (async () => {
             const res = battle.nextTurn();
             if (res.combatEnded) {
+                usersInBattle.delete(user.id);
                 clearInterval(interval);
                 if (!encounterExp[userChar.CHAR_LEVEL]) {
                     await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -98,8 +99,6 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
             }
         })();
     }, 1 * timeInMS.second);
-
-    usersInBattle.delete(user.id);
 }
 
 async function newPvPBattle(interaction: ChatInputCommandInteraction) {
@@ -192,8 +191,6 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
                         clearInterval(interval);
                         usersInBattle.delete(user.id,);
                         usersInBattle.delete(opponent.id);
-
-                        
                         
                         if (res.winner === Side.Tie) {
                             await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
