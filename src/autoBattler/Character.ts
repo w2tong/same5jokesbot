@@ -75,6 +75,14 @@ class Character {
         this.physResist = calcStatValue(stats.physResist, level);
         this.magicResist = calcStatValue(stats.magicResist, level);
 
+        this.maxHealth = calcStatValue(stats.health, level);
+
+        this.maxMana = stats.mana;
+        this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
+
+        this.manaRegen = calcStatValue(stats.manaRegen, level) + (this._mainHand.manaRegen ?? 0);
+        this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
+
         // Off hand weapon/shield
         if (equipment.offHandWeapon && equipment.offHandShield) {
             throw Error('cannot have both weapon and shield in offhand');
@@ -84,6 +92,7 @@ class Character {
             this.offHandWeapon.attackBonus += lvlAttackBonus;
             this.offHandWeapon.damageBonus += lvlDamageBonus;
             this.offHandWeapon.manaPerAtk += lvlManaPerAtk;
+            this.manaRegen += this.offHandWeapon.manaRegen ?? 0;
         }
         else if (equipment.offHandShield) {
             const shield = equipment.offHandShield;
@@ -93,14 +102,12 @@ class Character {
             this.physResist += shield.physResist ?? 0;
             this.magicResist += shield.magicResist ?? 0;
         }
-        
-        this.maxHealth = calcStatValue(stats.health, level);
 
-        this.maxMana = stats.mana;
-        this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
-
-        this.manaRegen = calcStatValue(stats.manaRegen, level);
-        this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
+        // Armour
+        if (equipment.armour) {
+            this._armourClass += equipment.armour.armourClass;
+            this.manaRegen += equipment.armour.manaRegen ?? 0;
+        }
 
         if (options?.userId) {
             const userId = options.userId;

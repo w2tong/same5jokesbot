@@ -179,4 +179,4 @@ async function updateABCharExp(userId: string, name: string, amount: number): Pr
     }
 }
 
-export { createTableABCharacters, updateTableABCharacters, insertABChar, deleteABChar, getABPlayerChars, selectABChar, getABSelectedChar, updateABCharExp };
+export { createTableABCharacters, updateTableABCharacters, ABCharacter, insertABChar, deleteABChar, getABPlayerChars, selectABChar, getABSelectedChar, updateABCharExp };

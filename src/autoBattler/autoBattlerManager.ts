@@ -1,17 +1,37 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, userMention } from 'discord.js';
-import { getABSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
-import { timeInMS } from '../util/util';
+import { ABCharacter, getABSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
+import { getRandomRange, timeInMS } from '../util/util';
 import Battle, { Side } from './Battle';
-import { Classes } from './Classes/classes';
 import { getRandomEncounter } from './encounters';
-import { ClassStats } from './statTemplates';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe_points';
 import { emptyEmbedFieldInline, getBalanceStrings } from '../util/discordUtil';
 import { encounterExp, levelExp } from './experience';
-import { defaultEquipment } from './Equipment/Equipment';
+import { defaultEquipment, fetchEquipment, items } from './Equipment/Equipment';
+import lootTables from './lootTables';
+import { insertABInventoryItem } from '../sql/tables/ab_inventory';
+import { Classes } from './Classes/classes';
+import { ClassStats } from './statTemplates';
 
 const usersInBattle: Set<string> = new Set();
 const ExpLoss = 0.05;
+const lootChance = 0.25;
+
+async function addLoot(userId: string, level: number): Promise<string|null> {
+    if (Math.random() < lootChance) {
+        const lootTable = lootTables[level];
+        const itemId = Math.random() < lootTable.rareChance ? lootTable.rare[getRandomRange(lootTable.rare.length)] : lootTable.normal[getRandomRange(lootTable.normal.length)];
+        await insertABInventoryItem(userId, itemId);
+        return items[itemId].name;
+    }
+    return null;
+}
+
+async function createPlayerChar(userId: string, char: ABCharacter) {
+    const equipment = await fetchEquipment(userId, char.CHAR_NAME);
+    // Set main hand to class default if missing
+    if (!equipment.mainHand) equipment.mainHand = defaultEquipment[char.CLASS_NAME].mainHand;
+    return new Classes[char.CLASS_NAME](char.CHAR_LEVEL, ClassStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId});
+}
 
 async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -33,7 +53,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     usersInBattle.add(user.id);
     
     const battle = new Battle(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME, {userId: user.id})],
+        [await createPlayerChar(user.id, userChar)],
         getRandomEncounter(userChar.CHAR_LEVEL)
     );
     
@@ -43,60 +63,56 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     const interval = setInterval(() => {
         void (async () => {
             const res = battle.nextTurn();
+            const embeds = [battle.generateEmbed()];
             if (res.combatEnded) {
                 usersInBattle.delete(user.id);
                 clearInterval(interval);
-                if (!encounterExp[userChar.CHAR_LEVEL]) {
-                    await interaction.editReply({embeds: [battle.generateEmbed()]});
-                }
-                else {
-                    if (res.winner !== Side.Tie) {
-                        const resultEmbed = new EmbedBuilder();
-                        let expChange = 0;
-                        if (res.winner === Side.Left) {
-                            expChange = encounterExp[userChar.CHAR_LEVEL];
-                            resultEmbed
-                                .setTitle('Victory');
-                        }
-                        else {    
-                            expChange = -levelExp[userChar.CHAR_LEVEL] * ExpLoss;
-                            resultEmbed
-                                .setTitle('Defeat');
-                            // TODO: set char curr health to 1
-                        }
-                        const newLevelAndExp = await updateABCharExp(user.id, userChar.CHAR_NAME, expChange);
-                        if (newLevelAndExp) {
-                            if (newLevelAndExp.level > userChar.CHAR_LEVEL) {
-                                resultEmbed.addFields(
-                                    {name: 'Level', value: `${userChar.CHAR_LEVEL}`, inline: true},
-                                    {name: 'New Level', value: `${newLevelAndExp.level}`, inline: true},
-                                    emptyEmbedFieldInline
-                                );
-                            }
-                            resultEmbed.addFields(
-                                {name: 'Exp Gain', value: `${userChar.EXPERIENCE.toLocaleString()}(${expChange > 0 ? '+' : ''}${expChange.toLocaleString()})/${levelExp[userChar.CHAR_LEVEL].toLocaleString()}`, inline: true},
-                                
+                if (res.winner !== Side.Tie) {
+                    const expEmbed = new EmbedBuilder();
+                    let expChange = 0;
+                    if (res.winner === Side.Left) {
+                        expChange = encounterExp[userChar.CHAR_LEVEL];
+                        expEmbed.setTitle('Victory');
+                        const loot = await addLoot(user.id, userChar.CHAR_LEVEL);
+                        if (loot) {
+                            embeds.push(new EmbedBuilder()
+                                .setAuthor({name: `${user.username} looted ${loot}.`, iconURL: user.displayAvatarURL()})
+                                .setDescription('item description here')
                             );
-                            if (levelExp[newLevelAndExp.level]) {
-                                resultEmbed.addFields(
-                                    {name: 'New Exp', value: `${newLevelAndExp.exp.toLocaleString()}/${levelExp[newLevelAndExp.level].toLocaleString()}`, inline: true},
-                                    {name: 'Next Lvl', value: `${(levelExp[newLevelAndExp.level] - newLevelAndExp.exp).toLocaleString()}`, inline: true}
-                                );
-                            }
                         }
-                        else {
-                            resultEmbed.setDescription(`${userChar.CHAR_NAME} is at max level.`);
+                    }
+                    else {    
+                        expChange = -levelExp[userChar.CHAR_LEVEL] * ExpLoss;
+                        expEmbed.setTitle('Defeat');
+                        // TODO: set char curr health to 1
+                    }
+                    const newLevelAndExp = await updateABCharExp(user.id, userChar.CHAR_NAME, expChange);
+                    if (newLevelAndExp) {
+                        if (newLevelAndExp.level > userChar.CHAR_LEVEL) {
+                            expEmbed.addFields(
+                                {name: 'Level', value: `${userChar.CHAR_LEVEL}`, inline: true},
+                                {name: 'New Level', value: `${newLevelAndExp.level}`, inline: true},
+                                emptyEmbedFieldInline
+                            );
                         }
-                        await interaction.editReply({embeds: [battle.generateEmbed(), resultEmbed]});
+                        expEmbed.addFields(
+                            {name: 'Exp Gain', value: `${userChar.EXPERIENCE.toLocaleString()}(${expChange > 0 ? '+' : ''}${expChange.toLocaleString()})/${levelExp[userChar.CHAR_LEVEL].toLocaleString()}`, inline: true},
+                                
+                        );
+                        if (levelExp[newLevelAndExp.level]) {
+                            expEmbed.addFields(
+                                {name: 'New Exp', value: `${newLevelAndExp.exp.toLocaleString()}/${levelExp[newLevelAndExp.level].toLocaleString()}`, inline: true},
+                                {name: 'Next Lvl', value: `${(levelExp[newLevelAndExp.level] - newLevelAndExp.exp).toLocaleString()}`, inline: true}
+                            );
+                        }
                     }
                     else {
-                        await interaction.editReply({embeds: [battle.generateEmbed()]});
-                    }               
+                        expEmbed.setDescription(`${userChar.CHAR_NAME} is at max level.`);
+                    }
+                    embeds.push(expEmbed);
                 }
             }
-            else {
-                await interaction.editReply({embeds: [battle.generateEmbed()]});
-            }
+            await interaction.editReply({embeds});
         })();
     }, 1 * timeInMS.second);
 }
@@ -148,8 +164,8 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     }
 
     const battle = new Battle(
-        [new Classes[userChar.CLASS_NAME](userChar.CHAR_LEVEL, ClassStats[userChar.CLASS_NAME], defaultEquipment[userChar.CLASS_NAME], userChar.CHAR_NAME, {userId: user.id})],
-        [new Classes[opponentChar.CLASS_NAME](opponentChar.CHAR_LEVEL, ClassStats[opponentChar.CLASS_NAME], defaultEquipment[opponentChar.CLASS_NAME], opponentChar.CHAR_NAME, {userId: opponent.id})],
+        [await createPlayerChar(user.id, userChar)],
+        [await createPlayerChar(opponent.id, opponentChar)],
     );
 
     const acceptButtonId = 'accept';
