@@ -16,8 +16,15 @@ interface Shield extends Item {
     magicResist?: number;
 }
 
-const shields: {[id: string]: Shield} = {
-
+type ShieldId = 'buckler0'
+const shields: {[id in ShieldId]: Shield} = {
+    buckler0: {
+        id: 'buckler0',
+        name: 'Buckler',
+        itemType: ItemType.Shield,
+        type: ShieldType.Light,
+        armourClass: 1
+    }
 };
 
-export { Shield, shields };
+export { Shield, ShieldId, shields };
