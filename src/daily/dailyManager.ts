@@ -77,7 +77,7 @@ function scheduleDailiesCronJob(client: Client) {
 }
 
 async function updateDaily(dailyId: DailyId, userId: string, progInc: number) {
-    if (currDailies.has(dailyId)) {
+    if (currDailies.has(dailyId) && userDailies[userId]) {
         const daily = userDailies[userId][dailyId];
         if (daily.completed) return;
         daily.progress += progInc;
@@ -86,7 +86,7 @@ async function updateDaily(dailyId: DailyId, userId: string, progInc: number) {
 }
 
 async function completeDaily(dailyId: DailyId, user: User, client: Client, channelId?: string) {
-    if (currDailies.has(dailyId)) {
+    if (currDailies.has(dailyId) && userDailies[user.id]) {
         const daily = userDailies[user.id][dailyId];
         if (daily.completed) return;
         if (daily.progress >= dailies[dailyId].maxProgress) {

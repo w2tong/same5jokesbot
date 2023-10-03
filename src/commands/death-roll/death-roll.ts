@@ -9,6 +9,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const opponent = interaction.options.getUser('user');
     const wager = interaction.options.getInteger('wager');
     const startingRoll = interaction.options.getInteger('roll') ?? 100;
+    let autoDeathRoll = false;
 
     if (!opponent || !wager) {
         await interaction.editReply('Error creating bet (invalid opponent or wager).');
@@ -20,59 +21,67 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    if (opponent.bot) {
-        await interaction.editReply('You cannot duel a bot.');
-        return;
-    }
-
     const userPoints = await getUserCringePoints(user.id) ?? 0;
     const opponentPoints = await getUserCringePoints(opponent.id) ?? 0;
-    if (userPoints < wager || opponentPoints < wager) {
+    if (opponent.bot) {
+        if (wager > 25000) {
+            await interaction.editReply('Bot max bet amount is 25000');
+            return;
+        }
+        autoDeathRoll = true;
+    } else if (userPoints < wager || opponentPoints < wager) {
         await interaction.editReply('You and/or your opponent do not have enough points.');
         return;
     }
 
     const deathRoll = new DeathRoll(user, opponent, wager, startingRoll, interaction.client, interaction.channelId);
 
-    const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
-    buttonsRow.addComponents(
-        new ButtonBuilder()
-            .setCustomId('roll')
-            .setLabel('Roll')
-            .setStyle(ButtonStyle.Success)
-    );
-    await reply.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to a death roll.`);
-    await interaction.editReply({embeds: [deathRoll.createEmbed()], components: !deathRoll.isEnded() && !deathRoll.isExpired() ? [buttonsRow] : []});
-    
-    const rollButtonFilter = async (i: ButtonInteraction) => {
-        if (user.id !== i.user.id && opponent.id !== i.user.id) {
-            await i.reply({content: 'You are not in this death roll.', ephemeral: true});
-            return false;
+    if (autoDeathRoll){
+        while (!deathRoll.isEnded()){
+            await deathRoll.roll(deathRoll.turnUser.id);
         }
-        return true;
-    };
-
-    const buttonCollector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: DeathRoll.idleTimeout, filter: rollButtonFilter });
-    buttonCollector.on('collect', async buttonInteraction => {
-        const {correctUser, ended} = await deathRoll.roll(buttonInteraction.user.id);
-        if (ended) buttonCollector.stop();
-        else {
-            if (correctUser) {
-                buttonCollector.resetTimer();
-                await buttonInteraction.update({embeds: [deathRoll.createEmbed()]});
+        await interaction.editReply({embeds: [deathRoll.createEmbed()], components: []});
+    } else {
+        const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
+        buttonsRow.addComponents(
+            new ButtonBuilder()
+                .setCustomId('roll')
+                .setLabel('Roll')
+                .setStyle(ButtonStyle.Success)
+        );
+        await reply.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to a death roll.`);
+        await interaction.editReply({embeds: [deathRoll.createEmbed()], components: !deathRoll.isEnded() && !deathRoll.isExpired() ? [buttonsRow] : []});
+        
+        const rollButtonFilter = async (i: ButtonInteraction) => {
+            if (user.id !== i.user.id && opponent.id !== i.user.id) {
+                await i.reply({content: 'You are not in this death roll.', ephemeral: true});
+                return false;
             }
+            return true;
+        };
+
+        const buttonCollector = reply.createMessageComponentCollector({ componentType: ComponentType.Button, time: DeathRoll.idleTimeout, filter: rollButtonFilter });
+        buttonCollector.on('collect', async buttonInteraction => {
+            const {correctUser, ended} = await deathRoll.roll(buttonInteraction.user.id);
+            if (ended) buttonCollector.stop();
             else {
-                await buttonInteraction.reply({content: 'It is not your turn.', ephemeral: true});
+                if (correctUser) {
+                    buttonCollector.resetTimer();
+                    await buttonInteraction.update({embeds: [deathRoll.createEmbed()]});
+                }
+                else {
+                    await buttonInteraction.reply({content: 'It is not your turn.', ephemeral: true});
+                }
             }
-        }
-    });
+        });
 
-    buttonCollector.on('end', async () => {
-        if (!deathRoll.isEnded()) {
-            deathRoll.expire();
-        }
-        await reply.edit({embeds: [deathRoll.createEmbed()], components: []});
-    });
+        buttonCollector.on('end', async () => {
+            if (!deathRoll.isEnded()) {
+                deathRoll.expire();
+            }
+            await reply.edit({embeds: [deathRoll.createEmbed()], components: []});
+        });
+    }
 }
 
 const name = 'death-roll';
