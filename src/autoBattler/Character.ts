@@ -88,8 +88,9 @@ class Character {
             throw Error('cannot have both weapon and shield in offhand');
         }
         if (equipment.offHandWeapon) {
+            this.mainHand.attackBonus += dualWieldPenalty;
             this.offHandWeapon = Object.assign({}, equipment.offHandWeapon);
-            this.offHandWeapon.attackBonus += lvlAttackBonus;
+            this.offHandWeapon.attackBonus += lvlAttackBonus + dualWieldPenalty + offHandPenalty;
             this.offHandWeapon.damageBonus += lvlDamageBonus;
             this.offHandWeapon.manaPerAtk += lvlManaPerAtk;
             this.manaRegen += this.offHandWeapon.manaRegen ?? 0;
@@ -254,10 +255,10 @@ class Character {
         this.buffTracker.tick();
     }
 
-    attackRoll(weapon: Weapon, offHandHit: boolean): {hitType: HitType, details: string} {
+    attackRoll(weapon: Weapon): {hitType: HitType, details: string} {
         if (!this.target) return {hitType: HitType.Miss, details: 'No Target'};
         const attackRoll = rollDice({num: 1, sides: 20});
-        const rollToHitTaget = this.target.armourClass - weapon.attackBonus - (this.offHandWeapon ? dualWieldPenalty : 0) - (offHandHit ? offHandPenalty : 0);
+        const rollToHitTaget = this.target.armourClass - weapon.attackBonus;
         const details = `${attackRoll} vs. ${rollToHitTaget <= 2 ? 2 : rollToHitTaget <= 20 ? rollToHitTaget : 20}`;
         if (attackRoll === 1) {
             return {hitType: HitType.CritMiss, details};
@@ -277,7 +278,7 @@ class Character {
         if (!this.battle) return;
         this.setTarget();
         if (this.target) { 
-            let attack = this.attackRoll(this.mainHand, false);
+            let attack = this.attackRoll(this.mainHand);
             // Main hand attack
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                 const damageRoll = rollDice(this.mainHand.damage);
@@ -295,7 +296,7 @@ class Character {
 
             // Off hand attack
             if (this.offHandWeapon) {
-                attack = this.attackRoll(this.offHandWeapon, true);
+                attack = this.attackRoll(this.offHandWeapon);
                 if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                     const damageRoll = rollDice(this.offHandWeapon.damage);
                     const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
