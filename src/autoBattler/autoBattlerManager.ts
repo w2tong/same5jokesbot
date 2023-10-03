@@ -28,8 +28,15 @@ async function addLoot(userId: string, level: number): Promise<Equip|null> {
 
 async function createPlayerChar(userId: string, char: ABCharacter) {
     const equipment = await fetchEquipment(userId, char.CHAR_NAME);
-    // Set main hand to class default if missing
-    if (!equipment.mainHand) equipment.mainHand = defaultEquipment[char.CLASS_NAME].mainHand;
+    // Set main hand to class default weapon if missing
+    if (!equipment.mainHand) {
+        equipment.mainHand = defaultEquipment[char.CLASS_NAME].mainHand;
+    }
+    // Set off hand to class default weapon/shield if missing and main hand is not two-handed
+    if (!equipment.offHandWeapon && !equipment.offHandShield && equipment.mainHand && !equipment.mainHand.twoHanded) {
+        equipment.offHandWeapon = defaultEquipment[char.CLASS_NAME].offHandWeapon;
+        equipment.offHandShield = defaultEquipment[char.CLASS_NAME].offHandShield;
+    }
     return new Classes[char.CLASS_NAME](char.CHAR_LEVEL, ClassStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId});
 }
 
