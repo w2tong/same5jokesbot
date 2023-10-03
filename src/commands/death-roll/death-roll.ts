@@ -2,6 +2,8 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatIn
 import { DeathRoll } from './DeathRoll';
 import { getUserCringePoints } from '../../sql/tables/cringe_points';
 
+const houseMaxWager = 25_000;
+
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     const reply = await interaction.fetchReply();
@@ -9,7 +11,6 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const opponent = interaction.options.getUser('user');
     const wager = interaction.options.getInteger('wager');
     const startingRoll = interaction.options.getInteger('roll') ?? 100;
-    let autoDeathRoll = false;
 
     if (!opponent || !wager) {
         await interaction.editReply('Error creating bet (invalid opponent or wager).');
@@ -22,26 +23,28 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const userPoints = await getUserCringePoints(user.id) ?? 0;
-    const opponentPoints = await getUserCringePoints(opponent.id) ?? 0;
-    if (opponent.bot) {
-        if (wager > 25000) {
-            await interaction.editReply('Bot max bet amount is 25000');
+    if (opponent.id === process.env.CLIENT_ID) {
+        if (wager > houseMaxWager) {
+            await interaction.editReply(`Bot max wager is ${houseMaxWager.toLocaleString()}`);
             return;
         }
-        autoDeathRoll = true;
-    } else if (userPoints < wager || opponentPoints < wager) {
-        await interaction.editReply('You and/or your opponent do not have enough points.');
-        return;
-    }
 
-    const deathRoll = new DeathRoll(user, opponent, wager, startingRoll, interaction.client, interaction.channelId);
+        const deathRoll = new DeathRoll(user, opponent, wager, startingRoll, interaction.client, interaction.channelId);
 
-    if (autoDeathRoll){
         while (!deathRoll.isEnded()){
             await deathRoll.roll(deathRoll.turnUser.id);
         }
         await interaction.editReply({embeds: [deathRoll.createEmbed()], components: []});
     } else {
+
+        const opponentPoints = await getUserCringePoints(opponent.id) ?? 0;
+        if (userPoints < wager || opponentPoints < wager) {
+            await interaction.editReply('You and/or your opponent do not have enough points.');
+            return;
+        }
+
+        const deathRoll = new DeathRoll(user, opponent, wager, startingRoll, interaction.client, interaction.channelId);
+
         const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
         buttonsRow.addComponents(
             new ButtonBuilder()
