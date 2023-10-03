@@ -36,10 +36,13 @@ interface Weapon extends Item {
 }
 
 function getWeaponTooltip(weapon: Weapon) {
-    const tooltip = [`${weapon.type}, ${weapon.range}`, `${bold('Attack Bonus')}: ${weapon.attackBonus}`, `${bold('Damage')}: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus} ${weapon.damageType}`, `${bold('Crit')}: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`, `${bold('Mana/Atk')}: ${weapon.manaPerAtk}`];
-    if (weapon.onHit) {
-        tooltip.push(weapon.onHit.description);
-    }
+    const tooltip = [
+        `${weapon.type}, ${weapon.range}`,
+        `${bold('Damage')}: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus} ${weapon.damageType}`,
+        `${bold('Crit')}: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`, `${bold('Mana/Atk')}: ${weapon.manaPerAtk}`
+    ];
+    if (weapon.attackBonus) tooltip.push(`${bold('Attack Bonus')}: ${weapon.attackBonus}`);
+    if (weapon.onHit) tooltip.push(weapon.onHit.description);
     return tooltip.join('\n');
 }
 

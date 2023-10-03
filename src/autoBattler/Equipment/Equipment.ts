@@ -1,10 +1,12 @@
 import { getABEquipmentItemIds } from '../../sql/tables/ab_equipment';
 import { ClassName } from '../Classes/classes';
-import { Armour, ArmourId, armour } from './Armour';
-import { Shield, ShieldId, shields } from './Shield';
-import { Weapon, WeaponId, weapons } from './Weapons';
+import { Armour, ArmourId, armour, getArmourDescription, getArmourTooltip } from './Armour';
+import { ItemType } from './Item';
+import { Shield, getShieldDescription, getShieldTooltip, shields } from './Shield';
+import { Weapon, WeaponId, getWeaponDescription, getWeaponTooltip, weapons } from './Weapons';
 
-const items = {...weapons, ...shields, ...armour};
+type Equip = Weapon|Shield|Armour;
+const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour} as const;
 
 type Equipment = {
     mainHand?: Weapon
@@ -31,12 +33,43 @@ async function fetchEquipment(userId: string, name: string): Promise<Equipment> 
     if (!dbEquipment) {
         return {};
     }
-    return {
-        mainHand: dbEquipment.MAIN_HAND ? weapons[dbEquipment.MAIN_HAND as WeaponId] : undefined,
-        offHandWeapon: dbEquipment.OFF_HAND ? dbEquipment.OFF_HAND in weapons ? weapons[dbEquipment.OFF_HAND as WeaponId] : undefined : undefined,
-        offHandShield: dbEquipment.OFF_HAND ? dbEquipment.OFF_HAND in shields ? shields[dbEquipment.OFF_HAND as ShieldId] : undefined : undefined,
-        armour: dbEquipment.ARMOUR ? armour[dbEquipment.ARMOUR as ArmourId] : undefined
-    };
+    const equipment: Equipment = {};
+    // Main Hand
+    if (dbEquipment.MAIN_HAND && dbEquipment.MAIN_HAND in weapons) {
+        equipment.mainHand = weapons[dbEquipment.MAIN_HAND as WeaponId];
+    }
+    // Off Hand
+    if (dbEquipment.OFF_HAND && equips[dbEquipment.OFF_HAND]) {
+        const offHand = equips[dbEquipment.OFF_HAND];
+        if (offHand.itemType === ItemType.Weapon) {
+            equipment.offHandWeapon = offHand;
+        }
+        else if (offHand.itemType === ItemType.Shield) {
+            equipment.offHandShield = offHand;
+        }
+    }
+    // Armour
+    if (dbEquipment.ARMOUR && dbEquipment.ARMOUR in armour) {
+        equipment.armour = armour[dbEquipment.ARMOUR as ArmourId];
+    }
+    
+    return equipment;
 }
 
-export { items, Equipment, defaultEquipment, fetchEquipment };
+function getItemTooltip(item: Equip): string {
+    if (item.itemType === ItemType.Weapon) return getWeaponTooltip(item);
+    else if (item.itemType === ItemType.Shield) return getShieldTooltip(item);
+    else if (item.itemType === ItemType.Armour) return getArmourTooltip(item);
+    return 'Missing item tooltip.';
+}
+
+function getItemDescription(itemId: string) {
+    const item = equips[itemId];
+    if (!item) throw Error(`Item id ${itemId} does not exist`);
+    if (item.itemType === ItemType.Weapon) return getWeaponDescription(item);
+    else if (item.itemType === ItemType.Shield) return getShieldDescription(item);
+    else if (item.itemType === ItemType.Armour) return getArmourDescription(item);
+    return 'Missing item description.';
+}
+
+export { Equip, equips, Equipment, defaultEquipment, fetchEquipment, getItemTooltip, getItemDescription };

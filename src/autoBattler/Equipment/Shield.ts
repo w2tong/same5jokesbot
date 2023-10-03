@@ -16,6 +16,11 @@ interface Shield extends Item {
     magicResist?: number;
 }
 
+function getShieldTooltip(shield: Shield) {
+    const descriptions = [`AC: ${shield.armourClass}`];
+    return descriptions.join('\n');
+}
+
 function getShieldDescription(shield: Shield) {
     const descriptions = [`AC: ${shield.armourClass}`];
     return descriptions.join(', ');
@@ -32,4 +37,4 @@ const shields: {[id in ShieldId]: Shield} = {
     }
 };
 
-export { Shield, getShieldDescription, ShieldId, shields };
+export { Shield, getShieldTooltip, getShieldDescription, ShieldId, shields };
