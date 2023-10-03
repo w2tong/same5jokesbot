@@ -5,7 +5,7 @@ import { Weapon, WeaponId, getWeaponDescription, weapons } from '../../../../aut
 import { Shield, ShieldId, getShieldDescription, shields } from '../../../../autoBattler/Equipment/Shield';
 import { EquipSlot, getABEquipment, updateABEquipment } from '../../../../sql/tables/ab_equipment';
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
-import { Armour, ArmourId, armour } from '../../../../autoBattler/Equipment/Armour';
+import { Armour, ArmourId, armour, getArmourDescription } from '../../../../autoBattler/Equipment/Armour';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
@@ -101,7 +101,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         ...Object.entries(armourOptions).map(([id, armour]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(armour.name)
-                .setDescription('description here')
+                .setDescription(getArmourDescription(armour))
                 .setValue(`${id}`);
             if (equip.ARMOUR && equip.ARMOUR === parseInt(id)) option.setDefault(true);
             return option;
