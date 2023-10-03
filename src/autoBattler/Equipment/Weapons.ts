@@ -40,10 +40,19 @@ function getWeaponTooltip(weapon: Weapon) {
     if (weapon.onHit) {
         tooltip.push(weapon.onHit.description);
     }
-    return {
-        name: weapon.name,
-        tooltip: tooltip.join('\n')
-    };
+    return tooltip.join('\n');
+}
+
+function getWeaponDescription(weapon: Weapon) {
+    const descriptions = [];
+    if (weapon.twoHanded) {
+        descriptions.push('Two-Handed');
+    }
+    descriptions.push(`Damage: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus}`);
+    descriptions.push(`Crit: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`);
+    descriptions.push(`MP/Atk: ${weapon.manaPerAtk}`);
+    if (weapon.manaRegen) descriptions.push(`MP Regen: ${weapon.manaRegen}`);
+    return descriptions.join(', ');
 }
 
 type WeaponId = 
@@ -221,4 +230,4 @@ const weapons: {[id in WeaponId]: Weapon} = {
     }
 } as const;
 
-export { Weapon, getWeaponTooltip, WeaponId, weapons };
+export { Weapon, getWeaponTooltip, getWeaponDescription, WeaponId, weapons };

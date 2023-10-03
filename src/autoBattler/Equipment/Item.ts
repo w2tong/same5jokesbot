@@ -11,9 +11,9 @@ enum ItemType {
 }
 
 interface Item {
-    id: string
-    itemType: ItemType
-    name: string
+    id: string;
+    itemType: ItemType;
+    name: string;
 }
 
 export { Item, ItemType };
