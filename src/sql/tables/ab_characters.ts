@@ -83,7 +83,7 @@ async function getABPlayerChar(userId: string, name: string): Promise<ABCharacte
         return null;
     }
     catch (err) {
-        throw new Error(`getABPlayerChars: ${err}`);
+        throw new Error(`getABPlayerChar: ${err}`);
     }
 }
 
