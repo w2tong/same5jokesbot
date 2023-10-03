@@ -64,7 +64,7 @@ type WeaponId =
 'greatsword0' | 'greatsword1' |
 'dagger0' | 'dagger1' | 
 'quarterstaff0' | 'quarterstaff1' |
-'poisonbite0'
+'poisonbite0' | 'poisonbite1'
 const weapons: {[id in WeaponId]: Weapon} = {
     // Unarmed
     unarmed0: {
@@ -229,6 +229,27 @@ const weapons: {[id in WeaponId]: Weapon} = {
                 target.buffTracker.addDebuff(DebuffId.Poison, 1, self);
             },
             description: 'Inflict 1 Poison on hit.'
+        }
+    },
+    poisonbite1: {
+        id: 'poisonbite1',
+        itemType: ItemType.Weapon,
+        name: 'Poison Bite',
+        type: WeaponType.Unarmed,
+        range: RangeType.Melee,
+        twoHanded: false,
+        attackBonus: 0,
+        damageType: DamageType.Physical,
+        damage: dice['1d4'],
+        damageBonus: 0,
+        critRange: 20,
+        critMult: 2,
+        manaPerAtk: 1,
+        onHit: {
+            func: (self: Character, target: Character) => {
+                target.buffTracker.addDebuff(DebuffId.Poison, 2, self);
+            },
+            description: 'Inflict 2 Poison on hit.'
         }
     }
 } as const;

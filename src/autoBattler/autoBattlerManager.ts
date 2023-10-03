@@ -10,7 +10,7 @@ import { Equip, defaultEquipment, equips, fetchEquipment, getItemTooltip } from 
 import lootTables from './lootTables';
 import { insertABInventoryItem } from '../sql/tables/ab_inventory';
 import { Classes } from './Classes/classes';
-import { ClassStats } from './statTemplates';
+import { PlayerStats } from './statTemplates';
 
 const usersInBattle: Set<string> = new Set();
 const ExpLoss = 0.05;
@@ -37,7 +37,7 @@ async function createPlayerChar(userId: string, char: ABCharacter) {
         equipment.offHandWeapon = defaultEquipment[char.CLASS_NAME].offHandWeapon;
         equipment.offHandShield = defaultEquipment[char.CLASS_NAME].offHandShield;
     }
-    return new Classes[char.CLASS_NAME](char.CHAR_LEVEL, ClassStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId});
+    return new Classes[char.CLASS_NAME](char.CHAR_LEVEL, PlayerStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId});
 }
 
 async function newPvEBattle(interaction: ChatInputCommandInteraction) {

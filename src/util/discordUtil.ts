@@ -53,4 +53,8 @@ function getBalanceStrings(bal: number, profit: number): { balance: string, newB
     };
 }
 
-export {MessageEmbedLimit, UsersPerEmbed, FieldValueCharLimit, SelectMenuOptionLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings};
+function header(str: string, size: 1|2|3): string {
+    return `${'#'.repeat(size)} ${str}`;
+}
+
+export {MessageEmbedLimit, UsersPerEmbed, FieldValueCharLimit, SelectMenuOptionLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings, header};

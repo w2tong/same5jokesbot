@@ -7,7 +7,7 @@ import { EquipSlot, getABEquipment, updateABEquipment } from '../../../../sql/ta
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 import { Armour, ArmourId, armour, getArmourDescription } from '../../../../autoBattler/Equipment/Armour';
 import { ItemType } from '../../../../autoBattler/Equipment/Item';
-import { Equip, equips } from '../../../../autoBattler/Equipment/Equipment';
+import { Equip } from '../../../../autoBattler/Equipment/Equipment';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
