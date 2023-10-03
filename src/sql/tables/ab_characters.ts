@@ -83,7 +83,7 @@ async function getABPlayerChar(userId: string, name: string): Promise<ABCharacte
         return null;
     }
     catch (err) {
-        throw new Error(`getABPlayerChars: ${err}`);
+        throw new Error(`getABPlayerChar: ${err}`);
     }
 }
 
@@ -157,10 +157,9 @@ UPDATE ab_characters
 SET char_level = :charLevel, experience = :experience
 WHERE user_id = :userId and char_name = :name
 `;
-async function updateABCharExp(userId: string, name: string, amount: number): Promise<{level: number, exp: number}|null> {
+async function updateABCharExp(userId: string, char: ABCharacter, amount: number): Promise<{level: number, exp: number}|null> {
     try {
         const connection = await oracledb.getConnection();
-        const char = await getABPlayerChar(userId, name);
         if (!char) return null;
         if (!levelExp[char.CHAR_LEVEL]) return null;
         let experience = Math.max(char.EXPERIENCE + amount, 0);
@@ -170,7 +169,7 @@ async function updateABCharExp(userId: string, name: string, amount: number): Pr
             charLevel++;
         }
         if (!levelExp[charLevel]) experience = 0;
-        await connection.execute(updateExpQuery, {userId, name, charLevel, experience}, selectExecuteOptions);
+        await connection.execute(updateExpQuery, {userId, name: char.CHAR_NAME, charLevel, experience}, selectExecuteOptions);
         await connection.close();
         return {level: charLevel, exp: experience};
     }
