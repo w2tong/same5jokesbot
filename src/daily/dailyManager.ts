@@ -77,53 +77,47 @@ function scheduleDailiesCronJob(client: Client) {
 }
 
 async function updateDaily(dailyId: DailyId, userId: string, progInc: number) {
-    const botId = process.env.CLIENT_ID;
-    if (botId != userId){
-        if (currDailies.has(dailyId)) {
-            const daily = userDailies[userId][dailyId];
-            if (daily.completed) return;
-            daily.progress += progInc;
-            await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
-        }
+    if (currDailies.has(dailyId) && userDailies[userId]) {
+        const daily = userDailies[userId][dailyId];
+        if (daily.completed) return;
+        daily.progress += progInc;
+        await updateDailyProgress(userId, dailyId, daily.progress, daily.completed);
     }
 }
 
 async function completeDaily(dailyId: DailyId, user: User, client: Client, channelId?: string) {
-    const botId = process.env.CLIENT_ID;
-    if (botId != user.id){
-        if (currDailies.has(dailyId)) {
-            const daily = userDailies[user.id][dailyId];
-            if (daily.completed) return;
-            if (daily.progress >= dailies[dailyId].maxProgress) {
-                daily.progress = dailies[dailyId].maxProgress;
-                daily.completed = true;
-                await updateDailyProgress(user.id, dailyId, daily.progress, daily.completed);
+    if (currDailies.has(dailyId) && userDailies[user.id]) {
+        const daily = userDailies[user.id][dailyId];
+        if (daily.completed) return;
+        if (daily.progress >= dailies[dailyId].maxProgress) {
+            daily.progress = dailies[dailyId].maxProgress;
+            daily.completed = true;
+            await updateDailyProgress(user.id, dailyId, daily.progress, daily.completed);
 
-                const channel = await fetchChannel(client, channelId ?? process.env.CASINO_CHANNEL_ID ?? '');
-                const balance = await getUserCringePoints(user.id) ?? 0;
-                const coins = await getDailyCoins(user.id) ?? 0;
-                if (channel?.isTextBased()) {
-                    const embed = new EmbedBuilder()
-                        .setAuthor({name: `${user.username} completed a Daily Quest`, iconURL: user.displayAvatarURL()})
-                        .addFields(
-                            {name: 'User', value: userMention(user.id), inline: true},
-                            {name: 'Quest', value: dailies[dailyId].description, inline: true},
-                            emptyEmbedFieldInline,
+            const channel = await fetchChannel(client, channelId ?? process.env.CASINO_CHANNEL_ID ?? '');
+            const balance = await getUserCringePoints(user.id) ?? 0;
+            const coins = await getDailyCoins(user.id) ?? 0;
+            if (channel?.isTextBased()) {
+                const embed = new EmbedBuilder()
+                    .setAuthor({name: `${user.username} completed a Daily Quest`, iconURL: user.displayAvatarURL()})
+                    .addFields(
+                        {name: 'User', value: userMention(user.id), inline: true},
+                        {name: 'Quest', value: dailies[dailyId].description, inline: true},
+                        emptyEmbedFieldInline,
 
-                            {name: 'Point Balance', value: `${balance.toLocaleString()} (+${dailies[dailyId].reward.toLocaleString()})`, inline: true},
-                            {name: 'New Point Balance', value: (balance + dailies[dailyId].reward).toLocaleString(), inline: true},
-                            emptyEmbedFieldInline,
+                        {name: 'Point Balance', value: `${balance.toLocaleString()} (+${dailies[dailyId].reward.toLocaleString()})`, inline: true},
+                        {name: 'New Point Balance', value: (balance + dailies[dailyId].reward).toLocaleString(), inline: true},
+                        emptyEmbedFieldInline,
 
-                            {name: 'Coin Balance', value: `${coins.toLocaleString()} (+1)`, inline: true},
-                            {name: 'New Coin Balance', value: (coins + 1).toLocaleString(), inline: true},
-                            emptyEmbedFieldInline
-                        );
-                    await channel.send({embeds: [embed]});
-                }
-
-                await updateCringePoints([{userId: user.id, points: dailies[dailyId].reward}]);
-                await updateDailyCoins(user.id, 1);
+                        {name: 'Coin Balance', value: `${coins.toLocaleString()} (+1)`, inline: true},
+                        {name: 'New Coin Balance', value: (coins + 1).toLocaleString(), inline: true},
+                        emptyEmbedFieldInline
+                    );
+                await channel.send({embeds: [embed]});
             }
+
+            await updateCringePoints([{userId: user.id, points: dailies[dailyId].reward}]);
+            await updateDailyCoins(user.id, 1);
         }
     }
 }
