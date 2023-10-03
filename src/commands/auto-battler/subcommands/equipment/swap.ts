@@ -43,7 +43,6 @@ async function execute(interaction: ChatInputCommandInteraction) {
             armourOptions[item.ID] = armour[item.ITEM_ID as ArmourId];
         }
     }
-    
 
     // Main Hand select menu
     const mainHandSelectMenu = new StringSelectMenuBuilder()

@@ -79,10 +79,17 @@ const getCharQuery = `
 SELECT id, item_id
 FROM ab_inventory
 WHERE user_id = :userId
-AND (id,id,id,id,id,id,id,id,id,id) NOT IN (SELECT main_hand, off_hand, head, amulet, armour, hands, belt, ring1, ring2, potion FROM ab_equipment
-    WHERE user_id = :userId
-    AND char_name != :name
-)`;
+AND id NOT IN (SELECT main_hand FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND main_hand IS NOT NULL)
+AND id NOT IN (SELECT off_hand FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND off_hand IS NOT NULL)
+AND id NOT IN (SELECT head FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND head IS NOT NULL)
+AND id NOT IN (SELECT amulet FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND amulet IS NOT NULL)
+AND id NOT IN (SELECT armour FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND armour IS NOT NULL)
+AND id NOT IN (SELECT hands FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND hands IS NOT NULL)
+AND id NOT IN (SELECT belt FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND belt IS NOT NULL)
+AND id NOT IN (SELECT ring1 FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND ring1 IS NOT NULL)
+AND id NOT IN (SELECT ring2 FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND ring2 IS NOT NULL)
+AND id NOT IN (SELECT potion FROM ab_equipment WHERE user_id = :userId AND char_name != :name AND potion IS NOT NULL)
+`;
 
 async function getABCharInventory(userId: string, name: string): Promise<InventoryItem[]> {
     try {
