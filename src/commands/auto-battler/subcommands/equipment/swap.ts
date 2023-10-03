@@ -7,10 +7,10 @@ import { EquipSlot, getABEquipment, updateABEquipment } from '../../../../sql/ta
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 import { Armour, ArmourId, armour, getArmourDescription } from '../../../../autoBattler/Equipment/Armour';
 import { ItemType } from '../../../../autoBattler/Equipment/Item';
+import { Equip, equips } from '../../../../autoBattler/Equipment/Equipment';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
-
     const user = interaction.user;
 
     const char = await getABSelectedChar(user.id);
@@ -19,8 +19,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    const equip = await getABEquipment(user.id, char.CHAR_NAME);
-    if (!equip) {
+    const equipment = await getABEquipment(user.id, char.CHAR_NAME);
+    if (!equipment) {
         await interaction.editReply('You do not have equipment for your selected character.');
         return;
     }
@@ -53,15 +53,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .setLabel('Empty Main Hand')
         .setDescription('Empty slot')
         .setValue('NULL');
-    if (!equip.MAIN_HAND) mainHandEmptyOption.setDefault(true);
+    if (!equipment.MAIN_HAND) mainHandEmptyOption.setDefault(true);
     mainHandSelectMenu.addOptions(
         mainHandEmptyOption,
         ...Object.entries(mainHandOptions).map(([id, weapon]) => {
             const option = new StringSelectMenuOptionBuilder()
-                .setLabel(weapon.name)
+                .setLabel(`${weapon.name} (${id})`)
                 .setDescription(getWeaponDescription(weapon))
                 .setValue(`${id}`);
-            if (equip.MAIN_HAND && equip.MAIN_HAND === parseInt(id)) option.setDefault(true);
+            if (equipment.MAIN_HAND && equipment.MAIN_HAND === parseInt(id)) option.setDefault(true);
             return option;
         }));
     if (mainHandSelectMenu.options.length === 1) mainHandSelectMenu.setDisabled(true);
@@ -74,15 +74,15 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .setLabel('Empty Off Hand')
         .setDescription('Empty slot')
         .setValue('NULL');
-    if (!equip.OFF_HAND) offHandEmptyOption.setDefault(true);
+    if (!equipment.OFF_HAND) offHandEmptyOption.setDefault(true);
     offHandSelectMenu.addOptions(
         offHandEmptyOption,
         ...Object.entries(offHandOptions).map(([id, offHand]) => {
             const option = new StringSelectMenuOptionBuilder()
-                .setLabel(offHand.name)
+                .setLabel(`${offHand.name} (${id})`)
                 .setDescription(offHand.itemType === ItemType.Weapon ? getWeaponDescription(offHand) : getShieldDescription(offHand))
                 .setValue(`${id}`);
-            if (equip.OFF_HAND && equip.OFF_HAND === parseInt(id)) option.setDefault(true);
+            if (equipment.OFF_HAND && equipment.OFF_HAND === parseInt(id)) option.setDefault(true);
             return option;
         }));
     if (offHandSelectMenu.options.length === 1) offHandSelectMenu.setDisabled(true);
@@ -95,7 +95,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .setLabel('Empty Armour')
         .setDescription('Empty slot')
         .setValue('NULL');
-    if (!equip.ARMOUR) armourEmptyOption.setDefault(true);
+    if (!equipment.ARMOUR) armourEmptyOption.setDefault(true);
     armourSelectMenu.addOptions(
         armourEmptyOption,
         ...Object.entries(armourOptions).map(([id, armour]) => {
@@ -103,7 +103,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 .setLabel(armour.name)
                 .setDescription(getArmourDescription(armour))
                 .setValue(`${id}`);
-            if (equip.ARMOUR && equip.ARMOUR === parseInt(id)) option.setDefault(true);
+            if (equipment.ARMOUR && equipment.ARMOUR === parseInt(id)) option.setDefault(true);
             return option;
         }));
     if (armourSelectMenu.options.length === 1) armourSelectMenu.setDisabled(true);
@@ -127,26 +127,57 @@ async function execute(interaction: ChatInputCommandInteraction) {
     collector.on('collect', async i => {
         const id = i.values[0] !== 'NULL' ? parseInt(i.values[0]) : null;
         const equipSlot = i.customId as EquipSlot;
-        // TODO: unequip off hand if main hand is two-handed
-        // TODO: check if weapon is already in use by other hand
+
+        // Check if weapon is already in use by other hand
+        if (id && equipSlot === EquipSlot.MainHand && id === equipment.OFF_HAND) {
+            await i.reply({content: 'You cannot use the same weapon in both hands', ephemeral: true});
+            return;
+        }
+        else if (id && equipSlot === EquipSlot.OffHand && id === equipment.MAIN_HAND) {
+            await i.reply({content: 'You cannot use the same weapon in both hands', ephemeral: true});
+            return;
+        }
+
         await updateABEquipment(user.id, char.CHAR_NAME, equipSlot, id);
-        let itemName = 'Empty';
-        if (id) {
-            switch(equipSlot) {
-                case EquipSlot.MainHand: 
-                    itemName = mainHandOptions[id].name;
-                    break;
-                case EquipSlot.OffHand: 
-                    itemName = offHandOptions[id].name;
-                    break;
-                case EquipSlot.Armour: 
-                    itemName = armourOptions[id].name;
-                    break;
+        // Update equipment object with id or null
+        
+        let equip: Equip|null = null;
+        switch(equipSlot) {
+            case EquipSlot.MainHand:
+                equipment.MAIN_HAND = id;
+                if (id) equip = mainHandOptions[id];
+                break;
+            case EquipSlot.OffHand:
+                equipment.OFF_HAND = id;
+                if (id) equip = offHandOptions[id];
+                break;
+            case EquipSlot.Armour:
+                equipment.ARMOUR = id;
+                if (id) equip = armourOptions[id];
+                break;
+        }
+
+        const itemName = equip ? equip.name : 'Empty';
+        const swapReplies = [`${bold(i.customId)} swapped to ${bold(itemName)}.`];
+        
+        // Unequip off hand if exists and main hand is two-handed
+        if (equip && (equipSlot === EquipSlot.MainHand || equipSlot === EquipSlot.OffHand) && equipment.MAIN_HAND && mainHandOptions[equipment.MAIN_HAND].twoHanded) {
+            // Unequip off hand
+            if (equipSlot === EquipSlot.MainHand && equipment.OFF_HAND) {
+                await updateABEquipment(user.id, char.CHAR_NAME, EquipSlot.OffHand, null);
+                swapReplies.push(`${bold(EquipSlot.OffHand)} swapped to ${bold('Empty')}.`);
+                equipment.OFF_HAND = null;
+            }
+            // Unequip main hand
+            else if (equipSlot === EquipSlot.OffHand && equipment.MAIN_HAND) {
+                await updateABEquipment(user.id, char.CHAR_NAME, EquipSlot.MainHand, null);
+                swapReplies.push(`${bold(EquipSlot.MainHand)} swapped to ${bold('Empty')}.`);
+                equipment.MAIN_HAND = null;
             }
         }
         
         await Promise.all([
-            i.reply({content: `${bold(i.customId)} swapped to ${bold(itemName)}.`, ephemeral: true}),
+            i.reply({content: swapReplies.join('\n'), ephemeral: true}),
         ]);
     });
 
