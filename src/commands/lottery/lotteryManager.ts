@@ -4,7 +4,7 @@ import { Lottery, getActiveLottery, getCurrentLottery, insertLottery, updateJack
 import { getUserCringePoints, houseUserTransfer } from '../../sql/tables/cringe_points';
 import { JackpotWinner, LotteryTicket, getJackpotWinners, getUnclaimedUsers, getUserLotteryTickets, insertLotteryTicket, claimLotteryTickets, getUnclaimedUserTicketsCount } from '../../sql/tables/lottery_ticket';
 import { ChannelType, Client, EmbedBuilder, User, bold, roleMention, time, userMention } from 'discord.js';
-import { emptyEmbedFieldInline, fetchChannel, fetchUser, MessageEmbedLimit } from '../../util/discordUtil';
+import { emptyEmbedFieldInline, fetchChannel, fetchUser, header, MessageEmbedLimit } from '../../util/discordUtil';
 import { ProfitType, updateProfits } from '../../sql/tables/profits';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
@@ -131,7 +131,7 @@ function scheduleLotteryAutoBuyCronJob(client: Client) {
                 return (ticketsBought > 0) ? `${user} bought ${ticketsBought} lottery ticket${ticketsBought > 1  ? 's' : ''}.` : '';
             }))
         ).filter(msg => msg.length !== 0);
-        if (msgs.length > 0) await channel.send(`${bold('Lottery Auto Buy')}\n${msgs.join('\n')}`);
+        if (msgs.length > 0) await channel.send(`${header('Lottery Auto Buy', 2)}\n${msgs.join('\n')}`);
     });
 }
 
