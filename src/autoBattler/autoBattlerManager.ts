@@ -77,6 +77,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
                         if (loot) {
                             embeds.push(new EmbedBuilder()
                                 .setAuthor({name: `${user.username} looted ${loot}.`, iconURL: user.displayAvatarURL()})
+                                // TODO: add item tooltip here
                                 .setDescription('item description here')
                             );
                         }
