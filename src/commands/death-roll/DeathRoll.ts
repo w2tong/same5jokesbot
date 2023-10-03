@@ -22,7 +22,7 @@ class DeathRoll {
     private wager: number;
     private startingRoll: number;
     private currentRoll: number;
-    private turnUser: User;
+    private _turnUser: User;
     private rollHistory: Roll[] = [];
     private expired = false;
     private static _idleTimeout: number = 60 * timeInMS.minute;
@@ -34,7 +34,7 @@ class DeathRoll {
         this.opponent = opponent;
         this.wager = wager;
         this.startingRoll = this.currentRoll = startingRoll;
-        this.turnUser = (Math.random() < 0.5) ? creator : opponent;
+        this._turnUser = (Math.random() < 0.5) ? creator : opponent;
         this.client = client;
         this.channelId = channelId;
     }
@@ -66,7 +66,7 @@ class DeathRoll {
 
     async roll(userId: string): Promise<{ correctUser: boolean; ended: boolean; }> {
         if (userId === this.turnUser.id) {
-            this.turnUser = (this.turnUser === this.creator) ? this.opponent : this.creator;
+            this._turnUser = (this.turnUser === this.creator) ? this.opponent : this.creator;
             this.currentRoll = Math.ceil(Math.random() * this.currentRoll);
             this.rollHistory.push({userId, roll: this.currentRoll});
             if (this.currentRoll === 1) {
@@ -100,7 +100,10 @@ class DeathRoll {
     }
 
     getResults() {
-        return this.turnUser === this.creator ? {winner: this.creator, loser: this.opponent} : {winner: this.opponent, loser: this.creator};
+        return this._turnUser === this.creator ? {winner: this.creator, loser: this.opponent} : {winner: this.opponent, loser: this.creator};
+    }
+    get turnUser(){
+        return this._turnUser;
     }
 
     static get idleTimeout() {
