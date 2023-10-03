@@ -40,7 +40,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         while (!deathRoll.isEnded()){
             await deathRoll.roll(deathRoll.turnUser.id);
         }
-        void reply.edit({embeds: [deathRoll.createEmbed()], components: []});
+        await interaction.editReply({embeds: [deathRoll.createEmbed()], components: []});
     } else {
         const buttonsRow = new ActionRowBuilder<ButtonBuilder>();
         buttonsRow.addComponents(
