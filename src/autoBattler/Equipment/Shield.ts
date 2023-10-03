@@ -26,7 +26,7 @@ function getShieldDescription(shield: Shield) {
     return descriptions.join(', ');
 }
 
-type ShieldId = 'buckler0'
+type ShieldId = 'buckler0' | 'buckler1' | 'buckler2' | 'buckler3' | 'buckler4' | 'buckler5'
 const shields: {[id in ShieldId]: Shield} = {
     buckler0: {
         id: 'buckler0',
@@ -34,6 +34,41 @@ const shields: {[id in ShieldId]: Shield} = {
         itemType: ItemType.Shield,
         type: ShieldType.Light,
         armourClass: 1
+    },
+    buckler1: {
+        id: 'buckler1',
+        name: 'Buckler +1',
+        itemType: ItemType.Shield,
+        type: ShieldType.Light,
+        armourClass: 1
+    },
+    buckler2: {
+        id: 'buckler2',
+        name: 'Buckler +2',
+        itemType: ItemType.Shield,
+        type: ShieldType.Light,
+        armourClass: 2
+    },
+    buckler3: {
+        id: 'buckler3',
+        name: 'Buckler +3',
+        itemType: ItemType.Shield,
+        type: ShieldType.Light,
+        armourClass: 3
+    },
+    buckler4: {
+        id: 'buckler4',
+        name: 'Buckler +4',
+        itemType: ItemType.Shield,
+        type: ShieldType.Light,
+        armourClass: 4
+    },
+    buckler5: {
+        id: 'buckler5',
+        name: 'Buckler +5',
+        itemType: ItemType.Shield,
+        type: ShieldType.Light,
+        armourClass: 5
     }
 };
 

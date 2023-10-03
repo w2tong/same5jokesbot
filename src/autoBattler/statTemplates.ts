@@ -84,14 +84,14 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
             base: 20,
             perLvl: 8
         },
-        mana: 10, 
+        mana: 100, 
         manaPerAtk: {
             base: 0,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         manaRegen: {
             base: 1,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         initiativeBonus: {
             base: 0,
@@ -132,14 +132,14 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
             base: 20,
             perLvl: 6
         },
-        mana: 10, 
+        mana: 100, 
         manaPerAtk: {
             base: 0,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         manaRegen: {
-            base: 1,
-            perLvl: 0.1
+            base: 10,
+            perLvl: 0.5
         },
         initiativeBonus: {
             base: 0,
@@ -180,14 +180,14 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
             base: 20,
             perLvl: 5
         },
-        mana: 10, 
+        mana: 100, 
         manaPerAtk: {
             base: 0,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         manaRegen: {
-            base: 2,
-            perLvl: 0.1
+            base: 20,
+            perLvl: 0.5
         },
         initiativeBonus: {
             base: 0,
@@ -232,14 +232,14 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: 20,
             perLvl: 8
         },
-        mana: 10, 
+        mana: 100, 
         manaPerAtk: {
             base: 0,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         manaRegen: {
             base: 1,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         initiativeBonus: {
             base: 0,
@@ -280,14 +280,14 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: 20,
             perLvl: 6
         },
-        mana: 10, 
+        mana: 100, 
         manaPerAtk: {
             base: 0,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         manaRegen: {
-            base: 1,
-            perLvl: 0.1
+            base: 10,
+            perLvl: 0.5
         },
         initiativeBonus: {
             base: 0,
@@ -328,14 +328,14 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: 20,
             perLvl: 5
         },
-        mana: 10, 
+        mana: 100, 
         manaPerAtk: {
             base: 0,
-            perLvl: 0.1
+            perLvl: 0.5
         },
         manaRegen: {
-            base: 2,
-            perLvl: 0.1
+            base: 20,
+            perLvl: 0.5
         },
         initiativeBonus: {
             base: 0,
