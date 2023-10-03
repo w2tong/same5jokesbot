@@ -87,7 +87,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
                         expEmbed.setTitle('Defeat');
                         // TODO: set char curr health to 1
                     }
-                    const newLevelAndExp = await updateABCharExp(user.id, userChar.CHAR_NAME, expChange);
+                    const newLevelAndExp = await updateABCharExp(user.id, userChar, expChange);
                     if (newLevelAndExp) {
                         if (newLevelAndExp.level > userChar.CHAR_LEVEL) {
                             expEmbed.addFields(
