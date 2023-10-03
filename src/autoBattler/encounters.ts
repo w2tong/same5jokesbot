@@ -59,6 +59,11 @@ function orcEncounter({level, count}: EncounterParams) {
         {class: Fighter, stats: NPCStats.OrcFighter, equipment: defaultEquipment.Fighter, name: NPCStats.OrcFighter.className},
     ], level, count);
 }
+function zombieEncounter({level, count}: EncounterParams) {
+    return createCharsFunc([
+        {class: Fighter, stats: NPCStats.Zombie, equipment: {mainHand: weapons.poisonbite1}, name: NPCStats.Zombie.className},
+    ], level, count);
+}
 
 const encounters: {[key: number]: Array<() => Character[]>} = {
     1: [
@@ -67,6 +72,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 1, count: 1}),
         ratEncounter({level: 1, count: 3}),
         orcEncounter({level: 1, count: 1}),
+        zombieEncounter({level: 1, count: 2}),
     ],
     2: [
         fighterEncounter({level: 2, count: 1}),
@@ -75,6 +81,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         ratEncounter({level: 2, count: 3}),
         goblinEncounter({level: 1, count: 1}),
         orcEncounter({level: 2, count: 1}),
+        zombieEncounter({level: 2, count: 2}),
     ],
     3: [
         fighterEncounter({level: 3, count: 1}),
@@ -83,6 +90,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         ratEncounter({level: 3, count: 3}),
         goblinEncounter({level: 2, count: 1}),
         orcEncounter({level: 3, count: 1}),
+        zombieEncounter({level: 3, count: 2}),
     ],
     4: [
         fighterEncounter({level: 4, count: 1}),
@@ -91,6 +99,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         ratEncounter({level: 4, count: 4}),
         goblinEncounter({level: 3, count: 1}),
         orcEncounter({level: 4, count: 1}),
+        zombieEncounter({level: 4, count: 2}),
     ],
     5: [
         fighterEncounter({level: 5, count: 1}),
@@ -99,6 +108,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         ratEncounter({level: 5, count: 4}),
         goblinEncounter({level: 4, count: 1}),
         orcEncounter({level: 5, count: 1}),
+        zombieEncounter({level: 5, count: 2}),
     ],
 };
 

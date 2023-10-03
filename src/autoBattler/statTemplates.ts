@@ -196,7 +196,7 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
     }
 };
 
-const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFighter']: CharacterStatTemplate} = {
+const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFighter'|'Zombie']: CharacterStatTemplate} = {
     // Classes
     [ClassName.Fighter]: {
         className: 'Fighter',
@@ -495,7 +495,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     OrcFighter: {
         className: 'Orc Fighter',
         attackBonus: {
-            base: 2,
+            base: 0,
             perLvl: 0.5
         },
         damageBonus: {
@@ -503,15 +503,15 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 12,
+            base: 10,
             perLvl: 0.5
         },
         physDR: {
             base: 1,
-            perLvl: 0
+            perLvl: 0.25
         },
         magicDR: {
-            base: 1,
+            base: 0,
             perLvl: 0
         },
         physResist: {
@@ -519,8 +519,8 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         magicResist: {
-            base: 10,
-            perLvl: 1
+            base: 0,
+            perLvl: 0
         },
         health: {
             base: 25,
@@ -539,7 +539,58 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: -2,
             perLvl: 1
         }
+    },
+
+    // Zombie
+    Zombie: {
+        className: 'Zombie',
+        attackBonus: {
+            base: -2,
+            perLvl: 0.5
+        },
+        damageBonus: {
+            base: 0,
+            perLvl: 1
+        },
+        armourClass: {
+            base: 6,
+            perLvl: 0.5
+        },
+        physDR: {
+            base: 0,
+            perLvl: 0
+        },
+        magicDR: {
+            base: 0,
+            perLvl: 0
+        },
+        physResist: {
+            base: 0,
+            perLvl: 0
+        },
+        magicResist: {
+            base: 0,
+            perLvl: 0
+        },
+        health: {
+            base: 16,
+            perLvl: 4
+        },
+        mana: 0, 
+        manaPerAtk: {
+            base: 0,
+            perLvl: 0
+        },
+        manaRegen: {
+            base: 1,
+            perLvl: 0
+        },
+        initiativeBonus: {
+            base: -10,
+            perLvl: 1
+        }
     }
+
 } as const;
 
 export { CharacterStatTemplate, PlayerStats, NPCStats };
