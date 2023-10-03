@@ -6,6 +6,7 @@ import { Shield, ShieldId, getShieldDescription, shields } from '../../../../aut
 import { EquipSlot, getABEquipment, updateABEquipment } from '../../../../sql/tables/ab_equipment';
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 import { Armour, ArmourId, armour, getArmourDescription } from '../../../../autoBattler/Equipment/Armour';
+import { ItemType } from '../../../../autoBattler/Equipment/Item';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
@@ -79,7 +80,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         ...Object.entries(offHandOptions).map(([id, offHand]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(offHand.name)
-                .setDescription(offHand.id in weapons ? getWeaponDescription(offHand as Weapon) : getShieldDescription(offHand as Shield))
+                .setDescription(offHand.itemType === ItemType.Weapon ? getWeaponDescription(offHand) : getShieldDescription(offHand))
                 .setValue(`${id}`);
             if (equip.OFF_HAND && equip.OFF_HAND === parseInt(id)) option.setDefault(true);
             return option;

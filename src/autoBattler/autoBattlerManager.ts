@@ -6,7 +6,7 @@ import { getRandomEncounter } from './encounters';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe_points';
 import { emptyEmbedFieldInline, getBalanceStrings } from '../util/discordUtil';
 import { encounterExp, levelExp } from './experience';
-import { defaultEquipment, fetchEquipment, items } from './Equipment/Equipment';
+import { Equip, defaultEquipment, equips, fetchEquipment, getItemTooltip } from './Equipment/Equipment';
 import lootTables from './lootTables';
 import { insertABInventoryItem } from '../sql/tables/ab_inventory';
 import { Classes } from './Classes/classes';
@@ -14,14 +14,14 @@ import { ClassStats } from './statTemplates';
 
 const usersInBattle: Set<string> = new Set();
 const ExpLoss = 0.05;
-const lootChance = 0.25;
+const lootChance = process.env.NODE_ENV === 'development' ? 1 : 0.25;
 
-async function addLoot(userId: string, level: number): Promise<string|null> {
+async function addLoot(userId: string, level: number): Promise<Equip|null> {
     if (Math.random() < lootChance) {
         const lootTable = lootTables[level];
         const itemId = Math.random() < lootTable.rareChance ? lootTable.rare[getRandomRange(lootTable.rare.length)] : lootTable.normal[getRandomRange(lootTable.normal.length)];
         await insertABInventoryItem(userId, itemId);
-        return items[itemId].name;
+        return equips[itemId];
     }
     return null;
 }
@@ -76,9 +76,8 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
                         const loot = await addLoot(user.id, userChar.CHAR_LEVEL);
                         if (loot) {
                             embeds.push(new EmbedBuilder()
-                                .setAuthor({name: `${user.username} looted ${loot}.`, iconURL: user.displayAvatarURL()})
-                                // TODO: add item tooltip here
-                                .setDescription('item description here')
+                                .setAuthor({name: `${user.username} looted ${loot.name}.`, iconURL: user.displayAvatarURL()})
+                                .addFields({name: loot.name, value: getItemTooltip(loot)})
                             );
                         }
                     }

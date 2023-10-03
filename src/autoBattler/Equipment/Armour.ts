@@ -1,3 +1,4 @@
+import { bold } from 'discord.js';
 import Character from '../Character';
 import { Item, ItemType } from './Item';
 
@@ -17,6 +18,12 @@ interface Armour extends Item {
         func: (self: Character, target: Character) => void;
         description: string;
     }
+}
+
+function getArmourTooltip(armour: Armour) {
+    const descriptions = [`${bold('Armour Class')}: ${armour.armourClass}`];
+    if (armour.manaRegen) descriptions.push(`${bold('Mana Regen')}: ${armour.manaRegen}`);
+    return descriptions.join('\n');
 }
 
 function getArmourDescription(armour: Armour) {
@@ -66,4 +73,4 @@ const armour: {[id in ArmourId]: Armour} = {
     }
 };
 
-export { Armour, getArmourDescription, ArmourId, armour };
+export { Armour, getArmourTooltip, getArmourDescription, ArmourId, armour };
