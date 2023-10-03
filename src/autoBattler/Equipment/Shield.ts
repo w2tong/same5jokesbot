@@ -16,6 +16,11 @@ interface Shield extends Item {
     magicResist?: number;
 }
 
+function getShieldDescription(shield: Shield) {
+    const descriptions = [`AC: ${shield.armourClass}`];
+    return descriptions.join(', ');
+}
+
 type ShieldId = 'buckler0'
 const shields: {[id in ShieldId]: Shield} = {
     buckler0: {
@@ -27,4 +32,4 @@ const shields: {[id in ShieldId]: Shield} = {
     }
 };
 
-export { Shield, ShieldId, shields };
+export { Shield, getShieldDescription, ShieldId, shields };

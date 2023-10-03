@@ -38,13 +38,12 @@ async function execute(interaction: ChatInputCommandInteraction) {
             {name: 'Phys Resist', value: `${charInfo.physResist}%`, inline: true},
             {name: 'Magic Resist', value: `${charInfo.magicResist}%`, inline: true},
 
-            // TODO: update attack bonus to reflect dual-wield/offhand penalty
-            {name: 'Main Hand Attack', value: getWeaponTooltip(charInfo.mainHand).tooltip}
+            {name: 'Main Hand Attack', value: getWeaponTooltip(charInfo.mainHand)}
         )
     ;
 
     if (charInfo.offHandWeapon) {
-        embed.addFields({name: 'Off Hand Attack', value: getWeaponTooltip(charInfo.offHandWeapon).tooltip
+        embed.addFields({name: 'Off Hand Attack', value: getWeaponTooltip(charInfo.offHandWeapon)
         });
     }
 

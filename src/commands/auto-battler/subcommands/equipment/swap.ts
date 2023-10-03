@@ -1,11 +1,11 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, ComponentType, SlashCommandSubcommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, StringSelectMenuOptionBuilder, bold } from 'discord.js';
 import { timeInMS } from '../../../../util/util';
 import { getABCharInventory } from '../../../../sql/tables/ab_inventory';
-import { Weapon, WeaponId, getWeaponTooltip, weapons } from '../../../../autoBattler/Equipment/Weapons';
-import { Shield, ShieldId, shields } from '../../../../autoBattler/Equipment/Shield';
+import { Weapon, WeaponId, getWeaponDescription, weapons } from '../../../../autoBattler/Equipment/Weapons';
+import { Shield, ShieldId, getShieldDescription, shields } from '../../../../autoBattler/Equipment/Shield';
 import { EquipSlot, getABEquipment, updateABEquipment } from '../../../../sql/tables/ab_equipment';
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
-import { Armour, ArmourId, armour } from '../../../../autoBattler/Equipment/Armour';
+import { Armour, ArmourId, armour, getArmourDescription } from '../../../../autoBattler/Equipment/Armour';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
@@ -59,7 +59,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         ...Object.entries(mainHandOptions).map(([id, weapon]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(weapon.name)
-                .setDescription(getWeaponTooltip(weapon).tooltip)
+                .setDescription(getWeaponDescription(weapon))
                 .setValue(`${id}`);
             if (equip.MAIN_HAND && equip.MAIN_HAND === parseInt(id)) option.setDefault(true);
             return option;
@@ -80,7 +80,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         ...Object.entries(offHandOptions).map(([id, offHand]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(offHand.name)
-                .setDescription('description here')
+                .setDescription(offHand.id in weapons ? getWeaponDescription(offHand as Weapon) : getShieldDescription(offHand as Shield))
                 .setValue(`${id}`);
             if (equip.OFF_HAND && equip.OFF_HAND === parseInt(id)) option.setDefault(true);
             return option;
@@ -101,7 +101,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         ...Object.entries(armourOptions).map(([id, armour]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(armour.name)
-                .setDescription('description here')
+                .setDescription(getArmourDescription(armour))
                 .setValue(`${id}`);
             if (equip.ARMOUR && equip.ARMOUR === parseInt(id)) option.setDefault(true);
             return option;

@@ -19,6 +19,12 @@ interface Armour extends Item {
     }
 }
 
+function getArmourDescription(armour: Armour) {
+    const descriptions = [`AC: ${armour.armourClass}`];
+    if (armour.manaRegen) descriptions.push(`MP Regen: ${armour.manaRegen}`);
+    return descriptions.join(', ');
+}
+
 type ArmourId = 
 'robe0' |
 'lightarmour0' |
@@ -60,4 +66,4 @@ const armour: {[id in ArmourId]: Armour} = {
     }
 };
 
-export { Armour, ArmourId, armour };
+export { Armour, getArmourDescription, ArmourId, armour };
