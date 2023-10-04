@@ -9,6 +9,7 @@ import { Armour, ArmourId, armour, getArmourDescription } from '../../../../auto
 import { ItemType } from '../../../../autoBattler/Equipment/Item';
 import { Equip } from '../../../../autoBattler/Equipment/Equipment';
 import { Head, HeadId, getHeadDescription, heads } from '../../../../autoBattler/Equipment/Head';
+import { Hands, HandsId, getHandsDescription, hands } from '../../../../autoBattler/Equipment/Hands';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
@@ -38,6 +39,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const offHandOptions: {[id: number]: Weapon|Shield} = {};
     const armourOptions: {[id: number]: Armour} = {};
     const headOptions: {[id: number]: Head} = {};
+    const handsOptions: {[id: number]: Hands} = {};
     for (const item of inv) {
         if (item.ITEM_ID in weapons) {
             const weapon = weapons[item.ITEM_ID as WeaponId];
@@ -54,6 +56,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
         else if (item.ITEM_ID in heads) {
             headOptions[item.ID] = heads[item.ITEM_ID as HeadId];
+        }
+        else if (item.ITEM_ID in hands) {
+            handsOptions[item.ID] = hands[item.ITEM_ID as HandsId];
         }
     }
 
@@ -141,11 +146,33 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }));
     if (headSelectMenu.options.length === 1) headSelectMenu.setDisabled(true);
 
+    // Hands select menu
+    const handsSelectMenu = new StringSelectMenuBuilder()
+        .setCustomId(EquipSlot.Hands)
+        .setPlaceholder('Hands is empty.');
+    const handsEmptyOption = new StringSelectMenuOptionBuilder()
+        .setLabel('Empty Hands')
+        .setDescription('Empty slot')
+        .setValue('NULL');
+    if (!equipment.HANDS) handsEmptyOption.setDefault(true);
+    handsSelectMenu.addOptions(
+        handsEmptyOption,
+        ...Object.entries(handsOptions).map(([id, handsItem]) => {
+            const option = new StringSelectMenuOptionBuilder()
+                .setLabel(handsItem.name)
+                .setDescription(getHandsDescription(handsItem))
+                .setValue(`${id}`);
+            if (equipment.HANDS && equipment.HANDS === parseInt(id)) option.setDefault(true);
+            return option;
+        }));
+    if (handsSelectMenu.options.length === 1) handsSelectMenu.setDisabled(true);
+
     const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(mainHandSelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(offHandSelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(armourSelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(headSelectMenu),
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(handsSelectMenu),
     ];
 
     await interaction.editReply({content: 'Swap your equipment.', components});
@@ -187,6 +214,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
             case EquipSlot.Head:
                 equipment.HEAD = id;
                 if (id) equip = headOptions[id];
+                break;
+            case EquipSlot.Hands:
+                equipment.HANDS = id;
+                if (id) equip = handsOptions[id];
                 break;
         }
 

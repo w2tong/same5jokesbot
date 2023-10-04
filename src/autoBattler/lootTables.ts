@@ -1,9 +1,10 @@
 import { ArmourId } from './Equipment/Armour';
+import { HandsId } from './Equipment/Hands';
 import { HeadId } from './Equipment/Head';
 import { ShieldId } from './Equipment/Shield';
 import { WeaponId } from './Equipment/Weapons';
 
-type LootTable = (WeaponId|ShieldId|HeadId|ArmourId)[];
+type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId)[];
 
 const lootTiers: {[tier: number]: LootTable} = {
     0: [
@@ -22,7 +23,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe1', 'lightarmour1', 'mediumarmour1', 'heavyarmour1', 
         // Heads
-        'platehelmet0', 'clothhood0'
+        'platehelmet0', 'clothhood0',
+        // Hands
+        'dwGloves0', 'thGloves0', 'ohGloves0',
     ],
     2: [
         // Weapons
@@ -32,7 +35,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe2', 'lightarmour2', 'mediumarmour2', 'heavyarmour2',
         // Heads
-        'platehelmet0', 'clothhood0'
+        'platehelmet0', 'clothhood0',
+        // Hands
+        'dwGloves0', 'thGloves0', 'ohGloves0',
     ],
     3: [
         // Weapons
@@ -42,7 +47,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe3', 'lightarmour3', 'mediumarmour3', 'heavyarmour3',
         // Heads
-        'platehelmet1', 'clothhood1'
+        'platehelmet1', 'clothhood1',
+        // Hands
+        'dwGloves1', 'thGloves1', 'ohGloves1'
     ],
     4: [
         // Weapons
@@ -52,7 +59,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe4', 'lightarmour4', 'mediumarmour4', 'heavyarmour4',
         // Heads
-        'platehelmet1', 'clothhood1'
+        'platehelmet1', 'clothhood1',
+        // Hands
+        'dwGloves1', 'thGloves1', 'ohGloves1'
     ],
         
     5: [
@@ -63,7 +72,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe5', 'lightarmour5', 'mediumarmour5', 'heavyarmour5',
         // Heads
-        'platehelmet2', 'clothhood2'
+        'platehelmet2', 'clothhood2',
+        // Hands
+        'dwGloves2', 'thGloves2', 'ohGloves2',
     ],
 };
 

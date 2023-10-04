@@ -5,16 +5,25 @@ import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
 import { CharacterStatTemplate } from './statTemplates';
-import { Weapon } from './Equipment/Weapons';
+import { RangeType, Weapon } from './Equipment/Weapons';
 import { Shield } from './Equipment/Shield';
 import { Equipment } from './Equipment/Equipment';
 import { userUpgrades } from '../upgrades/upgradeManager';
 import { upgrades } from '../upgrades/upgrades';
+import { WeaponStyle } from './Equipment/Hands';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
 const dualWieldPenalty = -2;
 const offHandPenalty = -4;
+
+type HandsBonuses = {attack: number, damage: number, critRange: number, critMult: number};
+function addHandsBonus(weapon: Weapon, bonuses: HandsBonuses) {
+    weapon.attackBonus += bonuses.attack;
+    weapon.damageBonus += bonuses.damage;
+    weapon.critRange -= bonuses.critRange;
+    weapon.critMult += bonuses.critMult;
+}
 
 class Character {
     private userId?: string;
@@ -131,11 +140,27 @@ class Character {
 
         //Hands
         if (equipment.hands) {
-            this.mainHand.attackBonus += equipment.hands.attackBonus ?? 0;
-            this.mainHand.damageBonus += equipment.hands.damageBonus ?? 0;
-            if (this.offHandWeapon) {
-                this.offHandWeapon.attackBonus += equipment.hands.attackBonus ?? 0;
-                this.offHandWeapon.damageBonus += equipment.hands.damageBonus ?? 0;
+            const handsBonuses: HandsBonuses = {
+                attack: equipment.hands.attackBonus ?? 0,
+                damage: equipment.hands.damageBonus ?? 0,
+                critRange: equipment.hands.critRangeBonus ?? 0,
+                critMult: equipment.hands.critMultBonus ?? 0
+            };
+            if (equipment.hands.weaponStyle) {
+                if (equipment.hands.weaponStyle === WeaponStyle.DualWield && this.mainHand && this.offHandWeapon) {
+                    addHandsBonus(this.mainHand, handsBonuses);
+                    if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
+                }
+                else if ((equipment.hands.weaponStyle === WeaponStyle.TwoHanded && this.mainHand.twoHanded)
+                        || equipment.hands.weaponStyle === WeaponStyle.OneHanded && !this.mainHand.twoHanded
+                        || equipment.hands.weaponStyle === WeaponStyle.Ranged && this.mainHand.range === RangeType.LongRange
+                ) {
+                    addHandsBonus(this.mainHand, handsBonuses);
+                }
+            }
+            else {
+                addHandsBonus(this.mainHand, handsBonuses);
+                if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
             }
         }
 

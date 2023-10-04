@@ -526,4 +526,4 @@ function getWeaponDescription(weapon: Weapon) {
     return descriptions.join(', ');
 }
 
-export { Weapon, getWeaponTooltip, getWeaponDescription, WeaponId, weapons };
+export { WeaponType, RangeType, Weapon, getWeaponTooltip, getWeaponDescription, WeaponId, weapons };
