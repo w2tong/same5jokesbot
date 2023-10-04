@@ -16,6 +16,10 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setDescription('Enter the level of the encounter to fight.')
         .setMinValue(1)
         .setMaxValue(20)
+    )
+    .addBooleanOption(option => option
+        .setName('full-log')
+        .setDescription('Display the full combat log.')
     );
 
 export default { execute, name, subcommandBuilder };

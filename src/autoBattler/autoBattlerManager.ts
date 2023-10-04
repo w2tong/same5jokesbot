@@ -44,6 +44,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
     const user = interaction.user;
+    const fullLog = interaction.options.getBoolean('full-log') ?? false;
 
     if (usersInBattle.has(user.id)) {
         await interaction.editReply('You are already in a battle.');
@@ -62,7 +63,8 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     
     const battle = new Battle(
         [await createPlayerChar(user.id, userChar)],
-        getRandomEncounter(level)
+        getRandomEncounter(level),
+        {fullLog}
     );
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -130,6 +132,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     const opponent = interaction.options.getUser('user');
     const wager = interaction.options.getInteger('wager') ?? 0;
+    const fullLog = interaction.options.getBoolean('full-log') ?? false;
     
     if (!opponent || !interaction.channel) {
         await interaction.editReply('There was an error creating the auto battle.');
@@ -174,6 +177,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     const battle = new Battle(
         [await createPlayerChar(user.id, userChar)],
         [await createPlayerChar(opponent.id, opponentChar)],
+        {fullLog}
     );
 
     const acceptButtonId = 'accept';

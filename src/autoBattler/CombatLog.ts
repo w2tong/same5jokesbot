@@ -1,12 +1,19 @@
 import { FieldValueCharLimit } from '../util/discordUtil';
 
+const logLength = 5;
+
 class CombatLog {
     
     private log: string[] = [];
     private logLength = 0;
     private logIndex = 0;
+    private fullLog: boolean = false;
 
-    constructor() {}
+    constructor(options?: {fullLog?: boolean}) {
+        if (options) {
+            if (options.fullLog) this.fullLog = options.fullLog;
+        }
+    }
 
     add(line: string) {
         this.log.push(line);
@@ -17,7 +24,9 @@ class CombatLog {
     }
 
     getLog() {
-        return this.log.length ? this.log.slice(this.logIndex).join('\n') : 'None';
+        if (!this.log.length) return 'None';
+        if (this.fullLog) return this.log.slice(this.logIndex).join('\n');
+        return this.log.slice(-logLength).join('\n');
     }
 }
 
