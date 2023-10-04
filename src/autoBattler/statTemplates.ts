@@ -54,15 +54,15 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
         className: 'Fighter',
         attackBonus: {
             base: 0,
-            perLvl: 0.25
+            perLvl: 0.34
         },
         damageBonus: {
             base: 0,
-            perLvl: 0.5
+            perLvl: 1
         },
         armourClass: {
             base: 10,
-            perLvl: 0.25
+            perLvl: 0.34
         },
         physDR: {
             base: 0,
@@ -102,15 +102,15 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
         className: 'Rogue',
         attackBonus: {
             base: 0,
-            perLvl: 0.25
+            perLvl: 0.34
         },
         damageBonus: {
             base: 0,
-            perLvl: 0.5
+            perLvl: 1
         },
         armourClass: {
             base: 10,
-            perLvl: 0.25
+            perLvl: 0.34
         },
         physDR: {
             base: 0,
@@ -150,15 +150,15 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
         className: 'Wizard',
         attackBonus: {
             base: 0,
-            perLvl: 0.25
+            perLvl: 0.34
         },
         damageBonus: {
             base: 0,
-            perLvl: 0.5
+            perLvl: 1
         },
         armourClass: {
             base: 10,
-            perLvl: 0.25
+            perLvl: 0.34
         },
         physDR: {
             base: 0,

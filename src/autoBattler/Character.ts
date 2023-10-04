@@ -43,6 +43,7 @@ class Character {
     protected maxMana: number;
     protected currMana: number;
     protected manaRegen: number;
+    protected manaCostReduction: number;
 
     protected _initiativeBonus: number;
 
@@ -79,6 +80,7 @@ class Character {
 
         this.maxMana = stats.mana;
         this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
+        this.manaCostReduction = 0;
 
         this.manaRegen = calcStatValue(stats.manaRegen, level) + (this._mainHand.manaRegen ?? 0);
         this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
@@ -107,7 +109,20 @@ class Character {
         // Armour
         if (equipment.armour) {
             this._armourClass += equipment.armour.armourClass;
+            this.physDR += equipment.armour.physDR ?? 0;
+            this.magicDR += equipment.armour.magicDR ?? 0;
+            this.physResist += equipment.armour.physResist ?? 0;
+            this.magicResist += equipment.armour.magicResist ?? 0;
             this.manaRegen += equipment.armour.manaRegen ?? 0;
+        }
+
+        // Head
+        if (equipment.head) {
+            this._armourClass += equipment.head.armourClass ?? 0;
+            this.mainHand.manaPerAtk += equipment.head.manaPerAtk ?? 0;
+            if (this.offHandWeapon) this.offHandWeapon.manaPerAtk += equipment.head.manaPerAtk ?? 0;
+            this.manaRegen += equipment.head.manaRegen ?? 0;
+            this.manaCostReduction += equipment.head.manaCostReduction ?? 0;
         }
 
         if (options?.userId) {
@@ -245,7 +260,7 @@ class Character {
     }
 
     doTurn(): void {
-        if (this.maxMana !== 0 && this.currMana === this.maxMana) {
+        if (this.maxMana !== 0 && this.currMana >= this.maxMana - this.manaCostReduction) {
             this.specialAbility();
         }
         else {
@@ -316,7 +331,7 @@ class Character {
 
     // Default special ability
     specialAbility() {
-        this.currMana = 0;
+        this.currMana -= (this.maxMana - this.manaCostReduction);
         this.attack();        
     }
 

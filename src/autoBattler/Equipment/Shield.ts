@@ -16,16 +16,6 @@ interface Shield extends Item {
     magicResist?: number;
 }
 
-function getShieldTooltip(shield: Shield) {
-    const descriptions = [`AC: ${shield.armourClass}`];
-    return descriptions.join('\n');
-}
-
-function getShieldDescription(shield: Shield) {
-    const descriptions = [`AC: ${shield.armourClass}`];
-    return descriptions.join(', ');
-}
-
 type ShieldId = 'buckler0' | 'buckler1' | 'buckler2' | 'buckler3' | 'buckler4' | 'buckler5'
 const shields: {[id in ShieldId]: Shield} = {
     buckler0: {
@@ -71,5 +61,15 @@ const shields: {[id in ShieldId]: Shield} = {
         armourClass: 5
     }
 };
+
+function getShieldTooltip(shield: Shield) {
+    const tooltip = [`AC: ${shield.armourClass}`];
+    return tooltip.join('\n');
+}
+
+function getShieldDescription(shield: Shield) {
+    const descriptions = [`AC: ${shield.armourClass}`];
+    return descriptions.join(', ');
+}
 
 export { Shield, getShieldTooltip, getShieldDescription, ShieldId, shields };

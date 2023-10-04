@@ -8,6 +8,7 @@ import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 import { Armour, ArmourId, armour, getArmourDescription } from '../../../../autoBattler/Equipment/Armour';
 import { ItemType } from '../../../../autoBattler/Equipment/Item';
 import { Equip } from '../../../../autoBattler/Equipment/Equipment';
+import { Head, HeadId, getHeadDescription, heads } from '../../../../autoBattler/Equipment/Head';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
@@ -26,9 +27,17 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const inv = await getABCharInventory(user.id, char.CHAR_NAME);
+
+    // TODO: change to if all slots are empty
+    if (inv.length === 0) {
+        await interaction.editReply('You do not have equipment to swap to.');
+        return;
+    }
+
     const mainHandOptions: {[id: number]: Weapon} = {};
     const offHandOptions: {[id: number]: Weapon|Shield} = {};
     const armourOptions: {[id: number]: Armour} = {};
+    const headOptions: {[id: number]: Head} = {};
     for (const item of inv) {
         if (item.ITEM_ID in weapons) {
             const weapon = weapons[item.ITEM_ID as WeaponId];
@@ -42,6 +51,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
         else if (item.ITEM_ID in armour) {
             armourOptions[item.ID] = armour[item.ITEM_ID as ArmourId];
+        }
+        else if (item.ITEM_ID in heads) {
+            headOptions[item.ID] = heads[item.ITEM_ID as HeadId];
         }
     }
 
@@ -58,7 +70,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         mainHandEmptyOption,
         ...Object.entries(mainHandOptions).map(([id, weapon]) => {
             const option = new StringSelectMenuOptionBuilder()
-                .setLabel(`${weapon.name} (${id})`)
+                .setLabel(`${weapon.name} (id: ${id})`)
                 .setDescription(getWeaponDescription(weapon))
                 .setValue(`${id}`);
             if (equipment.MAIN_HAND && equipment.MAIN_HAND === parseInt(id)) option.setDefault(true);
@@ -79,7 +91,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         offHandEmptyOption,
         ...Object.entries(offHandOptions).map(([id, offHand]) => {
             const option = new StringSelectMenuOptionBuilder()
-                .setLabel(`${offHand.name} (${id})`)
+                .setLabel(`${offHand.name} (id: ${id})`)
                 .setDescription(offHand.itemType === ItemType.Weapon ? getWeaponDescription(offHand) : getShieldDescription(offHand))
                 .setValue(`${id}`);
             if (equipment.OFF_HAND && equipment.OFF_HAND === parseInt(id)) option.setDefault(true);
@@ -108,17 +120,34 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }));
     if (armourSelectMenu.options.length === 1) armourSelectMenu.setDisabled(true);
 
+    // Head select menu
+    const headSelectMenu = new StringSelectMenuBuilder()
+        .setCustomId(EquipSlot.Head)
+        .setPlaceholder('Head is empty.');
+    const headEmptyOption = new StringSelectMenuOptionBuilder()
+        .setLabel('Empty Head')
+        .setDescription('Empty slot')
+        .setValue('NULL');
+    if (!equipment.HEAD) headEmptyOption.setDefault(true);
+    headSelectMenu.addOptions(
+        headEmptyOption,
+        ...Object.entries(headOptions).map(([id, head]) => {
+            const option = new StringSelectMenuOptionBuilder()
+                .setLabel(head.name)
+                .setDescription(getHeadDescription(head))
+                .setValue(`${id}`);
+            if (equipment.HEAD && equipment.HEAD === parseInt(id)) option.setDefault(true);
+            return option;
+        }));
+    if (headSelectMenu.options.length === 1) headSelectMenu.setDisabled(true);
+
     const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(mainHandSelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(offHandSelectMenu),
-        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(armourSelectMenu)
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(armourSelectMenu),
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(headSelectMenu),
     ];
 
-    // TODO: change to if all slots are empty
-    if (components.length === 0) {
-        await interaction.editReply('You do not have equipment to swap to.');
-        return;
-    }
     await interaction.editReply({content: 'Swap your equipment.', components});
 
     const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
@@ -154,6 +183,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
             case EquipSlot.Armour:
                 equipment.ARMOUR = id;
                 if (id) equip = armourOptions[id];
+                break;
+            case EquipSlot.Head:
+                equipment.HEAD = id;
+                if (id) equip = headOptions[id];
                 break;
         }
 

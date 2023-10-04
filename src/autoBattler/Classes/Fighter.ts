@@ -6,7 +6,7 @@ class Fighter extends Character {
         if (!this.battle) return;
         this.setTarget();
         if (this.target) {
-            this.currMana = 0;
+            this.currMana -= (this.maxMana - this.manaCostReduction);
             this.battle.ref.combatLog.add(`${bold(this.name)} used ${bold('Extra Attack')}.`);
             this.attack();
             this.attack();
