@@ -51,9 +51,16 @@ const getQuery = `
 SELECT id, item_id
 FROM ab_inventory
 WHERE user_id = :userId
-AND (id,id,id,id,id,id,id,id,id,id) NOT IN (SELECT main_hand, off_hand, head, amulet, armour, hands, belt, ring1, ring2, potion FROM ab_equipment
-    WHERE user_id = :userId
-)
+AND id NOT IN (SELECT main_hand FROM ab_equipment WHERE user_id = :userId AND main_hand IS NOT NULL)
+AND id NOT IN (SELECT off_hand FROM ab_equipment WHERE user_id = :userId AND off_hand IS NOT NULL)
+AND id NOT IN (SELECT head FROM ab_equipment WHERE user_id = :userId AND head IS NOT NULL)
+AND id NOT IN (SELECT amulet FROM ab_equipment WHERE user_id = :userId AND amulet IS NOT NULL)
+AND id NOT IN (SELECT armour FROM ab_equipment WHERE user_id = :userId AND armour IS NOT NULL)
+AND id NOT IN (SELECT hands FROM ab_equipment WHERE user_id = :userId AND hands IS NOT NULL)
+AND id NOT IN (SELECT belt FROM ab_equipment WHERE user_id = :userId AND belt IS NOT NULL)
+AND id NOT IN (SELECT ring1 FROM ab_equipment WHERE user_id = :userId AND ring1 IS NOT NULL)
+AND id NOT IN (SELECT ring2 FROM ab_equipment WHERE user_id = :userId AND ring2 IS NOT NULL)
+AND id NOT IN (SELECT potion FROM ab_equipment WHERE user_id = :userId AND potion IS NOT NULL)
 `;
 type InventoryItem = {
     ID: number;

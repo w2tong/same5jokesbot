@@ -6,6 +6,7 @@ import deleteCharacter from './subcommands/character/delete';
 import selectCharacter from './subcommands/character/select';
 import characterInfo from './subcommands/character/info';
 import equipmentSwap from './subcommands/equipment/swap';
+import equipmentSell from './subcommands/equipment/sell';
 
 const subcommands = {
     [pve.name]: pve.execute,
@@ -15,6 +16,7 @@ const subcommands = {
     [selectCharacter.name]: selectCharacter.execute,
     [characterInfo.name]: characterInfo.execute,
     [equipmentSwap.name]: equipmentSwap.execute,
+    [equipmentSell.name]: equipmentSell.execute,
 };
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -41,6 +43,7 @@ const commandBuilder = new SlashCommandBuilder()
         .setName('equipment')
         .setDescription('Equipment stuff')
         .addSubcommand(equipmentSwap.subcommandBuilder)
+        .addSubcommand(equipmentSell.subcommandBuilder)
     );
 
 export default { execute, name, commandBuilder };
