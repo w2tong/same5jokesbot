@@ -5,16 +5,25 @@ import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
 import { CharacterStatTemplate } from './statTemplates';
-import { Weapon } from './Equipment/Weapons';
+import { RangeType, Weapon } from './Equipment/Weapons';
 import { Shield } from './Equipment/Shield';
 import { Equipment } from './Equipment/Equipment';
 import { userUpgrades } from '../upgrades/upgradeManager';
 import { upgrades } from '../upgrades/upgrades';
+import { WeaponStyle } from './Equipment/Hands';
 
 const healthBarLength = 10;
 const manaBarLength = 10;
 const dualWieldPenalty = -2;
 const offHandPenalty = -4;
+
+type HandsBonuses = {attack: number, damage: number, critRange: number, critMult: number};
+function addHandsBonus(weapon: Weapon, bonuses: HandsBonuses) {
+    weapon.attackBonus += bonuses.attack;
+    weapon.damageBonus += bonuses.damage;
+    weapon.critRange -= bonuses.critRange;
+    weapon.critMult += bonuses.critMult;
+}
 
 class Character {
     private userId?: string;
@@ -24,16 +33,18 @@ class Character {
 
     protected level: number;
 
+    // Main Hand and Off Hand
     protected _mainHand: Weapon;
     protected offHandWeapon?: Weapon;
     protected offHandShield?: Shield;
 
-    // Defence stats
+    // Defense stats
     protected _armourClass: number;
     protected physDR: number;
     protected magicDR: number;
     protected physResist: number;
     protected magicResist: number;
+    protected _thorns: number = 0;
     
     // Health
     protected maxHealth: number;
@@ -104,6 +115,7 @@ class Character {
             this.magicDR += shield.magicDR ?? 0;
             this.physResist += shield.physResist ?? 0;
             this.magicResist += shield.magicResist ?? 0;
+            this._thorns += shield.thorns ?? 0;
         }
 
         // Armour
@@ -114,6 +126,7 @@ class Character {
             this.physResist += equipment.armour.physResist ?? 0;
             this.magicResist += equipment.armour.magicResist ?? 0;
             this.manaRegen += equipment.armour.manaRegen ?? 0;
+            this._thorns += equipment.armour.thorns ?? 0;
         }
 
         // Head
@@ -123,6 +136,32 @@ class Character {
             if (this.offHandWeapon) this.offHandWeapon.manaPerAtk += equipment.head.manaPerAtk ?? 0;
             this.manaRegen += equipment.head.manaRegen ?? 0;
             this.manaCostReduction += equipment.head.manaCostReduction ?? 0;
+        }
+
+        //Hands
+        if (equipment.hands) {
+            const handsBonuses: HandsBonuses = {
+                attack: equipment.hands.attackBonus ?? 0,
+                damage: equipment.hands.damageBonus ?? 0,
+                critRange: equipment.hands.critRangeBonus ?? 0,
+                critMult: equipment.hands.critMultBonus ?? 0
+            };
+            if (equipment.hands.weaponStyle) {
+                if (equipment.hands.weaponStyle === WeaponStyle.DualWield && this.mainHand && this.offHandWeapon) {
+                    addHandsBonus(this.mainHand, handsBonuses);
+                    if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
+                }
+                else if ((equipment.hands.weaponStyle === WeaponStyle.TwoHanded && this.mainHand.twoHanded)
+                        || equipment.hands.weaponStyle === WeaponStyle.OneHanded && !this.mainHand.twoHanded
+                        || equipment.hands.weaponStyle === WeaponStyle.Ranged && this.mainHand.range === RangeType.LongRange
+                ) {
+                    addHandsBonus(this.mainHand, handsBonuses);
+                }
+            }
+            else {
+                addHandsBonus(this.mainHand, handsBonuses);
+                if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
+            }
         }
 
         if (options?.userId) {
@@ -157,6 +196,10 @@ class Character {
 
     get armourClass() {
         return this._armourClass;
+    }
+
+    get thorns() {
+        return this._thorns;
     }
 
     get initiativeBonus() {
@@ -293,9 +336,12 @@ class Character {
         if (!this.battle) return;
         this.setTarget();
         if (this.target) { 
-            let attack = this.attackRoll(this.mainHand);
+            let hitTarget = false;
+            
             // Main hand attack
+            let attack = this.attackRoll(this.mainHand);
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
+                hitTarget = true;
                 const damageRoll = rollDice(this.mainHand.damage);
                 const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
                 let damage = damageRoll + this.mainHand.damageBonus + sneakDamage;
@@ -304,6 +350,7 @@ class Character {
                 this.target.takeDamage(this.name, damage, this.mainHand.damageType);
                 if (this.mainHand.onHit) this.mainHand.onHit.func(this, this.target);
                 this.addMana(this.mainHand.manaPerAtk);
+                
             }
             else {
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
@@ -313,6 +360,7 @@ class Character {
             if (this.offHandWeapon) {
                 attack = this.attackRoll(this.offHandWeapon);
                 if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
+                    hitTarget = true;
                     const damageRoll = rollDice(this.offHandWeapon.damage);
                     const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
                     let damage = damageRoll + this.offHandWeapon.damageBonus + sneakDamage;
@@ -326,6 +374,12 @@ class Character {
                     this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));
                 }
             }
+
+            // Apply thorns damage if target was hit
+            if (hitTarget && this.target.thorns > 0) {
+                this.takeDamage('Thorns', this.target.thorns, DamageType.Physical);
+            }
+            
         }
     }
 

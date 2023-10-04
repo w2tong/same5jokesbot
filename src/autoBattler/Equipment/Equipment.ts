@@ -1,12 +1,13 @@
 import { getABEquipmentItemIds } from '../../sql/tables/ab_equipment';
 import { ClassName } from '../Classes/classes';
 import { Armour, ArmourId, armour, getArmourDescription, getArmourTooltip } from './Armour';
+import { Hands, HandsId, hands } from './Hands';
 import { Head, HeadId, getHeadDescription, getHeadTooltip, heads } from './Head';
 import { ItemType } from './Item';
 import { Shield, getShieldDescription, getShieldTooltip, shields } from './Shield';
 import { Weapon, WeaponId, getWeaponDescription, getWeaponTooltip, weapons } from './Weapons';
 
-type Equip = Weapon|Shield|Armour|Head;
+type Equip = Weapon|Shield|Armour|Head|Hands;
 const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour} as const;
 
 type Equipment = {
@@ -15,6 +16,7 @@ type Equipment = {
     offHandShield?: Shield
     armour?: Armour
     head?: Head
+    hands?: Hands
 }
 
 const defaultEquipment: {[name in ClassName]: Equipment} = {
@@ -58,6 +60,10 @@ async function fetchEquipment(userId: string, name: string): Promise<Equipment> 
     // Head
     if (dbEquipment.HEAD && dbEquipment.HEAD in heads) {
         equipment.head = heads[dbEquipment.HEAD as HeadId];
+    }
+
+    if (dbEquipment.HANDS && dbEquipment.HANDS in hands) {
+        equipment.hands = hands[dbEquipment.HANDS as HandsId];
     }
     
     return equipment;

@@ -1,16 +1,17 @@
 import { ArmourId } from './Equipment/Armour';
+import { HandsId } from './Equipment/Hands';
 import { HeadId } from './Equipment/Head';
 import { ShieldId } from './Equipment/Shield';
 import { WeaponId } from './Equipment/Weapons';
 
-type LootTable = (WeaponId|ShieldId|HeadId|ArmourId)[];
+type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId)[];
 
 const lootTiers: {[tier: number]: LootTable} = {
     0: [
         // Weapons
         'longsword0', 'greatsword0', 'dagger0', 'quarterstaff0', 
         // Shields
-        'buckler0', 
+        'buckler0', 'spikedShield0', 'towerShield0',
         // Armour
         'robe0', 'lightarmour0', 'mediumarmour0', 'heavyarmour0'
     ],
@@ -18,52 +19,62 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Weapons
         'longsword1', 'greatsword1', 'dagger1', 'quarterstaff1', 
         // Shields
-        'buckler1', 
+        'buckler1', 'spikedShield1', 'towerShield1',
         // Armour
         'robe1', 'lightarmour1', 'mediumarmour1', 'heavyarmour1', 
         // Heads
-        'platehelmet0', 'clothhood0'
+        'platehelmet0', 'clothhood0',
+        // Hands
+        'dwGloves0', 'thGloves0', 'ohGloves0',
     ],
     2: [
         // Weapons
         'longsword2', 'greatsword2', 'dagger2', 'quarterstaff2', 
         // Shields
-        'buckler2', 
+        'buckler2', 'spikedShield2', 'towerShield2',
         // Armour
         'robe2', 'lightarmour2', 'mediumarmour2', 'heavyarmour2',
         // Heads
-        'platehelmet0', 'clothhood0'
+        'platehelmet0', 'clothhood0',
+        // Hands
+        'dwGloves0', 'thGloves0', 'ohGloves0',
     ],
     3: [
         // Weapons
         'longsword3', 'greatsword3', 'dagger3', 'quarterstaff3', 
         // Shields
-        'buckler3', 
+        'buckler3', 'spikedShield3', 'towerShield3',
         // Armour
         'robe3', 'lightarmour3', 'mediumarmour3', 'heavyarmour3',
         // Heads
-        'platehelmet1', 'clothhood1'
+        'platehelmet1', 'clothhood1',
+        // Hands
+        'dwGloves1', 'thGloves1', 'ohGloves1'
     ],
     4: [
         // Weapons
         'longsword4', 'greatsword4', 'dagger4', 'quarterstaff4', 
         // Shields
-        'buckler4', 
+        'buckler4', 'spikedShield4', 'towerShield4',
         // Armour
         'robe4', 'lightarmour4', 'mediumarmour4', 'heavyarmour4',
         // Heads
-        'platehelmet1', 'clothhood1'
+        'platehelmet1', 'clothhood1',
+        // Hands
+        'dwGloves1', 'thGloves1', 'ohGloves1'
     ],
         
     5: [
         // Weapons
         'longsword5', 'greatsword5', 'dagger5', 'quarterstaff5', 
         // Shields
-        'buckler5', 
+        'buckler5', 'spikedShield5', 'towerShield5',
         // Armour
         'robe5', 'lightarmour5', 'mediumarmour5', 'heavyarmour5',
         // Heads
-        'platehelmet2', 'clothhood2'
+        'platehelmet2', 'clothhood2',
+        // Hands
+        'dwGloves2', 'thGloves2', 'ohGloves2',
     ],
 };
 
