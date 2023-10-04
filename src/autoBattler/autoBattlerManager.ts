@@ -124,7 +124,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
             }
             await interaction.editReply({embeds});
         })();
-    }, 1 * timeInMS.second);
+    }, 0.5 * timeInMS.second);
 }
 
 async function newPvPBattle(interaction: ChatInputCommandInteraction) {
@@ -263,7 +263,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
                         await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
                     }
                 })();
-            }, 1 * timeInMS.second);
+            }, 0.5 * timeInMS.second);
         }
         else {
             await buttonInteraction.editReply({content: `${userMention(opponent.id)} declined the auto battle.`, embeds: [], components: []});
