@@ -1,11 +1,12 @@
 import { getABEquipmentItemIds } from '../../sql/tables/ab_equipment';
 import { ClassName } from '../Classes/classes';
 import { Armour, ArmourId, armour, getArmourDescription, getArmourTooltip } from './Armour';
+import { Head, HeadId, getHeadDescription, getHeadTooltip, heads } from './Head';
 import { ItemType } from './Item';
 import { Shield, getShieldDescription, getShieldTooltip, shields } from './Shield';
 import { Weapon, WeaponId, getWeaponDescription, getWeaponTooltip, weapons } from './Weapons';
 
-type Equip = Weapon|Shield|Armour;
+type Equip = Weapon|Shield|Armour|Head;
 const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour} as const;
 
 type Equipment = {
@@ -13,6 +14,7 @@ type Equipment = {
     offHandWeapon?: Weapon
     offHandShield?: Shield
     armour?: Armour
+    head?: Head
 }
 
 const defaultEquipment: {[name in ClassName]: Equipment} = {
@@ -52,6 +54,11 @@ async function fetchEquipment(userId: string, name: string): Promise<Equipment> 
     if (dbEquipment.ARMOUR && dbEquipment.ARMOUR in armour) {
         equipment.armour = armour[dbEquipment.ARMOUR as ArmourId];
     }
+
+    // Head
+    if (dbEquipment.HEAD && dbEquipment.HEAD in heads) {
+        equipment.head = heads[dbEquipment.HEAD as HeadId];
+    }
     
     return equipment;
 }
@@ -60,6 +67,7 @@ function getItemTooltip(item: Equip): string {
     if (item.itemType === ItemType.Weapon) return getWeaponTooltip(item);
     else if (item.itemType === ItemType.Shield) return getShieldTooltip(item);
     else if (item.itemType === ItemType.Armour) return getArmourTooltip(item);
+    else if (item.itemType === ItemType.Head) return getHeadTooltip(item);
     return 'Missing item tooltip.';
 }
 
@@ -69,6 +77,7 @@ function getItemDescription(itemId: string) {
     if (item.itemType === ItemType.Weapon) return getWeaponDescription(item);
     else if (item.itemType === ItemType.Shield) return getShieldDescription(item);
     else if (item.itemType === ItemType.Armour) return getArmourDescription(item);
+    else if (item.itemType === ItemType.Head) return getHeadDescription(item);
     return 'Missing item description.';
 }
 

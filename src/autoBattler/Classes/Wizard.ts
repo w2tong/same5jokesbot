@@ -8,7 +8,7 @@ class Wizard extends Character {
         if (!this.battle) return;
         this.setTarget();
         if (this.target) {
-            this.currMana = 0;
+            this.currMana -= (this.maxMana - this.manaCostReduction);
             this.battle.ref.combatLog.add(`${bold(this.name)} casted ${bold('Firebolt')}.`);
             const attack = this.attackRoll(this.mainHand);
             this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, false));

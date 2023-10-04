@@ -20,18 +20,6 @@ interface Armour extends Item {
     }
 }
 
-function getArmourTooltip(armour: Armour) {
-    const descriptions = [`${bold('Armour Class')}: ${armour.armourClass}`];
-    if (armour.manaRegen) descriptions.push(`${bold('Mana Regen')}: ${armour.manaRegen}`);
-    return descriptions.join('\n');
-}
-
-function getArmourDescription(armour: Armour) {
-    const descriptions = [`AC: ${armour.armourClass}`];
-    if (armour.manaRegen) descriptions.push(`MP Regen: ${armour.manaRegen}`);
-    return descriptions.join(', ');
-}
-
 type ArmourId = 
 'robe0' | 'robe1' | 'robe2' | 'robe3' | 'robe4' | 'robe5' |
 'lightarmour0' | 'lightarmour1' | 'lightarmour2' | 'lightarmour3' | 'lightarmour4' | 'lightarmour5' |
@@ -227,5 +215,17 @@ const armour: {[id in ArmourId]: Armour} = {
         armourClass: 8,
     }
 };
+
+function getArmourTooltip(armour: Armour) {
+    const descriptions = [`${bold('Armour Class')}: ${armour.armourClass}`];
+    if (armour.manaRegen) descriptions.push(`${bold('Mana Regen')}: ${armour.manaRegen}`);
+    return descriptions.join('\n');
+}
+
+function getArmourDescription(armour: Armour) {
+    const descriptions = [`AC: ${armour.armourClass}`];
+    if (armour.manaRegen) descriptions.push(`MP Regen: ${armour.manaRegen}`);
+    return descriptions.join(', ');
+}
 
 export { Armour, getArmourTooltip, getArmourDescription, ArmourId, armour };

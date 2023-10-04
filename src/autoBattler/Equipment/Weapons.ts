@@ -36,29 +36,6 @@ interface Weapon extends Item {
     }
 }
 
-function getWeaponTooltip(weapon: Weapon) {
-    const tooltip = [
-        `${weapon.type}, ${weapon.range}`,
-        `${bold('Damage')}: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus} ${weapon.damageType}`,
-        `${bold('Crit')}: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`, `${bold('Mana/Atk')}: ${weapon.manaPerAtk}`
-    ];
-    if (weapon.attackBonus) tooltip.push(`${bold('Attack Bonus')}: ${weapon.attackBonus}`);
-    if (weapon.onHit) tooltip.push(weapon.onHit.description);
-    return tooltip.join('\n');
-}
-
-function getWeaponDescription(weapon: Weapon) {
-    const descriptions = [];
-    if (weapon.twoHanded) {
-        descriptions.push('Two-Handed');
-    }
-    descriptions.push(`Damage: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus}`);
-    descriptions.push(`Crit: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`);
-    descriptions.push(`MP/Atk: ${weapon.manaPerAtk}`);
-    if (weapon.manaRegen) descriptions.push(`MP Regen: ${weapon.manaRegen}`);
-    return descriptions.join(', ');
-}
-
 type WeaponId = 
 'unarmed0' | 
 'longsword0' | 'longsword1' | 'longsword2' | 'longsword3' | 'longsword4' | 'longsword5' |
@@ -525,5 +502,28 @@ const weapons: {[id in WeaponId]: Weapon} = {
         }
     }
 } as const;
+
+function getWeaponTooltip(weapon: Weapon) {
+    const tooltip = [
+        `${weapon.type}, ${weapon.range}`,
+        `${bold('Damage')}: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus} ${weapon.damageType}`,
+        `${bold('Crit')}: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`, `${bold('Mana/Atk')}: ${weapon.manaPerAtk}`
+    ];
+    if (weapon.attackBonus) tooltip.push(`${bold('Attack Bonus')}: ${weapon.attackBonus}`);
+    if (weapon.onHit) tooltip.push(weapon.onHit.description);
+    return tooltip.join('\n');
+}
+
+function getWeaponDescription(weapon: Weapon) {
+    const descriptions = [];
+    if (weapon.twoHanded) {
+        descriptions.push('Two-Handed');
+    }
+    descriptions.push(`Damage: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus}`);
+    descriptions.push(`Crit: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`);
+    descriptions.push(`MP/Atk: ${weapon.manaPerAtk}`);
+    if (weapon.manaRegen) descriptions.push(`MP Regen: ${weapon.manaRegen}`);
+    return descriptions.join(', ');
+}
 
 export { Weapon, getWeaponTooltip, getWeaponDescription, WeaponId, weapons };

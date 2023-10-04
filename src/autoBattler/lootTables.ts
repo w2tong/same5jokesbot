@@ -1,16 +1,70 @@
 import { ArmourId } from './Equipment/Armour';
+import { HeadId } from './Equipment/Head';
 import { ShieldId } from './Equipment/Shield';
 import { WeaponId } from './Equipment/Weapons';
 
-type LootTable = (WeaponId|ShieldId|ArmourId)[];
+type LootTable = (WeaponId|ShieldId|HeadId|ArmourId)[];
 
 const lootTiers: {[tier: number]: LootTable} = {
-    0: ['longsword0', 'greatsword0', 'dagger0', 'quarterstaff0', 'buckler0', 'robe0', 'lightarmour0', 'mediumarmour0', 'heavyarmour0'],
-    1: ['longsword1', 'greatsword1', 'dagger1', 'quarterstaff1', 'buckler1', 'robe1', 'lightarmour1', 'mediumarmour1', 'heavyarmour1'],
-    2: ['longsword2', 'greatsword2', 'dagger2', 'quarterstaff2', 'buckler2', 'robe2', 'lightarmour2', 'mediumarmour2', 'heavyarmour2'],
-    3: ['longsword3', 'greatsword3', 'dagger3', 'quarterstaff3', 'buckler3', 'robe3', 'lightarmour3', 'mediumarmour3', 'heavyarmour3'],
-    4: ['longsword4', 'greatsword4', 'dagger4', 'quarterstaff4', 'buckler4', 'robe4', 'lightarmour4', 'mediumarmour4', 'heavyarmour4'],
-    5: ['longsword5', 'greatsword5', 'dagger5', 'quarterstaff5', 'buckler5', 'robe5', 'lightarmour5', 'mediumarmour5', 'heavyarmour5'],
+    0: [
+        // Weapons
+        'longsword0', 'greatsword0', 'dagger0', 'quarterstaff0', 
+        // Shields
+        'buckler0', 
+        // Armour
+        'robe0', 'lightarmour0', 'mediumarmour0', 'heavyarmour0'
+    ],
+    1: [
+        // Weapons
+        'longsword1', 'greatsword1', 'dagger1', 'quarterstaff1', 
+        // Shields
+        'buckler1', 
+        // Armour
+        'robe1', 'lightarmour1', 'mediumarmour1', 'heavyarmour1', 
+        // Heads
+        'platehelmet0', 'clothhood0'
+    ],
+    2: [
+        // Weapons
+        'longsword2', 'greatsword2', 'dagger2', 'quarterstaff2', 
+        // Shields
+        'buckler2', 
+        // Armour
+        'robe2', 'lightarmour2', 'mediumarmour2', 'heavyarmour2',
+        // Heads
+        'platehelmet0', 'clothhood0'
+    ],
+    3: [
+        // Weapons
+        'longsword3', 'greatsword3', 'dagger3', 'quarterstaff3', 
+        // Shields
+        'buckler3', 
+        // Armour
+        'robe3', 'lightarmour3', 'mediumarmour3', 'heavyarmour3',
+        // Heads
+        'platehelmet1', 'clothhood1'
+    ],
+    4: [
+        // Weapons
+        'longsword4', 'greatsword4', 'dagger4', 'quarterstaff4', 
+        // Shields
+        'buckler4', 
+        // Armour
+        'robe4', 'lightarmour4', 'mediumarmour4', 'heavyarmour4',
+        // Heads
+        'platehelmet1', 'clothhood1'
+    ],
+        
+    5: [
+        // Weapons
+        'longsword5', 'greatsword5', 'dagger5', 'quarterstaff5', 
+        // Shields
+        'buckler5', 
+        // Armour
+        'robe5', 'lightarmour5', 'mediumarmour5', 'heavyarmour5',
+        // Heads
+        'platehelmet2', 'clothhood2'
+    ],
 };
 
 const lootTables: {[level: number]: {normal: LootTable, rare: LootTable, rareChance: number}} = {
