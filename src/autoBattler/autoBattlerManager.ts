@@ -13,7 +13,7 @@ import { Classes } from './Classes/classes';
 import { PlayerStats } from './statTemplates';
 
 const usersInBattle: Set<string> = new Set();
-const ExpLoss = 0.05;
+const ExpLoss = 0.025;
 const lootChance = process.env.NODE_ENV === 'development' ? 1 : 0.25;
 
 async function addLoot(userId: string, level: number): Promise<Equip|null> {
