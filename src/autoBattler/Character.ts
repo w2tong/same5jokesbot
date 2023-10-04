@@ -109,6 +109,10 @@ class Character {
         // Armour
         if (equipment.armour) {
             this._armourClass += equipment.armour.armourClass;
+            this.physDR += equipment.armour.physDR ?? 0;
+            this.magicDR += equipment.armour.magicDR ?? 0;
+            this.physResist += equipment.armour.physResist ?? 0;
+            this.magicResist += equipment.armour.magicResist ?? 0;
             this.manaRegen += equipment.armour.manaRegen ?? 0;
         }
 

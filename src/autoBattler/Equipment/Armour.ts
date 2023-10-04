@@ -12,7 +12,11 @@ enum ArmourType {
 interface Armour extends Item {
     itemType: ItemType.Armour
     type: ArmourType;
-    armourClass: number
+    armourClass: number;
+    physDR?: number;
+    magicDR?: number;
+    physResist?: number;
+    magicResist?: number;
     manaRegen?: number;
     onHit?: {
         func: (self: Character, target: Character) => void;
@@ -185,6 +189,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Heavy Armour +1',
         type: ArmourType.Heavy,
         armourClass: 4,
+        physDR: 1,
     },
     heavyarmour2: {
         id: 'heavyarmour2',
@@ -192,6 +197,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Heavy Armour +2',
         type: ArmourType.Heavy,
         armourClass: 5,
+        physDR: 2,
     },
     heavyarmour3: {
         id: 'heavyarmour3',
@@ -199,6 +205,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Heavy Armour +3',
         type: ArmourType.Heavy,
         armourClass: 6,
+        physDR: 3,
     },
     heavyarmour4: {
         id: 'heavyarmour4',
@@ -206,6 +213,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Heavy Armour +4',
         type: ArmourType.Heavy,
         armourClass: 7,
+        physDR: 4,
     },
     heavyarmour5: {
         id: 'heavyarmour5',
@@ -213,17 +221,26 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Heavy Armour +5',
         type: ArmourType.Heavy,
         armourClass: 8,
+        physDR: 5,
     }
 };
 
 function getArmourTooltip(armour: Armour) {
-    const descriptions = [`${bold('Armour Class')}: ${armour.armourClass}`];
-    if (armour.manaRegen) descriptions.push(`${bold('Mana Regen')}: ${armour.manaRegen}`);
-    return descriptions.join('\n');
+    const tooltip = [`${bold('Armour Class')}: ${armour.armourClass}`];
+    if (armour.physDR) tooltip.push(`${bold('Physical DR')}: ${armour.physDR}`);
+    if (armour.magicDR) tooltip.push(`${bold('Magic DR')}: ${armour.magicDR}`);
+    if (armour.physResist) tooltip.push(`${bold('Phyisical Resist')}: ${armour.physResist}`);
+    if (armour.magicResist) tooltip.push(`${bold('Magic Resist')}: ${armour.magicResist}`);
+    if (armour.manaRegen) tooltip.push(`${bold('Mana Regen')}: ${armour.manaRegen}`);
+    return tooltip.join('\n');
 }
 
 function getArmourDescription(armour: Armour) {
     const descriptions = [`AC: ${armour.armourClass}`];
+    if (armour.physDR) descriptions.push(`Phys DR: ${armour.physDR}`);
+    if (armour.magicDR) descriptions.push(`Mag DR: ${armour.physDR}`);
+    if (armour.physResist) descriptions.push(`Phys Res: ${armour.physDR}`);
+    if (armour.magicResist) descriptions.push(`Mag Res: ${armour.physDR}`);
     if (armour.manaRegen) descriptions.push(`MP Regen: ${armour.manaRegen}`);
     return descriptions.join(', ');
 }
