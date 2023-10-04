@@ -10,6 +10,12 @@ const name = 'pve';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Auto Battler');
+    .setDescription('Auto Battler')
+    .addIntegerOption(option => option
+        .setName('level')
+        .setDescription('Enter the level of the encounter to fight.')
+        .setMinValue(1)
+        .setMaxValue(20)
+    );
 
 export default { execute, name, subcommandBuilder };

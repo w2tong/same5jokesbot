@@ -56,12 +56,13 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
         await interaction.editReply('You do not have a selected character.');
         return;
     }
+    const level = interaction.options.getInteger('level') ?? userChar.CHAR_LEVEL;
 
     usersInBattle.add(user.id);
     
     const battle = new Battle(
         [await createPlayerChar(user.id, userChar)],
-        getRandomEncounter(userChar.CHAR_LEVEL)
+        getRandomEncounter(level)
     );
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -78,9 +79,9 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
                     const expEmbed = new EmbedBuilder();
                     let expChange = 0;
                     if (res.winner === Side.Left) {
-                        expChange = encounterExp[userChar.CHAR_LEVEL];
+                        expChange = encounterExp[level];
                         expEmbed.setTitle('Victory');
-                        const loot = await addLoot(user.id, userChar.CHAR_LEVEL);
+                        const loot = await addLoot(user.id, level);
                         if (loot) {
                             embeds.push(new EmbedBuilder()
                                 .setAuthor({name: `${user.username} looted ${loot.name}.`, iconURL: user.displayAvatarURL()})
@@ -89,11 +90,11 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
                         }
                     }
                     else {    
-                        expChange = -levelExp[userChar.CHAR_LEVEL] * ExpLoss;
+                        expChange = -Math.round(levelExp[userChar.CHAR_LEVEL] * ExpLoss);
                         expEmbed.setTitle('Defeat');
                         // TODO: set char curr health to 1
                     }
-                    const newLevelAndExp = await updateABCharExp(user.id, userChar, Math.round(expChange));
+                    const newLevelAndExp = await updateABCharExp(user.id, userChar, expChange);
                     if (newLevelAndExp) {
                         if (newLevelAndExp.level > userChar.CHAR_LEVEL) {
                             expEmbed.addFields(
