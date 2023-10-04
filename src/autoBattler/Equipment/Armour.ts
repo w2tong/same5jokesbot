@@ -18,6 +18,7 @@ interface Armour extends Item {
     physResist?: number;
     magicResist?: number;
     manaRegen?: number;
+    thorns?: number;
     onHit?: {
         func: (self: Character, target: Character) => void;
         description: string;
@@ -232,6 +233,7 @@ function getArmourTooltip(armour: Armour) {
     if (armour.physResist) tooltip.push(`${bold('Phyisical Resist')}: ${armour.physResist}`);
     if (armour.magicResist) tooltip.push(`${bold('Magic Resist')}: ${armour.magicResist}`);
     if (armour.manaRegen) tooltip.push(`${bold('Mana Regen')}: ${armour.manaRegen}`);
+    if (armour.thorns) tooltip.push(`${bold('Thorns')}: ${armour.thorns}`);
     return tooltip.join('\n');
 }
 
@@ -242,6 +244,7 @@ function getArmourDescription(armour: Armour) {
     if (armour.physResist) descriptions.push(`Phys Res: ${armour.physDR}`);
     if (armour.magicResist) descriptions.push(`Mag Res: ${armour.physDR}`);
     if (armour.manaRegen) descriptions.push(`MP Regen: ${armour.manaRegen}`);
+    if (armour.thorns) descriptions.push(`Thorns: ${armour.thorns}`);
     return descriptions.join(', ');
 }
 

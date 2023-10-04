@@ -10,7 +10,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Weapons
         'longsword0', 'greatsword0', 'dagger0', 'quarterstaff0', 
         // Shields
-        'buckler0', 
+        'buckler0', 'spikedShield0', 'towerShield0',
         // Armour
         'robe0', 'lightarmour0', 'mediumarmour0', 'heavyarmour0'
     ],
@@ -18,7 +18,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Weapons
         'longsword1', 'greatsword1', 'dagger1', 'quarterstaff1', 
         // Shields
-        'buckler1', 
+        'buckler1', 'spikedShield1', 'towerShield1',
         // Armour
         'robe1', 'lightarmour1', 'mediumarmour1', 'heavyarmour1', 
         // Heads
@@ -28,7 +28,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Weapons
         'longsword2', 'greatsword2', 'dagger2', 'quarterstaff2', 
         // Shields
-        'buckler2', 
+        'buckler2', 'spikedShield2', 'towerShield2',
         // Armour
         'robe2', 'lightarmour2', 'mediumarmour2', 'heavyarmour2',
         // Heads
@@ -38,7 +38,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Weapons
         'longsword3', 'greatsword3', 'dagger3', 'quarterstaff3', 
         // Shields
-        'buckler3', 
+        'buckler3', 'spikedShield3', 'towerShield3',
         // Armour
         'robe3', 'lightarmour3', 'mediumarmour3', 'heavyarmour3',
         // Heads
@@ -48,7 +48,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Weapons
         'longsword4', 'greatsword4', 'dagger4', 'quarterstaff4', 
         // Shields
-        'buckler4', 
+        'buckler4', 'spikedShield4', 'towerShield4',
         // Armour
         'robe4', 'lightarmour4', 'mediumarmour4', 'heavyarmour4',
         // Heads
@@ -59,7 +59,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Weapons
         'longsword5', 'greatsword5', 'dagger5', 'quarterstaff5', 
         // Shields
-        'buckler5', 
+        'buckler5', 'spikedShield5', 'towerShield5',
         // Armour
         'robe5', 'lightarmour5', 'mediumarmour5', 'heavyarmour5',
         // Heads
