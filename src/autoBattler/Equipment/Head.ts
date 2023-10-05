@@ -12,7 +12,7 @@ interface Head extends Item {
 
 type HeadId = 
 'helmet0' | 'helmet1' | 'helmet2' |
-'clothhood0' | 'clothhood1' | 'clothhood2' 
+'clothHood0' | 'clothHood1' | 'clothHood2' 
 ;
 
 const heads: {[id in HeadId]: Head} = {
@@ -34,19 +34,19 @@ const heads: {[id in HeadId]: Head} = {
         name: 'Plate Helmet',
         armourClass: 3
     },
-    clothhood0: {
+    clothHood0: {
         id: 'clothhood0',
         itemType: ItemType.Head,
         name: 'Cloth Hood',
         manaCostReduction: 10
     },
-    clothhood1: {
+    clothHood1: {
         id: 'clothhood1',
         itemType: ItemType.Head,
         name: 'Cloth Hood +1',
         manaCostReduction: 15
     },
-    clothhood2: {
+    clothHood2: {
         id: 'clothhood2',
         itemType: ItemType.Head,
         name: 'Cloth Hood +2',
