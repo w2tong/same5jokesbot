@@ -521,7 +521,7 @@ function getWeaponDescription(weapon: Weapon) {
     }
     descriptions.push(`Damage: ${weapon.damage.num + weapon.damageBonus} - ${weapon.damage.num * weapon.damage.sides + weapon.damageBonus}`);
     descriptions.push(`Crit: ${weapon.critRange < 20 ? `${weapon.critRange}-` : ''}20 (x${weapon.critMult})`);
-    descriptions.push(`MP/Atk: ${weapon.manaPerAtk}`);
+    descriptions.push(`MP/ATK: ${weapon.manaPerAtk}`);
     if (weapon.manaRegen) descriptions.push(`MP Regen: ${weapon.manaRegen}`);
     return descriptions.join(', ');
 }

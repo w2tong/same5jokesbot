@@ -67,7 +67,7 @@ function getHeadTooltip(head: Head) {
 function getHeadDescription(head: Head) {
     const descriptions = [];
     if (head.armourClass) descriptions.push(`AC: ${head.armourClass}`);
-    if (head.manaPerAtk) descriptions.push(`MP/Atk: ${head.manaPerAtk}`);
+    if (head.manaPerAtk) descriptions.push(`MP/ATK: ${head.manaPerAtk}`);
     if (head.manaRegen) descriptions.push(`MP Regen: ${head.manaRegen}`);
     if (head.manaCostReduction) descriptions.push(`MCR: ${head.manaCostReduction}`);
     if (head.initiativeBonus) descriptions.push(`IB: ${head.initiativeBonus}`);
