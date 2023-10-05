@@ -339,6 +339,9 @@ class Character {
             return {hitType: HitType.Crit, details};
         }
         else if (attackRoll >= rollToHitTaget) {
+            if (attackRoll >= weapon.critRange) {
+                return {hitType: HitType.Crit, details};
+            }
             return {hitType: HitType.Hit, details};
         }
         else {
