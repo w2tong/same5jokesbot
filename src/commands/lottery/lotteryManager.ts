@@ -18,7 +18,8 @@ const lotteryEmitter = new EventEmitter() as TypedEmitter<LotteryEvents>;
 
 const numbers = Array.from(new Array(12), (_x, i) => i+1);
 const choose = 4;
-const price = 10000;
+const jackpotBase = numbers.length * choose * 250_000;
+const price = 10_000;
 const basePayout = 0.25;
 const payoutMultiplier = 4;
 const payout: {[key: number]: number} = {0: 0};
@@ -89,7 +90,7 @@ function scheduleNewLotteryCronJob(client: Client) {
         const endDate = new Date(startDate.getTime() + Math.round(timeInMS.hour * lotteryLengthHours));
         const houseBalance = process.env.CLIENT_ID ? await getUserCringePoints(process.env.CLIENT_ID) ?? 0 : 0;
         const newJackpot = Math.max(
-            numbers.length * 250_000,
+            jackpotBase,
             jackpotWinners.length > 0 ? 0 : lottery?.JACKPOT ?? 0, 
             houseBalance * 0.5
         );
