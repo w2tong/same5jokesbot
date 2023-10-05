@@ -99,7 +99,7 @@ function getHandsTooltip(hands: Hands) {
     if (hands.attackBonus) tooltip.push(`${bold('Attack Bonus')}: ${hands.attackBonus}`);
     if (hands.damageBonus) tooltip.push(`${bold('Damage Bonus')}: ${hands.damageBonus}`);
     if (hands.critRangeBonus) tooltip.push(`${bold('Crit Range Bonus')}: ${hands.critRangeBonus}`);
-    if (hands.critMultBonus) tooltip.push(`${bold('Crit Mult Bonus')}: ${hands.critMultBonus}`);
+    if (hands.critMultBonus) tooltip.push(`${bold('Crit Mult Bonus')}: ${hands.critMultBonus*100}%`);
     return tooltip.join('\n');
 }
 
@@ -109,7 +109,7 @@ function getHandsDescription(hands: Hands) {
     if (hands.attackBonus) descriptions.push(`ATK: ${hands.attackBonus}`);
     if (hands.damageBonus) descriptions.push(`DMG: ${hands.damageBonus}`);
     if (hands.critRangeBonus) descriptions.push(`Crit Range: ${hands.critRangeBonus}`);
-    if (hands.critMultBonus) descriptions.push(`Crit Mult: ${hands.critMultBonus}`);
+    if (hands.critMultBonus) descriptions.push(`Crit Mult: ${hands.critMultBonus*100}%`);
     return descriptions.join(', ');
 }
 

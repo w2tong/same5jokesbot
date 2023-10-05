@@ -24,17 +24,74 @@ interface Ring extends Item {
 }
 
 type RingId = 
-'ph'
+'abRing0' | 'abRing1' | 'abRing2'
+| 'dbRing0' | 'dbRing1' | 'dbRing2'
+| 'crRing'
+| 'cmRing0' | 'cmRing1' | 'cmRing2' 
 ;
 
 // TODO: add rings and add rings to loot table
 const rings: {[id in RingId]: Ring} = {
-    ph: {
-        id: 'ph',
+    abRing0: {
+        id: 'abRing0',
         itemType: ItemType.Ring,
-        name: 'PH',
+        name: 'Ring of Lesser Attack',
         attackBonus: 1
-    }
+    },
+    abRing1: {
+        id: 'abRing1',
+        itemType: ItemType.Ring,
+        name: 'Ring of Attack',
+        attackBonus: 2
+    },
+    abRing2: {
+        id: 'abRing2',
+        itemType: ItemType.Ring,
+        name: 'Ring of Greater Attack',
+        attackBonus: 3
+    },
+    dbRing0: {
+        id: 'dbRing0',
+        itemType: ItemType.Ring,
+        name: 'Ring of Lesser Damage',
+        attackBonus: 1
+    },
+    dbRing1: {
+        id: 'dbRing1',
+        itemType: ItemType.Ring,
+        name: 'Ring of Damage',
+        attackBonus: 2
+    },
+    dbRing2: {
+        id: 'dbRing2',
+        itemType: ItemType.Ring,
+        name: 'Ring of Greater Damage',
+        attackBonus: 3
+    },
+    crRing: {
+        id: 'crRing',
+        itemType: ItemType.Ring,
+        name: 'PH: CRIT RANGE RING',
+        critRangeBonus: 1
+    },
+    cmRing0: {
+        id: 'cmRing0',
+        itemType: ItemType.Ring,
+        name: 'PH: LESSER CRIT MULT RING',
+        critMultBonus: 0.2
+    },
+    cmRing1: {
+        id: 'cmRing1',
+        itemType: ItemType.Ring,
+        name: 'PH: CRIT MULT RING',
+        critMultBonus: 0.35
+    },
+    cmRing2: {
+        id: 'cmRing2',
+        itemType: ItemType.Ring,
+        name: 'PH: GREATER CRIT MULT RING',
+        critMultBonus: 0.5
+    },
 };
 
 function getRingTooltip(ring: Ring) {
@@ -42,7 +99,7 @@ function getRingTooltip(ring: Ring) {
     if (ring.attackBonus) tooltip.push(`${bold('Attack Bonus')}: ${ring.attackBonus}`);
     if (ring.damageBonus) tooltip.push(`${bold('Damage Bonus')}: ${ring.damageBonus}`);
     if (ring.critRangeBonus) tooltip.push(`${bold('Crit Range Bonus')}: ${ring.critRangeBonus}`);
-    if (ring.critMultBonus) tooltip.push(`${bold('Crit Mult Bonus')}: ${ring.critMultBonus}`);
+    if (ring.critMultBonus) tooltip.push(`${bold('Crit Mult Bonus')}: ${ring.critMultBonus*100}%`);
 
     if (ring.armourClass) tooltip.push(`${bold('Armour Class')}: ${ring.armourClass}`);
     if (ring.physDR) tooltip.push(`${bold('Physical DR')}: ${ring.physDR}`);
@@ -64,7 +121,7 @@ function getRingDescription(ring: Ring) {
     if (ring.attackBonus) descriptions.push(`ATK: ${ring.attackBonus}`);
     if (ring.damageBonus) descriptions.push(`DMG: ${ring.damageBonus}`);
     if (ring.critRangeBonus) descriptions.push(`Crit Range: ${ring.critRangeBonus}`);
-    if (ring.critMultBonus) descriptions.push(`Crit Mult: ${ring.critMultBonus}`);
+    if (ring.critMultBonus) descriptions.push(`Crit Mult: ${ring.critMultBonus*100}%`);
 
     if (ring.armourClass) descriptions.push(`AC: ${ring.armourClass}`);
     if (ring.physDR) descriptions.push(`Phys DR: ${ring.physDR}`);
