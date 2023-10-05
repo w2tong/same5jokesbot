@@ -11,21 +11,15 @@ import { Equipment } from './Equipment/Equipment';
 import { userUpgrades } from '../upgrades/upgradeManager';
 import { upgrades } from '../upgrades/upgrades';
 import { WeaponStyle } from './Equipment/Hands';
-
-const healthBarLength = 10;
-const manaBarLength = 10;
-const dualWieldPenalty = -2;
-const offHandPenalty = -4;
-
-type HandsBonuses = {attack: number, damage: number, critRange: number, critMult: number};
-function addHandsBonus(weapon: Weapon, bonuses: HandsBonuses) {
-    weapon.attackBonus += bonuses.attack;
-    weapon.damageBonus += bonuses.damage;
-    weapon.critRange -= bonuses.critRange;
-    weapon.critMult += bonuses.critMult;
-}
+import { Ring } from './Equipment/Ring';
 
 class Character {
+
+    static healthBarLength = 10;
+    static manaBarLength = 10;
+    static dualWieldPenalty = -2;
+    static offHandPenalty = -4;
+
     private userId?: string;
 
     protected _name: string;
@@ -102,9 +96,9 @@ class Character {
             throw Error('cannot have both weapon and shield in offhand');
         }
         if (equipment.offHandWeapon) {
-            this.mainHand.attackBonus += dualWieldPenalty;
+            this.mainHand.attackBonus += Character.dualWieldPenalty;
             this.offHandWeapon = Object.assign({}, equipment.offHandWeapon);
-            this.offHandWeapon.attackBonus += lvlAttackBonus + dualWieldPenalty + offHandPenalty;
+            this.offHandWeapon.attackBonus += lvlAttackBonus + Character.dualWieldPenalty + Character.offHandPenalty;
             this.offHandWeapon.damageBonus += lvlDamageBonus;
             this.offHandWeapon.manaPerAtk += lvlManaPerAtk;
             this.manaRegen += this.offHandWeapon.manaRegen ?? 0;
@@ -142,7 +136,7 @@ class Character {
 
         //Hands
         if (equipment.hands) {
-            const handsBonuses: HandsBonuses = {
+            const handsBonuses = {
                 attack: equipment.hands.attackBonus ?? 0,
                 damage: equipment.hands.damageBonus ?? 0,
                 critRange: equipment.hands.critRangeBonus ?? 0,
@@ -150,21 +144,25 @@ class Character {
             };
             if (equipment.hands.weaponStyle) {
                 if (equipment.hands.weaponStyle === WeaponStyle.DualWield && this.mainHand && this.offHandWeapon) {
-                    addHandsBonus(this.mainHand, handsBonuses);
-                    if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
+                    Character.addHandsBonus(this.mainHand, handsBonuses);
+                    if (this.offHandWeapon) Character.addHandsBonus(this.offHandWeapon, handsBonuses);
                 }
                 else if ((equipment.hands.weaponStyle === WeaponStyle.TwoHanded && this.mainHand.twoHanded)
                         || equipment.hands.weaponStyle === WeaponStyle.OneHanded && !this.mainHand.twoHanded
                         || equipment.hands.weaponStyle === WeaponStyle.Ranged && this.mainHand.range === RangeType.LongRange
                 ) {
-                    addHandsBonus(this.mainHand, handsBonuses);
+                    Character.addHandsBonus(this.mainHand, handsBonuses);
                 }
             }
             else {
-                addHandsBonus(this.mainHand, handsBonuses);
-                if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
+                Character.addHandsBonus(this.mainHand, handsBonuses);
+                if (this.offHandWeapon) Character.addHandsBonus(this.offHandWeapon, handsBonuses);
             }
         }
+
+        // Rings
+        if (equipment.ring1) this.addRingBonuses(equipment.ring1);
+        if (equipment.ring2) this.addRingBonuses(equipment.ring2);
 
         if (options?.userId) {
             const userId = options.userId;
@@ -186,6 +184,13 @@ class Character {
             side,
             index
         };
+    }
+
+    static addHandsBonus(weapon: Weapon, bonuses: {attack: number, damage: number, critRange: number, critMult: number}) {
+        weapon.attackBonus += bonuses.attack;
+        weapon.damageBonus += bonuses.damage;
+        weapon.critRange -= bonuses.critRange;
+        weapon.critMult += bonuses.critMult;
     }
 
     get name() {
@@ -239,14 +244,14 @@ class Character {
     }
 
     getHealthBar(): string {
-        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*healthBarLength);
-        const numRed = healthBarLength - numGreen;
+        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*Character.healthBarLength);
+        const numRed = Character.healthBarLength - numGreen;
         return '🟩'.repeat(numGreen) + '🟥'.repeat(numRed);
     }
 
     getManaBar(): string {
-        const numBlue = Math.ceil(this.currMana/this.maxMana*manaBarLength);
-        const numWhite = manaBarLength - numBlue;
+        const numBlue = Math.ceil(this.currMana/this.maxMana*Character.manaBarLength);
+        const numWhite = Character.manaBarLength - numBlue;
         return '🟦'.repeat(numBlue) + '⬜'.repeat(numWhite);
     }
 
@@ -438,6 +443,35 @@ class Character {
             manaRegen: this.manaRegen,
             initiativeBonus: this.initiativeBonus
         };
+    }
+
+    // Helper functions
+    addRingBonuses(ring: Ring) {
+        this.mainHand.attackBonus += ring.attackBonus ?? 0;
+        this.mainHand.damageBonus += ring.damageBonus ?? 0;
+        this.mainHand.critRange -= ring.critRangeBonus ?? 0;
+        this.mainHand.critMult += ring.critMultBonus ?? 0;
+        this.mainHand.manaPerAtk += ring.manaPerAtk ?? 0;
+
+        if (this.offHandWeapon) {
+            this.offHandWeapon.attackBonus += ring.attackBonus ?? 0;
+            this.offHandWeapon.damageBonus += ring.damageBonus ?? 0;
+            this.offHandWeapon.critRange -= ring.critRangeBonus ?? 0;
+            this.offHandWeapon.critMult += ring.critMultBonus ?? 0;
+            this.offHandWeapon.manaPerAtk += ring.manaPerAtk ?? 0;
+        }
+        // Defense
+        this._armourClass += ring.armourClass ?? 0;
+        this.physDR += ring.physDR ?? 0;
+        this.magicDR += ring.magicDR ?? 0;
+        this.physResist += ring.physResist ?? 0;
+        this.magicResist += ring.magicResist ?? 0;
+        this._thorns += ring.thorns ?? 0;
+        // Mana
+        this.manaRegen += ring.manaRegen ?? 0;
+        this.manaCostReduction += ring.manaCostReduction ?? 0;
+        // Other
+        this._initiativeBonus += ring.initiativeBonus ?? 0;
     }
 }
 
