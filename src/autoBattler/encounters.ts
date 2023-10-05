@@ -179,7 +179,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         orcEncounter({level: 14, count: 1}),
         zombieEncounter({level: 14, count: 2}),
     ],
-    115: [
+    15: [
         fighterEncounter({level: 15, count: 1}),
         rogueEncounter({level: 15, count: 1}),
         wizardEncounter({level: 15, count: 1}),

@@ -200,13 +200,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     collector.on('end', async () => {
         try {
-            await reply.edit({content: 'Equipment swap expired.', components: []});
-        } finally {
-            //
-        }
-        try {
-            await followUp.delete();
-        } finally {
+            await Promise.all([
+                reply.edit({content: 'Equipment swap expired.', components: []}),
+                followUp.delete()
+            ]);
+        } catch {
             //
         }
     });
