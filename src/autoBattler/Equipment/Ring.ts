@@ -27,11 +27,13 @@ type RingId =
 'ph'
 ;
 
+// TODO: add rings and add rings to loot table
 const rings: {[id in RingId]: Ring} = {
     ph: {
         id: 'ph',
         itemType: ItemType.Ring,
         name: 'PH',
+        attackBonus: 1
     }
 };
 

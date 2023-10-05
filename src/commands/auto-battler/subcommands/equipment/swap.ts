@@ -10,7 +10,7 @@ import { Equip, getItemDescription } from '../../../../autoBattler/Equipment/Equ
 import { Head, HeadId, heads } from '../../../../autoBattler/Equipment/Head';
 import { Hands, HandsId, hands } from '../../../../autoBattler/Equipment/Hands';
 import { SelectMenuOptionLimit } from '../../../../util/discordUtil';
-import { Ring } from '../../../../autoBattler/Equipment/Ring';
+import { Ring, RingId, rings } from '../../../../autoBattler/Equipment/Ring';
 
 const SwapSelectMenuOptionLimit = SelectMenuOptionLimit-1;
 
@@ -27,7 +27,7 @@ function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equ
         emptyOption,
         ...Object.entries(equipOptions).map(([id, equip]) => {
             const option = new StringSelectMenuOptionBuilder()
-                .setLabel(`${equip.name}${equipSlot === EquipSlot.MainHand || equipSlot === EquipSlot.OffHand || equipSlot === EquipSlot.Ring1 || equipSlot === EquipSlot.Ring2 ? `(id: ${id})` : ''}`)
+                .setLabel(`${equip.name}${equipSlot === EquipSlot.MainHand || equipSlot === EquipSlot.OffHand || equipSlot === EquipSlot.Ring1 || equipSlot === EquipSlot.Ring2 ? ` (id: ${id})` : ''}`)
                 .setDescription(getItemDescription(equip))
                 .setValue(`${id}`);
             if (equippedId && equippedId === parseInt(id)) option.setDefault(true);
@@ -38,7 +38,7 @@ function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equ
 }
 
 async function execute(interaction: ChatInputCommandInteraction) {
-    const reply = await interaction.deferReply({ephemeral: true});
+    const reply = await interaction.deferReply();
     const user = interaction.user;
 
     const char = await getABSelectedChar(user.id);
@@ -87,6 +87,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         else if (item.ITEM_ID in hands && Object.keys(handsOptions).length < SwapSelectMenuOptionLimit) {
             handsOptions[item.ID] = hands[item.ITEM_ID as HandsId];
         }
+        else if (item.ITEM_ID in rings && Object.keys(ringOptions).length < SwapSelectMenuOptionLimit) {
+            ringOptions[item.ID] = rings[item.ITEM_ID as RingId];
+        }
     }
 
     const mainHandSelectMenu = createItemSelectMenu(EquipSlot.MainHand, equipment.MAIN_HAND, mainHandOptions);
@@ -95,18 +98,25 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const headSelectMenu = createItemSelectMenu(EquipSlot.Head, equipment.HEAD, headOptions);
     const handsSelectMenu = createItemSelectMenu(EquipSlot.Hands, equipment.HANDS, handsOptions);
 
-    const components: ActionRowBuilder<StringSelectMenuBuilder>[] = [
+    await interaction.editReply({content: 'Swap your equipment.', components: [
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(mainHandSelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(offHandSelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(armourSelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(headSelectMenu),
-        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(handsSelectMenu),
-    ];
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(handsSelectMenu)   
+    ]});
 
-    await interaction.editReply({content: 'Swap your equipment.', components});
+    // 2nd reply
+    const ring1SelectMenu = createItemSelectMenu(EquipSlot.Ring1, equipment.RING1, ringOptions);
+    const ring2SelectMenu = createItemSelectMenu(EquipSlot.Ring2, equipment.RING2, ringOptions);
+
+    const followUp = await interaction.followUp({components: [
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(ring1SelectMenu),
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(ring2SelectMenu),
+    ]});
 
     const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
-    const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 0.1 * timeInMS.minute, filter });
+    const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
 
     collector.on('collect', async i => {
         const id = i.values[0] !== 'NULL' ? parseInt(i.values[0]) : null;
@@ -122,9 +132,19 @@ async function execute(interaction: ChatInputCommandInteraction) {
             return;
         }
 
+        // Check if ring is already in use by other hand
+        if (id && equipSlot === EquipSlot.Ring1 && id === equipment.RING2) {
+            await i.reply({content: 'You cannot use the same ring in both slots.', ephemeral: true});
+            return;
+        }
+        else if (id && equipSlot === EquipSlot.Ring2 && id === equipment.RING1) {
+            await i.reply({content: 'You cannot use the same ring in both slots.', ephemeral: true});
+            return;
+        }
+
         await updateABEquipment(user.id, char.CHAR_NAME, equipSlot, id);
-        // Update equipment object with id or null
         
+        // Update equipment object with id or null
         let equip: Equip|null = null;
         switch(equipSlot) {
             case EquipSlot.MainHand:
@@ -175,14 +195,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 equipment.MAIN_HAND = null;
             }
         }
-        
-        await Promise.all([
-            i.reply({content: swapReplies.join('\n'), ephemeral: true}),
-        ]);
+
+        await i.reply({content: swapReplies.join('\n'), ephemeral: true});
     });
 
     collector.on('end', async () => {
         await reply.edit({content: 'Equipment swap expired.', components: []});
+        await followUp.delete();
     });
 }
 
