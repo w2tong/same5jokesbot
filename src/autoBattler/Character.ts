@@ -360,7 +360,7 @@ class Character {
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                 hitTarget = true;
                 const damageRoll = rollDice(this.mainHand.damage);
-                const sneakDamage = this.isInvisible() ? rollDice({num: Math.floor(this.mainHand.damageBonus / 2), sides: 4}) : 0;
+                const sneakDamage = this.isInvisible() ? rollDice({num: 1 + Math.floor(this.mainHand.damageBonus/2), sides: 4}) : 0;
                 let damage = damageRoll + this.mainHand.damageBonus + sneakDamage;
                 if (attack.hitType === HitType.Crit) damage = Math.floor(damage * this.mainHand.critMult);
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
@@ -379,9 +379,9 @@ class Character {
                 if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                     hitTarget = true;
                     const damageRoll = rollDice(this.offHandWeapon.damage);
-                    const sneakDamage = this.isInvisible() ? rollDice({num: Math.floor(this.offHandWeapon.damageBonus / 2), sides: 4}) : 0;
+                    const sneakDamage = this.isInvisible() ? rollDice({num: 1 + Math.floor(this.offHandWeapon.damageBonus/2), sides: 4}) : 0;
                     let damage = damageRoll + this.offHandWeapon.damageBonus + sneakDamage;
-                    if (attack.hitType === HitType.Crit) damage = damage * Math.floor(damage * this.mainHand.critMult);
+                    if (attack.hitType === HitType.Crit) damage = Math.floor(damage * this.mainHand.critMult);
                     this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                     this.target.takeDamage(this.name, damage, this.offHandWeapon.damageType);
                     if (this.offHandWeapon.onHit) this.offHandWeapon.onHit.func(this, this.target);
