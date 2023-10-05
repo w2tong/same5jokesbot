@@ -1,4 +1,6 @@
+import { bold } from 'discord.js';
 import { FieldValueCharLimit } from '../util/discordUtil';
+import HitType from './HitType';
 
 const logLength = 5;
 
@@ -30,4 +32,9 @@ class CombatLog {
     }
 }
 
+function generateCombatAttack(charName: string, tarName: string, attackDetails: string, hitType: HitType, sneak: boolean) {
+    return `${bold(charName)} ⚔️ ${bold(tarName)} (${attackDetails}). ${bold(hitType.toString())}${sneak ? ' (Sneak Attack)' : ''}.`;
+}
+
 export default CombatLog;
+export { generateCombatAttack };

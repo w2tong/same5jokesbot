@@ -164,7 +164,7 @@ const shields: {[id in ShieldId]: Shield} = {
 };
 
 function getShieldTooltip(shield: Shield) {
-    const tooltip = [`AC: ${shield.armourClass}`];
+    const tooltip = [`${bold('AC')}: ${shield.armourClass}`];
     if (shield.attackBonus) tooltip.push(`${bold('Attack Bonus')}: ${shield.attackBonus}`);
     if (shield.physDR) tooltip.push(`${bold('Physical DR')}: ${shield.physDR}`);
     if (shield.magicDR) tooltip.push(`${bold('Magic DR')}: ${shield.magicDR}`);
@@ -185,4 +185,4 @@ function getShieldDescription(shield: Shield) {
     return descriptions.join(', ');
 }
 
-export { Shield, getShieldTooltip, getShieldDescription, ShieldId, shields };
+export { Shield, ShieldId, shields, getShieldTooltip, getShieldDescription };

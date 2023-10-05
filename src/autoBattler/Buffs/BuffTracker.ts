@@ -1,7 +1,8 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
 import { Buff, BuffId, Debuff, DebuffId } from './buffs';
-import { DamageType, dice, rollDice } from '../util';
+import DamageType from '../DamageType';
+import { dice, rollDice } from '../dice';
 
 const BurnDamage = dice['1d3'];
 const PoisonDamage = 1;
@@ -63,6 +64,8 @@ class BuffTracker {
 
     tick() {
         if (!this.char.battle) return;
+
+        // Tick buffs
         for (const [id, buff] of Object.entries(this.buffs)) {
             if (buff.new) buff.new = false;
             else buff.duration -= 1;
@@ -73,7 +76,7 @@ class BuffTracker {
             }
         }
 
-        // TODO: add tick for debuffs
+        // Tick debuffs
         for (const [id, debuff] of Object.entries(this.debuffs)) {
             // TODO: separate debuffs such as burn by source to calculate damage for each source
             if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {

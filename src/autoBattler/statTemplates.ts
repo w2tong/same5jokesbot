@@ -14,32 +14,36 @@ type CharacterStatTemplate = {
         base: number;
         perLvl: number;
     };
-    physDR: {
+    physDR?: {
         base: number;
         perLvl: number;
     };
-    magicDR: {
+    magicDR?: {
         base: number;
         perLvl: number;
     };
-    physResist: {
+    physResist?: {
         base: number;
         perLvl: number;
     };
-    magicResist: {
+    magicResist?: {
         base: number;
         perLvl: number;
     };
+    thorns?: {
+        base: number;
+        perLvl: number;
+    }
     health: {
         base: number;
         perLvl: number;
     };
-    mana: number;
-    manaPerAtk: {
+    mana?: number;
+    manaPerAtk?: {
         base: number;
         perLvl: number;
     };
-    manaRegen: {
+    manaRegen?: {
         base: number;
         perLvl: number;
     };
@@ -63,22 +67,6 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
         armourClass: {
             base: 10,
             perLvl: 0.34
-        },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 5,
-            perLvl: 1
-        },
-        magicResist: {
-            base: 5,
-            perLvl: 1
         },
         health: {
             base: 20,
@@ -112,22 +100,6 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
             base: 10,
             perLvl: 0.34
         },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 0,
-            perLvl: 0.5
-        },
-        magicResist: {
-            base: 0,
-            perLvl: 0.5
-        },
         health: {
             base: 20,
             perLvl: 6
@@ -159,22 +131,6 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
         armourClass: {
             base: 10,
             perLvl: 0.34
-        },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 0,
-            perLvl: 0
-        },
-        magicResist: {
-            base: 5,
-            perLvl: 1
         },
         health: {
             base: 20,
@@ -212,22 +168,6 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: 11,
             perLvl: 0.5
         },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 5,
-            perLvl: 1
-        },
-        magicResist: {
-            base: 5,
-            perLvl: 1
-        },
         health: {
             base: 20,
             perLvl: 8
@@ -258,22 +198,6 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         },
         armourClass: {
             base: 11,
-            perLvl: 0.5
-        },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 0,
-            perLvl: 0.5
-        },
-        magicResist: {
-            base: 0,
             perLvl: 0.5
         },
         health: {
@@ -307,22 +231,6 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         armourClass: {
             base: 11,
             perLvl: 0.5
-        },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 0,
-            perLvl: 0
-        },
-        magicResist: {
-            base: 5,
-            perLvl: 1
         },
         health: {
             base: 20,
@@ -358,34 +266,9 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: 8,
             perLvl: 0.5
         },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 0,
-            perLvl: 0
-        },
-        magicResist: {
-            base: 0,
-            perLvl: 0
-        },
         health: {
             base: 4,
             perLvl: 2
-        },
-        mana: 0, 
-        manaPerAtk: {
-            base: 0,
-            perLvl: 0
-        },
-        manaRegen: {
-            base: 0,
-            perLvl: 0
         },
         initiativeBonus: {
             base: 2,
@@ -407,22 +290,6 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         armourClass: {
             base: 12,
             perLvl: 0.5
-        },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 10,
-            perLvl: 1
-        },
-        magicResist: {
-            base: 0,
-            perLvl: 0
         },
         health: {
             base: 10,
@@ -455,22 +322,6 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         armourClass: {
             base: 10,
             perLvl: 0.5
-        },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 5,
-            perLvl: 1
-        },
-        magicResist: {
-            base: 0,
-            perLvl: 0
         },
         health: {
             base: 10,
@@ -510,17 +361,9 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: 1,
             perLvl: 0.25
         },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
         physResist: {
             base: 10,
             perLvl: 1
-        },
-        magicResist: {
-            base: 0,
-            perLvl: 0
         },
         health: {
             base: 25,
@@ -553,37 +396,12 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 6,
+            base: 7,
             perLvl: 0.5
-        },
-        physDR: {
-            base: 0,
-            perLvl: 0
-        },
-        magicDR: {
-            base: 0,
-            perLvl: 0
-        },
-        physResist: {
-            base: 0,
-            perLvl: 0
-        },
-        magicResist: {
-            base: 0,
-            perLvl: 0
         },
         health: {
             base: 16,
             perLvl: 4
-        },
-        mana: 0, 
-        manaPerAtk: {
-            base: 0,
-            perLvl: 0
-        },
-        manaRegen: {
-            base: 1,
-            perLvl: 0
         },
         initiativeBonus: {
             base: -10,

@@ -1,6 +1,5 @@
 import { bold, userMention } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { DamageType, HitType, calcStatValue, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
@@ -11,21 +10,22 @@ import { Equipment } from './Equipment/Equipment';
 import { userUpgrades } from '../upgrades/upgradeManager';
 import { upgrades } from '../upgrades/upgrades';
 import { WeaponStyle } from './Equipment/Hands';
+import { Ring } from './Equipment/Ring';
+import DamageType from './DamageType';
+import HitType from './HitType';
+import { rollDice, dice } from './dice';
+import { generateCombatAttack } from './CombatLog';
 
-const healthBarLength = 10;
-const manaBarLength = 10;
-const dualWieldPenalty = -2;
-const offHandPenalty = -4;
-
-type HandsBonuses = {attack: number, damage: number, critRange: number, critMult: number};
-function addHandsBonus(weapon: Weapon, bonuses: HandsBonuses) {
-    weapon.attackBonus += bonuses.attack;
-    weapon.damageBonus += bonuses.damage;
-    weapon.critRange -= bonuses.critRange;
-    weapon.critMult += bonuses.critMult;
+function calcStatValue(stat:{base: number, perLvl: number}, level: number) {
+    return stat.base + Math.floor(stat.perLvl * (level - 1));
 }
 
 class Character {
+    static healthBarLength = 10;
+    static manaBarLength = 10;
+    static dualWieldPenalty = -2;
+    static offHandPenalty = -4;
+
     private userId?: string;
 
     protected _name: string;
@@ -44,7 +44,7 @@ class Character {
     protected magicDR: number;
     protected physResist: number;
     protected magicResist: number;
-    protected _thorns: number = 0;
+    protected _thorns: number;
     
     // Health
     protected maxHealth: number;
@@ -73,7 +73,7 @@ class Character {
 
         const lvlAttackBonus = calcStatValue(stats.attackBonus, level);
         const lvlDamageBonus = calcStatValue(stats.damageBonus, level);
-        const lvlManaPerAtk = calcStatValue(stats.manaPerAtk, level);
+        const lvlManaPerAtk = stats.manaPerAtk ? calcStatValue(stats.manaPerAtk, level) : 0;
 
         // Main hand weapon
         this._mainHand = Object.assign({}, equipment.mainHand);
@@ -82,18 +82,19 @@ class Character {
         this._mainHand.manaPerAtk += lvlManaPerAtk;
 
         this._armourClass = calcStatValue(stats.armourClass, level);
-        this.physDR = calcStatValue(stats.physDR, level);
-        this.magicDR = calcStatValue(stats.magicDR, level);
-        this.physResist = calcStatValue(stats.physResist, level);
-        this.magicResist = calcStatValue(stats.magicResist, level);
+        this.physDR = stats.physDR ? calcStatValue(stats.physDR, level) : 0;
+        this.magicDR = stats.magicDR ? calcStatValue(stats.magicDR, level) : 0;
+        this.physResist = stats.physResist ? calcStatValue(stats.physResist, level) : 0;
+        this.magicResist = stats.magicResist ? calcStatValue(stats.magicResist, level) : 0;
+        this._thorns = stats.thorns ? calcStatValue(stats.thorns, level) : 0;
 
         this.maxHealth = calcStatValue(stats.health, level);
 
-        this.maxMana = stats.mana;
+        this.maxMana = stats.mana ?? 0;
         this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
         this.manaCostReduction = 0;
 
-        this.manaRegen = calcStatValue(stats.manaRegen, level) + (this._mainHand.manaRegen ?? 0);
+        this.manaRegen = stats.manaRegen ? calcStatValue(stats.manaRegen, level) + (this._mainHand.manaRegen ?? 0) : 0;
         this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
 
         // Off hand weapon/shield
@@ -101,9 +102,9 @@ class Character {
             throw Error('cannot have both weapon and shield in offhand');
         }
         if (equipment.offHandWeapon) {
-            this.mainHand.attackBonus += dualWieldPenalty;
+            this.mainHand.attackBonus += Character.dualWieldPenalty;
             this.offHandWeapon = Object.assign({}, equipment.offHandWeapon);
-            this.offHandWeapon.attackBonus += lvlAttackBonus + dualWieldPenalty + offHandPenalty;
+            this.offHandWeapon.attackBonus += lvlAttackBonus + Character.dualWieldPenalty + Character.offHandPenalty;
             this.offHandWeapon.damageBonus += lvlDamageBonus;
             this.offHandWeapon.manaPerAtk += lvlManaPerAtk;
             this.manaRegen += this.offHandWeapon.manaRegen ?? 0;
@@ -136,11 +137,12 @@ class Character {
             if (this.offHandWeapon) this.offHandWeapon.manaPerAtk += equipment.head.manaPerAtk ?? 0;
             this.manaRegen += equipment.head.manaRegen ?? 0;
             this.manaCostReduction += equipment.head.manaCostReduction ?? 0;
+            this._initiativeBonus += equipment.head.initiativeBonus ?? 0;
         }
 
         //Hands
         if (equipment.hands) {
-            const handsBonuses: HandsBonuses = {
+            const handsBonuses = {
                 attack: equipment.hands.attackBonus ?? 0,
                 damage: equipment.hands.damageBonus ?? 0,
                 critRange: equipment.hands.critRangeBonus ?? 0,
@@ -148,21 +150,25 @@ class Character {
             };
             if (equipment.hands.weaponStyle) {
                 if (equipment.hands.weaponStyle === WeaponStyle.DualWield && this.mainHand && this.offHandWeapon) {
-                    addHandsBonus(this.mainHand, handsBonuses);
-                    if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
+                    Character.addHandsBonus(this.mainHand, handsBonuses);
+                    if (this.offHandWeapon) Character.addHandsBonus(this.offHandWeapon, handsBonuses);
                 }
                 else if ((equipment.hands.weaponStyle === WeaponStyle.TwoHanded && this.mainHand.twoHanded)
                         || equipment.hands.weaponStyle === WeaponStyle.OneHanded && !this.mainHand.twoHanded
                         || equipment.hands.weaponStyle === WeaponStyle.Ranged && this.mainHand.range === RangeType.LongRange
                 ) {
-                    addHandsBonus(this.mainHand, handsBonuses);
+                    Character.addHandsBonus(this.mainHand, handsBonuses);
                 }
             }
             else {
-                addHandsBonus(this.mainHand, handsBonuses);
-                if (this.offHandWeapon) addHandsBonus(this.offHandWeapon, handsBonuses);
+                Character.addHandsBonus(this.mainHand, handsBonuses);
+                if (this.offHandWeapon) Character.addHandsBonus(this.offHandWeapon, handsBonuses);
             }
         }
+
+        // Rings
+        if (equipment.ring1) this.addRingBonuses(equipment.ring1);
+        if (equipment.ring2) this.addRingBonuses(equipment.ring2);
 
         if (options?.userId) {
             const userId = options.userId;
@@ -184,6 +190,14 @@ class Character {
             side,
             index
         };
+    }
+    
+
+    static addHandsBonus(weapon: Weapon, bonuses: {attack: number, damage: number, critRange: number, critMult: number}) {
+        weapon.attackBonus += bonuses.attack;
+        weapon.damageBonus += bonuses.damage;
+        weapon.critRange -= bonuses.critRange;
+        weapon.critMult += bonuses.critMult;
     }
 
     get name() {
@@ -237,14 +251,14 @@ class Character {
     }
 
     getHealthBar(): string {
-        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*healthBarLength);
-        const numRed = healthBarLength - numGreen;
+        const numGreen = Math.ceil((this.currHealth >= 0 ? this.currHealth : 0)/this.maxHealth*Character.healthBarLength);
+        const numRed = Character.healthBarLength - numGreen;
         return '🟩'.repeat(numGreen) + '🟥'.repeat(numRed);
     }
 
     getManaBar(): string {
-        const numBlue = Math.ceil(this.currMana/this.maxMana*manaBarLength);
-        const numWhite = manaBarLength - numBlue;
+        const numBlue = Math.ceil(this.currMana/this.maxMana*Character.manaBarLength);
+        const numWhite = Character.manaBarLength - numBlue;
         return '🟦'.repeat(numBlue) + '⬜'.repeat(numWhite);
     }
 
@@ -436,6 +450,35 @@ class Character {
             manaRegen: this.manaRegen,
             initiativeBonus: this.initiativeBonus
         };
+    }
+
+    // Helper functions
+    addRingBonuses(ring: Ring) {
+        this.mainHand.attackBonus += ring.attackBonus ?? 0;
+        this.mainHand.damageBonus += ring.damageBonus ?? 0;
+        this.mainHand.critRange -= ring.critRangeBonus ?? 0;
+        this.mainHand.critMult += ring.critMultBonus ?? 0;
+        this.mainHand.manaPerAtk += ring.manaPerAtk ?? 0;
+
+        if (this.offHandWeapon) {
+            this.offHandWeapon.attackBonus += ring.attackBonus ?? 0;
+            this.offHandWeapon.damageBonus += ring.damageBonus ?? 0;
+            this.offHandWeapon.critRange -= ring.critRangeBonus ?? 0;
+            this.offHandWeapon.critMult += ring.critMultBonus ?? 0;
+            this.offHandWeapon.manaPerAtk += ring.manaPerAtk ?? 0;
+        }
+        // Defense
+        this._armourClass += ring.armourClass ?? 0;
+        this.physDR += ring.physDR ?? 0;
+        this.magicDR += ring.magicDR ?? 0;
+        this.physResist += ring.physResist ?? 0;
+        this.magicResist += ring.magicResist ?? 0;
+        this._thorns += ring.thorns ?? 0;
+        // Mana
+        this.manaRegen += ring.manaRegen ?? 0;
+        this.manaCostReduction += ring.manaCostReduction ?? 0;
+        // Other
+        this._initiativeBonus += ring.initiativeBonus ?? 0;
     }
 }
 

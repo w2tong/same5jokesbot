@@ -2,6 +2,15 @@ import { bold } from 'discord.js';
 import Character from '../Character';
 import { Item, ItemType } from './Item';
 
+// enum Price {
+//     Tier0 = 5_000,
+//     Tier1 = 10_000,
+//     Tier2 = 20_000,
+//     Tier3 = 35_000,
+//     Tier4 = 60_000,
+//     Tier5 = 100_000
+// }
+
 enum ArmourType {
     Unarmoured = 'Unarmoured',
     Light = 'Light',
@@ -224,7 +233,7 @@ const armour: {[id in ArmourId]: Armour} = {
         armourClass: 8,
         physDR: 5,
     }
-};
+} as const;
 
 function getArmourTooltip(armour: Armour) {
     const tooltip = [`${bold('Armour Class')}: ${armour.armourClass}`];
@@ -248,4 +257,4 @@ function getArmourDescription(armour: Armour) {
     return descriptions.join(', ');
 }
 
-export { Armour, getArmourTooltip, getArmourDescription, ArmourId, armour };
+export { Armour, ArmourId, armour, getArmourTooltip, getArmourDescription };

@@ -5,6 +5,8 @@ import { timeInMS } from '../../../../util/util';
 import { updateCringePoints } from '../../../../sql/tables/cringe_points';
 import { SelectMenuOptionLimit } from '../../../../util/discordUtil';
 
+const sellPrice = 1_000;
+
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
     const user = interaction.user;
@@ -26,7 +28,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         .addOptions(
             ...Object.entries(itemOptions).map(([id, item]) => 
                 new StringSelectMenuOptionBuilder()
-                    .setLabel(item.name)
+                    .setLabel(`${item.name} (sell: ${sellPrice.toLocaleString()})`)
                     .setDescription(getItemDescription(item))
                     .setValue(id)
             )
@@ -39,13 +41,18 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
     collector.on('collect', async i => {
         const itemId = i.values[0];
+
+        // Remove selected item from select menu
         const index = selectMenu.options.findIndex(option => option.data.value === itemId);
-        const sellPrice = 1_000;
         selectMenu.spliceOptions(index, 1);
+
+        // Update DB inventory and cringe points
         await Promise.all([
             deleteABInventoryItem(user.id, itemId),
             updateCringePoints([{userId: i.user.id, points: sellPrice}])
         ]);
+
+        // Update select menu
         if (selectMenu.options.length) {
             await i.update({components: [row]});
         }

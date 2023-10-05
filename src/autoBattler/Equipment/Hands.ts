@@ -91,7 +91,7 @@ const hands: {[id in HandsId]: Hands} = {
         attackBonus: 3,
         damageBonus: 3
     },
-};
+} as const;
 
 function getHandsTooltip(hands: Hands) {
     const tooltip = [];

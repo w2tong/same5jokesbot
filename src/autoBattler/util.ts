@@ -1,45 +1,27 @@
-import { bold } from 'discord.js';
+import { ABCharacter } from '../sql/tables/ab_characters';
+import { Classes } from './Classes/classes';
+import { fetchEquipment, defaultEquipment } from './Equipment/Equipment';
+import { weapons } from './Equipment/Weapons';
+import { PlayerStats } from './statTemplates';
 
-type Dice = {num: number, sides: number}
-
-type DiceRoll = '1d2'|'1d3'|'1d4'|'1d6'|'1d8'|'1d10'|'1d12'|'1d20'
-const dice: {[key in DiceRoll]: Dice} = {
-    '1d2': {num: 1, sides: 2},
-    '1d3': {num: 1, sides: 3},
-    '1d4': {num: 1, sides: 4},
-    '1d6': {num: 1, sides: 6},
-    '1d8': {num: 1, sides: 8},
-    '1d10': {num: 1, sides: 10},
-    '1d12': {num: 1, sides: 12},
-    '1d20': {num: 1, sides: 20}
-} as const;
-
-function rollDice(dice: Dice): number {
-    let sum = 0;
-    for (let i = 0; i < dice.num; i++) {
-        sum += Math.floor(Math.random() * dice.sides + 1);
+async function createPlayerChar(userId: string, char: ABCharacter) {
+    const equipment = await fetchEquipment(userId, char.CHAR_NAME);
+    const classDefault = defaultEquipment[char.CLASS_NAME];
+    // Set main hand to class default weapon if missing
+    if (classDefault.mainHand && !equipment.mainHand) {
+        if ((classDefault.mainHand.twoHanded && !equipment.offHandWeapon && !equipment.offHandShield) || !classDefault.mainHand.twoHanded) {
+            equipment.mainHand = classDefault.mainHand;
+        }
+        else {
+            equipment.mainHand = weapons.unarmed0;
+        }
     }
-    return sum;
+    // Set off hand to class default weapon/shield if missing and main hand is not two-handed
+    if ((classDefault.offHandWeapon || classDefault.offHandShield) && !equipment.offHandWeapon && !equipment.offHandShield && equipment.mainHand && !equipment.mainHand.twoHanded) {
+        equipment.offHandWeapon = classDefault.offHandWeapon;
+        equipment.offHandShield = classDefault.offHandShield;
+    }
+    return new Classes[char.CLASS_NAME](char.CHAR_LEVEL, PlayerStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId});
 }
 
-enum HitType {
-    Hit = 'Hit',
-    Crit = 'Crit',
-    Miss = 'Miss',
-    CritMiss = 'Crit Miss'
-}
-
-function generateCombatAttack(charName: string, tarName: string, attackDetails: string, hitType: HitType, sneak: boolean) {
-    return `${bold(charName)} ⚔️ ${bold(tarName)} (${attackDetails}). ${bold(hitType.toString())}${sneak ? ' (Sneak Attack)' : ''}.`;
-}
-
-enum DamageType {
-    Physical = '🪨',
-    Magic = '✨'
-}
-
-function calcStatValue(stat:{base: number, perLvl: number}, level: number) {
-    return stat.base + Math.floor(stat.perLvl * (level - 1));
-}
-
-export { Dice, dice, rollDice, HitType, generateCombatAttack, DamageType, calcStatValue };
+export { createPlayerChar };
