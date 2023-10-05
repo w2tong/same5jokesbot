@@ -157,16 +157,16 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     [ClassName.Fighter]: {
         className: 'Fighter',
         attackBonus: {
-            base: 1,
-            perLvl: 0.5
+            base: 0,
+            perLvl: 0.67
         },
         damageBonus: {
             base: 0,
             perLvl: 1
         },
         armourClass: {
-            base: 11,
-            perLvl: 0.5
+            base: 10,
+            perLvl: 0.67
         },
         health: {
             base: 20,
@@ -189,16 +189,16 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     [ClassName.Rogue]: {
         className: 'Rogue',
         attackBonus: {
-            base: 1,
-            perLvl: 0.5
+            base: 0,
+            perLvl: 0.67
         },
         damageBonus: {
             base: 0,
             perLvl: 1
         },
         armourClass: {
-            base: 11,
-            perLvl: 0.5
+            base: 10,
+            perLvl: 0.67
         },
         health: {
             base: 20,
@@ -221,16 +221,16 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     [ClassName.Wizard]: {
         className: 'Wizard',
         attackBonus: {
-            base: 1,
-            perLvl: 0.5
+            base: 0,
+            perLvl: 0.67
         },
         damageBonus: {
             base: 0,
             perLvl: 1
         },
         armourClass: {
-            base: 11,
-            perLvl: 0.5
+            base: 10,
+            perLvl: 0.67
         },
         health: {
             base: 20,
@@ -256,15 +256,15 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         className: 'Rat',
         attackBonus: {
             base: -2,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         damageBonus: {
             base: 0,
-            perLvl: 0.5
+            perLvl: 1
         },
         armourClass: {
             base: 8,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         health: {
             base: 4,
@@ -281,15 +281,15 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         className: 'Goblin Fighter',
         attackBonus: {
             base: 0,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         damageBonus: {
             base: 0,
-            perLvl: 0.67
+            perLvl: 1
         },
         armourClass: {
-            base: 12,
-            perLvl: 0.5
+            base: 10,
+            perLvl: 0.67
         },
         health: {
             base: 10,
@@ -313,7 +313,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         className: 'Goblin Rogue',
         attackBonus: {
             base: 0,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         damageBonus: {
             base: 0,
@@ -321,7 +321,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         },
         armourClass: {
             base: 10,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         health: {
             base: 10,
@@ -347,7 +347,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         className: 'Orc Fighter',
         attackBonus: {
             base: 0,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         damageBonus: {
             base: 1,
@@ -355,11 +355,11 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         },
         armourClass: {
             base: 10,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         physDR: {
             base: 1,
-            perLvl: 0.25
+            perLvl: 0.5
         },
         physResist: {
             base: 10,
@@ -389,15 +389,15 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         className: 'Zombie',
         attackBonus: {
             base: -2,
-            perLvl: 0.5
+            perLvl: 0.67
         },
         damageBonus: {
             base: 0,
             perLvl: 1
         },
         armourClass: {
-            base: 7,
-            perLvl: 0.5
+            base: 8,
+            perLvl: 0.67
         },
         health: {
             base: 16,
