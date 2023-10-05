@@ -26,8 +26,13 @@ interface Ring extends Item {
 type RingId = 
 'abRing0' | 'abRing1' | 'abRing2'
 | 'dbRing0' | 'dbRing1' | 'dbRing2'
-| 'crRing'
+| 'crRing0' | 'crRing1' 
 | 'cmRing0' | 'cmRing1' | 'cmRing2' 
+| 'acRing0' | 'acRing1' | 'acRing2'
+| 'thrRing0' | 'thrRing1' | 'thrRing2'
+| 'mpatkRing0' | 'mpatkRing1' | 'mpatkRing2'
+| 'mrgnRing0' | 'mrgnRing1' | 'mrgnRing2'
+| 'mcostRing0' | 'mcostRing1' | 'mcostRing2'
 ;
 
 // TODO: add rings and add rings to loot table
@@ -68,30 +73,127 @@ const rings: {[id in RingId]: Ring} = {
         name: 'Ring of Greater Damage',
         attackBonus: 3
     },
-    crRing: {
-        id: 'crRing',
+    crRing0: {
+        id: 'crRing0',
         itemType: ItemType.Ring,
-        name: 'PH: CRIT RANGE RING',
+        name: 'Crit of Ring Chance',
         critRangeBonus: 1
+    },
+    crRing1: {
+        id: 'crRing1',
+        itemType: ItemType.Ring,
+        name: 'Crit of Pog Clazy Ring Chance',
+        critRangeBonus: 2
     },
     cmRing0: {
         id: 'cmRing0',
         itemType: ItemType.Ring,
-        name: 'PH: LESSER CRIT MULT RING',
+        name: 'Multi Lesser Ctit Ring',
         critMultBonus: 0.2
     },
     cmRing1: {
         id: 'cmRing1',
         itemType: ItemType.Ring,
-        name: 'PH: CRIT MULT RING',
+        name: 'Multi Ctit Ring',
         critMultBonus: 0.35
     },
     cmRing2: {
         id: 'cmRing2',
         itemType: ItemType.Ring,
-        name: 'PH: GREATER CRIT MULT RING',
+        name: 'Multi Greater Ctit Ring',
         critMultBonus: 0.5
     },
+    acRing0: {
+        id: 'acRing0',
+        itemType: ItemType.Ring,
+        name: 'Ring of Lesser Armour',
+        armourClass: 1
+    },
+    acRing1: {
+        id: 'acRing1',
+        itemType: ItemType.Ring,
+        name: 'Ring of Armour',
+        armourClass: 2
+    },
+    acRing2: {
+        id: 'acRing2',
+        itemType: ItemType.Ring,
+        name: 'Ring of Greater Armour',
+        armourClass: 3
+    },
+    thrRing0: {
+        id: 'thrRing0',
+        itemType: ItemType.Ring,
+        name: 'Ring of Lesser Thorns',
+        thorns: 1
+    },
+    thrRing1: {
+        id: 'thrRing1',
+        itemType: ItemType.Ring,
+        name: 'Ring of Thorns',
+        thorns: 2
+    },
+    thrRing2: {
+        id: 'thrRing2',
+        itemType: ItemType.Ring,
+        name: 'Ring of Greater Thorns',
+        thorns: 3
+    },
+    mpatkRing0: {
+        id: 'mpatkRing0',
+        itemType: ItemType.Ring,
+        name: 'Ring of Lesser M.Atk Ring',
+        manaPerAtk: 2.5
+    },
+    mpatkRing1: {
+        id: 'mpatkRing1',
+        itemType: ItemType.Ring,
+        name: 'Ring of M.Atk Ring',
+        manaPerAtk: 5.0
+    },
+    mpatkRing2: {
+        id: 'mpatkRing3',
+        itemType: ItemType.Ring,
+        name: 'Ring of Greater M.Atk Ring',
+        manaPerAtk: 7.5
+    },
+    mrgnRing0: {
+        id: 'mrgnRing0',
+        itemType: ItemType.Ring,
+        name: 'Ring of Lesser M.Regen Ring',
+        manaRegen: 4
+    },
+    mrgnRing1: {
+        id: 'mrgnRing1',
+        itemType: ItemType.Ring,
+        name: 'Ring of M.Regen Ring',
+        manaRegen: 7
+    },
+    mrgnRing2: {
+        id: 'mrgnRing2',
+        itemType: ItemType.Ring,
+        name: 'Ring of Greater M.Regen Ring',
+        manaRegen: 11
+    },
+    mcostRing0: {
+        id: 'mcostRing0',
+        itemType: ItemType.Ring,
+        name: 'Ring of Lesser M.Cost Ring',
+        manaRegen: 5
+    },
+    mcostRing1: {
+        id: 'mcostRing1',
+        itemType: ItemType.Ring,
+        name: 'Ring of M.Cost Ring',
+        manaRegen: 7.5
+    },
+    mcostRing2: {
+        id: 'mcostRing2',
+        itemType: ItemType.Ring,
+        name: 'Ring of Greater M.Cost Ring',
+        manaRegen: 10
+    }
+
 };
 
 function getRingTooltip(ring: Ring) {

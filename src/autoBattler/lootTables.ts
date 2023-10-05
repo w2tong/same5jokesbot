@@ -3,8 +3,8 @@ import { HandsId } from './Equipment/Hands';
 import { HeadId } from './Equipment/Head';
 import { ShieldId } from './Equipment/Shield';
 import { WeaponId } from './Equipment/Weapons';
-
-type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId)[];
+import { RingId } from './Equipment/Ring';
+type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId|RingId)[];
 
 const lootTiers: {[tier: number]: LootTable} = {
     0: [
@@ -26,6 +26,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         'helmet0', 'clothHood0',
         // Hands
         'dwGloves0', 'thGloves0', 'ohGloves0',
+        // Rings
+        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0' 
+
     ],
     2: [
         // Weapons
@@ -38,6 +41,8 @@ const lootTiers: {[tier: number]: LootTable} = {
         'helmet0', 'clothHood0',
         // Hands
         'dwGloves0', 'thGloves0', 'ohGloves0',
+        // Rings
+        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0' 
     ],
     3: [
         // Weapons
@@ -49,7 +54,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Heads
         'helmet1', 'clothHood1',
         // Hands
-        'dwGloves1', 'thGloves1', 'ohGloves1'
+        'dwGloves1', 'thGloves1', 'ohGloves1',
+        // Rings
+        'abRing1' , 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0'
     ],
     4: [
         // Weapons
@@ -61,7 +68,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Heads
         'helmet1', 'clothHood1',
         // Hands
-        'dwGloves1', 'thGloves1', 'ohGloves1'
+        'dwGloves1', 'thGloves1', 'ohGloves1',
+        // Rings
+        'abRing1', 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0'
     ],
         
     5: [
@@ -75,6 +84,8 @@ const lootTiers: {[tier: number]: LootTable} = {
         'helmet2', 'clothHood2',
         // Hands
         'dwGloves2', 'thGloves2', 'ohGloves2',
+        // Rings
+        'abRing2', 'dbRing2', 'cmRing2', 'acRing2', 'thrRing2', 'mpatkRing2', 'mrgnRing2', 'mcostRing2', 'crRing1'
     ],
 };
 
