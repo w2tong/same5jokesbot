@@ -13,7 +13,7 @@ import { WeaponStyle } from './Equipment/Hands';
 import { Ring } from './Equipment/Ring';
 import DamageType from './DamageType';
 import HitType from './HitType';
-import { rollDice, dice } from './dice';
+import { rollDice } from './dice';
 import { generateCombatAttack } from './CombatLog';
 
 function calcStatValue(stat:{base: number, perLvl: number}, level: number) {
