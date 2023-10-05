@@ -44,7 +44,7 @@ class Character {
     protected magicDR: number;
     protected physResist: number;
     protected magicResist: number;
-    protected _thorns: number = 0;
+    protected _thorns: number;
     
     // Health
     protected maxHealth: number;
@@ -73,7 +73,7 @@ class Character {
 
         const lvlAttackBonus = calcStatValue(stats.attackBonus, level);
         const lvlDamageBonus = calcStatValue(stats.damageBonus, level);
-        const lvlManaPerAtk = calcStatValue(stats.manaPerAtk, level);
+        const lvlManaPerAtk = stats.manaPerAtk ? calcStatValue(stats.manaPerAtk, level) : 0;
 
         // Main hand weapon
         this._mainHand = Object.assign({}, equipment.mainHand);
@@ -82,18 +82,19 @@ class Character {
         this._mainHand.manaPerAtk += lvlManaPerAtk;
 
         this._armourClass = calcStatValue(stats.armourClass, level);
-        this.physDR = calcStatValue(stats.physDR, level);
-        this.magicDR = calcStatValue(stats.magicDR, level);
-        this.physResist = calcStatValue(stats.physResist, level);
-        this.magicResist = calcStatValue(stats.magicResist, level);
+        this.physDR = stats.physDR ? calcStatValue(stats.physDR, level) : 0;
+        this.magicDR = stats.magicDR ? calcStatValue(stats.magicDR, level) : 0;
+        this.physResist = stats.physResist ? calcStatValue(stats.physResist, level) : 0;
+        this.magicResist = stats.magicResist ? calcStatValue(stats.magicResist, level) : 0;
+        this._thorns = stats.thorns ? calcStatValue(stats.thorns, level) : 0;
 
         this.maxHealth = calcStatValue(stats.health, level);
 
-        this.maxMana = stats.mana;
+        this.maxMana = stats.mana ?? 0;
         this.currMana = options?.currManaPc ? Math.ceil(this.maxMana * options.currManaPc) : 0;
         this.manaCostReduction = 0;
 
-        this.manaRegen = calcStatValue(stats.manaRegen, level) + (this._mainHand.manaRegen ?? 0);
+        this.manaRegen = stats.manaRegen ? calcStatValue(stats.manaRegen, level) + (this._mainHand.manaRegen ?? 0) : 0;
         this._initiativeBonus = calcStatValue(stats.initiativeBonus, level);
 
         // Off hand weapon/shield
@@ -136,6 +137,7 @@ class Character {
             if (this.offHandWeapon) this.offHandWeapon.manaPerAtk += equipment.head.manaPerAtk ?? 0;
             this.manaRegen += equipment.head.manaRegen ?? 0;
             this.manaCostReduction += equipment.head.manaCostReduction ?? 0;
+            this._initiativeBonus += equipment.head.initiativeBonus ?? 0;
         }
 
         //Hands

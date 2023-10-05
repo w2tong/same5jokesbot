@@ -7,6 +7,7 @@ interface Head extends Item {
     manaPerAtk?: number;
     manaRegen?: number;
     manaCostReduction?: number;
+    initiativeBonus?: number;
 }
 
 type HeadId = 
@@ -59,6 +60,7 @@ function getHeadTooltip(head: Head) {
     if (head.manaPerAtk) tooltip.push(`${bold('Mana/Attack')}: ${head.manaPerAtk}`);
     if (head.manaRegen) tooltip.push(`${bold('Mana Regen')}: ${head.manaRegen}`);
     if (head.manaCostReduction) tooltip.push(`${bold('Mana Cost Reduction')}: ${head.manaCostReduction}`);
+    if (head.initiativeBonus) tooltip.push(`${bold('Initiative Bonus')}: ${head.initiativeBonus}`);
     return tooltip.join('\n');
 }
 
@@ -68,6 +70,7 @@ function getHeadDescription(head: Head) {
     if (head.manaPerAtk) descriptions.push(`MP/Atk: ${head.manaPerAtk}`);
     if (head.manaRegen) descriptions.push(`MP Regen: ${head.manaRegen}`);
     if (head.manaCostReduction) descriptions.push(`MCR: ${head.manaCostReduction}`);
+    if (head.initiativeBonus) descriptions.push(`IB: ${head.initiativeBonus}`);
     return descriptions.join(', ');
 }
 
