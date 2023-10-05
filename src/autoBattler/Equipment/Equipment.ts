@@ -24,7 +24,8 @@ type Equipment = {
 
 const defaultEquipment: {[name in ClassName]: Equipment} = {
     [ClassName.Fighter]: {
-        mainHand: weapons.greatsword0,
+        mainHand: weapons.longsword0,
+        offHandShield: shields.buckler0
     },
     [ClassName.Rogue]: {
         mainHand: weapons.dagger0,
