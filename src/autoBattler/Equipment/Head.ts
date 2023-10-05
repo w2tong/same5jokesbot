@@ -51,7 +51,7 @@ const heads: {[id in HeadId]: Head} = {
         name: 'Cloth Hood +2',
         manaCostReduction: 20
     }
-};
+} as const;
 
 function getHeadTooltip(head: Head) {
     const tooltip = [];
@@ -71,4 +71,4 @@ function getHeadDescription(head: Head) {
     return descriptions.join(', ');
 }
 
-export { Head, getHeadTooltip, getHeadDescription, HeadId, heads };
+export { Head, HeadId, heads, getHeadTooltip, getHeadDescription };

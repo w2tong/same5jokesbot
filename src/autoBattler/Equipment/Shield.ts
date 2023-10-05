@@ -185,4 +185,4 @@ function getShieldDescription(shield: Shield) {
     return descriptions.join(', ');
 }
 
-export { Shield, getShieldTooltip, getShieldDescription, ShieldId, shields };
+export { Shield, ShieldId, shields, getShieldTooltip, getShieldDescription };
