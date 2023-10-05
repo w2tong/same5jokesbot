@@ -76,31 +76,31 @@ const rings: {[id in RingId]: Ring} = {
     crRing0: {
         id: 'crRing0',
         itemType: ItemType.Ring,
-        name: 'Crit of Ring Chance',
+        name: 'Ring of Crit Chance',
         critRangeBonus: 1
     },
     crRing1: {
         id: 'crRing1',
         itemType: ItemType.Ring,
-        name: 'Crit of Pog Clazy Ring Chance',
+        name: 'Ring of Pog Clazy Crit Chance',
         critRangeBonus: 2
     },
     cmRing0: {
         id: 'cmRing0',
         itemType: ItemType.Ring,
-        name: 'Multi Lesser Ctit Ring',
+        name: 'Ring of Lesser Crit Damage',
         critMultBonus: 0.2
     },
     cmRing1: {
         id: 'cmRing1',
         itemType: ItemType.Ring,
-        name: 'Multi Ctit Ring',
+        name: 'Ring of Crit Damage',
         critMultBonus: 0.35
     },
     cmRing2: {
         id: 'cmRing2',
         itemType: ItemType.Ring,
-        name: 'Multi Greater Ctit Ring',
+        name: 'Ring of Greater Crit Damage',
         critMultBonus: 0.5
     },
     acRing0: {

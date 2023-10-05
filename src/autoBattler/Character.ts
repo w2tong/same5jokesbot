@@ -13,7 +13,7 @@ import { WeaponStyle } from './Equipment/Hands';
 import { Ring } from './Equipment/Ring';
 import DamageType from './DamageType';
 import HitType from './HitType';
-import { rollDice, dice } from './dice';
+import { rollDice } from './dice';
 import { generateCombatAttack } from './CombatLog';
 
 function calcStatValue(stat:{base: number, perLvl: number}, level: number) {
@@ -243,7 +243,7 @@ class Character {
     }
 
     getHealthString(): string {
-        return `${this.currHealth}/${this.maxHealth}`;
+        return `${Math.round(this.currHealth)}/${this.maxHealth}`;
     }
 
     getManaString(): string {
@@ -360,9 +360,9 @@ class Character {
             if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                 hitTarget = true;
                 const damageRoll = rollDice(this.mainHand.damage);
-                const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
+                const sneakDamage = this.isInvisible() ? rollDice({num: Math.floor(this.mainHand.damageBonus / 2), sides: 4}) : 0;
                 let damage = damageRoll + this.mainHand.damageBonus + sneakDamage;
-                if (attack.hitType === HitType.Crit) damage *= this.mainHand.critMult;
+                if (attack.hitType === HitType.Crit) damage = Math.floor(damage * this.mainHand.critMult);
                 this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                 this.target.takeDamage(this.name, damage, this.mainHand.damageType);
                 if (this.mainHand.onHit) this.mainHand.onHit.func(this, this.target);
@@ -379,9 +379,9 @@ class Character {
                 if (attack.hitType === HitType.Hit || attack.hitType === HitType.Crit) {
                     hitTarget = true;
                     const damageRoll = rollDice(this.offHandWeapon.damage);
-                    const sneakDamage = this.isInvisible() ? rollDice(dice['1d4']) : 0;
+                    const sneakDamage = this.isInvisible() ? rollDice({num: Math.floor(this.offHandWeapon.damageBonus / 2), sides: 4}) : 0;
                     let damage = damageRoll + this.offHandWeapon.damageBonus + sneakDamage;
-                    if (attack.hitType === HitType.Crit) damage *= this.offHandWeapon.critMult;
+                    if (attack.hitType === HitType.Crit) damage = damage * Math.floor(damage * this.mainHand.critMult);
                     this.battle.ref.combatLog.add(generateCombatAttack(this.name, this.target.name, attack.details, attack.hitType, sneakDamage > 0));
                     this.target.takeDamage(this.name, damage, this.offHandWeapon.damageType);
                     if (this.offHandWeapon.onHit) this.offHandWeapon.onHit.func(this, this.target);
