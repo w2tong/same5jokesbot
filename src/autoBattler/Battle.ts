@@ -25,7 +25,7 @@ class Battle {
     private turnIndex = -1;
     private turnOrder: {char: Character, init: number}[] = [];
 
-    private _combatLog = new CombatLog();
+    private _combatLog;
 
     private winner?: Side; 
 
@@ -33,7 +33,7 @@ class Battle {
         return this._combatLog;
     }
 
-    constructor(left: Character[], right: Character[]) {
+    constructor(left: Character[], right: Character[], options?: {fullLog?: boolean}) {
         this.left = left;
         this.leftAlive = new Set(Array(left.length).keys());
         for (let i = 0; i < this.left.length; i++) {
@@ -45,6 +45,8 @@ class Battle {
         for (let i = 0; i < this.right.length; i++) {
             this.right[i].setBattle(this, Side.Right, i);
         }
+
+        this._combatLog = new CombatLog({fullLog: options?.fullLog});
     }
 
     getTargets(side: Side) {

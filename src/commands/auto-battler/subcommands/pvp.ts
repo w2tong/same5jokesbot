@@ -19,6 +19,10 @@ const subcommandBuilder = new SlashCommandSubcommandBuilder()
         .setName('wager')
         .setDescription('Enter a wager.')
         .setMinValue(1)
+    )
+    .addBooleanOption(option => option
+        .setName('full-log')
+        .setDescription('Display the full combat log.')
     );
 
 export default { execute, name, subcommandBuilder };

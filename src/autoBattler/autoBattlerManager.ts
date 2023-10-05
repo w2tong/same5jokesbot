@@ -13,7 +13,7 @@ import { Classes } from './Classes/classes';
 import { PlayerStats } from './statTemplates';
 
 const usersInBattle: Set<string> = new Set();
-const ExpLoss = 0.05;
+const ExpLoss = 0.025;
 const lootChance = process.env.NODE_ENV === 'development' ? 1 : 0.25;
 
 async function addLoot(userId: string, level: number): Promise<Equip|null> {
@@ -44,6 +44,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
     const user = interaction.user;
+    const fullLog = interaction.options.getBoolean('full-log') ?? false;
 
     if (usersInBattle.has(user.id)) {
         await interaction.editReply('You are already in a battle.');
@@ -62,7 +63,8 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
     
     const battle = new Battle(
         [await createPlayerChar(user.id, userChar)],
-        getRandomEncounter(level)
+        getRandomEncounter(level),
+        {fullLog}
     );
     
     await interaction.editReply({embeds: [battle.generateEmbed()]});
@@ -122,7 +124,7 @@ async function newPvEBattle(interaction: ChatInputCommandInteraction) {
             }
             await interaction.editReply({embeds});
         })();
-    }, 1 * timeInMS.second);
+    }, 0.5 * timeInMS.second);
 }
 
 async function newPvPBattle(interaction: ChatInputCommandInteraction) {
@@ -130,6 +132,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
     const opponent = interaction.options.getUser('user');
     const wager = interaction.options.getInteger('wager') ?? 0;
+    const fullLog = interaction.options.getBoolean('full-log') ?? false;
     
     if (!opponent || !interaction.channel) {
         await interaction.editReply('There was an error creating the auto battle.');
@@ -174,6 +177,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
     const battle = new Battle(
         [await createPlayerChar(user.id, userChar)],
         [await createPlayerChar(opponent.id, opponentChar)],
+        {fullLog}
     );
 
     const acceptButtonId = 'accept';
@@ -259,7 +263,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
                         await buttonInteraction.editReply({embeds: [battle.generateEmbed()]});
                     }
                 })();
-            }, 1 * timeInMS.second);
+            }, 0.5 * timeInMS.second);
         }
         else {
             await buttonInteraction.editReply({content: `${userMention(opponent.id)} declined the auto battle.`, embeds: [], components: []});

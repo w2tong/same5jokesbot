@@ -10,6 +10,9 @@ import { ItemType } from '../../../../autoBattler/Equipment/Item';
 import { Equip } from '../../../../autoBattler/Equipment/Equipment';
 import { Head, HeadId, getHeadDescription, heads } from '../../../../autoBattler/Equipment/Head';
 import { Hands, HandsId, getHandsDescription, hands } from '../../../../autoBattler/Equipment/Hands';
+import { SelectMenuOptionLimit } from '../../../../util/discordUtil';
+
+const SwapSelectMenuOptionLimit = SelectMenuOptionLimit-1;
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const reply = await interaction.deferReply({ephemeral: true});
@@ -43,21 +46,21 @@ async function execute(interaction: ChatInputCommandInteraction) {
     for (const item of inv) {
         if (item.ITEM_ID in weapons) {
             const weapon = weapons[item.ITEM_ID as WeaponId];
-            mainHandOptions[item.ID] = weapon;
-            if (weapon.twoHanded === false) {
+            if (Object.keys(mainHandOptions).length < SwapSelectMenuOptionLimit) mainHandOptions[item.ID] = weapon;
+            if (weapon.twoHanded === false && Object.keys(offHandOptions).length < SwapSelectMenuOptionLimit) {
                 offHandOptions[item.ID] = weapon;
             }
         }
-        else if (item.ITEM_ID in shields) {
+        else if (item.ITEM_ID in shields && Object.keys(offHandOptions).length < SwapSelectMenuOptionLimit) {
             offHandOptions[item.ID] = shields[item.ITEM_ID as ShieldId];
         }
-        else if (item.ITEM_ID in armour) {
+        else if (item.ITEM_ID in armour && Object.keys(armourOptions).length < SwapSelectMenuOptionLimit) {
             armourOptions[item.ID] = armour[item.ITEM_ID as ArmourId];
         }
-        else if (item.ITEM_ID in heads) {
+        else if (item.ITEM_ID in heads && Object.keys(headOptions).length < SwapSelectMenuOptionLimit) {
             headOptions[item.ID] = heads[item.ITEM_ID as HeadId];
         }
-        else if (item.ITEM_ID in hands) {
+        else if (item.ITEM_ID in hands && Object.keys(handsOptions).length < SwapSelectMenuOptionLimit) {
             handsOptions[item.ID] = hands[item.ITEM_ID as HandsId];
         }
     }

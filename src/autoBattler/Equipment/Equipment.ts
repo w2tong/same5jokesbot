@@ -1,14 +1,14 @@
 import { getABEquipmentItemIds } from '../../sql/tables/ab_equipment';
 import { ClassName } from '../Classes/classes';
 import { Armour, ArmourId, armour, getArmourDescription, getArmourTooltip } from './Armour';
-import { Hands, HandsId, hands } from './Hands';
+import { Hands, HandsId, getHandsDescription, getHandsTooltip, hands } from './Hands';
 import { Head, HeadId, getHeadDescription, getHeadTooltip, heads } from './Head';
 import { ItemType } from './Item';
 import { Shield, getShieldDescription, getShieldTooltip, shields } from './Shield';
 import { Weapon, WeaponId, getWeaponDescription, getWeaponTooltip, weapons } from './Weapons';
 
 type Equip = Weapon|Shield|Armour|Head|Hands;
-const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour} as const;
+const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour, ...heads, ...hands} as const;
 
 type Equipment = {
     mainHand?: Weapon
@@ -74,16 +74,16 @@ function getItemTooltip(item: Equip): string {
     else if (item.itemType === ItemType.Shield) return getShieldTooltip(item);
     else if (item.itemType === ItemType.Armour) return getArmourTooltip(item);
     else if (item.itemType === ItemType.Head) return getHeadTooltip(item);
+    else if (item.itemType === ItemType.Hands) return getHandsTooltip(item);
     return 'Missing item tooltip.';
 }
 
-function getItemDescription(itemId: string) {
-    const item = equips[itemId];
-    if (!item) throw Error(`Item id ${itemId} does not exist`);
+function getItemDescription(item: Equip) {
     if (item.itemType === ItemType.Weapon) return getWeaponDescription(item);
     else if (item.itemType === ItemType.Shield) return getShieldDescription(item);
     else if (item.itemType === ItemType.Armour) return getArmourDescription(item);
     else if (item.itemType === ItemType.Head) return getHeadDescription(item);
+    else if (item.itemType === ItemType.Hands) return getHandsDescription(item);
     return 'Missing item description.';
 }
 
