@@ -1,8 +1,9 @@
 import { bold } from 'discord.js';
 import { DebuffId } from '../Buffs/buffs';
 import Character from '../Character';
-import { DamageType, Dice, dice } from '../util';
 import { Item, ItemType } from './Item';
+import DamageType from '../DamageType';
+import { Dice, dice } from '../dice';
 
 enum WeaponType {
     Unarmed = 'Unarmed',

@@ -1,8 +1,8 @@
 import { EmbedBuilder, bold } from 'discord.js';
 import Character from './Character';
-import { dice, rollDice } from './util';
 import { emptyEmbedFieldInline } from '../util/discordUtil';
 import CombatLog from './CombatLog';
+import { rollDice, dice } from './dice';
 
 enum Side {
     Left = 'Left',

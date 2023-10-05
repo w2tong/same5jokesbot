@@ -1,10 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder} from 'discord.js';
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
-// import { getABEquipment } from '../../../../sql/tables/ab_equipment';
-import { Classes } from '../../../../autoBattler/Classes/classes';
-import { defaultEquipment, fetchEquipment } from '../../../../autoBattler/Equipment/Equipment';
-import { PlayerStats } from '../../../../autoBattler/statTemplates';
 import { getWeaponTooltip } from '../../../../autoBattler/Equipment/Weapons';
+import { createPlayerChar } from '../../../../autoBattler/util';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -17,10 +14,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
     
-    const equipment = await fetchEquipment(user.id, char.CHAR_NAME);
-    // Set main hand to class default if missing
-    if (!equipment.mainHand) equipment.mainHand = defaultEquipment[char.CLASS_NAME].mainHand;
-    const charInfo = new Classes[char.CLASS_NAME](char.CHAR_LEVEL, PlayerStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId: user.id}).info();
+    const charInfo = (await createPlayerChar(user.id, char)).info();
 
     const embed = new EmbedBuilder()
         .setAuthor({name: `${user.username} - ${charInfo.name}`, iconURL: user.displayAvatarURL()})

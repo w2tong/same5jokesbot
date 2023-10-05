@@ -1,6 +1,5 @@
 import { bold, userMention } from 'discord.js';
 import { getRandomRange } from '../util/util';
-import { DamageType, HitType, calcStatValue, dice, generateCombatAttack, rollDice } from './util';
 import Battle, { Side } from './Battle';
 import BuffTracker from './Buffs/BuffTracker';
 import { BuffId } from './Buffs/buffs';
@@ -12,9 +11,16 @@ import { userUpgrades } from '../upgrades/upgradeManager';
 import { upgrades } from '../upgrades/upgrades';
 import { WeaponStyle } from './Equipment/Hands';
 import { Ring } from './Equipment/Ring';
+import DamageType from './DamageType';
+import HitType from './HitType';
+import { rollDice, dice } from './dice';
+import { generateCombatAttack } from './CombatLog';
+
+function calcStatValue(stat:{base: number, perLvl: number}, level: number) {
+    return stat.base + Math.floor(stat.perLvl * (level - 1));
+}
 
 class Character {
-
     static healthBarLength = 10;
     static manaBarLength = 10;
     static dualWieldPenalty = -2;
@@ -185,6 +191,7 @@ class Character {
             index
         };
     }
+    
 
     static addHandsBonus(weapon: Weapon, bonuses: {attack: number, damage: number, critRange: number, critMult: number}) {
         weapon.attackBonus += bonuses.attack;

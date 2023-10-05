@@ -1,16 +1,15 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, ComponentType, EmbedBuilder, userMention } from 'discord.js';
-import { ABCharacter, getABSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
+import { getABSelectedChar, updateABCharExp } from '../sql/tables/ab_characters';
 import { getRandomRange, timeInMS } from '../util/util';
 import Battle, { Side } from './Battle';
 import { getRandomEncounter } from './encounters';
 import { getUserCringePoints, updateCringePoints } from '../sql/tables/cringe_points';
 import { emptyEmbedFieldInline, getBalanceStrings } from '../util/discordUtil';
 import { encounterExp, levelExp } from './experience';
-import { Equip, defaultEquipment, equips, fetchEquipment, getItemTooltip } from './Equipment/Equipment';
+import { Equip, equips, getItemTooltip } from './Equipment/Equipment';
 import lootTables from './lootTables';
 import { insertABInventoryItem } from '../sql/tables/ab_inventory';
-import { Classes } from './Classes/classes';
-import { PlayerStats } from './statTemplates';
+import { createPlayerChar } from './util';
 
 const usersInBattle: Set<string> = new Set();
 const ExpLoss = 0.025;
@@ -24,20 +23,6 @@ async function addLoot(userId: string, level: number): Promise<Equip|null> {
         return equips[itemId];
     }
     return null;
-}
-
-async function createPlayerChar(userId: string, char: ABCharacter) {
-    const equipment = await fetchEquipment(userId, char.CHAR_NAME);
-    // Set main hand to class default weapon if missing
-    if (!equipment.mainHand) {
-        equipment.mainHand = defaultEquipment[char.CLASS_NAME].mainHand;
-    }
-    // Set off hand to class default weapon/shield if missing and main hand is not two-handed
-    if (!equipment.offHandWeapon && !equipment.offHandShield && equipment.mainHand && !equipment.mainHand.twoHanded) {
-        equipment.offHandWeapon = defaultEquipment[char.CLASS_NAME].offHandWeapon;
-        equipment.offHandShield = defaultEquipment[char.CLASS_NAME].offHandShield;
-    }
-    return new Classes[char.CLASS_NAME](char.CHAR_LEVEL, PlayerStats[char.CLASS_NAME], equipment, char.CHAR_NAME, {userId});
 }
 
 async function newPvEBattle(interaction: ChatInputCommandInteraction) {

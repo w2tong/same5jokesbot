@@ -1,7 +1,10 @@
 import { bold } from 'discord.js';
 import Character from '../Character';
 import { DebuffId } from '../Buffs/buffs';
-import { DamageType, HitType, generateCombatAttack, rollDice } from '../util';
+import DamageType from '../DamageType';
+import HitType from '../HitType';
+import { rollDice } from '../dice';
+import { generateCombatAttack } from '../CombatLog';
 
 class Wizard extends Character {
     specialAbility(): void {

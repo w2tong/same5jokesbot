@@ -55,7 +55,6 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const inv = await getABCharInventory(user.id, char.CHAR_NAME);
 
-    // TODO: change to if all slots are empty
     if (inv.length === 0) {
         await interaction.editReply('You do not have equipment to swap to.');
         return;
@@ -200,8 +199,16 @@ async function execute(interaction: ChatInputCommandInteraction) {
     });
 
     collector.on('end', async () => {
-        await reply.edit({content: 'Equipment swap expired.', components: []});
-        await followUp.delete();
+        try {
+            await reply.edit({content: 'Equipment swap expired.', components: []});
+        } finally {
+            //
+        }
+        try {
+            await followUp.delete();
+        } finally {
+            //
+        }
     });
 }
 
