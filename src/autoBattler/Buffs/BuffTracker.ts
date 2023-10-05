@@ -80,7 +80,7 @@ class BuffTracker {
         for (const [id, debuff] of Object.entries(this.debuffs)) {
             // TODO: separate debuffs such as burn by source to calculate damage for each source
             if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
-                this.char.takeDamage(Debuff.Burn.name, rollDice(BurnDamage) + this.debuffs.Burn.source.mainHand.damageBonus, DamageType.Magic);
+                this.char.takeDamage(Debuff.Burn.name, rollDice(BurnDamage) + Math.floor(this.debuffs.Burn.source.mainHand.damageBonus/2), DamageType.Magic);
             }
             if (id as DebuffId === DebuffId.Poison && this.debuffs.Poison) {
                 this.char.takeDamage(Debuff.Poison.name, PoisonDamage, DamageType.Physical);
