@@ -17,7 +17,7 @@ type LotteryEvents = {
 const lotteryEmitter = new EventEmitter() as TypedEmitter<LotteryEvents>;
 
 const numbers = Array.from(new Array(12), (_x, i) => i+1);
-const choose = 3;
+const choose = 4;
 const price = 10000;
 const basePayout = 0.25;
 const payoutMultiplier = 4;
