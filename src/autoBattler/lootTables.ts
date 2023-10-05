@@ -23,7 +23,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe1', 'lightarmour1', 'mediumarmour1', 'heavyarmour1', 
         // Heads
-        'platehelmet0', 'clothhood0',
+        'helmet0', 'clothhood0',
         // Hands
         'dwGloves0', 'thGloves0', 'ohGloves0',
     ],
@@ -35,7 +35,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe2', 'lightarmour2', 'mediumarmour2', 'heavyarmour2',
         // Heads
-        'platehelmet0', 'clothhood0',
+        'helmet0', 'clothhood0',
         // Hands
         'dwGloves0', 'thGloves0', 'ohGloves0',
     ],
@@ -47,7 +47,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe3', 'lightarmour3', 'mediumarmour3', 'heavyarmour3',
         // Heads
-        'platehelmet1', 'clothhood1',
+        'helmet1', 'clothhood1',
         // Hands
         'dwGloves1', 'thGloves1', 'ohGloves1'
     ],
@@ -59,7 +59,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe4', 'lightarmour4', 'mediumarmour4', 'heavyarmour4',
         // Heads
-        'platehelmet1', 'clothhood1',
+        'helmet1', 'clothhood1',
         // Hands
         'dwGloves1', 'thGloves1', 'ohGloves1'
     ],
@@ -72,7 +72,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Armour
         'robe5', 'lightarmour5', 'mediumarmour5', 'heavyarmour5',
         // Heads
-        'platehelmet2', 'clothhood2',
+        'helmet2', 'clothhood2',
         // Hands
         'dwGloves2', 'thGloves2', 'ohGloves2',
     ],
