@@ -61,6 +61,7 @@ class Character {
 
     // Potion
     protected potion?: Potion;
+    protected potionEffectiveness: number = 1;
 
     // Buffs/Debuffs
     protected _buffTracker: BuffTracker = new BuffTracker(this);
@@ -174,7 +175,14 @@ class Character {
         if (equipment.ring1) this.addRingBonuses(equipment.ring1);
         if (equipment.ring2) this.addRingBonuses(equipment.ring2);
 
-        if (equipment.potion) this.potion = Object.assign({}, equipment.potion);
+        if (equipment.potion) {
+            this.potion = Object.assign({}, equipment.potion);
+            if (equipment.belt) {
+                if (equipment.belt.charges) equipment.potion.charges += equipment.belt.charges;
+                if (equipment.belt.effectiveness) this.potionEffectiveness += equipment.belt.effectiveness;
+                if (equipment.belt.healing) equipment.potion.bonus += equipment.belt.healing;
+            }
+        } 
 
         if (options?.userId) {
             const userId = options.userId;
@@ -324,7 +332,7 @@ class Character {
 
     doTurn(): void {
         if (this.potion && this.potion.charges > 0 && this.currHealth <= this.maxHealth/2) {
-            const potionHeal = rollDice(this.potion.dice) + this.potion.bonus;
+            const potionHeal = Math.round((rollDice(this.potion.dice) + this.potion.bonus) * this.potionEffectiveness);
             this.addHealth(potionHeal);
             this.potion.charges -= 1;
             if (this.battle) this.battle.ref.combatLog.add(`${bold(this.name)} used ${bold(this.potion.name)} and healed for ${bold(potionHeal.toLocaleString())}.`);

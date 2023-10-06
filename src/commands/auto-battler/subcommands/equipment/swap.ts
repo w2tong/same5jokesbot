@@ -12,6 +12,7 @@ import { Hands, HandsId, hands } from '../../../../autoBattler/Equipment/Hands';
 import { SelectMenuOptionLimit } from '../../../../util/discordUtil';
 import { Ring, RingId, rings } from '../../../../autoBattler/Equipment/Ring';
 import { Potion, PotionId, potions } from '../../../../autoBattler/Equipment/Potion';
+import { Belt, BeltId, belts } from '../../../../autoBattler/Equipment/Belt';
 
 const SwapSelectMenuOptionLimit = SelectMenuOptionLimit-1;
 
@@ -28,7 +29,6 @@ function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equ
         .setPlaceholder(`${equipSlot} is empty.`);
     const emptyOption = new StringSelectMenuOptionBuilder()
         .setLabel(`Empty ${equipSlot}`)
-        .setDescription('Empty slot')
         .setValue('NULL');
     if (!equippedId) emptyOption.setDefault(true);
     selectMenu.addOptions(emptyOption);
@@ -75,6 +75,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const handsOptions: {[id: number]: Hands} = {};
     const ringOptions: {[id: number]: Ring} = {};
     const potionOptions: {[id: number]: Potion} = {};
+    const beltOptions: {[id: number]: Belt} = {};
 
     for (const item of inv.reverse()) {
         if (item.ITEM_ID in weapons) {
@@ -102,6 +103,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         else if (item.ITEM_ID in potions) {
             potionOptions[item.ID] = potions[item.ITEM_ID as PotionId];
         }
+        else if (item.ITEM_ID in belts) {
+            beltOptions[item.ID] = belts[item.ITEM_ID as BeltId];
+        }
     }
 
     const mainHandSelectMenu = createItemSelectMenu(EquipSlot.MainHand, equipment.MAIN_HAND, mainHandOptions);
@@ -113,6 +117,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const ring1SelectMenu = createItemSelectMenu(EquipSlot.Ring1, equipment.RING1, ringOptions);
     const ring2SelectMenu = createItemSelectMenu(EquipSlot.Ring2, equipment.RING2, ringOptions);
     const potionSelectMenu = createItemSelectMenu(EquipSlot.Potion, equipment.POTION, potionOptions);
+    const beltSelectMenu = createItemSelectMenu(EquipSlot.Belt, equipment.BELT, beltOptions);
 
     const reply = await user.send({content: `Swap ${bold(char.CHAR_NAME)}'s equipment.`, components: [
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(mainHandSelectMenu),
@@ -211,6 +216,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(ring1SelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(ring2SelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(potionSelectMenu),
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(beltSelectMenu),
     ]});
     const collector2 = reply2.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
     collector2.on('collect', async i => {

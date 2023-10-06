@@ -5,7 +5,8 @@ import { ShieldId } from './Equipment/Shield';
 import { WeaponId } from './Equipment/Weapons';
 import { RingId } from './Equipment/Ring';
 import { PotionId } from './Equipment/Potion';
-type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId|RingId|PotionId)[];
+import { BeltId } from './Equipment/Belt';
+type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId|RingId|PotionId|BeltId)[];
 
 const lootTiers: {[tier: number]: LootTable} = {
     0: [
@@ -53,7 +54,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Rings
         'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0',
         // Potions
-        'healingPotion1'
+        'healingPotion1',
+        // Belts
+        'effBelt0', 'healBelt0',
     ],
     3: [
         // Weapons
@@ -69,7 +72,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Rings
         'abRing1' , 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0',
         // Potions
-        'healingPotion2'
+        'healingPotion2',
+        // Belts
+        'effBelt1', 'healBelt1',
     ],
     4: [
         // Weapons
@@ -85,7 +90,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Rings
         'abRing1', 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0',
         // Potions
-        'healingPotion3'
+        'healingPotion3',
+        // Belts
+        'effBelt2', 'healBelt2', 'chargesBelt0',
     ],
         
     5: [
@@ -102,7 +109,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Rings
         'abRing2', 'dbRing2', 'cmRing2', 'acRing2', 'thrRing2', 'mpatkRing2', 'mrgnRing2', 'mcostRing2', 'crRing1',
         // Potions
-        'healingPotion4'
+        'healingPotion4',
+        // Belts
+        'effBelt3', 'healBelt3', 'chargesBelt1',
     ],
 };
 

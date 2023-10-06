@@ -1,16 +1,17 @@
 import { getABEquipmentItemIds } from '../../sql/tables/ab_equipment';
 import { ClassName } from '../Classes/classes';
 import { Armour, ArmourId, armour, getArmourDescription, getArmourTooltip } from './Armour';
+import { Belt, BeltId, belts, getBeltDescription, getBeltTooltip } from './Belt';
 import { Hands, HandsId, getHandsDescription, getHandsTooltip, hands } from './Hands';
 import { Head, HeadId, getHeadDescription, getHeadTooltip, heads } from './Head';
 import { ItemType } from './Item';
-import { Potion, PotionId, getPotionTooltip, potions } from './Potion';
+import { Potion, PotionId, getPotionDescription, getPotionTooltip, potions } from './Potion';
 import { Ring, RingId, getRingDescription, getRingTooltip, rings } from './Ring';
 import { Shield, getShieldDescription, getShieldTooltip, shields } from './Shield';
 import { Weapon, WeaponId, getWeaponDescription, getWeaponTooltip, weapons } from './Weapons';
 
-type Equip = Weapon|Shield|Armour|Head|Hands|Ring|Potion;
-const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour, ...heads, ...hands, ...rings, ...potions} as const;
+type Equip = Weapon|Shield|Armour|Head|Hands|Ring|Potion|Belt;
+const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour, ...heads, ...hands, ...rings, ...potions, ...belts} as const;
 
 type Equipment = {
     mainHand?: Weapon;
@@ -22,6 +23,7 @@ type Equipment = {
     ring1?: Ring;
     ring2?: Ring;
     potion?: Potion;
+    belt?: Belt;
 }
 
 const defaultEquipment: {[name in ClassName]: Equipment} = {
@@ -84,30 +86,40 @@ async function fetchEquipment(userId: string, name: string): Promise<Equipment> 
     if (dbEquipment.POTION && dbEquipment.POTION in potions) {
         equipment.potion = potions[dbEquipment.POTION as PotionId];
     }
+
+    if (dbEquipment.BELT && dbEquipment.BELT in belts) {
+        equipment.belt = belts[dbEquipment.BELT as BeltId];
+    }
     
     return equipment;
 }
 
 function getItemTooltip(item: Equip): string {
-    if (item.itemType === ItemType.Weapon) return getWeaponTooltip(item);
-    else if (item.itemType === ItemType.Shield) return getShieldTooltip(item);
-    else if (item.itemType === ItemType.Armour) return getArmourTooltip(item);
-    else if (item.itemType === ItemType.Head) return getHeadTooltip(item);
-    else if (item.itemType === ItemType.Hands) return getHandsTooltip(item);
-    else if (item.itemType === ItemType.Ring) return getRingTooltip(item);
-    else if (item.itemType === ItemType.Potion) return getPotionTooltip(item);
-    return 'Missing item tooltip.';
+    switch(item.itemType) {
+        case ItemType.Weapon: return getWeaponTooltip(item);
+        case ItemType.Shield: return getShieldTooltip(item);
+        case ItemType.Armour: return getArmourTooltip(item);
+        case ItemType.Head: return getHeadTooltip(item);
+        case ItemType.Hands: return getHandsTooltip(item);
+        case ItemType.Ring: return getRingTooltip(item);
+        case ItemType.Potion: return getPotionTooltip(item);
+        case ItemType.Belt: return getBeltTooltip(item);
+        default: return 'Missing item tooltip.';
+    }
 }
 
 function getItemDescription(item: Equip) {
-    if (item.itemType === ItemType.Weapon) return getWeaponDescription(item);
-    else if (item.itemType === ItemType.Shield) return getShieldDescription(item);
-    else if (item.itemType === ItemType.Armour) return getArmourDescription(item);
-    else if (item.itemType === ItemType.Head) return getHeadDescription(item);
-    else if (item.itemType === ItemType.Hands) return getHandsDescription(item);
-    else if (item.itemType === ItemType.Ring) return getRingDescription(item);
-    else if (item.itemType === ItemType.Potion) return getPotionTooltip(item);
-    return 'Missing item description.';
+    switch(item.itemType) {
+        case ItemType.Weapon: return getWeaponDescription(item);
+        case ItemType.Shield: return getShieldDescription(item);
+        case ItemType.Armour: return getArmourDescription(item);
+        case ItemType.Head: return getHeadDescription(item);
+        case ItemType.Hands: return getHandsDescription(item);
+        case ItemType.Ring: return getRingDescription(item);
+        case ItemType.Potion: return getPotionDescription(item);
+        case ItemType.Belt: return getBeltDescription(item);
+        default: return 'Missing item description.';
+    }
 }
 
 export { Equip, equips, Equipment, defaultEquipment, fetchEquipment, getItemTooltip, getItemDescription };
