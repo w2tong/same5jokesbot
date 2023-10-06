@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilde
 import { getABSelectedChar } from '../../../../sql/tables/ab_characters';
 import { getWeaponTooltip } from '../../../../autoBattler/Equipment/Weapons';
 import { createPlayerChar } from '../../../../autoBattler/util';
+import { emptyEmbedFieldInline } from '../../../../util/discordUtil';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -31,6 +32,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
             {name: 'Initiative Bonus', value: `${charInfo.initiativeBonus}`, inline: true},
             {name: 'Phys Resist', value: `${charInfo.physResist}%`, inline: true},
             {name: 'Magic Resist', value: `${charInfo.magicResist}%`, inline: true},
+
+            {name: 'Thorns', value: `${charInfo.thorns}`, inline: true},
+            {name: 'Mana Cost Reduction', value: `${charInfo.manaCostReduction}`, inline: true},
+            emptyEmbedFieldInline,
 
             {name: 'Main Hand Attack', value: getWeaponTooltip(charInfo.mainHand)}
         )

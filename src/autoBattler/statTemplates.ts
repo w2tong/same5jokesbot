@@ -388,7 +388,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     Zombie: {
         className: 'Zombie',
         attackBonus: {
-            base: -2,
+            base: -3,
             perLvl: 0.67
         },
         damageBonus: {
@@ -396,7 +396,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 8,
+            base: 7,
             perLvl: 0.67
         },
         health: {

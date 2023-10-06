@@ -72,6 +72,6 @@ const name = 'sell';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Sell your items from you inventory.');
+    .setDescription('Sell your items from your inventory.');
 
 export default { execute, name, subcommandBuilder };
