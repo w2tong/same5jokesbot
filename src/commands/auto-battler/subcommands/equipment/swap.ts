@@ -25,7 +25,7 @@ function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equ
     if (!equippedId) emptyOption.setDefault(true);
     selectMenu.addOptions(
         emptyOption,
-        ...Object.entries(equipOptions).map(([id, equip]) => {
+        ...Object.entries(equipOptions).reverse().map(([id, equip]) => {
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(`${equip.name}${equipSlot === EquipSlot.MainHand || equipSlot === EquipSlot.OffHand || equipSlot === EquipSlot.Ring1 || equipSlot === EquipSlot.Ring2 ? ` (id: ${id})` : ''}`)
                 .setDescription(getItemDescription(equip))
