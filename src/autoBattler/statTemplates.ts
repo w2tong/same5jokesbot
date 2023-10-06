@@ -152,7 +152,7 @@ const PlayerStats: {[name in ClassName]: CharacterStatTemplate} = {
     }
 };
 
-const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFighter'|'Zombie']: CharacterStatTemplate} = {
+const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFighter'|'Zombie'|'OgreFighter']: CharacterStatTemplate} = {
     // Classes
     [ClassName.Fighter]: {
         className: 'Fighter',
@@ -407,7 +407,41 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             base: -10,
             perLvl: 1
         }
-    }
+    },
+
+    // Ogre
+    OgreFighter: {
+        className: 'Orc Fighter',
+        attackBonus: {
+            base: -2,
+            perLvl: 0.5
+        },
+        damageBonus: {
+            base: 2,
+            perLvl: 1.5
+        },
+        armourClass: {
+            base: 8,
+            perLvl: 0.5
+        },
+        health: {
+            base: 40,
+            perLvl: 12
+        },
+        mana: 100, 
+        manaPerAtk: {
+            base: 0,
+            perLvl: 0.5
+        },
+        manaRegen: {
+            base: 10,
+            perLvl: 0.5
+        },
+        initiativeBonus: {
+            base: -5,
+            perLvl: 1
+        }
+    },
 
 } as const;
 
