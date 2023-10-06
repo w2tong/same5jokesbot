@@ -4,7 +4,8 @@ import { HeadId } from './Equipment/Head';
 import { ShieldId } from './Equipment/Shield';
 import { WeaponId } from './Equipment/Weapons';
 import { RingId } from './Equipment/Ring';
-type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId|RingId)[];
+import { PotionId } from './Equipment/Potion';
+type LootTable = (WeaponId|ShieldId|HeadId|ArmourId|HandsId|RingId|PotionId)[];
 
 const lootTiers: {[tier: number]: LootTable} = {
     0: [
@@ -20,6 +21,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         'dwGloves0', 'thGloves0', 'ohGloves0',
         // Rings
         'abRing0', 'dbRing0', 'acRing0'
+        
     ],
     1: [
         // Weapons
@@ -33,8 +35,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Hands
         'dwGloves0', 'thGloves0', 'ohGloves0',
         // Rings
-        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0' 
-
+        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0' ,
+        // Potions
+        'healingPotion0'
     ],
     2: [
         // Weapons
@@ -48,7 +51,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Hands
         'dwGloves0', 'thGloves0', 'ohGloves0',
         // Rings
-        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0' 
+        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0',
+        // Potions
+        'healingPotion1'
     ],
     3: [
         // Weapons
@@ -62,7 +67,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Hands
         'dwGloves1', 'thGloves1', 'ohGloves1',
         // Rings
-        'abRing1' , 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0'
+        'abRing1' , 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0',
+        // Potions
+        'healingPotion2'
     ],
     4: [
         // Weapons
@@ -76,7 +83,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Hands
         'dwGloves1', 'thGloves1', 'ohGloves1',
         // Rings
-        'abRing1', 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0'
+        'abRing1', 'dbRing1', 'cmRing1', 'acRing1', 'thrRing1', 'mpatkRing1', 'mrgnRing1', 'mcostRing1', 'crRing0',
+        // Potions
+        'healingPotion3'
     ],
         
     5: [
@@ -91,7 +100,9 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Hands
         'dwGloves2', 'thGloves2', 'ohGloves2',
         // Rings
-        'abRing2', 'dbRing2', 'cmRing2', 'acRing2', 'thrRing2', 'mpatkRing2', 'mrgnRing2', 'mcostRing2', 'crRing1'
+        'abRing2', 'dbRing2', 'cmRing2', 'acRing2', 'thrRing2', 'mpatkRing2', 'mrgnRing2', 'mcostRing2', 'crRing1',
+        // Potions
+        'healingPotion4'
     ],
 };
 

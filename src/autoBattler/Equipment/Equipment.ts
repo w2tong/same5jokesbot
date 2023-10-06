@@ -4,12 +4,13 @@ import { Armour, ArmourId, armour, getArmourDescription, getArmourTooltip } from
 import { Hands, HandsId, getHandsDescription, getHandsTooltip, hands } from './Hands';
 import { Head, HeadId, getHeadDescription, getHeadTooltip, heads } from './Head';
 import { ItemType } from './Item';
+import { Potion, PotionId, getPotionTooltip, potions } from './Potion';
 import { Ring, RingId, getRingDescription, getRingTooltip, rings } from './Ring';
 import { Shield, getShieldDescription, getShieldTooltip, shields } from './Shield';
 import { Weapon, WeaponId, getWeaponDescription, getWeaponTooltip, weapons } from './Weapons';
 
-type Equip = Weapon|Shield|Armour|Head|Hands|Ring;
-const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour, ...heads, ...hands, ...rings} as const;
+type Equip = Weapon|Shield|Armour|Head|Hands|Ring|Potion;
+const equips: {[key: string]: Equip} = {...weapons, ...shields, ...armour, ...heads, ...hands, ...rings, ...potions} as const;
 
 type Equipment = {
     mainHand?: Weapon;
@@ -20,6 +21,7 @@ type Equipment = {
     hands?: Hands;
     ring1?: Ring;
     ring2?: Ring;
+    potion?: Potion;
 }
 
 const defaultEquipment: {[name in ClassName]: Equipment} = {
@@ -78,6 +80,10 @@ async function fetchEquipment(userId: string, name: string): Promise<Equipment> 
     if (dbEquipment.RING2 && dbEquipment.RING2 in rings) {
         equipment.ring2 = rings[dbEquipment.RING2 as RingId];
     }
+
+    if (dbEquipment.POTION && dbEquipment.POTION in potions) {
+        equipment.potion = potions[dbEquipment.POTION as PotionId];
+    }
     
     return equipment;
 }
@@ -89,6 +95,7 @@ function getItemTooltip(item: Equip): string {
     else if (item.itemType === ItemType.Head) return getHeadTooltip(item);
     else if (item.itemType === ItemType.Hands) return getHandsTooltip(item);
     else if (item.itemType === ItemType.Ring) return getRingTooltip(item);
+    else if (item.itemType === ItemType.Potion) return getPotionTooltip(item);
     return 'Missing item tooltip.';
 }
 
@@ -99,6 +106,7 @@ function getItemDescription(item: Equip) {
     else if (item.itemType === ItemType.Head) return getHeadDescription(item);
     else if (item.itemType === ItemType.Hands) return getHandsDescription(item);
     else if (item.itemType === ItemType.Ring) return getRingDescription(item);
+    else if (item.itemType === ItemType.Potion) return getPotionTooltip(item);
     return 'Missing item description.';
 }
 

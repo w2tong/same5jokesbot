@@ -11,6 +11,7 @@ import { Head, HeadId, heads } from '../../../../autoBattler/Equipment/Head';
 import { Hands, HandsId, hands } from '../../../../autoBattler/Equipment/Hands';
 import { SelectMenuOptionLimit } from '../../../../util/discordUtil';
 import { Ring, RingId, rings } from '../../../../autoBattler/Equipment/Ring';
+import { Potion, PotionId, potions } from '../../../../autoBattler/Equipment/Potion';
 
 const SwapSelectMenuOptionLimit = SelectMenuOptionLimit-1;
 
@@ -68,12 +69,13 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     const mainHandOptions: {[id: number]: Weapon} = {};
-    console.group(mainHandOptions[239]);
     const offHandOptions: {[id: number]: Weapon|Shield} = {};
     const armourOptions: {[id: number]: Armour} = {};
     const headOptions: {[id: number]: Head} = {};
     const handsOptions: {[id: number]: Hands} = {};
     const ringOptions: {[id: number]: Ring} = {};
+    const potionOptions: {[id: number]: Potion} = {};
+
     for (const item of inv.reverse()) {
         if (item.ITEM_ID in weapons) {
             const weapon = weapons[item.ITEM_ID as WeaponId];
@@ -97,6 +99,9 @@ async function execute(interaction: ChatInputCommandInteraction) {
         else if (item.ITEM_ID in rings) {
             ringOptions[item.ID] = rings[item.ITEM_ID as RingId];
         }
+        else if (item.ITEM_ID in potions) {
+            potionOptions[item.ID] = potions[item.ITEM_ID as PotionId];
+        }
     }
 
     const mainHandSelectMenu = createItemSelectMenu(EquipSlot.MainHand, equipment.MAIN_HAND, mainHandOptions);
@@ -104,6 +109,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const armourSelectMenu = createItemSelectMenu(EquipSlot.Armour, equipment.ARMOUR, armourOptions);
     const headSelectMenu = createItemSelectMenu(EquipSlot.Head, equipment.HEAD, headOptions);
     const handsSelectMenu = createItemSelectMenu(EquipSlot.Hands, equipment.HANDS, handsOptions);
+
+    const ring1SelectMenu = createItemSelectMenu(EquipSlot.Ring1, equipment.RING1, ringOptions);
+    const ring2SelectMenu = createItemSelectMenu(EquipSlot.Ring2, equipment.RING2, ringOptions);
+    const potionSelectMenu = createItemSelectMenu(EquipSlot.Potion, equipment.POTION, potionOptions);
 
     const reply = await user.send({content: `Swap ${bold(char.CHAR_NAME)}'s equipment.`, components: [
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(mainHandSelectMenu),
@@ -113,10 +122,6 @@ async function execute(interaction: ChatInputCommandInteraction) {
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(handsSelectMenu)   
     ]});
     await interaction.editReply(`Swap ${bold(char.CHAR_NAME)}'s equipment: ${reply.url}.`);
-
-    // 2nd reply
-    const ring1SelectMenu = createItemSelectMenu(EquipSlot.Ring1, equipment.RING1, ringOptions);
-    const ring2SelectMenu = createItemSelectMenu(EquipSlot.Ring2, equipment.RING2, ringOptions);
 
     const filter = (i: StringSelectMenuInteraction) => i.user.id === user.id;
     const collector1 = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
@@ -201,9 +206,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
         }
     });
 
+    // 2nd reply
     const reply2 = await reply.reply({components: [
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(ring1SelectMenu),
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(ring2SelectMenu),
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(potionSelectMenu),
     ]});
     const collector2 = reply2.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 1 * timeInMS.minute, filter });
     collector2.on('collect', async i => {
