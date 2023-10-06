@@ -57,7 +57,7 @@ const upgrades: {[key in UpgradeId]: Upgrade} = {
     stolenGoodChanceReduction: {
         name: 'Stolen Good Chance Reduction',
         description: 'Each stolen good reduces your chance of success.',
-        levels: [0, 0.005,0.01, 0.015, 0.02, 0.025],
+        levels: [0, 0.005, 0.01, 0.015, 0.02, 0.025],
         percentage: true
     },
     stealDefence: {

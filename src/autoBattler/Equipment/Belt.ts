@@ -89,9 +89,9 @@ function getBeltTooltip(belt: Belt) {
 
 function getBeltDescription(belt: Belt) {
     const descriptions = [];
-    if (belt.charges) descriptions.push(`${'Pot Charges'}: +${belt.charges}%`);
-    if (belt.effectiveness) descriptions.push(`${'Pot Eff'}: +${belt.effectiveness*100}%`);
-    if (belt.healing) descriptions.push(`${'Pot Heal:'}: +${belt.healing}`);
+    if (belt.charges) descriptions.push(`Pot Charges: +${belt.charges}%`);
+    if (belt.effectiveness) descriptions.push(`Pot Eff: +${belt.effectiveness*100}%`);
+    if (belt.healing) descriptions.push(`Pot Heal: +${belt.healing}`);
     return descriptions.join(', ');
 }
 

@@ -178,9 +178,9 @@ class Character {
         if (equipment.potion) {
             this.potion = Object.assign({}, equipment.potion);
             if (equipment.belt) {
-                if (equipment.belt.charges) equipment.potion.charges += equipment.belt.charges;
+                if (equipment.belt.charges) this.potion.charges += equipment.belt.charges;
                 if (equipment.belt.effectiveness) this.potionEffectiveness += equipment.belt.effectiveness;
-                if (equipment.belt.healing) equipment.potion.bonus += equipment.belt.healing;
+                if (equipment.belt.healing) this.potion.bonus += equipment.belt.healing;
             }
         } 
 
