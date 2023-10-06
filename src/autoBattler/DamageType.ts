@@ -1,5 +1,5 @@
 enum DamageType {
-    Physical = '🪨',
+    Physical = '👊',
     Magic = '✨'
 }
 

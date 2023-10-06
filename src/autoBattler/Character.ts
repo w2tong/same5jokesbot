@@ -15,6 +15,7 @@ import DamageType from './DamageType';
 import HitType from './HitType';
 import { rollDice } from './dice';
 import { generateCombatAttack } from './CombatLog';
+import { Potion } from './Equipment/Potion';
 
 function calcStatValue(stat:{base: number, perLvl: number}, level: number) {
     return stat.base + Math.floor(stat.perLvl * (level - 1));
@@ -57,6 +58,9 @@ class Character {
     protected manaCostReduction: number;
 
     protected _initiativeBonus: number;
+
+    // Potion
+    protected potion?: Potion;
 
     // Buffs/Debuffs
     protected _buffTracker: BuffTracker = new BuffTracker(this);
@@ -169,6 +173,8 @@ class Character {
         // Rings
         if (equipment.ring1) this.addRingBonuses(equipment.ring1);
         if (equipment.ring2) this.addRingBonuses(equipment.ring2);
+
+        if (equipment.potion) this.potion = Object.assign({}, equipment.potion);
 
         if (options?.userId) {
             const userId = options.userId;
@@ -317,6 +323,12 @@ class Character {
     }
 
     doTurn(): void {
+        if (this.potion && this.potion.charges > 0 && this.currHealth <= this.maxHealth/2) {
+            const potionHeal = rollDice(this.potion.dice) + this.potion.bonus;
+            this.addHealth(potionHeal);
+            this.potion.charges -= 1;
+            if (this.battle) this.battle.ref.combatLog.add(`${bold(this.name)} used ${bold(this.potion.name)} and healed for ${bold(potionHeal.toLocaleString())}.`);
+        }
         if (this.maxMana !== 0 && this.currMana >= this.maxMana - this.manaCostReduction) {
             this.specialAbility();
         }
@@ -426,6 +438,10 @@ class Character {
 
     addMana(mana: number): void {
         this.currMana = Math.min(this.currMana + mana, this.maxMana);
+    }
+
+    addHealth(health: number): void {
+        this.currHealth = Math.min(this.currHealth + health, this.maxHealth);
     }
 
     isDead(): boolean {
