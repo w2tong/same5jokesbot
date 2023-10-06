@@ -448,9 +448,11 @@ class Character {
             magicDR: this.magicDR,
             physResist: this.physResist,
             magicResist: this.magicResist,
+            thorns: this.thorns,
             health: this.maxHealth,
             mana: this.maxMana,
             manaRegen: this.manaRegen,
+            manaCostReduction: this.manaCostReduction,
             initiativeBonus: this.initiativeBonus
         };
     }
