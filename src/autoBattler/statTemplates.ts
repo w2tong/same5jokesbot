@@ -267,7 +267,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 0.67
         },
         health: {
-            base: 4,
+            base: 3,
             perLvl: 2
         },
         initiativeBonus: {
