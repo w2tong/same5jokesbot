@@ -28,7 +28,6 @@ function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equ
         .setPlaceholder(`${equipSlot} is empty.`);
     const emptyOption = new StringSelectMenuOptionBuilder()
         .setLabel(`Empty ${equipSlot}`)
-        .setDescription('Empty slot')
         .setValue('NULL');
     if (!equippedId) emptyOption.setDefault(true);
     selectMenu.addOptions(emptyOption);
