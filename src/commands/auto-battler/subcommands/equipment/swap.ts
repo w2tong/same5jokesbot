@@ -14,6 +14,13 @@ import { Ring, RingId, rings } from '../../../../autoBattler/Equipment/Ring';
 
 const SwapSelectMenuOptionLimit = SelectMenuOptionLimit-1;
 
+function createItemSelectMenuOption(equipSlot: EquipSlot, id: number, equip: Equip): StringSelectMenuOptionBuilder {
+    return new StringSelectMenuOptionBuilder()
+        .setLabel(`${equip.name}${equipSlot === EquipSlot.MainHand || equipSlot === EquipSlot.OffHand || equipSlot === EquipSlot.Ring1 || equipSlot === EquipSlot.Ring2 ? ` (id: ${id})` : ''}`)
+        .setDescription(getItemDescription(equip))
+        .setValue(`${id}`);
+}
+
 function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equipOptions: {[id: number]: Equip}) {
     const selectMenu = new StringSelectMenuBuilder()
         .setCustomId(equipSlot)
@@ -23,16 +30,16 @@ function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equ
         .setDescription('Empty slot')
         .setValue('NULL');
     if (!equippedId) emptyOption.setDefault(true);
-    selectMenu.addOptions(
-        emptyOption,
-        ...Object.entries(equipOptions).reverse().map(([id, equip]) => {
-            const option = new StringSelectMenuOptionBuilder()
-                .setLabel(`${equip.name}${equipSlot === EquipSlot.MainHand || equipSlot === EquipSlot.OffHand || equipSlot === EquipSlot.Ring1 || equipSlot === EquipSlot.Ring2 ? ` (id: ${id})` : ''}`)
-                .setDescription(getItemDescription(equip))
-                .setValue(`${id}`);
-            if (equippedId && equippedId === parseInt(id)) option.setDefault(true);
-            return option;
-        }));
+    selectMenu.addOptions(emptyOption);
+    if (equippedId) {
+        const equip = equipOptions[equippedId];
+        console.log(equip, equippedId);
+        selectMenu.addOptions(createItemSelectMenuOption(equipSlot, equippedId, equip));
+    }
+    selectMenu.addOptions (
+        ...Object.entries(equipOptions).reverse().slice(0, SwapSelectMenuOptionLimit - (equippedId ? 1 : 0)).map(([id, equip]) =>
+            createItemSelectMenuOption(equipSlot, parseInt(id), equip)
+        ));
     if (selectMenu.options.length === 1) selectMenu.setDisabled(true);
     return selectMenu;
 }
@@ -69,24 +76,24 @@ async function execute(interaction: ChatInputCommandInteraction) {
     for (const item of inv.reverse()) {
         if (item.ITEM_ID in weapons) {
             const weapon = weapons[item.ITEM_ID as WeaponId];
-            if (Object.keys(mainHandOptions).length < SwapSelectMenuOptionLimit) mainHandOptions[item.ID] = weapon;
-            if (weapon.twoHanded === false && Object.keys(offHandOptions).length < SwapSelectMenuOptionLimit) {
+            mainHandOptions[item.ID] = weapon;
+            if (weapon.twoHanded === false) {
                 offHandOptions[item.ID] = weapon;
             }
         }
-        else if (item.ITEM_ID in shields && Object.keys(offHandOptions).length < SwapSelectMenuOptionLimit) {
+        else if (item.ITEM_ID in shields) {
             offHandOptions[item.ID] = shields[item.ITEM_ID as ShieldId];
         }
-        else if (item.ITEM_ID in armour && Object.keys(armourOptions).length < SwapSelectMenuOptionLimit) {
+        else if (item.ITEM_ID in armour) {
             armourOptions[item.ID] = armour[item.ITEM_ID as ArmourId];
         }
-        else if (item.ITEM_ID in heads && Object.keys(headOptions).length < SwapSelectMenuOptionLimit) {
+        else if (item.ITEM_ID in heads) {
             headOptions[item.ID] = heads[item.ITEM_ID as HeadId];
         }
-        else if (item.ITEM_ID in hands && Object.keys(handsOptions).length < SwapSelectMenuOptionLimit) {
+        else if (item.ITEM_ID in hands) {
             handsOptions[item.ID] = hands[item.ITEM_ID as HandsId];
         }
-        else if (item.ITEM_ID in rings && Object.keys(ringOptions).length < SwapSelectMenuOptionLimit) {
+        else if (item.ITEM_ID in rings) {
             ringOptions[item.ID] = rings[item.ITEM_ID as RingId];
         }
     }
