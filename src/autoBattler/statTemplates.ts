@@ -157,7 +157,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     [ClassName.Fighter]: {
         className: 'Fighter',
         attackBonus: {
-            base: 0,
+            base: -1,
             perLvl: 0.67
         },
         damageBonus: {
@@ -165,7 +165,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 10,
+            base: 9,
             perLvl: 0.67
         },
         health: {
@@ -189,7 +189,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     [ClassName.Rogue]: {
         className: 'Rogue',
         attackBonus: {
-            base: 0,
+            base: -1,
             perLvl: 0.67
         },
         damageBonus: {
@@ -197,7 +197,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 10,
+            base: 9,
             perLvl: 0.67
         },
         health: {
@@ -221,7 +221,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     [ClassName.Wizard]: {
         className: 'Wizard',
         attackBonus: {
-            base: 0,
+            base: -1,
             perLvl: 0.67
         },
         damageBonus: {
@@ -229,7 +229,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 10,
+            base: 9,
             perLvl: 0.67
         },
         health: {
@@ -280,7 +280,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     GoblinFighter: {
         className: 'Goblin Fighter',
         attackBonus: {
-            base: 0,
+            base: -1,
             perLvl: 0.67
         },
         damageBonus: {
@@ -288,12 +288,12 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 10,
+            base: 9,
             perLvl: 0.67
         },
         health: {
-            base: 10,
-            perLvl: 5
+            base: 12,
+            perLvl: 6
         },
         mana: 100, 
         manaPerAtk: {
@@ -312,20 +312,20 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     GoblinRogue: {
         className: 'Goblin Rogue',
         attackBonus: {
-            base: 0,
-            perLvl: 0.67
+            base: -1,
+            perLvl: 1
         },
         damageBonus: {
             base: 0,
             perLvl: 0.67
         },
         armourClass: {
-            base: 10,
-            perLvl: 0.67
+            base: 9,
+            perLvl: 1
         },
         health: {
-            base: 10,
-            perLvl: 4
+            base: 11,
+            perLvl: 5
         },
         mana: 100, 
         manaPerAtk: {
@@ -346,7 +346,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
     OrcFighter: {
         className: 'Orc Fighter',
         attackBonus: {
-            base: 0,
+            base: -1,
             perLvl: 0.67
         },
         damageBonus: {
@@ -354,7 +354,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
             perLvl: 1
         },
         armourClass: {
-            base: 10,
+            base: 9,
             perLvl: 0.67
         },
         physDR: {
@@ -401,7 +401,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
         },
         health: {
             base: 16,
-            perLvl: 4
+            perLvl: 6
         },
         initiativeBonus: {
             base: -10,
