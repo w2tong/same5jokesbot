@@ -246,6 +246,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 equipment.RING2 = id;
                 if (id) equip = ringOptions[id];
                 break;
+            case EquipSlot.Potion:
+                equipment.POTION = id;
+                if (id) equip = potionOptions[id];
+                break;
+            case EquipSlot.Belt:
+                equipment.BELT = id;
+                if (id) equip = beltOptions[id];
+                break;
         }
 
         const itemName = equip ? equip.name : 'Empty';
