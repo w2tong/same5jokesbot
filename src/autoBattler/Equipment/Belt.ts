@@ -32,25 +32,25 @@ const belts: {[id in BeltId]: Belt} = {
         id: 'effBelt0',
         itemType: ItemType.Belt,
         name: 'Belt of Effectiveness',
-        effectiveness: 25
+        effectiveness: 0.25
     },
     effBelt1: {
         id: 'effBelt1',
         itemType: ItemType.Belt,
         name: 'Belt of Greater Effectiveness',
-        effectiveness: 50
+        effectiveness: 0.50
     },
     effBelt2: {
         id: 'effBelt2',
         itemType: ItemType.Belt,
         name: 'Belt of Superior Effectiveness',
-        effectiveness: 75
+        effectiveness: 0.75
     },
     effBelt3: {
         id: 'effBelt3',
         itemType: ItemType.Belt,
         name: 'Belt of Supreme Effectiveness',
-        effectiveness: 100
+        effectiveness: 1
     },
     healBelt0: {
         id: 'healBelt0',

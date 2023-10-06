@@ -70,17 +70,17 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         fighterEncounter({level: 1, count: 1}),
         rogueEncounter({level: 1, count: 1}),
         wizardEncounter({level: 1, count: 1}),
-        ratEncounter({level: 1, count: 3}),
+        ratEncounter({level: 1, count: 2}),
         orcEncounter({level: 1, count: 1}),
-        zombieEncounter({level: 1, count: 2}),
+        zombieEncounter({level: 1, count: 1}),
     ],
     2: [
         fighterEncounter({level: 2, count: 1}),
         rogueEncounter({level: 2, count: 1}),
         wizardEncounter({level: 2, count: 1}),
-        ratEncounter({level: 2, count: 3}),
+        ratEncounter({level: 2, count: 2}),
         orcEncounter({level: 2, count: 1}),
-        zombieEncounter({level: 2, count: 2}),
+        zombieEncounter({level: 2, count: 1}),
     ],
     3: [
         fighterEncounter({level: 3, count: 1}),
@@ -89,7 +89,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         ratEncounter({level: 3, count: 3}),
         goblinDuoEncounter({level: 2, count: 1}),
         orcEncounter({level: 3, count: 1}),
-        zombieEncounter({level: 3, count: 2}),
+        zombieEncounter({level: 3, count: 1}),
     ],
     4: [
         fighterEncounter({level: 4, count: 1}),
@@ -97,7 +97,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 4, count: 1}),
         goblinDuoEncounter({level: 3, count: 1}),
         orcEncounter({level: 4, count: 1}),
-        zombieEncounter({level: 4, count: 2}),
+        zombieEncounter({level: 4, count: 1}),
     ],
     5: [
         fighterEncounter({level: 5, count: 1}),
@@ -137,7 +137,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 9, count: 1}),
         goblinDuoEncounter({level: 8, count: 1}),
         orcEncounter({level: 9, count: 1}),
-        zombieEncounter({level: 9, count: 2}),
+        zombieEncounter({level: 9, count: 3}),
     ],
     10: [
         fighterEncounter({level: 10, count: 1}),
@@ -145,7 +145,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 10, count: 1}),
         goblinDuoEncounter({level: 9, count: 1}),
         orcEncounter({level: 10, count: 1}),
-        zombieEncounter({level: 10, count: 2}),
+        zombieEncounter({level: 10, count: 3}),
     ],
     11: [
         fighterEncounter({level: 11, count: 1}),
@@ -153,7 +153,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 11, count: 1}),
         goblinDuoEncounter({level: 10, count: 1}),
         orcEncounter({level: 11, count: 1}),
-        zombieEncounter({level: 11, count: 2}),
+        zombieEncounter({level: 11, count: 3}),
     ],
     12: [
         fighterEncounter({level: 12, count: 1}),
@@ -161,7 +161,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 12, count: 1}),
         goblinDuoEncounter({level: 11, count: 1}),
         orcEncounter({level: 12, count: 1}),
-        zombieEncounter({level: 12, count: 2}),
+        zombieEncounter({level: 12, count: 3}),
     ],
     13: [
         fighterEncounter({level: 13, count: 1}),
@@ -169,7 +169,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 13, count: 1}),
         goblinDuoEncounter({level: 12, count: 1}),
         orcEncounter({level: 13, count: 1}),
-        zombieEncounter({level: 13, count: 2}),
+        zombieEncounter({level: 13, count: 4}),
     ],
     14: [
         fighterEncounter({level: 14, count: 1}),
@@ -177,7 +177,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 14, count: 1}),
         goblinDuoEncounter({level: 13, count: 1}),
         orcEncounter({level: 14, count: 1}),
-        zombieEncounter({level: 14, count: 2}),
+        zombieEncounter({level: 14, count: 4}),
     ],
     15: [
         fighterEncounter({level: 15, count: 1}),
@@ -185,7 +185,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 15, count: 1}),
         goblinDuoEncounter({level: 14, count: 1}),
         orcEncounter({level: 15, count: 1}),
-        zombieEncounter({level: 15, count: 2}),
+        zombieEncounter({level: 15, count: 4}),
     ],
     16: [
         fighterEncounter({level: 16, count: 1}),
@@ -193,7 +193,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 16, count: 1}),
         goblinDuoEncounter({level: 15, count: 1}),
         orcEncounter({level: 16, count: 1}),
-        zombieEncounter({level: 16, count: 2}),
+        zombieEncounter({level: 16, count: 4}),
     ],
     17: [
         fighterEncounter({level: 17, count: 1}),
@@ -201,7 +201,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 17, count: 1}),
         goblinDuoEncounter({level: 16, count: 1}),
         orcEncounter({level: 17, count: 1}),
-        zombieEncounter({level: 17, count: 2}),
+        zombieEncounter({level: 17, count: 5}),
     ],
     18: [
         fighterEncounter({level: 18, count: 1}),
@@ -209,7 +209,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 18, count: 1}),
         goblinDuoEncounter({level: 17, count: 1}),
         orcEncounter({level: 18, count: 1}),
-        zombieEncounter({level: 18, count: 2}),
+        zombieEncounter({level: 18, count: 5}),
     ],
     19: [
         fighterEncounter({level: 19, count: 1}),
@@ -217,7 +217,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 19, count: 1}),
         goblinDuoEncounter({level: 18, count: 1}),
         orcEncounter({level: 19, count: 1}),
-        zombieEncounter({level: 19, count: 2}),
+        zombieEncounter({level: 19, count: 5}),
     ],
     20: [
         fighterEncounter({level: 20, count: 1}),
@@ -225,7 +225,7 @@ const encounters: {[key: number]: Array<() => Character[]>} = {
         wizardEncounter({level: 20, count: 1}),
         goblinDuoEncounter({level: 19, count: 1}),
         orcEncounter({level: 20, count: 1}),
-        zombieEncounter({level: 20, count: 2}),
+        zombieEncounter({level: 20, count: 5}),
     ],
 };
 
