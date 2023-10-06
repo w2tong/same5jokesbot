@@ -66,7 +66,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const headOptions: {[id: number]: Head} = {};
     const handsOptions: {[id: number]: Hands} = {};
     const ringOptions: {[id: number]: Ring} = {};
-    for (const item of inv) {
+    for (const item of inv.reverse()) {
         if (item.ITEM_ID in weapons) {
             const weapon = weapons[item.ITEM_ID as WeaponId];
             if (Object.keys(mainHandOptions).length < SwapSelectMenuOptionLimit) mainHandOptions[item.ID] = weapon;
