@@ -72,8 +72,8 @@ function getPotionTooltip(potion: Potion) {
 
 function getPotionDescription(potion: Potion) {
     const descriptions = [
-        `${'Healing'}: ${potion.dice.sides + potion.bonus}-${potion.dice.num * potion.dice.sides + potion.bonus}`,
-        `${'Charges'}: ${potion.charges}`
+        `Healing: ${potion.dice.sides + potion.bonus}-${potion.dice.num * potion.dice.sides + potion.bonus}`,
+        `Charges: ${potion.charges}`
     ];
     if (potion.onUse) descriptions.push(`${'On Use:'}: ${potion.onUse.description}`);
     return descriptions.join(', ');
