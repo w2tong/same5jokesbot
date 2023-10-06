@@ -58,6 +58,7 @@ class BuffTracker {
 
     addDebuff(id: DebuffId, duration: number, source: Character) {
         if (!this.char.battle) return;
+        // TODO: increase duration if debuff already exists
         this.debuffs[id] = {duration, source, new: true};
         this.char.battle.ref.combatLog.add(`${this.char.name} gained debuff ${bold(`${id}(${duration})`)}.`);
     }
