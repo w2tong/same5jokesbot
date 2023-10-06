@@ -19,7 +19,7 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Hands
         'dwGloves0', 'thGloves0', 'ohGloves0',
         // Rings
-        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0' 
+        'abRing0', 'dbRing0', 'acRing0'
     ],
     1: [
         // Weapons
