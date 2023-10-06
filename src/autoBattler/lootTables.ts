@@ -13,7 +13,13 @@ const lootTiers: {[tier: number]: LootTable} = {
         // Shields
         'buckler0', 'spikedShield0', 'towerShield0',
         // Armour
-        'robe0', 'lightarmour0', 'mediumarmour0', 'heavyarmour0'
+        'robe0', 'lightarmour0', 'mediumarmour0', 'heavyarmour0',
+        // Heads
+        'helmet0', 'clothHood0',
+        // Hands
+        'dwGloves0', 'thGloves0', 'ohGloves0',
+        // Rings
+        'abRing0', 'dbRing0', 'cmRing0', 'acRing0', 'thrRing0', 'mpatkRing0', 'mrgnRing0', 'mcostRing0' 
     ],
     1: [
         // Weapons
