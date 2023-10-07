@@ -144,6 +144,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Chainmail',
         type: ArmourType.Medium,
         armourClass: 2,
+        physResist: 5,
         manaRegen: 1
     },
     mediumarmour1: {
@@ -152,7 +153,8 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Chainmail +1',
         type: ArmourType.Medium,
         armourClass: 3,
-        manaRegen: 2
+        physResist: 6,
+        manaRegen: 1
     },
     mediumarmour2: {
         id: 'mediumarmour2',
@@ -160,7 +162,8 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Chainmail +2',
         type: ArmourType.Medium,
         armourClass: 4,
-        manaRegen: 3
+        physResist: 7,
+        manaRegen: 2
     },
     mediumarmour3: {
         id: 'mediumarmour3',
@@ -168,7 +171,8 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Chainmail +3',
         type: ArmourType.Medium,
         armourClass: 5,
-        manaRegen: 4
+        physResist: 8,
+        manaRegen: 3
     },
     mediumarmour4: {
         id: 'mediumarmour4',
@@ -176,15 +180,17 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Chainmail +4',
         type: ArmourType.Medium,
         armourClass: 6,
-        manaRegen: 5
+        physResist: 9,
+        manaRegen: 4
     },
     mediumarmour5: {
         id: 'mediumarmour5',
         itemType: ItemType.Armour,
         name: 'Chainmail +5',
         type: ArmourType.Medium,
-        armourClass: 2,
-        manaRegen: 6
+        armourClass: 7,
+        physResist: 10,
+        manaRegen: 5
     },
     heavyarmour0: {
         id: 'heavyarmour0',
@@ -192,6 +198,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Plate Armour',
         type: ArmourType.Heavy,
         armourClass: 3,
+        physResist: 5,
     },
     heavyarmour1: {
         id: 'heavyarmour1',
@@ -199,6 +206,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Plate Armour +1',
         type: ArmourType.Heavy,
         armourClass: 4,
+        physResist: 6,
         physDR: 1,
     },
     heavyarmour2: {
@@ -207,6 +215,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Plate Armour +2',
         type: ArmourType.Heavy,
         armourClass: 5,
+        physResist: 7,
         physDR: 2,
     },
     heavyarmour3: {
@@ -215,6 +224,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Plate Armour +3',
         type: ArmourType.Heavy,
         armourClass: 6,
+        physResist: 8,
         physDR: 3,
     },
     heavyarmour4: {
@@ -223,6 +233,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Plate Armour +4',
         type: ArmourType.Heavy,
         armourClass: 7,
+        physResist: 9,
         physDR: 4,
     },
     heavyarmour5: {
@@ -231,6 +242,7 @@ const armour: {[id in ArmourId]: Armour} = {
         name: 'Plate Armour +5',
         type: ArmourType.Heavy,
         armourClass: 8,
+        physResist: 10,
         physDR: 5,
     }
 } as const;
