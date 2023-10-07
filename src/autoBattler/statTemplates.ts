@@ -411,7 +411,7 @@ const NPCStats: {[name in ClassName|'Rat'|'GoblinFighter'|'GoblinRogue'|'OrcFigh
 
     // Ogre
     OgreFighter: {
-        className: 'Orc Fighter',
+        className: 'Ogre Fighter',
         attackBonus: {
             base: -2,
             perLvl: 0.5
