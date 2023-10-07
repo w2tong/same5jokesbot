@@ -103,11 +103,11 @@ class BuffTracker {
         // Tick debuffs
         for (const [id, debuff] of Object.entries(this.debuffs)) {
             for (const [sideId, charDebuff] of Object.entries(debuff)) {
-                if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
-                    this.char.takeDamage(Debuff.Burn.name, rollDice(BurnDamage) + Math.floor(charDebuff.source.mainHand.damageBonus/2), DamageType.Magic);
+                if (id as DebuffId === DebuffId.Burn) {
+                    this.char.takeDamage(`${Debuff.Burn.name} (${charDebuff.source.name})`, rollDice(BurnDamage) + Math.floor(charDebuff.source.mainHand.damageBonus/2), DamageType.Magic);
                 }
                 else if (id as DebuffId === DebuffId.Poison && this.debuffs.Poison) {
-                    this.char.takeDamage(Debuff.Poison.name, PoisonDamage, DamageType.Physical);
+                    this.char.takeDamage(`${Debuff.Poison.name} (${charDebuff.source.name})`, PoisonDamage, DamageType.Physical);
                 }
     
                 charDebuff.duration -= 1;
