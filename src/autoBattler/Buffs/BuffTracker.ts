@@ -59,14 +59,28 @@ class BuffTracker {
     addBuff(id: BuffId, duration: number, source: Character) {
         if (!this.char.battle) return;
         if (!this.buffs[id]) this.buffs[id] = {};
-        this.buffs[id]![`${source.battle?.side}${source.battle?.index}`] = {duration, source, new: true};
+        const sideId = `${source.battle?.side}${source.battle?.index}`;
+        if (!this.buffs[id]![sideId]) {
+            this.buffs[id]![sideId] = {duration, source, new: true};
+        }
+        else {
+            this.buffs[id]![sideId].duration += duration;
+            this.buffs[id]![sideId].new = true;
+        }
         this.char.battle.ref.combatLog.add(`${this.char.name} gained buff ${id}(${duration}).`);
     }
 
     addDebuff(id: DebuffId, duration: number, source: Character) {
         if (!this.char.battle) return;
         if (!this.debuffs[id]) this.debuffs[id] = {};
-        this.debuffs[id]![`${source.battle?.side}${source.battle?.index}`] = {duration, source, new: true};
+        const sideId = `${source.battle?.side}${source.battle?.index}`;
+        if (!this.debuffs[id]![sideId]) {
+            this.debuffs[id]![sideId] = {duration, source, new: true};
+        }
+        else {
+            this.debuffs[id]![sideId].duration += duration;
+            this.debuffs[id]![sideId].new = true;
+        }
         this.char.battle.ref.combatLog.add(`${this.char.name} gained debuff ${bold(`${id}(${duration})`)}.`);
     }
 
