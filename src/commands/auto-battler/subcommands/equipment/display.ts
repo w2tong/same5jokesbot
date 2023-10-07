@@ -100,6 +100,6 @@ const name = 'display';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Sell your items from your inventory.');
+    .setDescription('Display the equipment of your currently selected character.');
 
 export default { execute, name, subcommandBuilder };
