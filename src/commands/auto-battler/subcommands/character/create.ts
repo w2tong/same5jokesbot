@@ -1,10 +1,11 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, bold, userMention } from 'discord.js';
 import { ClassName, Classes } from '../../../../autoBattler/Classes/classes';
-import { insertABChar } from '../../../../sql/tables/ab_characters';
+import { insertABChar, selectABChar } from '../../../../sql/tables/ab_characters';
 import { insertABEquipment } from '../../../../sql/tables/ab_equipment';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
+    const user = interaction.user;
 
     const name = interaction.options.getString('name');
     const className = interaction.options.getString('class') as ClassName;
@@ -15,8 +16,11 @@ async function execute(interaction: ChatInputCommandInteraction) {
 
     const success = await insertABChar(interaction.user.id, name, className);
     if (success) {
-        await insertABEquipment(interaction.user.id, name);
-        await interaction.editReply(`${userMention(interaction.user.id)} created a new character ${bold(name)} (${className}).`);
+        await Promise.all([
+            insertABEquipment(interaction.user.id, name),
+            selectABChar(user.id, name),
+            interaction.editReply(`${userMention(interaction.user.id)} created a new character ${bold(name)} (${className}).`)
+        ]);
     }
     else {
         await interaction.editReply(`This character name ${bold(name)} is already taken by you.`);
