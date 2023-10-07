@@ -43,6 +43,7 @@ const encounterExp: {[level: number]: number} = {
     20: 500
 } as const;
 
+// Wins per encounter to level up
 // for (let i = 1; i < 20; i++) {
 //     console.log(i, levelExp[i] / encounterExp[i]);
 // }
