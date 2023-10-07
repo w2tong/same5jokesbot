@@ -23,23 +23,29 @@ const levelExp: {[level: number]: number} = {
 const encounterExp: {[level: number]: number} = {
     1: 10,
     2: 20,
-    3: 30,
-    4: 40,
-    5: 50,
-    6: 60,
-    7: 70,
-    8: 80,
-    9: 90,
-    10: 100,
-    11: 110,
-    12: 120,
-    13: 130,
-    14: 140,
-    15: 150,
-    16: 160,
-    17: 170,
-    18: 180,
-    19: 190,
+    3: 35,
+    4: 50,
+    5: 65,
+    6: 80,
+    7: 100,
+    8: 120,
+    9: 145,
+    10: 170,
+    11: 195,
+    12: 225,
+    13: 255,
+    14: 285,
+    15: 320,
+    16: 355,
+    17: 390,
+    18: 430,
+    19: 470,
+    20: 500
 } as const;
+
+// Wins per encounter to level up
+// for (let i = 1; i < 20; i++) {
+//     console.log(i, levelExp[i] / encounterExp[i]);
+// }
 
 export {levelExp, encounterExp};
