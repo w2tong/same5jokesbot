@@ -15,8 +15,8 @@ type BuffInfo = {
 
 class BuffTracker {
     private char: Character;
-    private buffs: {[id in BuffId]?: BuffInfo} = {};
-    private debuffs: {[id in DebuffId]?: BuffInfo} = {};
+    private buffs: {[id in BuffId]?: {[key: string]: BuffInfo}} = {};
+    private debuffs: {[id in DebuffId]?: {[key: string]: BuffInfo}} = {};
 
     constructor(char: Character) {
         this.char = char;
@@ -31,13 +31,16 @@ class BuffTracker {
     }
 
     getBuff(id: BuffId): number {
-        return this.buffs[id]?.duration ?? 0;
+        if (this.buffs[id]) return Object.values(this.buffs[id]!).reduce((sum, curr) => sum + curr.duration, 0);
+        return 0;
     }
 
     getBuffString(): string {
         const buffs = [];
         for (const [id, buff] of Object.entries(this.buffs)) {
-            buffs.push(`${Buff[id as BuffId].symbol}(${buff.duration})`);
+            for (const charBuff of Object.values(buff)) {
+                buffs.push(`${Buff[id as BuffId].symbol}(${charBuff.duration})`);
+            }
         }
         return buffs.join(', ');
     }
@@ -45,21 +48,25 @@ class BuffTracker {
     getDebuffString(): string {
         const debuffs = [];
         for (const [id, debuff] of Object.entries(this.debuffs)) {
-            debuffs.push(`${Debuff[id as DebuffId].symbol}(${debuff.duration})`);
+            for (const charDebuff of Object.values(debuff)) {
+                debuffs.push(`${Debuff[id as DebuffId].symbol}(${charDebuff.duration})`);
+            }
+            
         }
         return debuffs.join(', ');
     }
 
     addBuff(id: BuffId, duration: number, source: Character) {
         if (!this.char.battle) return;
-        this.buffs[id] = {duration, source, new: true};
+        if (!this.buffs[id]) this.buffs[id] = {};
+        this.buffs[id]![`${source.battle?.side}${source.battle?.index}`] = {duration, source, new: true};
         this.char.battle.ref.combatLog.add(`${this.char.name} gained buff ${id}(${duration}).`);
     }
 
     addDebuff(id: DebuffId, duration: number, source: Character) {
         if (!this.char.battle) return;
-        // TODO: increase duration if debuff already exists
-        this.debuffs[id] = {duration, source, new: true};
+        if (!this.debuffs[id]) this.debuffs[id] = {};
+        this.debuffs[id]![`${source.battle?.side}${source.battle?.index}`] = {duration, source, new: true};
         this.char.battle.ref.combatLog.add(`${this.char.name} gained debuff ${bold(`${id}(${duration})`)}.`);
     }
 
@@ -68,30 +75,33 @@ class BuffTracker {
 
         // Tick buffs
         for (const [id, buff] of Object.entries(this.buffs)) {
-            if (buff.new) buff.new = false;
-            else buff.duration -= 1;
+            for (const [sideId, charBuff] of Object.entries(buff)) {
+                if (charBuff.new) charBuff.new = false;
+                else charBuff.duration -= 1;
 
-            if (buff.duration <= 0) {
-                delete this.buffs[id as BuffId];
-                this.char.battle.ref.combatLog.add(`${this.char.name} lost buff ${id}.`);
+                if (charBuff.duration <= 0) {
+                    delete this.buffs[id as BuffId]![sideId];
+                    this.char.battle.ref.combatLog.add(`${this.char.name} lost buff ${id}.`);
+                }
             }
         }
 
         // Tick debuffs
         for (const [id, debuff] of Object.entries(this.debuffs)) {
-            // TODO: separate debuffs such as burn by source to calculate damage for each source
-            if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
-                this.char.takeDamage(Debuff.Burn.name, rollDice(BurnDamage) + Math.floor(this.debuffs.Burn.source.mainHand.damageBonus/2), DamageType.Magic);
-            }
-            if (id as DebuffId === DebuffId.Poison && this.debuffs.Poison) {
-                this.char.takeDamage(Debuff.Poison.name, PoisonDamage, DamageType.Physical);
-            }
+            for (const [sideId, charDebuff] of Object.entries(debuff)) {
+                if (id as DebuffId === DebuffId.Burn && this.debuffs.Burn) {
+                    this.char.takeDamage(Debuff.Burn.name, rollDice(BurnDamage) + Math.floor(charDebuff.source.mainHand.damageBonus/2), DamageType.Magic);
+                }
+                else if (id as DebuffId === DebuffId.Poison && this.debuffs.Poison) {
+                    this.char.takeDamage(Debuff.Poison.name, PoisonDamage, DamageType.Physical);
+                }
+    
+                charDebuff.duration -= 1;
 
-            debuff.duration -= 1;
-
-            if (debuff.duration <= 0) {
-                delete this.debuffs[id as DebuffId];
-                this.char.battle.ref.combatLog.add(`${this.char.name} lost debuff ${id}.`);
+                if (charDebuff.duration <= 0) {
+                    delete this.debuffs[id as DebuffId]![sideId];
+                    this.char.battle.ref.combatLog.add(`${this.char.name} lost debuff ${id}.`);
+                }
             }
         }
     }
