@@ -3,8 +3,8 @@ import { Item, ItemType } from './Item';
 
 enum WeaponStyle {
     DualWield = 'Dual Wield',
-    TwoHanded = 'Two Handed',
-    OneHanded = 'One Handed',
+    TwoHanded = 'Two-Handed',
+    OneHanded = 'One-Handed',
     Ranged = 'Ranged'
 }
 
