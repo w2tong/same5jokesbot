@@ -26,6 +26,7 @@ class Character {
     static manaBarLength = 10;
     static dualWieldPenalty = -2;
     static offHandPenalty = -4;
+    static twoHandedMult = 1.5;
 
     private userId?: string;
 
@@ -83,7 +84,7 @@ class Character {
         // Main hand weapon
         this._mainHand = Object.assign({}, equipment.mainHand);
         this._mainHand.attackBonus += lvlAttackBonus;
-        this._mainHand.damageBonus += lvlDamageBonus;
+        this._mainHand.damageBonus += lvlDamageBonus * (this._mainHand.twoHanded ? Character.twoHandedMult : 1);
         this._mainHand.manaPerAtk += lvlManaPerAtk;
 
         this._armourClass = calcStatValue(stats.armourClass, level);
@@ -209,7 +210,7 @@ class Character {
 
     static addHandsBonus(weapon: Weapon, bonuses: {attack: number, damage: number, critRange: number, critMult: number}) {
         weapon.attackBonus += bonuses.attack;
-        weapon.damageBonus += bonuses.damage;
+        weapon.damageBonus += bonuses.damage * (weapon.twoHanded ? Character.twoHandedMult : 1);
         weapon.critRange -= bonuses.critRange;
         weapon.critMult += bonuses.critMult;
     }
@@ -484,7 +485,7 @@ class Character {
     // Helper functions
     addRingBonuses(ring: Ring) {
         this.mainHand.attackBonus += ring.attackBonus ?? 0;
-        this.mainHand.damageBonus += ring.damageBonus ?? 0;
+        this.mainHand.damageBonus += (ring.damageBonus ?? 0) * (this._mainHand.twoHanded ? Character.twoHandedMult : 1);
         this.mainHand.critRange -= ring.critRangeBonus ?? 0;
         this.mainHand.critMult += ring.critMultBonus ?? 0;
         this.mainHand.manaPerAtk += ring.manaPerAtk ?? 0;
