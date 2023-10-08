@@ -196,7 +196,10 @@ class Character {
                 this.maxHealth += upgrades.health.levels[userUpgrades[userId].health];
             }
         }
+
         this.currHealth = options?.currHealthPc ? Math.ceil(this.maxHealth * options.currHealthPc) : this.maxHealth;
+        this._mainHand.damageBonus = Math.floor(this._mainHand.damageBonus);
+        if (this.offHandWeapon) this.offHandWeapon.damageBonus = Math.floor(this.offHandWeapon.damageBonus);
     }
 
     setBattle(ref: Battle, side: Side, index: number) {
