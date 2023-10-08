@@ -7,11 +7,11 @@ import { emptyEmbedFieldInline } from '../../../../util/discordUtil';
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
-    const user = interaction.user;
+    const user = interaction.options.getUser('user') ?? interaction.user;
     const char = await getABSelectedChar(user.id);
 
     if (!char) {
-        await interaction.editReply('You do not have a selected character.');
+        await interaction.editReply(`${user.username} does not have a selected character.`);
         return;
     }
     
@@ -53,6 +53,10 @@ const name = 'info';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Get info about your selected character.');
+    .setDescription('Get info about your selected character.')
+    .addUserOption(option => option
+        .setName('user')
+        .setDescription('Select a user.')
+    );
 
 export default { execute, name, subcommandBuilder };

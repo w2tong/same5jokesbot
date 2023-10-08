@@ -261,9 +261,9 @@ function getArmourTooltip(armour: Armour) {
 function getArmourDescription(armour: Armour) {
     const descriptions = [`AC: ${armour.armourClass}`];
     if (armour.physDR) descriptions.push(`Phys DR: ${armour.physDR}`);
-    if (armour.magicDR) descriptions.push(`Mag DR: ${armour.physDR}`);
-    if (armour.physResist) descriptions.push(`Phys Res: ${armour.physDR}`);
-    if (armour.magicResist) descriptions.push(`Mag Res: ${armour.physDR}`);
+    if (armour.magicDR) descriptions.push(`Mag DR: ${armour.magicDR}`);
+    if (armour.physResist) descriptions.push(`Phys Res: ${armour.physResist}`);
+    if (armour.magicResist) descriptions.push(`Mag Res: ${armour.magicResist}`);
     if (armour.manaRegen) descriptions.push(`MP Regen: ${armour.manaRegen}`);
     if (armour.thorns) descriptions.push(`Thorns: ${armour.thorns}`);
     return descriptions.join(', ');

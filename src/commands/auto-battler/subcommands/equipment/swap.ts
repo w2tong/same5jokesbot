@@ -81,7 +81,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
         if (item.ITEM_ID in weapons) {
             const weapon = weapons[item.ITEM_ID as WeaponId];
             mainHandOptions[item.ID] = weapon;
-            if (weapon.twoHanded === false) {
+            if (!weapon.twoHanded && weapon.light) {
                 offHandOptions[item.ID] = weapon;
             }
         }

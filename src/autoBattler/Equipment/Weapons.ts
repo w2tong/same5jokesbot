@@ -10,13 +10,24 @@ enum WeaponType {
     Longsword = 'Longsword',
     Greatsword = 'Greatsword',
     Dagger = 'Dagger',
-    Quarterstaff = 'Quarterstaff'
+    Quarterstaff = 'Quarterstaff',
+    Wand = 'Wand'
 }
 enum RangeType {
     Melee = 'Melee',
     ShortRange = 'ShortRange',
     LongRange = 'LongRange'
 }
+enum ManaPerAtk {
+    OneHanded = 10,
+    TwoHanded = 20
+}
+enum ManaRegen {
+    OneHanded = 5,
+    TwoHanded = 10
+}
+const critRange = 20;
+const critMult = 2;
 interface Weapon extends Item {
     itemType: ItemType.Weapon
     type: WeaponType;
@@ -38,12 +49,13 @@ interface Weapon extends Item {
 }
 
 type WeaponId = 
-'unarmed0' | 
-'longsword0' | 'longsword1' | 'longsword2' | 'longsword3' | 'longsword4' | 'longsword5' |
-'greatsword0' | 'greatsword1' | 'greatsword2' | 'greatsword3' | 'greatsword4' | 'greatsword5' |
-'dagger0' | 'dagger1' | 'dagger2' |  'dagger3' |  'dagger4' |  'dagger5' | 
-'quarterstaff0' | 'quarterstaff1' | 'quarterstaff2' | 'quarterstaff3' | 'quarterstaff4' | 'quarterstaff5' |
-'poisonbite0' | 'poisonbite1'
+'unarmed0'
+| 'longsword0' | 'longsword1' | 'longsword2' | 'longsword3' | 'longsword4' | 'longsword5'
+| 'greatsword0' | 'greatsword1' | 'greatsword2' | 'greatsword3' | 'greatsword4' | 'greatsword5'
+| 'dagger0' | 'dagger1' | 'dagger2' |  'dagger3' |  'dagger4' |  'dagger5'
+| 'quarterstaff0' | 'quarterstaff1' | 'quarterstaff2' | 'quarterstaff3' | 'quarterstaff4' | 'quarterstaff5'
+| 'wand0' | 'wand1' | 'wand2' | 'wand3' | 'wand4' | 'wand5' 
+| 'poisonbite0' | 'poisonbite1'
 const weapons: {[id in WeaponId]: Weapon} = {
     // Unarmed
     unarmed0: {
@@ -58,9 +70,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 0,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     // Longswords
     longsword0: {
@@ -75,9 +87,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d6'],
         damageBonus: 0,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     longsword1: {
         id: 'longsword1',
@@ -91,9 +103,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d6'],
         damageBonus: 1,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     longsword2: {
         id: 'longsword2',
@@ -107,9 +119,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d6'],
         damageBonus: 2,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     longsword3: {
         id: 'longsword3',
@@ -123,9 +135,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d6'],
         damageBonus: 3,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     longsword4: {
         id: 'longsword4',
@@ -139,9 +151,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d6'],
         damageBonus: 4,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     longsword5: {
         id: 'longsword5',
@@ -155,9 +167,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d6'],
         damageBonus: 5,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     // Greatswords
     greatsword0: {
@@ -170,11 +182,11 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 0,
         damageType: DamageType.Physical,
-        damage: dice['1d8'],
+        damage: dice['2d6'],
         damageBonus: 0,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
     },
     greatsword1: {
         id: 'greatsword1',
@@ -186,11 +198,11 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 1,
         damageType: DamageType.Physical,
-        damage: dice['1d8'],
+        damage: dice['2d6'],
         damageBonus: 1,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
     },
     greatsword2: {
         id: 'greatsword2',
@@ -202,11 +214,11 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 2,
         damageType: DamageType.Physical,
-        damage: dice['1d8'],
+        damage: dice['2d6'],
         damageBonus: 2,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
     },
     greatsword3: {
         id: 'greatsword3',
@@ -218,11 +230,11 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 3,
         damageType: DamageType.Physical,
-        damage: dice['1d8'],
+        damage: dice['2d6'],
         damageBonus: 3,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
     },
     greatsword4: {
         id: 'greatsword4',
@@ -234,11 +246,11 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 4,
         damageType: DamageType.Physical,
-        damage: dice['1d8'],
+        damage: dice['2d6'],
         damageBonus: 4,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
     },
     greatsword5: {
         id: 'greatsword5',
@@ -250,11 +262,11 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 5,
         damageType: DamageType.Physical,
-        damage: dice['1d8'],
+        damage: dice['2d6'],
         damageBonus: 5,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
     },
     // Daggers
     dagger0: {
@@ -269,9 +281,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 0,
-        critRange: 19,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange: critRange-1,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     dagger1: {
         id: 'dagger1',
@@ -285,9 +297,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 1,
-        critRange: 19,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange: critRange-1,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     dagger2: {
         id: 'dagger2',
@@ -301,9 +313,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 2,
-        critRange: 19,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange: critRange-1,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     dagger3: {
         id: 'dagger3',
@@ -317,9 +329,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 3,
-        critRange: 19,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange: critRange-1,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     dagger4: {
         id: 'dagger4',
@@ -333,9 +345,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 4,
-        critRange: 19,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange: critRange-1,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     dagger5: {
         id: 'dagger5',
@@ -349,9 +361,9 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 5,
-        critRange: 19,
-        critMult: 2,
-        manaPerAtk: 10,
+        critRange: critRange-1,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
     },
     // Staves
     quarterstaff0: {
@@ -364,12 +376,12 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 0,
         damageType: DamageType.Physical,
-        damage: dice['1d6'],
+        damage: dice['1d8'],
         damageBonus: 0,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
-        manaRegen: 10
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
+        manaRegen: ManaRegen.TwoHanded
     },
     quarterstaff1: {
         id: 'quarterstaff1',
@@ -381,12 +393,12 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 1,
         damageType: DamageType.Physical,
-        damage: dice['1d6'],
+        damage: dice['1d8'],
         damageBonus: 1,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
-        manaRegen: 10
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
+        manaRegen: ManaRegen.TwoHanded
     },
     quarterstaff2: {
         id: 'quarterstaff2',
@@ -398,12 +410,12 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 2,
         damageType: DamageType.Physical,
-        damage: dice['1d6'],
+        damage: dice['1d8'],
         damageBonus: 2,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
-        manaRegen: 10
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
+        manaRegen: ManaRegen.TwoHanded
     },
     quarterstaff3: {
         id: 'quarterstaff3',
@@ -415,12 +427,12 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 3,
         damageType: DamageType.Physical,
-        damage: dice['1d6'],
+        damage: dice['1d8'],
         damageBonus: 3,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
-        manaRegen: 10
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
+        manaRegen: ManaRegen.TwoHanded
     },
     quarterstaff4: {
         id: 'quarterstaff4',
@@ -432,12 +444,12 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 4,
         damageType: DamageType.Physical,
-        damage: dice['1d6'],
+        damage: dice['1d8'],
         damageBonus: 4,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
-        manaRegen: 10
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
+        manaRegen: ManaRegen.TwoHanded
     },
     quarterstaff5: {
         id: 'quarterstaff5',
@@ -449,12 +461,115 @@ const weapons: {[id in WeaponId]: Weapon} = {
         twoHanded: true,
         attackBonus: 5,
         damageType: DamageType.Physical,
+        damage: dice['1d8'],
+        damageBonus: 5,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.TwoHanded,
+        manaRegen: ManaRegen.TwoHanded
+    },
+    // Wands
+    wand0: {
+        id: 'wand0',
+        itemType: ItemType.Weapon,
+        name: 'Wand',
+        type: WeaponType.Wand,
+        range: RangeType.ShortRange,
+        light: false,
+        twoHanded: false,
+        attackBonus: 0,
+        damageType: DamageType.Magic,
+        damage: dice['1d6'],
+        damageBonus: 0,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
+        manaRegen: ManaRegen.OneHanded
+    },
+    wand1: {
+        id: 'wand1',
+        itemType: ItemType.Weapon,
+        name: 'Wand +1',
+        type: WeaponType.Wand,
+        range: RangeType.ShortRange,
+        light: false,
+        twoHanded: false,
+        attackBonus: 1,
+        damageType: DamageType.Magic,
+        damage: dice['1d6'],
+        damageBonus: 1,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
+        manaRegen: ManaRegen.OneHanded
+    },
+    wand2: {
+        id: 'wand2',
+        itemType: ItemType.Weapon,
+        name: 'Wand +2',
+        type: WeaponType.Wand,
+        range: RangeType.ShortRange,
+        light: false,
+        twoHanded: false,
+        attackBonus: 2,
+        damageType: DamageType.Magic,
+        damage: dice['1d6'],
+        damageBonus: 2,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
+        manaRegen: ManaRegen.OneHanded
+    },
+    wand3: {
+        id: 'wand3',
+        itemType: ItemType.Weapon,
+        name: 'Wand +3',
+        type: WeaponType.Wand,
+        range: RangeType.ShortRange,
+        light: false,
+        twoHanded: false,
+        attackBonus: 3,
+        damageType: DamageType.Magic,
+        damage: dice['1d6'],
+        damageBonus: 3,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
+        manaRegen: ManaRegen.OneHanded
+    },
+    wand4: {
+        id: 'wand4',
+        itemType: ItemType.Weapon,
+        name: 'Wand +4',
+        type: WeaponType.Wand,
+        range: RangeType.ShortRange,
+        light: false,
+        twoHanded: false,
+        attackBonus: 4,
+        damageType: DamageType.Magic,
+        damage: dice['1d6'],
+        damageBonus: 4,
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
+        manaRegen: ManaRegen.OneHanded
+    },
+    wand5: {
+        id: 'wand0',
+        itemType: ItemType.Weapon,
+        name: 'Wand +5',
+        type: WeaponType.Wand,
+        range: RangeType.ShortRange,
+        light: false,
+        twoHanded: false,
+        attackBonus: 5,
+        damageType: DamageType.Magic,
         damage: dice['1d6'],
         damageBonus: 5,
-        critRange: 20,
-        critMult: 2,
-        manaPerAtk: 20,
-        manaRegen: 10
+        critRange,
+        critMult,
+        manaPerAtk: ManaPerAtk.OneHanded,
+        manaRegen: ManaRegen.OneHanded
     },
     // NPC Weapons
     // Poison Bite
@@ -470,8 +585,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d3'],
         damageBonus: 0,
-        critRange: 20,
-        critMult: 2,
+        critRange,
+        critMult,
         manaPerAtk: 0,
         onHit: {
             func: (self: Character, target: Character) => {
@@ -492,8 +607,8 @@ const weapons: {[id in WeaponId]: Weapon} = {
         damageType: DamageType.Physical,
         damage: dice['1d4'],
         damageBonus: 0,
-        critRange: 20,
-        critMult: 2,
+        critRange,
+        critMult,
         manaPerAtk: 0,
         onHit: {
             func: (self: Character, target: Character) => {
