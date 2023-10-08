@@ -5,11 +5,11 @@ import { equips, getItemTooltip } from '../../../../autoBattler/Equipment/Equipm
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    const user = interaction.user;
+    const user = interaction.options.getUser('user') ?? interaction.user;
 
     const char = await getABSelectedChar(user.id);
     if (!char) {
-        await interaction.editReply('You do not have a selected character.');
+        await interaction.editReply(`${user.username} does not have a selected character.`);
         return;
     }
     const equipmentIds = await getABEquipmentItemIds(user.id, char.CHAR_NAME);
@@ -90,16 +90,20 @@ async function execute(interaction: ChatInputCommandInteraction) {
     }
 
     if (!embeds.length) {
-        await interaction.editReply('Your selected character does not have any equipment.');
+        await interaction.editReply(`${user.username}'s selected character does not have any equipment.`);
         return;
     }
-    await interaction.editReply({content: `${bold(char.CHAR_NAME)}'s Equipment`, embeds});
+    await interaction.editReply({content: `${user.username} - ${bold(char.CHAR_NAME)}'s Equipment`, embeds});
 }
 
 const name = 'display';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription('Display the equipment of your currently selected character.');
+    .setDescription('Display the equipment of your currently selected character.')
+    .addUserOption(option => option
+        .setName('user')
+        .setDescription('Select a user.')
+    );
 
 export default { execute, name, subcommandBuilder };
