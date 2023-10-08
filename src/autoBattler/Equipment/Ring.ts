@@ -206,8 +206,8 @@ function getRingTooltip(ring: Ring) {
     if (ring.armourClass) tooltip.push(`${bold('Armour Class')}: ${ring.armourClass}`);
     if (ring.physDR) tooltip.push(`${bold('Physical DR')}: ${ring.physDR}`);
     if (ring.magicDR) tooltip.push(`${bold('Magic DR')}: ${ring.magicDR}`);
-    if (ring.physResist) tooltip.push(`${bold('Phyisical Resist')}: ${ring.physResist}`);
-    if (ring.magicResist) tooltip.push(`${bold('Magic Resist')}: ${ring.magicResist}`);
+    if (ring.physResist) tooltip.push(`${bold('Physical Resist')}: ${ring.physResist}%`);
+    if (ring.magicResist) tooltip.push(`${bold('Magic Resist')}: ${ring.magicResist}%`);
     if (ring.thorns) tooltip.push(`${bold('Thorns')}: ${ring.thorns}`);
 
     if (ring.manaPerAtk) tooltip.push(`${bold('Mana/Attack')}: ${ring.manaPerAtk}`);
@@ -227,9 +227,9 @@ function getRingDescription(ring: Ring) {
 
     if (ring.armourClass) descriptions.push(`AC: ${ring.armourClass}`);
     if (ring.physDR) descriptions.push(`Phys DR: ${ring.physDR}`);
-    if (ring.magicDR) descriptions.push(`Mag DR: ${ring.physDR}`);
-    if (ring.physResist) descriptions.push(`Phys Res: ${ring.physDR}`);
-    if (ring.magicResist) descriptions.push(`Mag Res: ${ring.physDR}`);
+    if (ring.magicDR) descriptions.push(`Mag DR: ${ring.magicDR}`);
+    if (ring.physResist) descriptions.push(`Phys Res: ${ring.physResist}%`);
+    if (ring.magicResist) descriptions.push(`Mag Res: ${ring.magicResist}%`);
     if (ring.thorns) descriptions.push(`Thorns: ${ring.thorns}`);
 
     if (ring.manaPerAtk) descriptions.push(`MP/ATK: ${ring.manaPerAtk}`);

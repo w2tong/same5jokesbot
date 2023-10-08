@@ -168,8 +168,8 @@ function getShieldTooltip(shield: Shield) {
     if (shield.attackBonus) tooltip.push(`${bold('Attack Bonus')}: ${shield.attackBonus}`);
     if (shield.physDR) tooltip.push(`${bold('Physical DR')}: ${shield.physDR}`);
     if (shield.magicDR) tooltip.push(`${bold('Magic DR')}: ${shield.magicDR}`);
-    if (shield.physResist) tooltip.push(`${bold('Phyisical Resist')}: ${shield.physResist}`);
-    if (shield.magicResist) tooltip.push(`${bold('Magic Resist')}: ${shield.magicResist}`);
+    if (shield.physResist) tooltip.push(`${bold('Physical Resist')}: ${shield.physResist}%`);
+    if (shield.magicResist) tooltip.push(`${bold('Magic Resist')}: ${shield.magicResist}%`);
     if (shield.thorns) tooltip.push(`${bold('Thorns')}: ${shield.thorns}`);
     return tooltip.join('\n');
 }
@@ -179,8 +179,8 @@ function getShieldDescription(shield: Shield) {
     if (shield.attackBonus) descriptions.push(`AB: ${shield.attackBonus}`);
     if (shield.physDR) descriptions.push(`Phys DR: ${shield.physDR}`);
     if (shield.magicDR) descriptions.push(`Mag DR: ${shield.physDR}`);
-    if (shield.physResist) descriptions.push(`Phys Res: ${shield.physDR}`);
-    if (shield.magicResist) descriptions.push(`Mag Res: ${shield.physDR}`);
+    if (shield.physResist) descriptions.push(`Phys Res: ${shield.physDR}%`);
+    if (shield.magicResist) descriptions.push(`Mag Res: ${shield.physDR}%`);
     if (shield.thorns) descriptions.push(`Thorns: ${shield.thorns}`);
     return descriptions.join(', ');
 }

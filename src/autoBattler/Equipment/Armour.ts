@@ -251,8 +251,8 @@ function getArmourTooltip(armour: Armour) {
     const tooltip = [`${bold('Armour Class')}: ${armour.armourClass}`];
     if (armour.physDR) tooltip.push(`${bold('Physical DR')}: ${armour.physDR}`);
     if (armour.magicDR) tooltip.push(`${bold('Magic DR')}: ${armour.magicDR}`);
-    if (armour.physResist) tooltip.push(`${bold('Phyisical Resist')}: ${armour.physResist}`);
-    if (armour.magicResist) tooltip.push(`${bold('Magic Resist')}: ${armour.magicResist}`);
+    if (armour.physResist) tooltip.push(`${bold('Physical Resist')}: ${armour.physResist}%`);
+    if (armour.magicResist) tooltip.push(`${bold('Magic Resist')}: ${armour.magicResist}%`);
     if (armour.manaRegen) tooltip.push(`${bold('Mana Regen')}: ${armour.manaRegen}`);
     if (armour.thorns) tooltip.push(`${bold('Thorns')}: ${armour.thorns}`);
     return tooltip.join('\n');
@@ -262,8 +262,8 @@ function getArmourDescription(armour: Armour) {
     const descriptions = [`AC: ${armour.armourClass}`];
     if (armour.physDR) descriptions.push(`Phys DR: ${armour.physDR}`);
     if (armour.magicDR) descriptions.push(`Mag DR: ${armour.magicDR}`);
-    if (armour.physResist) descriptions.push(`Phys Res: ${armour.physResist}`);
-    if (armour.magicResist) descriptions.push(`Mag Res: ${armour.magicResist}`);
+    if (armour.physResist) descriptions.push(`Phys Res: ${armour.physResist}%`);
+    if (armour.magicResist) descriptions.push(`Mag Res: ${armour.magicResist}%`);
     if (armour.manaRegen) descriptions.push(`MP Regen: ${armour.manaRegen}`);
     if (armour.thorns) descriptions.push(`Thorns: ${armour.thorns}`);
     return descriptions.join(', ');
