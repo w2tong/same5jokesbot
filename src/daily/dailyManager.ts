@@ -153,7 +153,9 @@ deathRollEmitter.on('end', async (winner, loser, wager, client, channelId) => {
 
     await Promise.all([
         completeDaily('deathRollGame', loser, client, channelId),
-        completeDaily('deathRollGame', winner, client, channelId),
+        completeDaily('deathRollGame', winner, client, channelId)
+    ]);
+    await Promise.all([
         completeDaily('deathRollWager', loser, client, channelId),
         completeDaily('deathRollWager', winner, client, channelId)
     ]);

@@ -34,7 +34,9 @@ function createItemSelectMenu(equipSlot: EquipSlot, equippedId: number|null, equ
     selectMenu.addOptions(emptyOption);
     if (equippedId) {
         const equip = equipOptions[equippedId];
-        if (equip) selectMenu.addOptions(createItemSelectMenuOption(equipSlot, equippedId, equip).setDefault(true));
+        if (equip) {
+            selectMenu.addOptions(createItemSelectMenuOption(equipSlot, equippedId, equip).setDefault(true));
+        }
         else {
             console.error(`Missing Item Id: ${equippedId}`);
         }
