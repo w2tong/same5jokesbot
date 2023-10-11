@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import getCringePoints from './subcommands/get';
 import getTopCringePoints from './subcommands/top';
 import giveCringePoints from './subcommands/give';
-import redeemCringePoints from './subcommands/redeem';
+import redeemCringePoints from '../daily/subcommands/redeem';
 
 const subcommands = {
     [getCringePoints.name]: getCringePoints.execute,
