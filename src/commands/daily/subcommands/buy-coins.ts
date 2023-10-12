@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, bold } from 'discord.js';
 import { getUserCringePoints, updateCringePoints } from '../../../sql/tables/cringe_points';
 import { getDailyCoins, updateDailyCoins } from '../../../sql/tables/daily_coins';
-const COINCOST = 1_000_000;
+const CoinCost = 1_000_000;
 
 async function execute(interaction: ChatInputCommandInteraction) {
     const user = interaction.user;
@@ -9,7 +9,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     
     const userCringePoints = await getUserCringePoints(user.id) ?? 0;
     const userCoinsTotal = await getDailyCoins(user.id) ?? 0;
-    const cringePointsCost = COINCOST * amount;
+    const cringePointsCost = CoinCost * amount;
     if (userCringePoints < cringePointsCost) {
         await interaction.reply({content: `You do not have enough points (Balance: ${bold(userCringePoints.toLocaleString())}).`, ephemeral: true});
         return;
@@ -31,7 +31,7 @@ const name = 'buy-coins';
 
 const subcommandBuilder = new SlashCommandSubcommandBuilder()
     .setName(name)
-    .setDescription(`Buy a coin with ${COINCOST.toLocaleString()} points each.`)
+    .setDescription(`Buy a coin with ${CoinCost.toLocaleString()} points each.`)
     .addIntegerOption(option => option
         .setName('amount')
         .setDescription('Enter the amount of coins you want to redeem.')
