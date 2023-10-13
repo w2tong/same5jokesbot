@@ -18,8 +18,8 @@ const enum ComboMultiplier {
     Five = 10,
     FullHouse = 5
 }
-const maxWager = 10_000;
-const maxSpins = 100;
+const maxWager = 1_000_000;
+const maxSpins = 1_000;
 
 function spin(wager: number) {
     // Normal symbols
