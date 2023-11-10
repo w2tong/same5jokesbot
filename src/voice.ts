@@ -178,6 +178,8 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             }
 
             if (/bot,? (leave|dc|disconnect|get out|disperse)/.test(text)) {
+                const resource = createAudioResource(join(__dirname, '../audio/baj_baj.mp3'));
+                player.play(resource);
                 disconnectVoice(guildId);
                 return;
             }
