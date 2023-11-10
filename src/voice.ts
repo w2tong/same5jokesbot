@@ -10,6 +10,7 @@ import Transcriber from 'discord-speech-to-text';
 import { updateAudioCount } from './sql/tables/audio-count';
 import { RewardCooldown } from './cooldown';
 import { timeInMS } from './util/util';
+import audioFileMap from './util/audioFileMap';
 
 interface GuildConnection {
     connection: VoiceConnection;
@@ -178,8 +179,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             }
 
             if (/bot,? (leave|dc|disconnect|get out|disperse)/.test(text)) {
-                const resource = createAudioResource(join(__dirname, '../audio/baj_baj.mp3'));
-                player.play(resource);
+                playAudioFile(audioFileMap.bajBaj, userId, guildId);
                 disconnectVoice(guildId);
                 return;
             }
