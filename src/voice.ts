@@ -180,7 +180,11 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
 
             if (/bot,? (leave|dc|disconnect|get out|disperse)/.test(text)) {
                 playAudioFile(audioFileMap.bajBaj, userId, guildId);
-                disconnectVoice(guildId);
+                const listener = () => {
+                    disconnectVoice(guildId);
+                    player.off(AudioPlayerStatus.Idle, listener);
+                };
+                player.once(AudioPlayerStatus.Idle, listener);
                 return;
             }
     
