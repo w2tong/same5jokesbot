@@ -15,7 +15,7 @@ import audioFileMap from './util/audioFileMap';
 interface GuildConnection {
     connection: VoiceConnection;
     player: AudioPlayer;
-    timeoutId: NodeJS.Timer | undefined;
+    timeoutId: NodeJS.Timeout | undefined;
 }
 interface voiceConnection {
     channelId: string;
