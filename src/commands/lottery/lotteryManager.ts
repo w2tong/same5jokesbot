@@ -129,7 +129,7 @@ function scheduleLotteryAutoBuyCronJob(client: Client) {
         const msgs = (
             await Promise.all(users.map(async user => {
                 const ticketsBought = (await buyAuto(user, ticketLimit, client, channel.id)).ticketsBought;
-                return (ticketsBought > 0) ? `${user} bought ${ticketsBought} lottery ticket${ticketsBought > 1  ? 's' : ''}.` : '';
+                return (ticketsBought > 0) ? `${user.username} bought ${ticketsBought} lottery ticket${ticketsBought > 1  ? 's' : ''}.` : '';
             }))
         ).filter(msg => msg.length !== 0);
         if (msgs.length > 0) await channel.send(`${header('Lottery Auto Buy', 2)}\n${msgs.join('\n')}`);
