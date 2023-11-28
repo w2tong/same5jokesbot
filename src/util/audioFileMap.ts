@@ -128,6 +128,7 @@ export default {
     ciSin: 'ci_sin',
     pomNowThatHesBald: 'pom_now_that_hes_bald',
     pomTheMoreHairYouLose: 'pom_the_more_hair_you_lose',
+    destinyIWouldNever: 'destiny_i_would_never',
 
     // Kingdom Hearts
     khDontHitTheCameraMan: 'kh_dont_hit_the_camera_man',
@@ -204,5 +205,5 @@ export default {
     cjYouAlwaysWantWhatYouCantHave: 'cj_you_always_want_what_you_cant_have',
     cjYouCanLeadAHorseToWater: 'cj_you_can_lead_a_horse_to_water',
     cjYouCantMakeAnOmelette: 'cj_you_cant_make_an_omelette',
-    cjYouCatchMoreFliesWithHoneyThanVinegar: 'cj_you_catch_more_flies_with_honey_than_vinegar'
+    cjYouCatchMoreFliesWithHoneyThanVinegar: 'cj_you_catch_more_flies_with_honey_than_vinegar',
 };
