@@ -250,7 +250,7 @@ const regexToAudio = [
         getAudio: () => audio.teleportingFatGuyShort
     },
     {
-        regex: /developers/,
+        regex: /developers developers developers/,
         getAudio: () => audio.steveBallmerDevelopers
     },
     {
