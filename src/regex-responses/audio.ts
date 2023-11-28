@@ -31,7 +31,10 @@ function getMask(): string {
     return mask[getRandomRange(mask.length)];
 }
 
-const noNoNo = [audio.noNoNoNotLikeThat, audio.jerryNoNoNo];
+const noNoNo = [
+    audio.noNoNoNotLikeThat, 
+    // audio.jerryNoNoNo
+];
 function getNoNoNo(): string {
     return noNoNo[getRandomRange(noNoNo.length)];
 }
@@ -247,7 +250,7 @@ const regexToAudio = [
         getAudio: () => audio.teleportingFatGuyShort
     },
     {
-        regex: /developers/,
+        regex: /developers developers developers/,
         getAudio: () => audio.steveBallmerDevelopers
     },
     {
