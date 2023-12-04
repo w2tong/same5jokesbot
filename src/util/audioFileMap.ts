@@ -206,4 +206,8 @@ export default {
     cjYouCanLeadAHorseToWater: 'cj_you_can_lead_a_horse_to_water',
     cjYouCantMakeAnOmelette: 'cj_you_cant_make_an_omelette',
     cjYouCatchMoreFliesWithHoneyThanVinegar: 'cj_you_catch_more_flies_with_honey_than_vinegar',
+
+    // D4NNY - Hello
+    d4nnyHello1: 'd4nny_hello_1',
+    d4nnyHello2: 'd4nny_hello_2',
 };
