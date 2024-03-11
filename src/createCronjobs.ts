@@ -9,13 +9,14 @@ import { scheduleEndLotteryCronJob, scheduleLotteryAutoBuyCronJob, scheduleNewLo
 import { fetchChannel } from './util/discordUtil';
 import { scheduleDailyTaxWelfareCronJob } from './taxes-welfare';
 import { scheduleDailiesCronJob } from './daily/dailyManager';
+import { emotes } from './util/emotes';
 
-// Weekly Tuesday reminder
-function createTuesdayScheduleCronJob(client: Client, channelId: string) {
-    schedule.scheduleJob({ second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'America/Toronto' }, async function() {
+type CronRule = string | number | schedule.RecurrenceRule | schedule.RecurrenceSpecDateRange | schedule.RecurrenceSpecObjLit
+function createMessageCronJob(client: Client, channelId: string, rule: CronRule, msg: string) {
+    schedule.scheduleJob(rule, async function() {
         const channel = await fetchChannel(client, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
-            channel.send('Where 10.2').catch(logError);
+            channel.send(msg).catch(logError);
         }
     });
 }
@@ -29,7 +30,13 @@ function createOracleDBLogStatisticsCronJob() {
 
 function createCronJobs(client: Client) {
     if (process.env.MAIN_CHANNEL_ID) {
-        createTuesdayScheduleCronJob(client, process.env.MAIN_CHANNEL_ID);
+        // Weekly Tuesday reminder
+        createMessageCronJob(client, process.env.MAIN_CHANNEL_ID, { second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'America/Toronto' }, 'Where 10.2');
+    }
+    
+    if (process.env.NYT_CHANNEL_ID) {
+        // Weekly Tuesday reminder
+        createMessageCronJob(client, process.env.NYT_CHANNEL_ID, { second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'America/Toronto' }, `NYT Games time ${emotes.POGCRAZY}`);
     }
 
     // if (process.env.NODE_ENV === 'production') {
