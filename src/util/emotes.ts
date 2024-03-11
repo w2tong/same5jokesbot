@@ -19,7 +19,8 @@ const enum Emotes {
     NOOO = 'NOOO',
     OMEGALAUGHING = 'OMEGALAUGHING',
     THIS = 'THIS',
-    DESKCHAN = 'DESKCHAN'
+    DESKCHAN = 'DESKCHAN',
+    POGCRAZY = 'POGCRAZY'
 }
 
 const emotes: {[key: string]: GuildEmoji|string} = {
@@ -46,6 +47,7 @@ const getEmotes = (client: Client) => {
     emotes[Emotes.OMEGALAUGHING] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.OMEGALAUGHING) ?? '';
     emotes[Emotes.THIS] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.THIS) ?? '';
     emotes[Emotes.DESKCHAN] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.DESKCHAN) ?? '';
+    emotes[Emotes.POGCRAZY] = client.emojis.cache.find((emoji: GuildEmoji) => emoji.name === Emotes.POGCRAZY) ?? '';
 };
 
 export { Emotes, emotes, getEmotes };
