@@ -29,8 +29,8 @@ const createTableQueries = [createTableCurrentDisperseStreak, createTableDispers
 const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters];
 
 oracledb.autoCommit = true;
-if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = process.env.ORACLEDB_POOL_MIN;
-if (process.env.ORACLEDB_POOL_MAX) oracledb.poolMax = process.env.ORACLEDB_POOL_MAX;
+if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = parseInt(process.env.ORACLEDB_POOL_MIN);
+if (process.env.ORACLEDB_POOL_MAX) oracledb.poolMax = parseInt(process.env.ORACLEDB_POOL_MAX);
 
 const procedure =`
     declare
@@ -63,7 +63,9 @@ async function initOracleDB() {
             await connection.execute(procedure, {name, query});
         }
         catch(err) {
-            logError(`${name}: ${err}`);
+            logError(`${name}: ${err}\n
+                      ${query}`
+            );
         }
     }
 
@@ -72,7 +74,9 @@ async function initOracleDB() {
             await connection.execute(query);
         }
         catch(err) {
-            logError(`${err}`);
+            logError(`${err}\n
+                      ${query}`
+            );
         }
     }
 
