@@ -13,8 +13,8 @@ declare namespace NodeJS {
         ORACLEDB_PW: string;
         ORACLEDB_CONN_STR: string;
         UV_THREADPOOL_SIZE: number;
-        ORACLEDB_POOL_MIN: number;
-        ORACLEDB_POOL_MAX: number;
+        ORACLEDB_POOL_MIN: string;
+        ORACLEDB_POOL_MAX: string;
 
         MAIN_CHANNEL_ID: string;
         VOICE_LOG_CHANNEL_ID: string;
