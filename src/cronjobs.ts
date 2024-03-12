@@ -46,7 +46,7 @@ async function createCronJobs(client: Client) {
     
     if (process.env.NYT_CHANNEL_ID) {
         // Weekly Tuesday reminder
-        createMessageCronJob(client, process.env.NYT_CHANNEL_ID, { second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'America/Toronto' }, `NYT Games time ${emotes.POGCRAZY}`);
+        createMessageCronJob(client, process.env.NYT_CHANNEL_ID, { second: 0, minute: 0, hour: 0, tz: 'America/Toronto' }, `NYT Games time ${emotes.POGCRAZY}`);
     }
 
     // if (process.env.NODE_ENV === 'production') {
