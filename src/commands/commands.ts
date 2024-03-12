@@ -19,6 +19,7 @@ import blackjack from './blackjack/blackjack';
 import daily from './daily/daily';
 import upgrade from './upgrade/upgrade';
 import autoBattle from './auto-battler/auto-battler';
+import cronMessage from './cron-message/cron-message';
 
 const commands = {
     [play.name]: play.execute,
@@ -42,6 +43,7 @@ const commands = {
     [daily.name]: daily.execute,
     [upgrade.name]: upgrade.execute,
     [autoBattle.name]: autoBattle.execute,
+    [cronMessage.name]: cronMessage.execute,
 };
 
 const commandBuilders = [
@@ -66,6 +68,7 @@ const commandBuilders = [
     daily.commandBuilder,
     upgrade.commandBuilder,
     autoBattle.commandBuilder,
+    cronMessage.commandBuilder,
 ];
 
 export { commands, commandBuilders };
