@@ -29,8 +29,8 @@ const createTableQueries = [createTableCurrentDisperseStreak, createTableDispers
 const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters];
 
 oracledb.autoCommit = true;
-if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = parseInt(process.env.ORACLEDB_POOL_MIN);
-if (process.env.ORACLEDB_POOL_MAX) oracledb.poolMax = parseInt(process.env.ORACLEDB_POOL_MAX);
+if (process.env.ORACLEDB_POOL_MIN) oracledb.poolMin = process.env.ORACLEDB_POOL_MIN;
+if (process.env.ORACLEDB_POOL_MAX) oracledb.poolMax = process.env.ORACLEDB_POOL_MAX;
 
 const procedure =`
     declare
