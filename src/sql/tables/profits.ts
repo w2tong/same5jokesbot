@@ -24,7 +24,7 @@ const createTableProfits = {
             losses NUMBER DEFAULT 0,
             CONSTRAINT pk_profits PRIMARY KEY (user_id, type),
             CONSTRAINT chk_type CHECK (type IN (${Object.values(ProfitType).map(type => `'${type}'`).join(',')}))
-        );
+        )
     `
 };
 

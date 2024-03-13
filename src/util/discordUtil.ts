@@ -20,6 +20,15 @@ const monthChoices = [
     {name: '11. November', value: '11'},
     {name: '12. December', value: '12'}
 ];
+const DayChoices = [
+    {name: 'Monday', value: 1},
+    {name: 'Tuesday', value: 2},
+    {name: 'Wednesday', value: 3},
+    {name: 'Thursday', value: 4},
+    {name: 'Friday', value: 5},
+    {name: 'Saturday', value: 6},
+    {name: 'Sunday', value: 7}
+];
 
 async function fetchChannel(client: Client, channelId: string) {
     return client.channels.cache.get(channelId) ?? await client.channels.fetch(channelId);
@@ -57,4 +66,4 @@ function header(str: string, size: 1|2|3): string {
     return `${'#'.repeat(size)} ${str}`;
 }
 
-export {MessageEmbedLimit, UsersPerEmbed, FieldValueCharLimit, SelectMenuOptionLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings, header};
+export {MessageEmbedLimit, UsersPerEmbed, FieldValueCharLimit, SelectMenuOptionLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, DayChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings, header};

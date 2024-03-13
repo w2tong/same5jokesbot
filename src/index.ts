@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits, Events, ChannelType } from 'discord.js';
-import createCronJobs from './createCronjobs';
+import { createCronJobs } from './cronjobs';
 import { getEmotes } from './util/emotes';
 import { initOracleDB } from './sql/oracledb';
 import { loadReminders } from './commands/reminder/reminderManager';
@@ -51,15 +51,15 @@ client.once(Events.ClientReady, async () => {
     getEmotes(client);
     console.log('Done getting emotes.\n');
 
-    // Cronjobs
-    console.log('Creating Cronjobs.');
-    createCronJobs(client);
-    console.log('Done creating Cronjobs.\n');
-
     // Init db
     console.log('Initializing Oracle DB.');
     await initOracleDB();
     console.log('Done initializing Oracle DB.\n');
+
+    // Cronjobs
+    console.log('Creating Cronjobs.');
+    await createCronJobs(client);
+    console.log('Done creating Cronjobs.\n');
 
     console.log('Loading reminders.');
     await loadReminders(client);
