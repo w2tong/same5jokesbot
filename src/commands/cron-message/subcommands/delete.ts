@@ -55,7 +55,7 @@ async function autocomplete(interaction: AutocompleteInteraction) {
     }
     const filtered = choices.filter(job => job.creatorId === interaction.user.id && job.message.toLowerCase().includes(focusedValue));
     await interaction.respond(
-        filtered.map(choice => ({ name: `${choice.creatorUsername} - [${cronRuleToString(JSON.parse(choice.rule) as schedule.RecurrenceSpecObjLit)}]: ${choice.message}`.trim().slice(0, 100), value: choice.id })),
+        filtered.slice(0, 25).map(choice => ({ name: `${choice.creatorUsername} - [${cronRuleToString(JSON.parse(choice.rule) as schedule.RecurrenceSpecObjLit)}]: ${choice.message}`.trim().slice(0, 100), value: choice.id })),
     );
 }
 

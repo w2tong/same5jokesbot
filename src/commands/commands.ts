@@ -20,6 +20,7 @@ import daily from './daily/daily';
 import upgrade from './upgrade/upgrade';
 import autoBattle from './auto-battler/auto-battler';
 import cronMessage from './cron-message/cron-message';
+import setUserIntro from './set-user-intro';
 
 const commandExecute = {
     [play.name]: play.execute,
@@ -44,10 +45,12 @@ const commandExecute = {
     [upgrade.name]: upgrade.execute,
     [autoBattle.name]: autoBattle.execute,
     [cronMessage.name]: cronMessage.execute,
+    [setUserIntro.name]: setUserIntro.execute,
 };
 
 const commandAutocomplete = {
-    [cronMessage.name]: cronMessage.autocomplete
+    [cronMessage.name]: cronMessage.autocomplete,
+    [setUserIntro.name]: setUserIntro.autocomplete
 };
 
 const commandBuilders = [
@@ -73,6 +76,7 @@ const commandBuilders = [
     upgrade.commandBuilder,
     autoBattle.commandBuilder,
     cronMessage.commandBuilder,
+    setUserIntro.commandBuilder,
 ];
 
 export { commandExecute, commandAutocomplete, commandBuilders };
