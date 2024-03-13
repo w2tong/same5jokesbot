@@ -19,7 +19,6 @@ async function registerCommands() {
 
 try {
     void registerCommands();
-    process.exit();
 }
 catch (err) {
     console.error(err);

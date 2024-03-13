@@ -1,7 +1,7 @@
 import audio from '../util/audioFileMap';
 import { getMomentTorontoCurrentTime, getRandomRange } from '../util/util';
 
-const congratulations = audio.congratulations;
+const congratulations = [audio.congratulations01, audio.congratulations02, audio.congratulations03, audio.congratulations04, audio.congratulations05, audio.congratulations06, audio.congratulations07, audio.congratulations08, audio.congratulations09, audio.congratulations10, audio.congratulations11, audio.congratulations12, audio.congratulations13];
 function getCongratulations(): string {
     return congratulations[getRandomRange(congratulations.length)];
 }

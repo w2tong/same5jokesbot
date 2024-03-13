@@ -22,10 +22,11 @@ import { createTableABCharacters, updateTableABCharacters } from './tables/ab_ch
 import { createTableABInventory } from './tables/ab_inventory';
 import { createTableABEquipment } from './tables/ab_equipment';
 import { createTableCronMessage } from './tables/cron_message';
+import { createTableUserIntro } from './tables/user_intro';
 
 import { logError } from '../logger';
 
-const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableLotteryAutoBuy, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins, createTableABCharacters, createTableABInventory, createTableABEquipment, createTableCronMessage];
+const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableLotteryAutoBuy, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins, createTableABCharacters, createTableABInventory, createTableABEquipment, createTableCronMessage, createTableUserIntro];
 
 const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters];
 

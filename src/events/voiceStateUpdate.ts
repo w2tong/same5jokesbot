@@ -1,13 +1,13 @@
 import { ChannelType, Client, TextChannel, VoiceState } from 'discord.js';
 import { logError } from '../logger';
 import timeInVoice from '../timeInVoice';
-import userIntros from '../userIntros';
 import { fetchChannel } from '../util/discordUtil';
 import { getMomentTorontoCurrentTime } from '../util/util';
 import { disconnectVoice, isInGuildVoice, joinVoicePlayAudio } from '../voice';
 import * as dotenv from 'dotenv';
 import audio from '../util/audioFileMap';
 import userIds from '../userIds';
+import { getUserIntro } from '../sql/tables/user_intro';
 dotenv.config();
 
 // const mainChannel: TextChannel;
@@ -21,7 +21,7 @@ async function initMainChannel(client: Client) {
     }
 }
 
-export default (oldState: VoiceState, newState: VoiceState) => {
+export default async (oldState: VoiceState, newState: VoiceState) => {
 
     // Stop if user is a bot
     if (oldState.member?.user.bot) return;
@@ -55,11 +55,10 @@ export default (oldState: VoiceState, newState: VoiceState) => {
     // User joins voice channel
     else if (newState.channel && (oldState.channelId === null || oldState.channelId === newState.guild.afkChannelId)) {
         const userId = oldState.member?.id;
+        if (!userId) return;
         
         // Add user join time
-        if (userId) {
-            timeInVoice.userJoin(userId, newState.channelId, newState.guild.id);
-        }
+        timeInVoice.userJoin(userId, newState.channelId, newState.guild.id);
 
         // Play Good Morning Donda when joining channel in the morning
         const hour = getMomentTorontoCurrentTime().hour();
@@ -69,11 +68,9 @@ export default (oldState: VoiceState, newState: VoiceState) => {
 
         // Play user intro
         else {
-            if (userId && userIntros[userId] && userIntros[userId]) {
-                joinVoicePlayAudio(newState, userIntros[userId]);
-            }
+            const intro = await getUserIntro(userId);
+            if (intro) joinVoicePlayAudio(newState, intro);
         }
-        userIntros;
     }
     // User changes channels (not AFK channel)
     else if (oldState.guild.id === newState.guild.id && oldState.channelId && newState.channelId && oldState.channelId !== newState.channelId && oldState.channelId !== newState.guild.afkChannelId) {

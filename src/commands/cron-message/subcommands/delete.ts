@@ -48,14 +48,14 @@ async function execute(interaction: ChatInputCommandInteraction) {
 }
 
 async function autocomplete(interaction: AutocompleteInteraction) {
-    const focusedValue = interaction.options.getFocused();
+    const focusedValue = interaction.options.getFocused().toLowerCase();
     const choices = [];
     for (const [id, job] of Object.entries(cronMessageJobs)) {
         choices.push({id, creatorId: job.creatorId, creatorUsername: job.creatorUsername, guildId: job.guildId, message: job.message, rule: job.rule});
     }
-    const filtered = choices.filter(job => job.creatorId === interaction.user.id && job.message.includes(focusedValue));
+    const filtered = choices.filter(job => job.creatorId === interaction.user.id && job.message.toLowerCase().includes(focusedValue));
     await interaction.respond(
-        filtered.map(choice => ({ name: `${choice.creatorUsername} - [${cronRuleToString(JSON.parse(choice.rule) as schedule.RecurrenceSpecObjLit)}]: ${choice.message}`.trim().slice(0, 100), value: choice.id })),
+        filtered.slice(0, 25).map(choice => ({ name: `${choice.creatorUsername} - [${cronRuleToString(JSON.parse(choice.rule) as schedule.RecurrenceSpecObjLit)}]: ${choice.message}`.trim().slice(0, 100), value: choice.id })),
     );
 }
 
