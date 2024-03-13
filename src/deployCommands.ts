@@ -14,6 +14,14 @@ async function registerCommands() {
         });
         console.log('Successfully registered application commands.');
     }
+    process.exit();
 }
 
-void registerCommands();
+try {
+    void registerCommands();
+    process.exit();
+}
+catch (err) {
+    console.error(err);
+    process.exit();
+}
