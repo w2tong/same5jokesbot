@@ -21,7 +21,7 @@ import upgrade from './upgrade/upgrade';
 import autoBattle from './auto-battler/auto-battler';
 import cronMessage from './cron-message/cron-message';
 
-const commands = {
+const commandExecute = {
     [play.name]: play.execute,
     [roll.name]: roll.execute,
     [disperse.name]: disperse.execute,
@@ -44,6 +44,10 @@ const commands = {
     [upgrade.name]: upgrade.execute,
     [autoBattle.name]: autoBattle.execute,
     [cronMessage.name]: cronMessage.execute,
+};
+
+const commandAutocomplete = {
+    [cronMessage.name]: cronMessage.autocomplete
 };
 
 const commandBuilders = [
@@ -71,4 +75,4 @@ const commandBuilders = [
     cronMessage.commandBuilder,
 ];
 
-export { commands, commandBuilders };
+export { commandExecute, commandAutocomplete, commandBuilders };

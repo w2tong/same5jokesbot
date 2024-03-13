@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
-import { insertCronMessage } from '../../../sql/tables/cron_message';
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import schedule from 'node-schedule';
+import { insertCronMessage } from '../../../sql/tables/cron_message';
 import { DayChoices, emptyEmbedFieldInline } from '../../../util/discordUtil';
-import { CronRule } from '../../../cronjobs';
 import { createCronMessageCronJob } from '../cronMessageManager';
 
 async function execute(interaction: ChatInputCommandInteraction) {
@@ -16,19 +16,18 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const minute = interaction.options.getInteger('minute') ?? 0;
     const hour = interaction.options.getInteger('hour') ?? 0;
     const tz = 'America/Toronto';
-    const cronRule: CronRule = {second, minute, hour, tz};
+    const rule: schedule.RecurrenceSpecObjLit = {second, minute, hour, tz};
 
     const dayOfWeek = interaction.options.getInteger('day_of_week');
     if (dayOfWeek) {
-        cronRule.dayOfWeek = dayOfWeek;
+        rule.dayOfWeek = dayOfWeek;
     }
 
-    if (channel && message && cronRule) {
-        
-        if (mentionable) {
-            const id = createCronMessageCronJob(interaction.client, interaction.user.id, channel.id, message, cronRule, mentionable ? {mentionable: mentionable.toString()}: {});
-            await insertCronMessage(id, interaction.user.id, channel.id, message, JSON.stringify(cronRule), mentionable.toString());
-        }
+    const ruleStr = JSON.stringify(rule);
+
+    if (channel && message) {
+        const id = await createCronMessageCronJob(interaction.client, interaction.user.id, interaction.guildId, channel.id, message, ruleStr, mentionable ? {mentionable: mentionable.toString()}: {});
+        await insertCronMessage(id, interaction.guildId, interaction.user.id, channel.id, message, ruleStr, mentionable ? mentionable.toString() : undefined);
         
         const embed =  new EmbedBuilder()
             .setAuthor({name: `${interaction.user.username} created a cron message`, iconURL: interaction.user.displayAvatarURL()})
