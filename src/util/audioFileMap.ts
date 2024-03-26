@@ -141,6 +141,7 @@ export default {
     pomNowThatHesBald: 'pom_now_that_hes_bald',
     pomTheMoreHairYouLose: 'pom_the_more_hair_you_lose',
     destinyIWouldNever: 'destiny_i_would_never',
+    treeGrow: 'tree_grow',
 
     // Kingdom Hearts
     khDontHitTheCameraMan: 'kh_dont_hit_the_camera_man',

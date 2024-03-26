@@ -562,6 +562,10 @@ const regexToAudio = [
         regex: /hello/,
         getAudio: () => getHello()
     },
+    {
+        regex: /would you rather/,
+        getAudio: () => audio.treeGrow
+    },
 ];
 
 export default (command: string) => {
