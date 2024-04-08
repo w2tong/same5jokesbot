@@ -49,6 +49,7 @@ const commandExecute = {
 };
 
 const commandAutocomplete = {
+    [play.name]: play.autocomplete,
     [cronMessage.name]: cronMessage.autocomplete,
     [setUserIntro.name]: setUserIntro.autocomplete
 };
