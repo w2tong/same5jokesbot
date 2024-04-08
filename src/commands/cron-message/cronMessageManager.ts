@@ -25,8 +25,6 @@ async function createCronMessageCronJob(client: Client, creatorId: string, guild
     return job.name;
 }
 
-schedule.scheduleJob({}, () => {});
-
 async function loadCronMessages(client: Client) {
     const cronMessages = await getCronMessages();
     const promises = [];
