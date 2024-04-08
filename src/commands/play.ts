@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
+import { AutocompleteInteraction, ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
 import { joinVoicePlayAudio } from '../voice';
 import audio from '../util/audioFileMap';
 
@@ -11,6 +11,18 @@ function execute(interaction: ChatInputCommandInteraction) {
     }
 }
 
+async function autocomplete(interaction: AutocompleteInteraction) {
+    const focusedValue = interaction.options.getFocused().toLowerCase();
+    const choices = [];
+    for (const [name, value] of Object.entries(audio)) {
+        choices.push({name, value});
+    }
+    const filtered = choices.filter(choice => choice.name.toLowerCase().includes(focusedValue));
+    await interaction.respond(
+        filtered.slice(0, 25).map(choice => ({ name: choice.name, value: choice.value }))
+    );
+}
+
 const name = 'play';
 
 const commandBuilder = new SlashCommandBuilder()
@@ -20,42 +32,7 @@ const commandBuilder = new SlashCommandBuilder()
         .setName('audio')
         .setDescription('Audio clip')
         .setRequired(true)
-        .addChoices(
-            { name: 'Thunder vs Lightning', value: audio.thunderVsLightning },
-            /*
-            { name: 'Phasmo Breath', value: 'phasmo_breath' },
-            { name: 'Phasmo Die', value: 'phasmo_die' },
-            { name: 'Phasmo Groan', value: 'phasmo_groan' },
-            { name: 'Phasmo Heartbeat', value: 'phasmo_heartbeat' },
-            { name: 'Phasmo Kill', value: 'phasmo_kill' },
-            { name: 'Phasmo Behind', value: 'phasmo_behind' },
-            { name: 'Phasmo Here', value: 'phasmo_here' },
-            */
-            { name: 'Among Us Emergency Meeting', value: audio.amongUsEmergencyMeeting },
-            { name: 'Disgustang', value: audio.disgustang },
-            { name: 'Demon Time', value: audio.demonTime },
-            { name: 'What the dog doin', value: audio.whatTheDogDoin },
-            { name: 'Beans', value: audio.badlandsChugsBeans },
-            { name: 'Beans Slow', value: audio.badlandsChugsBeansSlow },
-            { name: 'NOIDONTTHINKSO', value: audio.noIDontThinkSo },
-            { name: 'Uh guys?', value: audio.bloonsUhGuys },
-            { name: 'ENOUGH TALK', value: audio.badlandsChugsEnoughTalk },
-            { name: 'Champ Select', value: audio.champSelect },
-            { name: 'TRUE', value: audio.trainTrue },
-            { name: 'Moonmoon destroys Weebs', value: audio.moonmoonDestroysWeebs },
-            { name: 'Bing Chilling', value: audio.bingChilling },
-            { name: 'An Exclusive! It Arrived', value: audio.anExclusiveItArrived },
-            { name: 'Smosh: Shut Up!', value: audio.smoshShutUp },
-            { name: 'Get ready! M.O.A.B.!', value: audio.bloonsGetReadyMOAB },
-            { name: 'Clean-cut, and still cuts a tomato.', value: audio.bloonsCleanCut },
-            { name: 'Game over, man.', value: audio.bloonsGameOverMan },
-            { name: 'Fulcrum, come in', value: audio.fulcrumComeIn },
-            { name: 'Obliterated', value: audio.fulcrumObliterated },
-            { name: 'FADEDTHANAHO', value: audio.fulcrumFadedThanAHo },
-            { name: 'Good Morning Donda', value: audio.goodMorningDonda },
-            { name: 'Teleporting Fat Guy', value: audio.teleportingFatGuy },
-            { name: 'Guga Sous Vide', value: audio.gugaSousVide },
-        )
+        .setAutocomplete(true)
     );
 
-export default { execute, name, commandBuilder };
+export default { execute, autocomplete, name, commandBuilder };
