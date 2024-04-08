@@ -14,7 +14,6 @@ async function registerCommands() {
         });
         console.log('Successfully registered application commands.');
     }
-    process.exit();
 }
 
 try {
@@ -22,5 +21,4 @@ try {
 }
 catch (err) {
     console.error(err);
-    process.exit();
 }
