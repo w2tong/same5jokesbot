@@ -52,7 +52,10 @@ jobs:
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: PM2 Deploy Production
-        run: pm2 deploy ecosystem.config.js production
+        run: | 
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          pm2 deploy ecosystem.config.js production
         env:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           SSH_USER: ${{secrets.SSH_USER}}
