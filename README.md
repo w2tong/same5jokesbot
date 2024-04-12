@@ -71,3 +71,11 @@ npm run deploy
 SSH_KNOWN_HOSTS=ip address
 SSH_PRIVATE_KEY=private key
 SSH_USER=username
+
+## GitHub Action deployment on Ubuntu using NVM
+```
+sudo ln -s /home/ubuntu/.nvm/versions/node/${NODE_VERSION}/bin/node /usr/local/bin/node
+sudo ln -s /home/ubuntu/.nvm/versions/node/${NODE_VERSION}/bin/npm /usr/local/bin/npm
+sudo ln -s /home/ubuntu/.nvm/versions/node/${NODE_VERSION}/bin/npx /usr/local/bin/npx
+sudo ln -s /home/ubuntu/.nvm/versions/node/${NODE_VERSION}/bin/pm2 /usr/local/bin/pm2
+```
