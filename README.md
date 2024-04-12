@@ -66,3 +66,8 @@ npm start
 ```shell
 npm run deploy
 ```
+
+## GitHub Action secrets for PM2 deployment
+SSH_KNOWN_HOSTS=ip address
+SSH_PRIVATE_KEY=private key
+SSH_USER=username
