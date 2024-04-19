@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Events, ChannelType } from 'discord.js';
+import { Client, GatewayIntentBits, Events, ChannelType, User } from 'discord.js';
 import { createCronJobs } from './cronjobs';
 import { getEmotes } from './util/emotes';
 import { initOracleDB } from './sql/oracledb';
@@ -13,8 +13,10 @@ import { fetchChannel, fetchUser } from './util/discordUtil';
 import { loadStolenGoods } from './commands/steal/stealManager';
 import { loadDailyProgress } from './daily/dailyManager';
 import { loadUpgrades } from './upgrades/upgradeManager';
+import { exitCode } from 'process';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
+let owner: User;
 
 // On messages
 client.on(Events.MessageCreate, messageCreateHandler);
@@ -28,6 +30,9 @@ client.on(Events.VoiceStateUpdate, voiceStateUpdateHandler);
 // Login with bot token
 client.login(process.env.BOT_TOKEN).catch(logError);
 client.once(Events.ClientReady, async () => {
+    if (process.env.OWNER_USER_ID) {
+        owner = await fetchUser(client, process.env.OWNER_USER_ID);
+    }
 
     // Fetch all guilds and members
     console.log('Fetching discord guilds and members.');
@@ -95,14 +100,30 @@ client.once(Events.ClientReady, async () => {
     //         void casinoChannel.send('The casino is open!');
     //     }
     // }
-    if (process.env.OWNER_USER_ID) {
-        const owner = await fetchUser(client, process.env.OWNER_USER_ID);
-        void owner.send('Same5JokesBot online.');
-    }
+    void owner.send('Same5JokesBot online.');
 });
 
 // client.on(Events.ShardError, err => {
 //     logError(err);
 // });
+
+process.on('exit', () => {
+    console.log(`Exit code: ${exitCode}`);
+});
+
+process.on('uncaughtException', (err) =>{
+    console.error(err);
+    owner.send(`${err.name}\n${err.message}`)
+        .catch(err => console.error(err))
+        .finally(() => {
+            console.log('Destroying Discord client.');
+            client.destroy()
+                .then(() => console.log('Discord client destroyed.'))
+                .catch(err => console.error(err))
+                .finally(() => 
+                    process.exit(1)
+                );
+        });
+});
 
 export default client;

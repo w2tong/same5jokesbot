@@ -3,6 +3,7 @@ module.exports = {
         name: 'same5jokesbot',
         script: 'npm start',
         cron_restart: '0 10 * * *',
+        exp_backoff_restart_delay: 1000,
         // max_memory_restart: '300M',
         // watch: true,
         // ignore_watch: ['node_modules','dist','audio','logs','coverage','.env'],
