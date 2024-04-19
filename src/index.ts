@@ -112,6 +112,7 @@ process.on('exit', () => {
 });
 
 process.on('uncaughtException', (err) =>{
+    console.error(err);
     owner.send(`${err.name}\n${err.message}`)
         .catch(err => console.error(err))
         .finally(() => {
