@@ -89,7 +89,7 @@ const regexToAudio = [
         getAudio: () => audio.tbcHype
     },
     {
-        regex: /suc(c|k|tion)/,
+        regex: /suction/,
         getAudio: () => audio.suction
     },
     {
@@ -97,8 +97,12 @@ const regexToAudio = [
         getAudio: () => audio.itsTimeToStop
     },
     {
-        regex: /dog/,
-        getAudio: () => getDog()
+        regex: /what the dog doing/,
+        getAudio: () => audio.whatTheDogDoin
+    },
+    {
+        regex: /i am a dog/,
+        getAudio: () => audio.iAmADoggie
     },
     {
         regex: /bean|badlands|chugs|eric booker/,
@@ -137,7 +141,7 @@ const regexToAudio = [
         getAudio: () => audio.chopSueyWakeUp
     },
     {
-        regex: /wanted to/,
+        regex: /you wanted to/,
         getAudio: () => audio.chopSueyYouWantedTo
     },
     {
@@ -145,7 +149,7 @@ const regexToAudio = [
         getAudio: () => audio.furgetAboutIt
     },
     {
-        regex: /blind|can'?t see/,
+        regex: /i'?m blind|can'?t see/,
         getAudio: () => getBlind()
     },
     {
@@ -203,10 +207,6 @@ const regexToAudio = [
         getAudio: () => audio.iAmUnderTheWater
     },
     {
-        regex: /everybody|cheers|take care|amazing|that'?s what i'?m talking about|all right/,
-        getAudio: () => audio.gugaEverybody
-    },
-    {
         regex: /arthur|knit|fuchsia/,
         getAudio: () => audio.arthurKnitter
     },
@@ -215,12 +215,16 @@ const regexToAudio = [
         getAudio: () => audio.zoominInTheForeign
     },
     {
-        regex: /bye|baj|badge/,
+        regex: /(bye|baj|badge) (bye|baj|badge)/,
         getAudio: () => audio.bajBaj
     },
     {
-        regex: /mask/,
-        getAudio: () => getMask()
+        regex: /dream|smp|that's what the mask is/,
+        getAudio: () => audio.dreamMask
+    },
+    {
+        regex: /bane|no one cared|put on the mask/,
+        getAudio: () => audio.baneMask
     },
     {
         regex: /(for|4)\s+(yo)?u/,
@@ -243,7 +247,7 @@ const regexToAudio = [
         getAudio: () => audio.allThe
     },
     {
-        regex: /uh guys/,
+        regex: /(o|u)h.*guys/,
         getAudio: () => audio.bloonsUhGuys
     },
     {
@@ -391,7 +395,7 @@ const regexToAudio = [
         getAudio: () => audio.killerKS
     },
     {
-        regex: /potion/,
+        regex: /potion seller/,
         getAudio: () => audio.potionSeller
     },
     {
@@ -427,7 +431,7 @@ const regexToAudio = [
         getAudio: () => audio.ohShtAGhost
     },
     {
-        regex: /oh sh.t/,
+        regex: /oh sh.t a/,
         getAudio: () => getOhSh_t()
     },
     {
@@ -435,7 +439,7 @@ const regexToAudio = [
         getAudio: () => audio.ltgNow
     },
     {
-        regex: /facebook|nice job/,
+        regex: /nice job/,
         getAudio: () => audio.niceJobTeam
     },
     {
@@ -547,7 +551,7 @@ const regexToAudio = [
         getAudio: () => getConstableJones()
     },
     {
-        regex: /crazy/,
+        regex: /that'?s crazy/,
         getAudio: () => audio.ciSin
     },
     {
@@ -559,12 +563,16 @@ const regexToAudio = [
         getAudio: () => audio.destinyIWouldNever
     },
     {
-        regex: /hello/,
+        regex: /hello to (the people|everybody)|i must say hello/,
         getAudio: () => getHello()
     },
     {
         regex: /would you rather/,
         getAudio: () => audio.treeGrow
+    },
+    {
+        regex: /everybody|cheers|take care|amazing|that'?s what i'?m talking about|all right/,
+        getAudio: () => audio.gugaEverybody
     },
 ];
 
