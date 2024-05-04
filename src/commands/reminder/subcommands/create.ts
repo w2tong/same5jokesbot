@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, time } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, inlineCode, time } from 'discord.js';
 import * as chrono from 'chrono-node';
 import { newReminder } from '../reminderManager';
 import { getUserRemindersCount } from '../../../sql/tables/reminders';
@@ -39,7 +39,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             }
         }
         else {
-            void interaction.editReply(`Invalid time/date input: \`${time}\``);
+            void interaction.editReply(`Invalid time/date input: ${inlineCode(date)}`);
         }
         
     }
