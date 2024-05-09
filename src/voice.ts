@@ -1,9 +1,9 @@
-import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState, bold, time } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, User, VoiceState, bold, time } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
-import { fetchChannel } from './util/discordUtil';
+import { fetchChannel, fetchGuildMember } from './util/discordUtil';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import Transcriber from 'discord-speech-to-text';
@@ -53,6 +53,16 @@ function disconnectVoice(guildId: string) {
     guildConnections[guildId].player.stop();
     clearTimeout(guildConnections[guildId].timeoutId);
     delete guildConnections[guildId];
+}
+
+async function disconnectUser(client: Client, guildId: string, userId: string) {
+    try {
+        const user = await fetchGuildMember(client, guildId, userId);
+        await user.voice.setChannel(null);
+    }
+    catch(error) {
+        console.error(error);
+    }
 }
 
 function isInGuildVoice(guildId: string) {
@@ -178,8 +188,15 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                 return;
             }
 
+            if (/bot,? kick me/.test(text)) {
+                void disconnectUser(client, guildId, userId);
+                return;
+            }
+
             if (/bot,? (leave|dc|disconnect|get out|disperse)/.test(text)) {
+                player.stop();
                 playAudioFile(audioFileMap.bajBaj, userId, guildId);
+                
                 const listener = () => {
                     disconnectVoice(guildId);
                     player.off(AudioPlayerStatus.Idle, listener);

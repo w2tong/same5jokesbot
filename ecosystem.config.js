@@ -2,7 +2,7 @@ module.exports = {
     apps : [{
         name: 'same5jokesbot',
         script: 'npm start',
-        cron_restart: '0 10 * * *',
+        cron_restart: '0 10 * * 0',
         exp_backoff_restart_delay: 1000,
         // max_memory_restart: '300M',
         // watch: true,
