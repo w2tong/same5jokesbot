@@ -30,6 +30,10 @@ const DayChoices = [
     {name: 'Sunday', value: 7}
 ];
 
+async function fetchGuild(client: Client, guiidId: string) {
+    return client.guilds.cache.get(guiidId) ?? await client.guilds.fetch(guiidId);
+}
+
 async function fetchChannel(client: Client, channelId: string) {
     return client.channels.cache.get(channelId) ?? await client.channels.fetch(channelId);
 }
@@ -40,6 +44,11 @@ async function fetchMessage(messages: MessageManager, messageId: string) {
 
 async function fetchUser(client: Client, userId: string) {
     return client.users.cache.get(userId) ?? await client.users.fetch(userId);
+}
+
+async function fetchGuildMember(client: Client, guildId: string, userId: string) {
+    const guild = await fetchGuild(client, guildId);
+    return guild.members.cache.get(userId) ?? await guild.members.fetch(userId);
 }
 
 async function createUserNumberedList(users: Promise<User>[]) {
@@ -66,4 +75,4 @@ function header(str: string, size: 1|2|3): string {
     return `${'#'.repeat(size)} ${str}`;
 }
 
-export {MessageEmbedLimit, UsersPerEmbed, FieldValueCharLimit, SelectMenuOptionLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, DayChoices, fetchChannel, fetchMessage, fetchUser, createUserNumberedList, createDispersersList, getBalanceStrings, header};
+export {MessageEmbedLimit, UsersPerEmbed, FieldValueCharLimit, SelectMenuOptionLimit, emptyEmbedField, emptyEmbedFieldInline, monthChoices, DayChoices, fetchGuild, fetchChannel, fetchMessage, fetchUser, fetchGuildMember, createUserNumberedList, createDispersersList, getBalanceStrings, header};
