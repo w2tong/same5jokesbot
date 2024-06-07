@@ -227,4 +227,11 @@ export default {
     // D4NNY - Hello
     d4nnyHello1: 'd4nny_hello_1',
     d4nnyHello2: 'd4nny_hello_2',
+
+    // Negative Creep
+    negativeCreep_crude: 'nc_crude',
+    negativeCreep_drone1: 'nc_drone1',
+    negativeCreep_drone2: 'nc_drone2',
+    negativeCreep_stoned1: 'nc_stoned1',
+    negativeCreep_stoned2: 'nc_stoned2',
 };

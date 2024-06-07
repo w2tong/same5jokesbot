@@ -54,6 +54,11 @@ function getHello(): string {
     return hello[getRandomRange(hello.length)];
 }
 
+const negativeCreep = [audio.negativeCreep_crude, audio.negativeCreep_drone1, audio.negativeCreep_drone2, audio.negativeCreep_stoned1, audio.negativeCreep_stoned2];
+function getNegativeCreep(): string {
+    return negativeCreep[getRandomRange(negativeCreep.length)];
+}
+
 const constableJones = [audio.cjAFriendInNeedIsAFriendIndeed, audio.cjALeopardCantChangeItsSpots,audio.cjALittleKnowledgeIsADangerousThing, audio.cjAPennySavedIsAPennyEarned, audio.cjAProblemSharedIsAProblemHavled, audio.cjAccidentsWillHappen, audio.cjActionsSpeakLouderThanWords, audio.cjAllsWellThatEndsWell, audio.cjAppearancesCanBeDeceiving, audio.cjBetterSafeThanSorry, audio.cjBetterToHaveLovedAndLost, audio.cjBetweenARockAndAHardPlace, audio.cjCatsGotYourTongue, audio.cjCatsOutOfTheBag, audio.cjCleaninessIsNextToGodliness, audio.cjCuriosityKilledTheCat, audio.cjDamnedIfYouDoDamnedIfYouDont, audio.cjDifferentStrokes, audio.cjDontCountYourChickens, audio.cjDontJudgeABookByItsCover, audio.cjDontShootTheMessenger, audio.cjEarlyBird, audio.cjEveryCloudHasASilverLining, audio.cjGoodFencesMakeGoodNeighbors, audio.cjGrassIsAlwaysGreener, audio.cjHasteMakesWaste, audio.cjHonestyIsTheBestPolicy, audio.cjIfItAintBrokeDontFixIt, audio.cjInnocentUntilProvenGuilty, audio.cjJealousyIsAGreeneyedMonster, audio.cjKeepCalmAndCarryOn, audio.cjKnowledgeIsPower, audio.cjLetSleepingDogsLie, audio.cjLifesNotFair, audio.cjOldHabitsDieHard, audio.cjPowerCorrupts, audio.cjSharingIsCaring, audio.cjSilenceIsGolden, audio.cjSomePeopleHaveAllTheLuck, audio.cjSomeThingsAreBetterLeftUnsaid, audio.cjSpeakOfTheDevil, audio.cjStrangerThingsHaveHappened, audio.cjTheCityCanBeACruelMistress, audio.cjTheDevilIsInTheDetails, audio.cjTheProofOfThePudding, audio.cjTheRoadToHell, audio.cjTheTongueIsATwoEdgedSword, audio.cjTheTruthShallSetYouFree, audio.cjTheTruthWillOut, audio.cjTimeHealsAllWounds, audio.cjTwoHeadsAreBetterThanOne, audio.cjTwoWrongsDontMakeARight, audio.cjWhenInDoubt, audio.cjWhenItRainsItPours, audio.cjWhenOneDoorCloses, audio.cjWhereTheresAWill, audio.cjWhereTheresSmokeTheresFire, audio.cjYouAlwaysWantWhatYouCantHave, audio.cjYouCanLeadAHorseToWater, audio.cjYouCantMakeAnOmelette, audio.cjYouCatchMoreFliesWithHoneyThanVinegar];
 function getConstableJones(): string {
     return constableJones[getRandomRange(constableJones.length)];
@@ -573,6 +578,10 @@ const regexToAudio = [
     {
         regex: /everybody|cheers|take care|amazing|that'?s what i'?m talking about|all right/,
         getAudio: () => audio.gugaEverybody
+    },
+    {
+        regex: /i'?m a negative creep and i'?m/,
+        getAudio: () => getNegativeCreep()
     },
 ];
 
