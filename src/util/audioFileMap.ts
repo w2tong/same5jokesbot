@@ -143,6 +143,9 @@ export default {
     destinyIWouldNever: 'destiny_i_would_never',
     treeGrow: 'tree_grow',
     looksmaxxing: 'looksmaxxing',
+    regice1: 'regice1',
+    regice2: 'regice2',
+    regirock: 'regirock',
 
     // Kingdom Hearts
     khDontHitTheCameraMan: 'kh_dont_hit_the_camera_man',
