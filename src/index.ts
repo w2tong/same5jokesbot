@@ -13,6 +13,7 @@ import { loadStolenGoods } from './commands/steal/stealManager';
 import { loadDailyProgress } from './daily/dailyManager';
 import { loadUpgrades } from './upgrades/upgradeManager';
 import { exitCode } from 'process';
+import registerCommands from './registerCommands';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 let owner: User;
@@ -34,12 +35,19 @@ client.once(Events.ClientReady, async () => {
     }
 
     // Fetch all guilds and members
-    console.log('Fetching discord guilds and members.');
+    console.log('Fetching discord guilds.');
     await client.guilds.fetch();
+    console.log('Done fetching discord guilds.\n');
+
+    console.log('Fetching discord members.');
+    const guildIds = [];
     for (const guild of client.guilds.cache.values()) {
+        guildIds.push(guild.id);
         await guild.members.fetch();
     }
-    console.log('Done fetching discord guilds and members.\n');
+
+    // Register slash commands
+    await registerCommands();
 
     // Init voice log channel
     console.log('Initializing main channel.');
@@ -103,6 +111,10 @@ client.once(Events.ClientReady, async () => {
     // }
 
     owner.send('Same5JokesBot online.').catch(console.error);
+});
+
+client.on(Events.GuildCreate, async (guild) => {
+    await registerCommands(guild.id);
 });
 
 process.on('exit', () => {

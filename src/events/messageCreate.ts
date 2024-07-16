@@ -1,9 +1,7 @@
 import { ChannelType, Message } from 'discord.js';
-import getAudioResponse from '../regex-responses/audio';
 import getImageResponse from '../regex-responses/image';
 import getReactResponse from '../regex-responses/react';
 import getTextResponse from '../regex-responses/text';
-import { joinVoicePlayAudio } from '../voice';
 import { RewardCooldown } from '../cooldown';
 import { timeInMS } from '../util/util';
 
@@ -33,13 +31,5 @@ export default async (message: Message) => {
     if (react) {
         message.react(react).catch(console.error);
         if (message.member?.id) reactRewardCooldown.reward(message.member.id).catch(console.error);
-    }
-
-    // Audio replies
-    if (message.member && message.member.voice.channel && message.guild) {
-        const audio = getAudioResponse(command);
-        if (audio) {
-            joinVoicePlayAudio(message, audio);
-        }
     }
 };
