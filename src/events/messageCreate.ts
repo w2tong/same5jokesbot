@@ -1,9 +1,7 @@
 import { ChannelType, Message } from 'discord.js';
-import getAudioResponse from '../regex-responses/audio';
 import getImageResponse from '../regex-responses/image';
 import getReactResponse from '../regex-responses/react';
 import getTextResponse from '../regex-responses/text';
-import { joinVoicePlayAudio } from '../voice';
 import { RewardCooldown } from '../cooldown';
 import { timeInMS } from '../util/util';
 
