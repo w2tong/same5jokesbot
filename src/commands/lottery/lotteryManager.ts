@@ -78,11 +78,11 @@ function scheduleNewLotteryCronJob(client: Client) {
                 const embeds = (await Promise.all(embedPromises));
                 await claimLotteryTickets(claimLotteryTicketsUpdates);
                 for (let i = 0; i < embeds.length; i += MessageEmbedLimit) {
-                    await channel.send({embeds: embeds.slice(i, i+MessageEmbedLimit)});
+                    await channel.send({embeds: embeds.slice(i, i+MessageEmbedLimit)}).catch(console.error);
                 }
             }
             // Send jackpot results
-            await channel.send({embeds: [createLotteryResultsEmbed(lottery, jackpotWinners, jackpotPerTicket)]});
+            await channel.send({embeds: [createLotteryResultsEmbed(lottery, jackpotWinners, jackpotPerTicket)]}).catch(console.error);
         }
 
         // Create new lottery
@@ -96,7 +96,7 @@ function scheduleNewLotteryCronJob(client: Client) {
         );
         await insertLottery(dateToDbString(startDate), dateToDbString(endDate), generateNumbersArray().join(','), newJackpot);
         
-        await channel.send({content: `${process.env.LOTTERY_ROLE_ID ? `${roleMention(process.env.LOTTERY_ROLE_ID)}` : ''}`, embeds: [createNewLotteryEmbed(startDate, endDate, newJackpot)]});
+        await channel.send({content: `${process.env.LOTTERY_ROLE_ID ? `${roleMention(process.env.LOTTERY_ROLE_ID)}` : ''}`, embeds: [createNewLotteryEmbed(startDate, endDate, newJackpot)]}).catch(console.error);
     });
 }
 
@@ -114,7 +114,7 @@ function scheduleEndLotteryCronJob(client: Client) {
                     {name: 'Jackpot', value: `${lottery.JACKPOT.toLocaleString()}`, inline: true},
                     {name: 'Winning Numbers', value: lottery.NUMBERS.split(',').join(', '), inline: true},
                 );
-            await channel.send({embeds: [embed]});
+            await channel.send({embeds: [embed]}).catch(console.error);
         }
     });
 }

@@ -147,7 +147,7 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
             if (!channel?.isTextBased()) return;
             const msgs = createTaxesResponse(taxesTotal, taxUserIds, taxesBalances, taxesNewBalances);
             for (const msg of msgs) {
-                await channel.send(msg);
+                await channel.send(msg).catch(console.error);
             }
         }
 
@@ -191,7 +191,7 @@ function scheduleDailyTaxWelfareCronJob(client: Client) {
             if (!channel?.isTextBased()) return;
             const msgs = createWelfareResponse(welfareTotal, welfareUserIds, welfareBalances, welfareNewBalances);
             for (const msg of msgs) {
-                await channel.send(msg);
+                await channel.send(msg).catch(console.error);
             }
         }
     });

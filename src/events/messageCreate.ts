@@ -1,5 +1,4 @@
 import { ChannelType, Message } from 'discord.js';
-import { logError } from '../logger';
 import getAudioResponse from '../regex-responses/audio';
 import getImageResponse from '../regex-responses/image';
 import getReactResponse from '../regex-responses/react';
@@ -24,16 +23,16 @@ export default async (message: Message) => {
         const botMessage = await getTextResponse(command, message.author.id, message.author.username, message.guildId);
         const images = getImageResponse(command);
         if (botMessage) {
-            message.channel.send({content: botMessage, files: images}).catch(logError);
-            if (message.member?.id) textRewardCooldown.reward(message.member.id);
+            message.channel.send({content: botMessage, files: images}).catch(console.error);
+            if (message.member?.id) textRewardCooldown.reward(message.member.id).catch(console.error);
         }
     }
 
     //Get emoji and react to message
     const react = getReactResponse(command);
     if (react) {
-        message.react(react).catch(logError);
-        if (message.member?.id) reactRewardCooldown.reward(message.member.id);
+        message.react(react).catch(console.error);
+        if (message.member?.id) reactRewardCooldown.reward(message.member.id).catch(console.error);
     }
 
     // Audio replies

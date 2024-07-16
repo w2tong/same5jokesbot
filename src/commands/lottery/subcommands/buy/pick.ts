@@ -16,7 +16,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     nums.sort((a,b) => a-b);
     const {success, res} = await lotteryManager.buyTicket(user, nums, interaction.client, interaction.channelId);
     void interaction.editReply(res);
-    if (success) void interaction.channel?.send(`${user} bought a lottery ticket.`);
+    if (success) void interaction.channel?.send(`${user} bought a lottery ticket.`).catch(console.error);
 }
 
 const name = 'pick';

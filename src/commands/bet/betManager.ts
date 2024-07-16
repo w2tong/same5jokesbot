@@ -2,7 +2,6 @@ import { Client, EmbedBuilder, InteractionEditReplyOptions, TextChannel, bold, t
 import { emptyEmbedFieldInline, fetchChannel, fetchMessage } from '../../util/discordUtil';
 import { updateCringePoints, CringePointsUpdate } from '../../sql/tables/cringe_points';
 import { ProfitType, ProfitsUpdate, updateProfits } from '../../sql/tables/profits';
-import { logError } from '../../logger';
 
 const enum BetResult {
     Yes = 'YES',
@@ -29,12 +28,7 @@ async function deleteBet(userId: string, client: Client): Promise<boolean> {
         betManager[userId].bet.delete();
         const channel = await fetchChannel(client, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
-        try {
-            await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
-        }
-        catch(err) {
-            logError(err);
-        }
+        await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []}).catch(console.error);
         delete betManager[userId];
         return true;
     }
@@ -45,12 +39,7 @@ async function endBet(userId: string, client: Client): Promise<boolean> {
     if (betManager[userId]) {
         const channel = await fetchChannel(client, betManager[userId].channelId) as TextChannel;
         const message = await fetchMessage(channel.messages, betManager[userId].interactionId);
-        try {
-            await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []});
-        }
-        catch(err) {
-            logError(err);
-        }
+        await message.edit({embeds: [betManager[userId].bet.createBetEmbed()], components: []}).catch(console.error);
         betManager[userId].bet.end();
         return true;
     }

@@ -179,7 +179,7 @@ async function newPvPBattle(interaction: ChatInputCommandInteraction) {
             .setStyle(ButtonStyle.Danger)
     );
     const reply = await interaction.editReply({embeds: [battle.generateEmbed()], components: [buttonsRow]});
-    await interaction.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to an auto battle.`);
+    await interaction.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to an auto battle.`).catch(console.error);
 
     const buttonFilter = async (i: ButtonInteraction) => {
         if (i.user.id !== opponent.id) {

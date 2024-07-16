@@ -37,8 +37,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         );
 
     const owner = await fetchUser(interaction.client, process.env.OWNER_USER_ID);
-    await owner.send({embeds: [embed]});
-    await interaction.editReply({embeds: [embed]});
+    await owner.send({embeds: [embed]}).catch(console.error);
+    await interaction.editReply({embeds: [embed]}).catch(console.error);
     await updateCringePoints([{userId: user.id, points: -price}, {userId: process.env.CLIENT_ID, points: price}]);
 }
 

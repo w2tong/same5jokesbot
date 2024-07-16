@@ -1,7 +1,6 @@
-import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, User, VoiceState, bold, time } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState, bold, time } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
-import { logError } from './logger';
 import getAudioResponse from './regex-responses/audio';
 import { fetchChannel, fetchGuildMember } from './util/discordUtil';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -162,7 +161,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
                     isRateLimited = true;
                     if (voiceLogChannel) {
                         voiceLogChannel.send(`${time(new Date(), 'T')} Rate limited. Try again in 1 minute.`)
-                            .then((message) => { rateLimitedMessage = message; }).catch(logError);
+                            .then((message) => { rateLimitedMessage = message; }).catch(console.error);
                     }
                 }
                 return;
@@ -171,7 +170,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
             // Process text
             isRateLimited = false;
             if (rateLimitedMessage) {
-                rateLimitedMessage.delete().catch(logError);
+                rateLimitedMessage.delete().catch(console.error);
                 rateLimitedMessage = null;
             }
             if (!data.transcript.text) return; // Return if no text
@@ -180,7 +179,7 @@ function joinVoice(voiceConnection: voiceConnection, client: Client) {
     
             // Log voice messages to console and discord channel
             const voiceTextLog = `${time(new Date(), 'T')} ${bold(username)}: ${text}`;
-            if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(logError);
+            if (voiceLogChannel) voiceLogChannel.send(voiceTextLog).catch(console.error);
     
             // Stop audio voice command
             if (/bot,? (stop|shut up)/.test(text)) {

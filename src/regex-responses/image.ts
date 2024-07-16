@@ -1,5 +1,3 @@
-import { logError } from '../logger';
-
 const regexToImage = [
     {
         regex: /\b166\b/,
@@ -22,7 +20,7 @@ export default (command: string): string[] => {
             try {
                 images.push(regexImage.getImage());
             } catch(err) {
-                logError(err);
+                console.error(err);
             }
         }
     }

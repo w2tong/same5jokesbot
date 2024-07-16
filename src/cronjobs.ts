@@ -1,9 +1,8 @@
 import { ChannelType, Client, EmbedBuilder } from 'discord.js';
 import schedule from 'node-schedule';
-import oracledb from 'oracledb';
+// import oracledb from 'oracledb';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { logError } from './logger';
 import { scheduleUpdateTimeInVoiceCronJob, scheduleUpdateTimeInVoiceTogetherCronJob, scheduleUpdateCringePointsCronJob } from './timeInVoice';
 import { scheduleEndLotteryCronJob, scheduleLotteryAutoBuyCronJob, scheduleNewLotteryCronJob } from './commands/lottery/lotteryManager'; 
 import { fetchChannel } from './util/discordUtil';
@@ -17,7 +16,7 @@ function createMessageCronJob(client: Client, channelId: string, rule: CronRule,
     schedule.scheduleJob(rule, async function() {
         const channel = await fetchChannel(client, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
-            channel.send(msg).catch(logError);
+            channel.send(msg).catch(console.error);
         }
     });
 }
@@ -26,17 +25,17 @@ function createEmbedCronJob(client: Client, channelId: string, rule: CronRule, e
     schedule.scheduleJob(rule, async function() {
         const channel = await fetchChannel(client, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
-            channel.send({embeds: [embed]}).catch(logError);
+            channel.send({embeds: [embed]}).catch(console.error);
         }
     });
 }
 
-function createOracleDBLogStatisticsCronJob() {
-    schedule.scheduleJob('0 * * * *', function() {
-        const pool = oracledb.getPool();
-        pool.logStatistics();
-    });
-}
+// function createOracleDBLogStatisticsCronJob() {
+//     schedule.scheduleJob('0 * * * *', function() {
+//         const pool = oracledb.getPool();
+//         pool.logStatistics();
+//     });
+// }
 
 async function createCronJobs(client: Client) {
     if (process.env.MAIN_CHANNEL_ID) {

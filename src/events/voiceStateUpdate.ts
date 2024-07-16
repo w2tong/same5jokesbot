@@ -1,5 +1,4 @@
 import { ChannelType, Client, TextChannel, VoiceState } from 'discord.js';
-import { logError } from '../logger';
 import timeInVoice from '../timeInVoice';
 import { fetchChannel } from '../util/discordUtil';
 import { getMomentTorontoCurrentTime } from '../util/util';
@@ -86,7 +85,7 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
     // Message when Azi leaves or chance when someone else leaves
     if (newState.member?.id == userIds.AZI && newState.channelId === null && oldState.guild.id === process.env.GUILD_ID) {
         if (mainChannel) {
-            mainChannel.send('You made Azi leave.').catch(logError);
+            mainChannel.send('You made Azi leave.').catch(console.error);
         }
     }
 

@@ -52,7 +52,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
                 .setLabel('Roll')
                 .setStyle(ButtonStyle.Success)
         );
-        await reply.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to a death roll.`);
+        await reply.channel.send(`${userMention(user.id)} challenged ${userMention(opponent.id)} to a death roll.`).catch(console.error);
         await interaction.editReply({embeds: [deathRoll.createEmbed()], components: !deathRoll.isEnded() && !deathRoll.isExpired() ? [buttonsRow] : []});
         
         const rollButtonFilter = async (i: ButtonInteraction) => {
