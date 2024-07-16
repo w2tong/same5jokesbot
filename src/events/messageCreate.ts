@@ -34,12 +34,4 @@ export default async (message: Message) => {
         message.react(react).catch(console.error);
         if (message.member?.id) reactRewardCooldown.reward(message.member.id).catch(console.error);
     }
-
-    // Audio replies
-    if (message.member && message.member.voice.channel && message.guild) {
-        const audio = getAudioResponse(command);
-        if (audio) {
-            joinVoicePlayAudio(message, audio);
-        }
-    }
 };
