@@ -88,19 +88,27 @@ client.once(Events.ClientReady, async () => {
     console.log('Done initializing users in voice.\n');
 
     console.log('Same5JokesBot online.');
-    if (process.env.STATUS_CHANNEL_ID) {
-        const statusChannel = await fetchChannel(client, process.env.STATUS_CHANNEL_ID);
-        if (statusChannel?.type === ChannelType.GuildText) {
-            void statusChannel.send('Same5JokesBot online.');
-        }
-    }
+
+    // if (process.env.STATUS_CHANNEL_ID) {
+    //     const statusChannel = await fetchChannel(client, process.env.STATUS_CHANNEL_ID);
+    //     if (statusChannel?.type === ChannelType.GuildText) {
+    //         void statusChannel.send('Same5JokesBot online.');
+    //     }
+    // }
+
     // if (process.env.CASINO_CHANNEL_ID) {
     //     const casinoChannel = await fetchChannel(client.channels, process.env.CASINO_CHANNEL_ID);
     //     if (casinoChannel?.type === ChannelType.GuildText) {
     //         void casinoChannel.send('The casino is open!');
     //     }
     // }
-    void owner.send('Same5JokesBot online.');
+    try {
+        void owner.send('Same5JokesBot online.');
+    }
+    catch(err) {
+        console.log(err);
+    }
+    
 });
 
 // client.on(Events.ShardError, err => {
