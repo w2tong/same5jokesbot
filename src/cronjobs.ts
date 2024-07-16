@@ -1,9 +1,8 @@
 import { ChannelType, Client, EmbedBuilder } from 'discord.js';
 import schedule from 'node-schedule';
-import oracledb from 'oracledb';
+// import oracledb from 'oracledb';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { logError } from './logger';
 import { scheduleUpdateTimeInVoiceCronJob, scheduleUpdateTimeInVoiceTogetherCronJob, scheduleUpdateCringePointsCronJob } from './timeInVoice';
 import { scheduleEndLotteryCronJob, scheduleLotteryAutoBuyCronJob, scheduleNewLotteryCronJob } from './commands/lottery/lotteryManager'; 
 import { fetchChannel } from './util/discordUtil';
@@ -31,12 +30,12 @@ function createEmbedCronJob(client: Client, channelId: string, rule: CronRule, e
     });
 }
 
-function createOracleDBLogStatisticsCronJob() {
-    schedule.scheduleJob('0 * * * *', function() {
-        const pool = oracledb.getPool();
-        pool.logStatistics();
-    });
-}
+// function createOracleDBLogStatisticsCronJob() {
+//     schedule.scheduleJob('0 * * * *', function() {
+//         const pool = oracledb.getPool();
+//         pool.logStatistics();
+//     });
+// }
 
 async function createCronJobs(client: Client) {
     if (process.env.MAIN_CHANNEL_ID) {

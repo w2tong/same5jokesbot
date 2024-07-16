@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, User, VoiceState, bold, time } from 'discord.js';
+import { ChannelType, ChatInputCommandInteraction, Client, GuildMember, Message, TextChannel, VoiceState, bold, time } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from '@discordjs/voice';
 import { join } from 'node:path';
 import getAudioResponse from './regex-responses/audio';
