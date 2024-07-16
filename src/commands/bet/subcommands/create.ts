@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid';
 import { timeInMS } from '../../../util/util';
 import { createBet, deleteBet, endBet } from '../betManager';
 import { getUserCringePoints } from '../../../sql/tables/cringe_points';
-import { logError } from '../../../logger';
 
 async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
@@ -95,7 +94,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
             await modalSubmitInteraction.editReply(`${userMention(user.id)} bet ${bold(betYes ? 'YES' : 'NO')} with ${bold(currBetPoints.toLocaleString())} points.`);
         }
         catch (err) {
-            logError(err);
+            console.error(err);
         }
     });
     buttonCollector.on('end', () => {

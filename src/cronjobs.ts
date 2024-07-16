@@ -17,7 +17,7 @@ function createMessageCronJob(client: Client, channelId: string, rule: CronRule,
     schedule.scheduleJob(rule, async function() {
         const channel = await fetchChannel(client, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
-            channel.send(msg).catch(logError);
+            channel.send(msg).catch(console.error);
         }
     });
 }
@@ -26,7 +26,7 @@ function createEmbedCronJob(client: Client, channelId: string, rule: CronRule, e
     schedule.scheduleJob(rule, async function() {
         const channel = await fetchChannel(client, channelId);
         if (channel && channel.type === ChannelType.GuildText) {
-            channel.send({embeds: [embed]}).catch(logError);
+            channel.send({embeds: [embed]}).catch(console.error);
         }
     });
 }

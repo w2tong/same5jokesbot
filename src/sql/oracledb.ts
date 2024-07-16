@@ -24,8 +24,6 @@ import { createTableABEquipment } from './tables/ab_equipment';
 import { createTableCronMessage } from './tables/cron_message';
 import { createTableUserIntro } from './tables/user_intro';
 
-import { logError } from '../logger';
-
 const createTableQueries = [createTableCurrentDisperseStreak, createTableDisperseStreakBreaks, createTableDisperseStreakHighscore, createTableGamersStats, createTableReminders, createTableTimeInVoice, createTableAudioCount, createTableUserIdPairs, createTableTimeInVoiceTogether, createTableCringePoints, createTableLottery, createTableLotteryTicket, createTableLotteryAutoBuy, createTableProfits, createTableStolenGoods, createTableDailyProgress, createTableUpgrades, createTableDailyCoins, createTableABCharacters, createTableABInventory, createTableABEquipment, createTableCronMessage, createTableUserIntro];
 
 const updateTableQueries = [...updateTableProfits, ...updateTableUpgrades, ...updateTableABCharacters];
@@ -65,9 +63,7 @@ async function initOracleDB() {
             await connection.execute(procedure, {name, query});
         }
         catch(err) {
-            logError(`${name}: ${err}\n
-                      ${query}`
-            );
+            console.error(`${name}: ${err}\n${query}`);
         }
     }
 
@@ -76,9 +72,7 @@ async function initOracleDB() {
             await connection.execute(query);
         }
         catch(err) {
-            logError(`${err}\n
-                      ${query}`
-            );
+            console.error(`${err}\n${query}`);
         }
     }
 

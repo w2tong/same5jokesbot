@@ -9,7 +9,7 @@ async function execute(interaction: ChatInputCommandInteraction) {
     const {msg, ticketsBought} = await lotteryManager.buyAuto(user, ticketsToBuy, interaction.client, interaction.channelId);
     
     void interaction.editReply(msg);
-    if (ticketsBought > 0) void interaction.channel?.send(`${user} bought ${ticketsBought} lottery ticket${ticketsBought > 1  ? 's' : ''}.`);
+    if (ticketsBought > 0) void interaction.channel?.send(`${user} bought ${ticketsBought} lottery ticket${ticketsBought > 1  ? 's' : ''}.`).catch(console.error);
 }
 
 const name = 'auto';

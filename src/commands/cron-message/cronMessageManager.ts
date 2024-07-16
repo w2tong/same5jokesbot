@@ -3,7 +3,6 @@ import { ChannelType, Client, EmbedBuilder, userMention } from 'discord.js';
 import schedule from 'node-schedule';
 import { getCronMessages } from '../../sql/tables/cron_message';
 import { fetchChannel, fetchUser } from '../../util/discordUtil';
-import { logError } from '../../logger';
 
 const cronMessageJobs: {[jobId: string]: {job: schedule.Job, creatorId: string, creatorUsername: string, guildId: string|null, message: string, rule: string}} = {};
 
@@ -16,7 +15,7 @@ async function createCronMessageCronJob(client: Client, creatorId: string, guild
                 {name: 'Message', value: message, inline: true}
             );
         if (channel && channel.type === ChannelType.GuildText) {
-            channel.send({content: options.mentionable ? options.mentionable : '', embeds: [embed]}).catch(logError);
+            channel.send({content: options.mentionable ? options.mentionable : '', embeds: [embed]}).catch(console.error);
         }
     }
     const rule = JSON.parse(ruleStr) as schedule.RecurrenceSpecObjLit;

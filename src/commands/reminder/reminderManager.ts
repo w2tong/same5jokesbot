@@ -1,6 +1,5 @@
 import { ChannelType, Client, TextChannel } from 'discord.js';
 import schedule from 'node-schedule';
-import { logError } from '../../logger';
 import { getReminders, insertReminder, deleteReminder } from '../../sql/tables/reminders';
 import { fetchChannel } from '../../util/discordUtil';
 import { dateToDbString } from '../../util/util';
@@ -9,12 +8,12 @@ function scheduleReminder(channel: TextChannel, date: Date, message: string, id?
     let job: schedule.Job;
     if (id) {
         job = schedule.scheduleJob(id, date, function() {
-            channel.send(message).catch(logError);
+            channel.send(message).catch(console.error);
         });
     }
     else {
         job = schedule.scheduleJob(date, function() {
-            channel.send(message).catch(logError);
+            channel.send(message).catch(console.error);
         });
     }
 

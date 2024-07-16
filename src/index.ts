@@ -1,15 +1,14 @@
-import { Client, GatewayIntentBits, Events, ChannelType, User } from 'discord.js';
+import { Client, GatewayIntentBits, Events, User } from 'discord.js';
 import { createCronJobs } from './cronjobs';
 import { getEmotes } from './util/emotes';
 import { initOracleDB } from './sql/oracledb';
 import { loadReminders } from './commands/reminder/reminderManager';
 import timeInVoice from './timeInVoice';
-import { logError } from './logger';
 import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
 import voiceStateUpdateHandler, { initMainChannel } from './events/voiceStateUpdate';
 import { initVoiceLogChannel } from './voice';
-import { fetchChannel, fetchUser } from './util/discordUtil';
+import { fetchUser } from './util/discordUtil';
 import { loadStolenGoods } from './commands/steal/stealManager';
 import { loadDailyProgress } from './daily/dailyManager';
 import { loadUpgrades } from './upgrades/upgradeManager';
@@ -28,7 +27,7 @@ client.on(Events.InteractionCreate, interactionCreateHandler);
 client.on(Events.VoiceStateUpdate, voiceStateUpdateHandler);
 
 // Login with bot token
-client.login(process.env.BOT_TOKEN).catch(logError);
+client.login(process.env.BOT_TOKEN).catch(console.error);
 client.once(Events.ClientReady, async () => {
     if (process.env.OWNER_USER_ID) {
         owner = await fetchUser(client, process.env.OWNER_USER_ID);
@@ -102,18 +101,9 @@ client.once(Events.ClientReady, async () => {
     //         void casinoChannel.send('The casino is open!');
     //     }
     // }
-    try {
-        void owner.send('Same5JokesBot online.');
-    }
-    catch(err) {
-        console.log(err);
-    }
-    
-});
 
-// client.on(Events.ShardError, err => {
-//     logError(err);
-// });
+    owner.send('Same5JokesBot online.').catch(console.error);
+});
 
 process.on('exit', () => {
     console.log(`Exit code: ${exitCode}`);
@@ -122,7 +112,7 @@ process.on('exit', () => {
 process.on('uncaughtException', (err) =>{
     console.error(err);
     owner.send(`${err.name}\n${err.message}`)
-        .catch(err => console.error(err))
+        .catch(console.error)
         .finally(() => {
             console.log('Destroying Discord client.');
             client.destroy()

@@ -81,10 +81,10 @@ async function execute(interaction: ChatInputCommandInteraction) {
         const config = createChartConfiguration(user.username, audio, count);
         const buffer = await createLargeChartBuffer(config);
         const file = new AttachmentBuilder(buffer).setName(`${name}-${user.username}-${new Date().toISOString()}.png`);
-        void interaction.editReply({files: [file]});
+        void interaction.editReply({files: [file]}).catch(console.error);
     }
     else {
-        void interaction.editReply('No data.');
+        void interaction.editReply('No data.').catch(console.error);
     }
 }
 

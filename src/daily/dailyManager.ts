@@ -69,7 +69,7 @@ function scheduleDailiesCronJob(client: Client) {
                     {name: 'Reward', value: rewards.join('\n'), inline: true},
                 );
 
-                await casinoChannel.send({embeds: [embed]});
+                await casinoChannel.send({embeds: [embed]}).catch(console.error);
             }
         }
         
@@ -113,7 +113,7 @@ async function completeDaily(dailyId: DailyId, user: User, client: Client, chann
                         {name: 'New Coin Balance', value: (coins + 1).toLocaleString(), inline: true},
                         emptyEmbedFieldInline
                     );
-                await channel.send({embeds: [embed]});
+                await channel.send({embeds: [embed]}).catch(console.error);
             }
 
             await updateCringePoints([{userId: user.id, points: dailies[dailyId].reward}]);

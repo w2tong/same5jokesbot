@@ -1,7 +1,6 @@
 import oracledb from 'oracledb';
 import { selectExecuteOptions } from '../query-options';
 import { Classes, ClassName } from '../../autoBattler/Classes/classes';
-import { logError } from '../../logger';
 import { levelExp } from '../../autoBattler/experience';
 
 const createTableABCharacters = {
@@ -43,7 +42,7 @@ async function insertABChar(userId: string, name: string, className: ClassName):
         return true;
     }
     catch (err) {
-        logError(err);
+        console.error(err);
         return false;
     }
 }

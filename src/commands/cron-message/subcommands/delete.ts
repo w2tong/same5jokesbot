@@ -4,7 +4,6 @@ import schedule from 'node-schedule';
 import { cronMessageJobs } from '../cronMessageManager';
 import { DayChoices } from '../../../util/discordUtil';
 import { deleteCronMessage } from '../../../sql/tables/cron_message';
-import { logError } from '../../../logger';
 
 function cronRuleToString(rule: schedule.RecurrenceSpecObjLit) {
     const hour = rule.hour ? Number(rule.hour.toString()) : 0;
@@ -42,8 +41,8 @@ async function execute(interaction: ChatInputCommandInteraction) {
         void interaction.editReply({embeds: [embed]});
     }
     catch(err) {
-        void interaction.editReply('There was an error deleting the cron message');
-        logError(err);
+        void interaction.editReply('There was an error deleting the cron message').catch(console.error);
+        console.error(err);
     }
 }
 
