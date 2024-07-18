@@ -6,7 +6,7 @@ import { loadReminders } from './commands/reminder/reminderManager';
 import timeInVoice from './timeInVoice';
 import messageCreateHandler from './events/messageCreate';
 import interactionCreateHandler from './events/interactionCreate';
-import voiceStateUpdateHandler, { initMainChannel } from './events/voiceStateUpdate';
+import voiceStateUpdateHandler from './events/voiceStateUpdate';
 import { initVoiceLogChannel } from './voice';
 import { fetchUser } from './util/discordUtil';
 import { loadStolenGoods } from './commands/steal/stealManager';
@@ -45,6 +45,7 @@ client.once(Events.ClientReady, async () => {
         guildIds.push(guild.id);
         await guild.members.fetch();
     }
+    console.log('Done fetching discord members\n.');
 
     // Register slash commands
     await registerCommands();
