@@ -49,11 +49,6 @@ client.once(Events.ClientReady, async () => {
     // Register slash commands
     await registerCommands();
 
-    // Init voice log channel
-    console.log('Initializing main channel.');
-    await initMainChannel(client);
-    console.log('Done initializing main channel.\n');
-
     console.log('Initializing voice channel.');
     await initVoiceLogChannel(client);
     console.log('Done initializing voice channel.\n');

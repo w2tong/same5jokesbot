@@ -1,24 +1,11 @@
-import { ChannelType, Client, TextChannel, VoiceState } from 'discord.js';
+import { ChannelType, VoiceState } from 'discord.js';
 import timeInVoice from '../timeInVoice';
-import { fetchChannel } from '../util/discordUtil';
 import { getMomentTorontoCurrentTime } from '../util/util';
 import { disconnectVoice, isInGuildVoice, joinVoicePlayAudio } from '../voice';
 import * as dotenv from 'dotenv';
 import audio from '../util/audioFileMap';
-import userIds from '../userIds';
 import { getUserIntro } from '../sql/tables/user_intro';
 dotenv.config();
-
-// const mainChannel: TextChannel;
-let mainChannel: TextChannel;
-async function initMainChannel(client: Client) {
-    if (process.env.MAIN_CHANNEL_ID) {
-        const channel = await fetchChannel(client, process.env.MAIN_CHANNEL_ID);
-        if (channel?.type === ChannelType.GuildText) {
-            mainChannel = channel;
-        }
-    }
-}
 
 export default async (oldState: VoiceState, newState: VoiceState) => {
 
@@ -82,13 +69,6 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
     // Stop if user moves to AFK channel
     if (newState.guild.afkChannelId === newState.channelId) return;
 
-    // Message when Azi leaves or chance when someone else leaves
-    if (newState.member?.id == userIds.AZI && newState.channelId === null && oldState.guild.id === process.env.GUILD_ID) {
-        if (mainChannel) {
-            mainChannel.send('You made Azi leave.').catch(console.error);
-        }
-    }
-
     // Play teleporting fat guy when moving between channels
     if (
         oldState.channelId && newState.channelId && oldState.channelId != newState.channelId &&
@@ -97,5 +77,3 @@ export default async (oldState: VoiceState, newState: VoiceState) => {
         joinVoicePlayAudio(newState, audio.teleportingFatGuyShort);
     }
 };
-
-export { initMainChannel };
