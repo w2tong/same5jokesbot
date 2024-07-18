@@ -1,4 +1,4 @@
-name: Deploy Slash Commands and PM2 Deploy
+name: PM2 Deploy
 
 on:
   push:
