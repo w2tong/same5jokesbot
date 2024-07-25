@@ -45,7 +45,7 @@ client.once(Events.ClientReady, async () => {
         guildIds.push(guild.id);
         await guild.members.fetch();
     }
-    console.log('Done fetching discord members\n.');
+    console.log('Done fetching discord members.\n');
 
     // Register slash commands
     await registerCommands();
