@@ -40,7 +40,7 @@ function createEmbedCronJob(client: Client, channelId: string, rule: CronRule, e
 async function createCronJobs(client: Client) {
     if (process.env.MAIN_CHANNEL_ID) {
         // Weekly Tuesday reminder
-        createMessageCronJob(client, process.env.MAIN_CHANNEL_ID, { second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'America/Toronto' }, 'Where 11.0');
+        createMessageCronJob(client, process.env.MAIN_CHANNEL_ID, { second: 0, minute: 0, hour: 17, dayOfWeek: 2, tz: 'America/Toronto' }, 'Where 11.1');
     }
     
     if (process.env.NYT_CHANNEL_ID) {
